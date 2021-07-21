@@ -456,10 +456,9 @@ export class ResultDataService {
         title: 'I',
       },
       fsy_tension: { fsy: null, fsd: null },
-      fsy_compress: { fsy: null, fsd: null },
       fsy_left: { fsy: null, fsd: null },
       fsy_right: { fsy: null, fsd: null },
-      rs: safety.safety_factor.rs,
+      rs: safety.safety_factor.S_rs,
     }
 
     // I配置鉄骨
@@ -483,6 +482,11 @@ export class ResultDataService {
         + target.web_thickness.toString();
     }
 
+    if (target.fsy_tension.fsy !== null) {
+      result.fsy_tension.fsy = target.fsy_tension.fsy;
+      result.fsy_tension.fsd = target.fsy_tension.fsy / result.rs;
+    }
+
     // H配置鉄骨
     target = section.steel.H;
     if (target.left_thickness !== null && target.left_width !== null) {
@@ -501,44 +505,24 @@ export class ResultDataService {
         + target.right_thickness.toString();
     }
 
-    for (const target of ['fsy_left', 'fsy_right']) {
-      if (section.steel[target].fsy !== null) {
-        result[target].fsy = section.steel[target].fsy;
-        result[target].fsd = section.steel[target].fsy / safety.safety_factor.rs;
-      }
-    }
-
-    if (side === '下側引張'){
-      if (section.steel['fsy_lower'].fsy !== null) {
-        result['fsy_tension'].fsy = section.steel['fsy_lower'].fsy;
-        result['fsy_tension'].fsd = section.steel['fsy_lower'].fsy / safety.safety_factor.rs;
-      }
-      if (section.steel['fsy_upper'].fsy !== null) {
-        result['fsy_compress'].fsy = section.steel['fsy_upper'].fsy;
-        result['fsy_compress'].fsd = section.steel['fsy_upper'].fsy / safety.safety_factor.rs;
-      }
-    } else {
-      if (section.steel['fsy_upper'].fsy !== null) {
-        result['fsy_tension'].fsy = section.steel['fsy_upper'].fsy;
-        result['fsy_tension'].fsd = section.steel['fsy_upper'].fsy / safety.safety_factor.rs;
-      }
-      if (section.steel['fsy_lower'].fsy !== null) {
-        result['fsy_compress'].fsy = section.steel['fsy_lower'].fsy;
-        result['fsy_compress'].fsd = section.steel['fsy_lower'].fsy / safety.safety_factor.rs;
+    for (const key of ['fsy_left', 'fsy_right']) {
+      if (target[key].fsy !== null) {
+        result[key].fsy = target[key].fsy;
+        result[key].fsd = target[key].fsy / result.rs;
       }
     }
 
 
     if (mark === 'Vd') {
       result['fsvy_Iweb'] = {
-        fsvy: section.steel['fvy_Iweb'].fvy,
-        fvyd: (section.steel['fvy_Iweb'].fvy === null) ? null :
-          section.steel['fvy_Iweb'].fvy / safety.safety_factor.rs
+        fsvy: section.steel.fvy_Iweb.fvy,
+        fvyd: (section.steel.fvy_Iweb.fvy === null) ? null :
+          section.steel.fvy_Iweb.fvy / result.rs
       }
       result['fsvy_Hweb'] = {
-        fsvy: section.steel['fvy_Hweb'].fvy,
-        fvyd: (section.steel['fvy_Hweb'].fvy === null) ? null :
-          section.steel['fvy_Hweb'].fvy / safety.safety_factor.rs
+        fsvy: section.steel.fvy_Hweb.fvy,
+        fvyd: (section.steel.fvy_Hweb.fvy === null) ? null :
+          section.steel.fvy_Hweb.fvy / result.rs
       }
     }
 

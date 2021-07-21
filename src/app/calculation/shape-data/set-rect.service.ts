@@ -256,6 +256,7 @@ export class SetRectService {
     // steel
     const steel = {
       I: {
+        position: null,
         tension_thickness: null,
         tension_width: null,
         compress_thickness: null,
@@ -263,9 +264,12 @@ export class SetRectService {
         web_thickness: null,
         web_height: null,
         fsy_tension: null,
-        fvy_Iweb: null,
+        fsy_web: null,
+        fsy_compress: null,
+        fvy_web: null,
         },
       H: {
+        position: null,
         left_thickness: null,
         left_width: null,
         right_thickness: null,
@@ -273,38 +277,11 @@ export class SetRectService {
         web_thickness: null,
         web_height: null,
         fsy_left: null,
+        fsy_web: null,
         fsy_right: null,
-        fvy_Hweb: null,
+        fvy_web: null,
       }
     };
-
-    // 縦向きのH鋼
-    switch (side) {
-      case "上側引張":
-        steel.I.tension_thickness = stl.I.upper_thickness;
-        steel.I.tension_width = stl.I.upper_width;
-        steel.I.compress_thickness = stl.I.lower_thickness;
-        steel.I.compress_width = stl.I.lower_width;
-
-        steel.I.fsy_tension = this.helper.getFsyk2(
-          stl.I.upper_thickness,
-          safety.material_steel,
-        );
-        break;
-      case "下側引張":
-        steel.I.tension_thickness = stl.I.lower_thickness;
-        steel.I.tension_width = stl.I.lower_width;
-        steel.I.compress_thickness = stl.I.upper_thickness;
-        steel.I.compress_width = stl.I.upper_width;
-
-        steel.I.fsy_tension = this.helper.getFsyk2(
-          stl.I.lower_thickness,
-          safety.material_steel,
-        );
-        break;
-    }
-    steel.I.web_thickness = stl.I.web_thickness;
-    steel.I.web_height = stl.I.web_height;
 
     // 横向き
     for (const key of ['left', 'right']){
@@ -322,10 +299,76 @@ export class SetRectService {
     }
     steel.H.web_thickness = stl.H.web_thickness;
     steel.H.web_height = stl.H.web_height;
+    steel.H.fsy_web = this.helper.getFsyk2(
+      steel.H.web_thickness,
+      safety.material_steel,
+    );
 
-    // web の材料強度
+
+    // 縦向きのH鋼
+    switch (side) {
+      case "上側引張":
+
+        steel.I.tension_thickness = stl.I.upper_thickness;
+        steel.I.tension_width = stl.I.upper_width;
+        steel.I.compress_thickness = stl.I.lower_thickness;
+        steel.I.compress_width = stl.I.lower_width;
+
+        const I_Height = stl.I.upper_thickness + stl.I.web_height + stl.I.lower_thickness;
+        steel.I.position = result.H - (stl.I.upper_cover + I_Height);
+
+        let H_Height = 0;
+        if (stl.H.left_width !== null){
+          H_Height = stl.H.left_width;
+        }
+        if (stl.H.right_width !== null){
+          H_Height = Math.max(H_Height, stl.H.right_width);
+        }
+        if(H_Height !== 0){
+          steel.H.position = result.H - (stl.H.left_cover + H_Height);
+        }
+
+        steel.I.fsy_tension = this.helper.getFsyk2(
+          stl.I.upper_thickness,
+          safety.material_steel,
+        );
+        steel.I.fsy_compress = this.helper.getFsyk2(
+          stl.I.lower_thickness,
+          safety.material_steel,
+        );
+        break;
+
+      case "下側引張":
+        steel.I.tension_thickness = stl.I.lower_thickness;
+        steel.I.tension_width = stl.I.lower_width;
+        steel.I.compress_thickness = stl.I.upper_thickness;
+        steel.I.compress_width = stl.I.upper_width;
+
+        steel.I.position = stl.I.upper_cover;
+
+        steel.H.position = stl.H.left_cover;
+
+        steel.I.fsy_tension = this.helper.getFsyk2(
+          stl.I.lower_thickness,
+          safety.material_steel,
+        );
+        steel.I.fsy_compress = this.helper.getFsyk2(
+          stl.I.upper_thickness,
+          safety.material_steel,
+        );
+        break;
+    }
+    steel.I.web_thickness = stl.I.web_thickness;
+    steel.I.web_height = stl.I.web_height;
+    steel.I.fsy_web = this.helper.getFsyk2(
+      steel.I.web_thickness,
+      safety.material_steel,
+    );
+
+
+    // web のせん断強度
     for (const key of ['I', 'H']) {
-      steel['fvy_' + key + 'web'] = this.helper.getFsyk2(
+      steel[key].fvy_web = this.helper.getFsyk2(
         stl[key].web_thickness,
         safety.material_steel,
         'fvy'
@@ -470,11 +513,86 @@ export class SetRectService {
       result.Bars.push(Ast);
     }
 
-    // 鉄骨の入力
-    if (!('steel' in section)) {
-      return result;
-    }
+    // I 鉄骨の入力
+    // 最初の1つめ の鉄骨材料を登録する
+    result.SteelElastic.push({
+      ElasticID: 'st',
+      Es:200,
+      fsk: section.steel.I.fsy_tension.fsy,
+    });
 
+    // かぶり部分
+    if(section.steel.I.position > 0){
+      result.Steels.push({
+        Height: section.steel.I.position,  // 断面高さ
+        WTop: 0,        // 断面幅（上辺）
+        WBottom: 0,     // 断面幅（底辺）
+        ElasticID: 'st' // 材料番号
+      })
+    }
+    // 圧縮側フランジ
+    if ( section.steel.I.compress_thickness !== null) {
+      const fsk = section.steel.I.fsy_compress.fsy;
+      const e = result.SteelElastic.find(v => v.fsk === fsk);
+      let ElasticID = 'sc';
+      if(e === undefined){
+        result.SteelElastic.push({
+          ElasticID: ElasticID,
+          Es:200,
+          fsk: fsk,
+        });
+      } else {
+        ElasticID = e.ElasticID;
+      }
+      result.Steels.push({
+        Height: section.steel.I.compress_thickness,  // 断面高さ
+        WTop: section.steel.I.compress_width,        // 断面幅（上辺）
+        WBottom: section.steel.I.compress_width,     // 断面幅（底辺）
+        ElasticID
+      })
+    }
+    // 腹板
+    if ( section.steel.I.web_height !== null) {
+      const fsk = section.steel.I.fsy_web.fsy;
+      const e = result.SteelElastic.find(v => v.fsk === fsk);
+      let ElasticID = 'sw';
+      if(e === undefined){
+        result.SteelElastic.push({
+          ElasticID: ElasticID,
+          Es:200,
+          fsk: fsk,
+        });
+      } else{
+        ElasticID = e.ElasticID;
+      }
+      result.Steels.push({
+        Height: section.steel.I.web_height,  // 断面高さ
+        WTop: section.steel.I.web_thickness,        // 断面幅（上辺）
+        WBottom: section.steel.I.web_thickness,     // 断面幅（底辺）
+        ElasticID: ElasticID // 材料番号
+      })
+    }
+    // 引張側フランジ
+    if ( section.steel.I.tension_thickness !== null) {
+      const fsk = section.steel.I.fsy_tension.fsy;
+      const e = result.SteelElastic.find(v => v.fsk === fsk);
+      let ElasticID = 'st';
+      if(e === undefined){
+        result.SteelElastic.push({
+          ElasticID: ElasticID,
+          Es:200,
+          fsk: fsk,
+        });
+      } else{
+        ElasticID = e.ElasticID;
+      }
+      result.Steels.push({
+        Height: section.steel.I.tension_thickness,  // 断面高さ
+        WTop: section.steel.I.tension_width,        // 断面幅（上辺）
+        WBottom: section.steel.I.tension_width,     // 断面幅（底辺）
+        ElasticID // 材料番号
+      })
+    }
 
     return result;
   }
