@@ -17,7 +17,7 @@ export class SetRectService {
 
   // 矩形断面の POST 用 データ作成
   public getRectangle(
-    target: string, member: any, index: number, 
+    target: string, member: any, index: number,
     side: string, safety: any, option: any): any {
 
     const result = { symmetry: true, Concretes: [], ConcreteElastic:[] };
@@ -38,7 +38,7 @@ export class SetRectService {
 
     result.ConcreteElastic.push(this.helper.getConcreteElastic(safety));
 
-    // 鉄筋情報を集計  
+    // 鉄筋情報を集計
     const result2 = this.getRectBar(shape, safety);
     for(const key of Object.keys(result2)){
       result[key] = result2[key];
@@ -72,7 +72,7 @@ export class SetRectService {
   //  barCenterPosition: 多段配筋の鉄筋を重心位置に全ての鉄筋があるものとす
   // }
   public getTsection(
-    target: string, member: any, index: number, 
+    target: string, member: any, index: number,
     side: string, safety: any, option: any): object {
 
     const result = { symmetry: false, Concretes: [], ConcreteElastic:[] };
@@ -102,7 +102,7 @@ export class SetRectService {
 
     result.ConcreteElastic.push(this.helper.getConcreteElastic(safety));
 
-    // 鉄筋情報を集計  
+    // 鉄筋情報を集計
     const result2 = this.getRectBar(shape, safety);
     for(const key of Object.keys(result2)){
       result[key] = result2[key];
@@ -115,9 +115,9 @@ export class SetRectService {
   //  barCenterPosition: 多段配筋の鉄筋を重心位置に全ての鉄筋があるものとす
   // }
   public getInvertedTsection(
-    target: string, member: any, index: number, 
+    target: string, member: any, index: number,
     side: string, safety: any, option: any): object {
-    
+
     const result = { symmetry: false, Concretes: [], ConcreteElastic:[] };
 
     // 断面情報を集計
@@ -145,7 +145,7 @@ export class SetRectService {
 
     result.ConcreteElastic.push(this.helper.getConcreteElastic(safety));
 
-    // 鉄筋情報を集計  
+    // 鉄筋情報を集計
     const result2 = this.getRectBar(shape, safety);
     for(const key of Object.keys(result2)){
       result[key] = result2[key];
@@ -153,9 +153,9 @@ export class SetRectService {
 
     return result;
   }
-  
+
   public getSection(member: any, target: string, index: number){
-    
+
     const result = {
       H: null,
       B: null,
@@ -181,12 +181,12 @@ export class SetRectService {
     }
 
     result.tan = bar.tan;
-    
+
     return result
   }
 
   public getTSection(member: any, target: string, index: number){
-    
+
     const result = this.getSection(member, target, index);
 
     let bf = this.helper.toNumber(member.Bt);
@@ -204,7 +204,7 @@ export class SetRectService {
   //  barCenterPosition: 多段配筋の鉄筋を重心位置に全ての鉄筋があるものとす
   // }
   public getRectangleShape(
-    member: any, target: string, index: number, 
+    member: any, target: string, index: number,
     side: string, safety: any, option: any): any {
 
     const result = this.getSection(member, target, index);
@@ -248,7 +248,7 @@ export class SetRectService {
     if (fsyt.fsy === 235)  tension.mark = "R"; // 鉄筋強度が 235 なら 丸鋼
     tension['fsy'] = fsyt;
     tension['rs'] = safety.safety_factor.rs;;
-    
+
 
     // 登録
     result['tension'] = tension;
@@ -266,7 +266,7 @@ export class SetRectService {
         fsy_tension: null,
         fsy_web: null,
         fsy_compress: null,
-        fvy_web: null,
+        fvy_web: null // せん断強度
         },
       H: {
         position: null,
@@ -279,7 +279,7 @@ export class SetRectService {
         fsy_left: null,
         fsy_web: null,
         fsy_right: null,
-        fvy_web: null,
+        fvy_web: null // せん断強度
       }
     };
 
@@ -408,7 +408,7 @@ export class SetRectService {
         result['sidebar'] = sidebar;
       }
     }
-    
+
     result['stirrup'] = bar.stirrup;
     result['bend'] = bar.bend;
 
@@ -417,13 +417,13 @@ export class SetRectService {
 
   // option: {
   //  barCenterPosition: 多段配筋の鉄筋を重心位置に全ての鉄筋があるものとす
-  // } 
+  // }
   public getTsectionShape(
-    member: any, target: string, index: number, 
+    member: any, target: string, index: number,
     side: string, safety: any, option: any): any {
 
     const result = this.getRectangleShape(member, target, index, side, safety, option);
-    
+
     let bf = this.helper.toNumber(member.Bt);
     let hf = this.helper.toNumber(member.t);
     if (bf === null) { bf = result.B; }
@@ -513,85 +513,12 @@ export class SetRectService {
       result.Bars.push(Ast);
     }
 
-    // I 鉄骨の入力
-    // 最初の1つめ の鉄骨材料を登録する
-    result.SteelElastic.push({
-      ElasticID: 'st',
-      Es:200,
-      fsk: section.steel.I.fsy_tension.fsy,
-    });
-
-    // かぶり部分
-    if(section.steel.I.position > 0){
-      result.Steels.push({
-        Height: section.steel.I.position,  // 断面高さ
-        WTop: 0,        // 断面幅（上辺）
-        WBottom: 0,     // 断面幅（底辺）
-        ElasticID: 'st' // 材料番号
-      })
-    }
-    // 圧縮側フランジ
-    if ( section.steel.I.compress_thickness !== null) {
-      const fsk = section.steel.I.fsy_compress.fsy;
-      const e = result.SteelElastic.find(v => v.fsk === fsk);
-      let ElasticID = 'sc';
-      if(e === undefined){
-        result.SteelElastic.push({
-          ElasticID: ElasticID,
-          Es:200,
-          fsk: fsk,
-        });
-      } else {
-        ElasticID = e.ElasticID;
+    // 鉄骨の登録
+    const steel = this.getSteel(section);
+    for(const key of Object.keys(steel)){
+      for(const value of steel[key]){
+        result[key].push(value);
       }
-      result.Steels.push({
-        Height: section.steel.I.compress_thickness,  // 断面高さ
-        WTop: section.steel.I.compress_width,        // 断面幅（上辺）
-        WBottom: section.steel.I.compress_width,     // 断面幅（底辺）
-        ElasticID
-      })
-    }
-    // 腹板
-    if ( section.steel.I.web_height !== null) {
-      const fsk = section.steel.I.fsy_web.fsy;
-      const e = result.SteelElastic.find(v => v.fsk === fsk);
-      let ElasticID = 'sw';
-      if(e === undefined){
-        result.SteelElastic.push({
-          ElasticID: ElasticID,
-          Es:200,
-          fsk: fsk,
-        });
-      } else{
-        ElasticID = e.ElasticID;
-      }
-      result.Steels.push({
-        Height: section.steel.I.web_height,  // 断面高さ
-        WTop: section.steel.I.web_thickness,        // 断面幅（上辺）
-        WBottom: section.steel.I.web_thickness,     // 断面幅（底辺）
-        ElasticID: ElasticID // 材料番号
-      })
-    }
-    // 引張側フランジ
-    if ( section.steel.I.tension_thickness !== null) {
-      const fsk = section.steel.I.fsy_tension.fsy;
-      const e = result.SteelElastic.find(v => v.fsk === fsk);
-      let ElasticID = 'st';
-      if(e === undefined){
-        result.SteelElastic.push({
-          ElasticID: ElasticID,
-          Es:200,
-          fsk: fsk,
-        });
-      } else{
-        ElasticID = e.ElasticID;
-      }
-      result.Steels.push({
-        Height: section.steel.I.tension_thickness,  // 断面高さ
-        WTop: section.steel.I.tension_width,        // 断面幅（上辺）
-        WBottom: section.steel.I.tension_width,     // 断面幅（底辺）
-        ElasticID // 材料番号
-      })
     }
 
     return result;
@@ -682,4 +609,93 @@ export class SetRectService {
     return result;
   }
 
+  // 矩形、Ｔ形断面における 鉄骨情報を生成する関数
+  private getSteel(section: any): any {
+    const result = {
+      Steels: new Array(),
+      SteelElastic: new Array(),
+    };
+
+    // I 鉄骨の入力
+    // 最初の1つめ の鉄骨材料を登録する
+    result.SteelElastic.push({
+      ElasticID: 'st',
+      Es:200,
+      fsk: section.steel.I.fsy_tension.fsy,
+    });
+
+    // かぶり部分
+    if(section.steel.I.position > 0){
+      result.Steels.push({
+        Height: section.steel.I.position,  // 断面高さ
+        WTop: 0,        // 断面幅（上辺）
+        WBottom: 0,     // 断面幅（底辺）
+        ElasticID: 'st' // 材料番号
+      })
+    }
+    // 圧縮側フランジ
+    if ( section.steel.I.compress_thickness !== null) {
+      const fsk = section.steel.I.fsy_compress.fsy;
+      const e = result.SteelElastic.find(v => v.fsk === fsk);
+      let ElasticID = 'sc';
+      if(e === undefined){
+        result.SteelElastic.push({
+          ElasticID: ElasticID,
+          Es:200,
+          fsk: fsk,
+        });
+      } else {
+        ElasticID = e.ElasticID;
+      }
+      result.Steels.push({
+        Height: section.steel.I.compress_thickness,  // 断面高さ
+        WTop: section.steel.I.compress_width,        // 断面幅（上辺）
+        WBottom: section.steel.I.compress_width,     // 断面幅（底辺）
+        ElasticID
+      })
+    }
+    // 腹板
+    if ( section.steel.I.web_height !== null) {
+      const fsk = section.steel.I.fsy_web.fsy;
+      const e = result.SteelElastic.find(v => v.fsk === fsk);
+      let ElasticID = 'sw';
+      if(e === undefined){
+        result.SteelElastic.push({
+          ElasticID: ElasticID,
+          Es:200,
+          fsk: fsk,
+        });
+      } else{
+        ElasticID = e.ElasticID;
+      }
+      result.Steels.push({
+        Height: section.steel.I.web_height,  // 断面高さ
+        WTop: section.steel.I.web_thickness,        // 断面幅（上辺）
+        WBottom: section.steel.I.web_thickness,     // 断面幅（底辺）
+        ElasticID: ElasticID // 材料番号
+      })
+    }
+    // 引張側フランジ
+    if ( section.steel.I.tension_thickness !== null) {
+      const fsk = section.steel.I.fsy_tension.fsy;
+      const e = result.SteelElastic.find(v => v.fsk === fsk);
+      let ElasticID = 'st';
+      if(e === undefined){
+        result.SteelElastic.push({
+          ElasticID: ElasticID,
+          Es:200,
+          fsk: fsk,
+        });
+      } else{
+        ElasticID = e.ElasticID;
+      }
+      result.Steels.push({
+        Height: section.steel.I.tension_thickness,  // 断面高さ
+        WTop: section.steel.I.tension_width,        // 断面幅（上辺）
+        WBottom: section.steel.I.tension_width,     // 断面幅（底辺）
+        ElasticID // 材料番号
+      })
+    }
+    return result;
+  }
 }
