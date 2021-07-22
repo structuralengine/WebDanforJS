@@ -37,8 +37,14 @@
 .sheet-title .indent10 {
   text-indent: 1em;
 }
+.sheet-title .indent15 {
+  text-indent: 1.5em;
+}
 .sheet-title .indent20 {
   text-indent: 2em;
+}
+.sheet-title .indent25 {
+  text-indent: 2.5em;
 }
 .sheet-title .indent30 {
   text-indent: 3em;
@@ -88,14 +94,44 @@
 .sheet-title .indent110 {
   text-indent: 11em;
 }
+.sheet-title .indent115 {
+  text-indent: 11.5em;
+}
 .sheet-title .indent120 {
   text-indent: 12em;
+}
+.sheet-title .indent135 {
+  text-indent: 13.5em;
+}
+.sheet-title .indent140 {
+  text-indent: 14.0em;
+}
+.sheet-title .indent160 {
+  text-indent: 16.0em;
+}
+.sheet-title .indent170 {
+  text-indent: 17.0em;
+}
+.sheet-title .indent175 {
+  text-indent: 17.5em;
+}
+.sheet-title .indent180 {
+  text-indent: 18.0em;
+}
+.sheet-title .indent190 {
+  text-indent: 19.0em;
+}
+.sheet-title .indent200 {
+  text-indent: 20.0em;
 }
 .sheet-title .indent240 {
   text-indent: 24em;
 }
 .sheet-title .indent_title {
   text-align: center;
+}
+.sheet-title .textright {
+  text-align: right;
 }
 
 p.noword {
@@ -106,6 +142,24 @@ p.caption {
 }
 div.noword{
   margin-bottom: 14pt;
+}
+div .margin30 {
+  margin-left: 3.0em;
+}
+div .margin50 {
+  margin-left: 5.0em;
+}
+div .margin70 {
+  margin-left: 7.0em;
+}
+div .margin110 {
+  margin-left: 11.0em;
+}
+div .margin115 {
+  margin-left: 11.5em;
+}
+div .margin130 {
+  margin-left: 13em;
 }
 
 table.title {
@@ -201,9 +255,6 @@ table.main .center {
 table.main .right {
   text-align: right;
   padding-right: 10px;
-}
-table.main .right-S {
-  text-align: right;
 }
 table.main .cell_name1 {
   width: 144px;
