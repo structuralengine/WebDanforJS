@@ -247,7 +247,7 @@ export class SetRectService {
     );
     if (fsyt.fsy === 235)  tension.mark = "R"; // 鉄筋強度が 235 なら 丸鋼
     tension['fsy'] = fsyt;
-    tension['rs'] = safety.safety_factor.rs;;
+    tension['rs'] = safety.safety_factor.rs;
     
 
     // 登録
@@ -280,8 +280,11 @@ export class SetRectService {
         fsy_web: null,
         fsy_right: null,
         fvy_web: null,
-      }
+      },
+      rs: null
     };
+
+    steel.rs = safety.safety_factor.S_rs;
 
     // 横向き
     for (const key of ['left', 'right']){
@@ -519,6 +522,7 @@ export class SetRectService {
       ElasticID: 'st',
       Es:200,
       fsk: section.steel.I.fsy_tension.fsy,
+      rs: section.steel.rs
     });
 
     // かぶり部分
@@ -540,6 +544,7 @@ export class SetRectService {
           ElasticID: ElasticID,
           Es:200,
           fsk: fsk,
+          rs: section.steel.rs
         });
       } else {
         ElasticID = e.ElasticID;
@@ -561,6 +566,7 @@ export class SetRectService {
           ElasticID: ElasticID,
           Es:200,
           fsk: fsk,
+          rs: section.steel.rs
         });
       } else{
         ElasticID = e.ElasticID;
@@ -582,6 +588,7 @@ export class SetRectService {
           ElasticID: ElasticID,
           Es:200,
           fsk: fsk,
+          rs: section.steel.rs
         });
       } else{
         ElasticID = e.ElasticID;
@@ -590,7 +597,8 @@ export class SetRectService {
         Height: section.steel.I.tension_thickness,  // 断面高さ
         WTop: section.steel.I.tension_width,        // 断面幅（上辺）
         WBottom: section.steel.I.tension_width,     // 断面幅（底辺）
-        ElasticID // 材料番号
+        ElasticID, // 材料番号
+        IsTensionBar: true
       })
     }
 
