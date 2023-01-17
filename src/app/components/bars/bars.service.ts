@@ -351,7 +351,7 @@ export class InputBarsService {
         for (const key of Object.keys(result)) {
           if (['rebar1', 'rebar2', 'sidebar1', 'sidebar2', 'stirrup', 'bend'].includes(key)) {
             for (const k of Object.keys(result[key])) {
-              if (k in data[key]) {
+              if (data[key] !== undefined && k in data[key]) {
                 result[key][k] = data[key][k];
               }
             }
@@ -367,7 +367,7 @@ export class InputBarsService {
         const re = result[key];
         for (const k of Object.keys(re)) {
           if (k === 'cos' || k === 'enable' || k === 'title') continue;
-          if (re[k] === null && k in rebar) {
+          if (re[k] === null && rebar !== undefined && k in rebar) {
             re[k] = this.helper.toNumber(rebar[k]);
             endFlg = false; // まだ終わらない
           }
