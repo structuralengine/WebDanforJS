@@ -53,13 +53,16 @@ export class ResultEarthquakesTorsionalMomentComponent implements OnInit {
     const inputJson: string = this.post.getInputJsonString(postData);
     // this.cd.detectChanges();
     // setTimeout(() => {
-      this.post.http_post(inputJson).then(
-        (response) => {
-          this.isFulfilled = this.setPages(response["OutputData"]);
-          this.calc.isEnable = true;
-          this.summary.setSummaryTable("earthquakesTorsionalMoment", this.safetyTorsionalMomentPages);
-        })
+    this.post.http_post(inputJson).then(
+      (response) => {
+        console.log(this.title + " 計算結果", response["OutputData"]);
+
+        this.isFulfilled = this.setPages(response["OutputData"]);
+        this.calc.isEnable = true;
+        this.summary.setSummaryTable("earthquakesTorsionalMoment", this.safetyTorsionalMomentPages);
+      })
       .catch((error) => {
+        console.log(this.title + " 計算エラー!");
         this.err = 'error!!\n' + error;;
         this.summary.setSummaryTable("earthquakesTorsionalMoment");
       })
@@ -67,7 +70,6 @@ export class ResultEarthquakesTorsionalMomentComponent implements OnInit {
         this.isLoading = false;
       });
     // });
-
   }
 
   // 計算結果を集計する

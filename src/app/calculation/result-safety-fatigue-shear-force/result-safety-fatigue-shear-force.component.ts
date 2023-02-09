@@ -52,6 +52,8 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
       return;
     }
 
+    // POSTは？？
+
     // 計算結果を集計する
     try {
       this.safetyFatigueShearForcepages = this.setSafetyFatiguePages(postData);

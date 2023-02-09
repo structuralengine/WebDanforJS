@@ -55,11 +55,14 @@ export class ResultRestorabilityTorsionalMomentComponent implements OnInit {
     // setTimeout(() => {
       this.post.http_post(inputJson).then(
         (response) => {
+          console.log(this.title + " 計算結果", response["OutputData"]);
+
           this.isFulfilled = this.setPages(response["OutputData"]);
           this.calc.isEnable = true;
           this.summary.setSummaryTable("restorabilityTorsionalMoment", this.safetyTorsionalMomentPages);
         })
       .catch((error) => {
+        console.log(this.title + " 計算エラー!");
         this.err = 'error!!\n' + error;;
         this.summary.setSummaryTable("restorabilityTorsionalMoment");
       })
