@@ -167,6 +167,7 @@ export class MenuComponent implements OnInit {
     }
     this.config.saveActiveComponentData();
     const inputJson: string = this.save.getInputText();
+
     this.fileName = this.electronService.ipcRenderer.sendSync('overWrite', this.fileName, inputJson);
   }
 
@@ -223,6 +224,7 @@ export class MenuComponent implements OnInit {
   public fileSave(): void {
     this.config.saveActiveComponentData();
     const inputJson: string = this.save.getInputText();
+
     if (this.fileName.length === 0) {
       this.fileName = "WebDan.wdj";
     }

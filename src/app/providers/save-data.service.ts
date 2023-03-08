@@ -249,14 +249,23 @@ export class SaveDataService {
     // ※ このソフトでは 圧縮がプラス(+)
   }
 
+  public load_ui_state()
+  {
+    // とりあえずローカル保存
+    localStorage.getItem("AutoSaved");
+  }
+
+  public save_ui_state()
+  {
+    // ステートメッセージ出す？
+
+    // とりあえずローカル保存
+    localStorage.setItem("AutoSaved", this.getInputText());
+  }
+
   // ファイルに保存用データを生成
   public getInputText(): string {
-
-    const jsonData = this.getInputJson();
-
-    // string 型にする
-    const result: string = JSON.stringify(jsonData);
-    return result;
+    return JSON.stringify(this.getInputJson());
   }
 
   public getInputJson(): any {
