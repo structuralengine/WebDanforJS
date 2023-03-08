@@ -58,7 +58,10 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.renew();
+    if(!this.app.load_ui_state())
+      this.renew();
+    else
+      this.fileName = localStorage.getItem("AutoSavedFileName");
   }
 
   // 新規作成
@@ -166,7 +169,8 @@ export class MenuComponent implements OnInit {
       return;
     }
     this.config.saveActiveComponentData();
-    const inputJson: string = this.save.getInputText();
+    //const inputJson: string = this.save.getInputText();
+    const inputJson: string = this.save.save_ui_state();
 
     this.fileName = this.electronService.ipcRenderer.sendSync('overWrite', this.fileName, inputJson);
   }
@@ -223,7 +227,8 @@ export class MenuComponent implements OnInit {
   // ファイルを保存
   public fileSave(): void {
     this.config.saveActiveComponentData();
-    const inputJson: string = this.save.getInputText();
+    //const inputJson: string = this.save.getInputText();
+    const inputJson: string = this.save.save_ui_state();
 
     if (this.fileName.length === 0) {
       this.fileName = "WebDan.wdj";

@@ -34,6 +34,25 @@ export class AppComponent {
     document.getElementById(id.toString()).classList.add("is-active");
   }
 
+  public load_ui_state(): boolean
+  {
+    // とりあえずローカルから読み出す
+    const json:string = localStorage.getItem("AutoSaved");
+
+    console.log("to be restored: ", json);
+
+    if(null === json)
+      return false;
+    
+    this.save.readInputData(json);
+
+    //this.menu.pickup_file_name = this.save.getPickupFilename();
+    this.memberChange(); // 左側のボタンを有効にする。
+    this.designPointChange(); // 左側のボタンを有効にする。
+
+    return true;
+  }
+
   // アクティブになっているボタンを全て非アクティブにする
   public deactiveButtons() {
     for (let i = 0; i <= 10; i++) {

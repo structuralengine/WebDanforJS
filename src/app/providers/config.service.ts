@@ -9,9 +9,9 @@ export class ConfigService {
 
   constructor() {
     this.activeComponentRef = null;
-   }
+  }
 
-   public nativeGlobal() { return window }
+  public nativeGlobal() { return window }
 
   public setActiveComponent(componentRef: any): void {
     this.activeComponentRef = componentRef;
@@ -25,8 +25,5 @@ export class ConfigService {
     if ('saveData' in this.activeComponentRef) {
       this.activeComponentRef.saveData();
     }
-
   }
-
 }
-
