@@ -43,7 +43,7 @@ export class AppComponent {
 
     if(null === json)
       return false;
-    
+
     this.save.readInputData(json);
 
     //this.menu.pickup_file_name = this.save.getPickupFilename();

@@ -60,8 +60,10 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
     if(!this.app.load_ui_state())
       this.renew();
-    else
-      this.fileName = localStorage.getItem("AutoSavedFileName");
+    else {
+      const file_name = localStorage.getItem("AutoSavedFileName");
+      this.fileName = (null===file_name?"":file_name);
+    }
   }
 
   // 新規作成
@@ -170,7 +172,7 @@ export class MenuComponent implements OnInit {
     }
     this.config.saveActiveComponentData();
     //const inputJson: string = this.save.getInputText();
-    const inputJson: string = this.save.save_ui_state();
+    const inputJson: string = this.save.save_ui_state(this.fileName);
 
     this.fileName = this.electronService.ipcRenderer.sendSync('overWrite', this.fileName, inputJson);
   }
@@ -227,8 +229,6 @@ export class MenuComponent implements OnInit {
   // ファイルを保存
   public fileSave(): void {
     this.config.saveActiveComponentData();
-    //const inputJson: string = this.save.getInputText();
-    const inputJson: string = this.save.save_ui_state();
 
     if (this.fileName.length === 0) {
       this.fileName = "WebDan.wdj";
@@ -237,6 +237,10 @@ export class MenuComponent implements OnInit {
     if (this.helper.getExt(this.fileName) !== "wdj") {
       this.fileName += ".wdj";
     }
+
+    //const inputJson: string = this.save.getInputText();
+    const inputJson: string = this.save.save_ui_state(this.fileName);
+
     // 保存する
     if(this.electronService.isElectronApp) {
       this.fileName = this.electronService.ipcRenderer.sendSync('saveFile', this.fileName, inputJson);
