@@ -1,4 +1,7 @@
 import { Component } from "@angular/core";
+import { AngularFireDatabase } from "@angular/fire/database";
+import { AngularFireAuth } from '@angular/fire/auth';
+
 import { InputDesignPointsService } from "./components/design-points/design-points.service";
 import { InputMembersService } from "./components/members/members.service";
 import { ConfigService } from "./providers/config.service";
@@ -14,7 +17,9 @@ export class AppComponent {
     private config: ConfigService,
     private save: SaveDataService,
     private members: InputMembersService,
-    private points: InputDesignPointsService
+    private points: InputDesignPointsService,
+    private ui_db: AngularFireDatabase,
+    private auth: AngularFireAuth,
   ) {}
 
   public isManual(): boolean {
@@ -34,15 +39,12 @@ export class AppComponent {
     document.getElementById(id.toString()).classList.add("is-active");
   }
 
-  public load_ui_state(): boolean
+  private _restore_ui_data(json: string): boolean
   {
-    // とりあえずローカルから読み出す
-    const json:string = localStorage.getItem("AutoSaved");
-
-    console.log("to be restored: ", json);
-
     if(null === json)
       return false;
+
+    //console.log("to be restored: ", json);
 
     this.save.readInputData(json);
 
@@ -51,6 +53,41 @@ export class AppComponent {
     this.designPointChange(); // 左側のボタンを有効にする。
 
     return true;
+  }
+  
+  private _load_ui_state_local(): boolean
+  {
+    return this._restore_ui_data(localStorage.getItem("AutoSaved"));
+  }
+
+  private _load_ui_state_realtime_database(): boolean
+  {
+    var u = null;
+    this.auth.currentUser.then(user=>{
+      u = user;
+    });
+    
+    if(u === null)
+      return false;
+
+    // 近い将来uidでなくグループID的なものになる
+    const ui_data_key:string = u.uid + "_UI_DATA_n";
+    var json:string = null;
+
+    this.ui_db.ref(this.ui_db, ui_data_key).on('value', async(snapshot) => {
+      json = snapshot.val();
+    });
+    
+    return this._restore_ui_data(json);
+  }
+
+  public load_ui_state(): boolean
+  {
+    // ローカルから読み出す
+    // return this._load_ui_state_local();
+    
+    // realtime databaseから読み出す
+    return this._load_ui_state_realtime_database();
   }
 
   // アクティブになっているボタンを全て非アクティブにする
