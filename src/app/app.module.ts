@@ -108,7 +108,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
     BrowserAnimationsModule,
     NgbModule,
     NgxPrintModule,
-    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireModule.initializeApp(environment.firebase_shiba),
+    //AngularFireModule.initializeApp(environment.firebase),
     DataHelperModule,
     TranslateModule.forRoot({
       loader: {
