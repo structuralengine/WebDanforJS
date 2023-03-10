@@ -249,19 +249,6 @@ export class SaveDataService {
     // ※ このソフトでは 圧縮がプラス(+)
   }
 
-  public save_ui_state(file_name:string):string
-  {
-    // ステートメッセージとか出す？
-
-    const data:string = this.getInputText();
-
-    // とりあえずローカル保存
-    localStorage.setItem("AutoSaved", data);
-    localStorage.setItem("AutoSavedFileName", file_name);
-
-    return data;
-  }
-
   // ファイルに保存用データを生成
   public getInputText(): string {
     return JSON.stringify(this.getInputJson());

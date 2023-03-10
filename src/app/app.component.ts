@@ -1,26 +1,53 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { AngularFireDatabase } from "@angular/fire/database";
 import { AngularFireAuth } from '@angular/fire/auth';
-
 import { InputDesignPointsService } from "./components/design-points/design-points.service";
+import * as FileSaver from "file-saver";
 import { InputMembersService } from "./components/members/members.service";
 import { ConfigService } from "./providers/config.service";
+import { DsdDataService } from "src/app/providers/dsd-data.service";
 import { SaveDataService } from "./providers/save-data.service";
+import { Observable } from 'rxjs';
+import { ElectronService } from 'ngx-electron';
+import { DataHelperModule } from "./providers/data-helper.module";
+import { NgbModal, ModalDismissReasons } from "@ng-bootstrap/ng-bootstrap";
+import { WaitDialogComponent } from "./components/wait-dialog/wait-dialog.component";
+import { TranslateService } from "@ngx-translate/core";
+import packageJson from '../../package.json';
+import {
+  Router,
+  ActivatedRoute,
+  ParamMap,
+  NavigationEnd,
+} from "@angular/router";
+
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+
+  public fileName: string="";
+  public version: string;
+
   constructor(
+    private modalService: NgbModal,
     private config: ConfigService,
+    private router: Router,
     private save: SaveDataService,
     private members: InputMembersService,
     private points: InputDesignPointsService,
-    private ui_db: AngularFireDatabase,
     private auth: AngularFireAuth,
-  ) {}
+    private ui_db: AngularFireDatabase,
+    private helper: DataHelperModule,
+    private dsdData: DsdDataService,
+    private electronService: ElectronService,
+    private translate: TranslateService
+  ) {
+    this.version = packageJson.version;
+  }
 
   public isManual(): boolean {
     return this.save.isManual();
@@ -39,55 +66,289 @@ export class AppComponent {
     document.getElementById(id.toString()).classList.add("is-active");
   }
 
-  private _restore_ui_data(json: string): boolean
+  ngOnInit() {
+    this.load_ui_state();
+  }
+
+  public isElectronApp():boolean
+  {
+    return this.electronService.isElectronApp;
+  }
+
+  // ファイルを保存
+  public fileSave(): void {
+    this.config.saveActiveComponentData();
+
+    if (this.fileName.length === 0) {
+      this.fileName = "WebDan.wdj";
+    }
+
+    if (this.helper.getExt(this.fileName) !== "wdj") {
+      this.fileName += ".wdj";
+    }
+
+    const inputJson: string = this.save_ui_state();
+
+    // 保存する
+    if(this.electronService.isElectronApp) {
+      this.fileName =
+        this.electronService.ipcRenderer.sendSync('saveFile', this.fileName, inputJson);
+    } else {
+      const blob = new window.Blob([inputJson], { type: "text/plain" });
+      FileSaver.saveAs(blob, this.fileName);
+    }
+  }
+
+  // ファイルを開く
+  public open(evt) {
+    const modalRef = this.modalService.open(WaitDialogComponent);
+    const file = evt.target.files[0];
+    this.fileName = file.name;
+    evt.target.value = "";
+
+    this.router.navigate(["/blank-page"]);
+    this.deactiveButtons();
+
+    switch (this.helper.getExt(this.fileName)) {
+      case "dsd":
+        this.fileToBinary(file)
+          .then((buff) => {
+            const pik = this.dsdData.readDsdData(buff);
+            this.open_done(modalRef);
+            if (pik !== null) {
+              this.helper.alert(pik + this.translate.instant("menu.open"));
+            }
+          })
+          .catch((err) => {
+            this.open_done(modalRef, err);
+          });
+        break;
+      default:
+        this.fileToText(file)
+          .then((text) => {
+            this.save.readInputData(text);
+            this.open_done(modalRef);
+          })
+          .catch((err) => {
+            this.open_done(modalRef, err);
+          });
+    }
+  }
+
+  private open_done(modalRef, error = null) {
+    // 後処理
+    if (error === null) {
+      //this.pickup_file_name = this.save.getPickupFilename();
+      this.memberChange(); // 左側のボタンを有効にする。
+      this.designPointChange(); // 左側のボタンを有効にする。
+    } else {
+      this.helper.alert(error);
+    }
+
+    modalRef.close();
+  }
+
+  // 新規作成
+  public renew(): void {
+    this.router.navigate(["/blank-page"]);
+    this.deactiveButtons();
+
+    this.fileName = "";
+
+    setTimeout(() => {
+      this.save.clear();
+      this.memberChange(false); // 左側のボタンを無効にする。
+    }, 10);
+  }
+
+  // Electron でファイルを開く
+  open_electron(){
+
+    const response = this.electronService.ipcRenderer.sendSync('open');
+
+    if(response.status!==true){
+      this.helper.alert(this.translate.instant("menu.fail") + response.status);
+      return;
+    }
+    const modalRef = this.modalService.open(WaitDialogComponent);
+    this.fileName = response.path;
+
+    this.router.navigate(["/blank-page"]);  // ngOnDestroyと非同期
+    this.deactiveButtons();
+
+    setTimeout(() => {
+      switch (this.helper.getExt(this.fileName)) {
+        case "dsd":
+          const pik = this.dsdData.readDsdData(response.text);
+          this.open_done(modalRef);
+          if (pik !== null) {
+            this.helper.alert(pik + this.translate.instant("menu.open"));
+          }
+          break;
+        default:
+          this.save.readInputData(response.text);
+          this.open_done(modalRef);
+      }
+    }, 10);
+  }
+
+  // 上書き保存
+  // 上書き保存のメニューが表示されるのは electron のときだけ
+  public overWrite(): void {
+    if (this.fileName === ""){
+      this.fileSave();
+      return;
+    }
+    this.config.saveActiveComponentData();
+    //const inputJson: string = this.save.getInputText();
+    const inputJson: string = this.save_ui_state();
+
+    this.fileName =
+      this.electronService.ipcRenderer.sendSync('overWrite', this.fileName, inputJson);
+  }
+
+  // ピックアップファイルを開く
+  pickup(evt) {
+    const file = evt.target.files[0];
+    const modalRef = this.modalService.open(WaitDialogComponent);
+    evt.target.value = "";
+
+    this.router.navigate(["/blank-page"]);
+    this.deactiveButtons();
+
+    this.fileToText(file)
+      .then((text) => {
+        this.save.readPickUpData(text, file.name); // データを読み込む
+        //this.pickup_file_name = this.save.getPickupFilename();
+        modalRef.close();
+      })
+      .catch((err) => {
+        modalRef.close();
+        console.log(err);
+      });
+  }
+
+  // ファイルのテキストを読み込む
+  private fileToText(file): any {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    return new Promise((resolve, reject) => {
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = () => {
+        reject(reader.error);
+      };
+    });
+  }
+
+  // バイナリのファイルを読み込む
+  private fileToBinary(file): any {
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    return new Promise((resolve, reject) => {
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = () => {
+        reject(reader.error);
+      };
+    });
+  }
+
+  private _restore_ui_data(json: string, file_name: string): boolean
   {
     if(null === json)
       return false;
+
+    this.fileName = (null===file_name?"":file_name);
 
     //console.log("to be restored: ", json);
 
     this.save.readInputData(json);
 
-    //this.menu.pickup_file_name = this.save.getPickupFilename();
     this.memberChange(); // 左側のボタンを有効にする。
     this.designPointChange(); // 左側のボタンを有効にする。
 
     return true;
   }
-  
-  private _load_ui_state_local(): boolean
+
+  private _load_ui_state_local()
   {
-    return this._restore_ui_data(localStorage.getItem("AutoSaved"));
+    this._restore_ui_data(localStorage.getItem("AutoSaved"),
+                          localStorage.getItem("AutoSavedFileName"));
   }
 
-  private _load_ui_state_realtime_database(): boolean
+  private _load_ui_state_realtime_database()
   {
-    var u = null;
-    this.auth.currentUser.then(user=>{
-      u = user;
-    });
-    
-    if(u === null)
-      return false;
+    this.auth.onAuthStateChanged((credential) => {
+      if(credential){
+        console.log('User is logged in:', credential);
 
-    // 近い将来uidでなくグループID的なものになる
-    const ui_data_key:string = u.uid + "_UI_DATA_n";
-    var json:string = null;
+        // 近い将来uidでなくグループID的なものになりそう
+        const ui_data_key:string = credential.uid + "_UI_DATA_n";
+        var json$:Observable<string> = this.ui_db.object<string>(ui_data_key).valueChanges();
 
-    this.ui_db.ref(this.ui_db, ui_data_key).on('value', async(snapshot) => {
-      json = snapshot.val();
+        json$.subscribe(
+          (j: string) => {
+            console.log("JSON: ", j);
+
+            const ui_filename_key:string = credential.uid + "_UI_FILENAME";
+            var filename$:Observable<string> =
+              this.ui_db.object<string>(ui_filename_key).valueChanges();
+
+            filename$.subscribe((f: string) => {
+              console.log("FILENAME: ", f);
+              this._restore_ui_data(j, f);
+            });
+          });
+      }
+      else
+        console.log('User is logged out');
     });
-    
-    return this._restore_ui_data(json);
   }
 
-  public load_ui_state(): boolean
+  public load_ui_state()
   {
     // ローカルから読み出す
-    // return this._load_ui_state_local();
-    
+    // this._load_ui_state_local();
+
     // realtime databaseから読み出す
-    return this._load_ui_state_realtime_database();
+    this._load_ui_state_realtime_database();
+  }
+
+  private _save_ui_state_local(json: string, filename: string)
+  {
+    localStorage.setItem("AutoSaved", json);
+    localStorage.setItem("AutoSavedFileName", filename);
+  }
+
+  private _save_ui_state_realtime_database(ui_data: any, filename: string)
+  {
+    this.auth.currentUser.then(user=>{
+      if(user === null) return;
+
+      // 近い将来uidでなくグループID的なものになりそう
+      const ui_data_key:string = user.uid + "_UI_DATA_n";
+      const ui_filename_key:string = user.uid + "_UI_FILENAME";
+      this.ui_db.database.ref(ui_data_key).set(ui_data);
+      this.ui_db.database.ref(ui_filename_key).set(filename);
+    });
+  }
+
+  public save_ui_state():string
+  {
+    // ステートメッセージとか出す？
+
+    const data:string = this.save.getInputText();
+
+    // ローカル保存
+    //this._save_ui_state_local(data, this.fileName);
+
+    // realtime database
+    this._save_ui_state_realtime_database(data, this.fileName);
+
+    return data;
   }
 
   // アクティブになっているボタンを全て非アクティブにする
