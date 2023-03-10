@@ -273,6 +273,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   public activePageChenge(id: number): void {
+    console.log("bars.activePageChange");
+    
     this.activeButtons(id);
 
     this.options = this.option_list[id];

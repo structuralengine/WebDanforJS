@@ -300,6 +300,8 @@ export class AppComponent implements OnInit {
             filename$.subscribe((f: string) => {
               console.log("FILENAME: ", f);
               this._restore_ui_data(j, f);
+
+              console.log("END LOAD_UI");
             });
           });
       }
@@ -310,6 +312,11 @@ export class AppComponent implements OnInit {
 
   public load_ui_state()
   {
+    this.router.navigate(["/blank-page"]);
+    this.deactiveButtons();
+
+    console.log("LOAD_UI");
+
     // ローカルから読み出す
     // this._load_ui_state_local();
 
