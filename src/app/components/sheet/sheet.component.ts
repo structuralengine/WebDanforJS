@@ -17,6 +17,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   grid: pq.gridT.instance = null;
 
   private createGrid() {
+
     this.options.beforeCellKeyDown = (evt, ui) => {
       const mov = 1;
 
@@ -89,6 +90,8 @@ export class SheetComponent implements AfterViewInit, OnChanges {
 
       return true;
     };
+
+    console.log("GUE=");
 
     this.grid = pq.grid(this.div.nativeElement, this.options);
   }
