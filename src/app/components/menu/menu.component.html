@@ -36,7 +36,7 @@
 
   <div class="title" *ngIf="app.fileName === ''; then init; else file"></div>
   <ng-template #init>
-    <h1 >{{'menu.softName'| translate }} ver.{{version}}</h1>
+    <h1 >{{'menu.softName'| translate }} ver.{{app.version}}</h1>
   </ng-template>
   <ng-template #file>
     <h1>{{ app.fileName }}</h1>

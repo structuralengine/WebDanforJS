@@ -14,19 +14,14 @@ import { NgbModal, ModalDismissReasons } from "@ng-bootstrap/ng-bootstrap";
 import { WaitDialogComponent } from "./components/wait-dialog/wait-dialog.component";
 import { TranslateService } from "@ngx-translate/core";
 import packageJson from '../../package.json';
-import {
-  Router,
-  ActivatedRoute,
-  ParamMap,
-  NavigationEnd,
-} from "@angular/router";
-
+import { Router, ActivatedRoute, ParamMap, NavigationEnd} from "@angular/router";
 
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
+
 export class AppComponent implements OnInit {
 
   public fileName: string="";
@@ -283,7 +278,7 @@ export class AppComponent implements OnInit {
   {
     this.auth.onAuthStateChanged((credential) => {
       if(credential){
-        console.log('User is logged in:', credential);
+        //console.log('User is logged in:', credential);
 
         // 近い将来uidでなくグループID的なものになりそう
         const ui_data_key:string = credential.uid + "_UI_DATA_n";
@@ -291,22 +286,20 @@ export class AppComponent implements OnInit {
 
         json$.subscribe(
           (j: string) => {
-            console.log("JSON: ", j);
+            //console.log("JSON: ", j);
 
             const ui_filename_key:string = credential.uid + "_UI_FILENAME";
             var filename$:Observable<string> =
               this.ui_db.object<string>(ui_filename_key).valueChanges();
 
             filename$.subscribe((f: string) => {
-              console.log("FILENAME: ", f);
+              //console.log("FILENAME: ", f);
               this._restore_ui_data(j, f);
-
-              console.log("END LOAD_UI");
             });
           });
       }
-      else
-        console.log('User is logged out');
+      //else
+      //  console.log('User is logged out');
     });
   }
 
@@ -314,8 +307,6 @@ export class AppComponent implements OnInit {
   {
     this.router.navigate(["/blank-page"]);
     this.deactiveButtons();
-
-    console.log("LOAD_UI");
 
     // ローカルから読み出す
     // this._load_ui_state_local();
@@ -372,12 +363,15 @@ export class AppComponent implements OnInit {
 
   // 部材に何か入力されたら呼ばれる
   // 有効な入力行があったら次のボタンを有効にする
-  public isMemberEnable = false;
+  private isMemberEnable = false;
+
   public memberChange(flg: boolean = this.members.checkMemberEnables()): void {
+
     if (this.isMemberEnable !== flg) {
       for (const id of ["2", "7"]) {
         const data = document.getElementById(id);
         if (data != null) {
+
           if (flg === true) {
             if (data.classList.contains("disabled")) {
               data.classList.remove("disabled");
@@ -388,6 +382,8 @@ export class AppComponent implements OnInit {
             }
           }
         }
+        else
+          console.log("data is null");
       }
       this.isMemberEnable = flg;
     }
@@ -399,7 +395,7 @@ export class AppComponent implements OnInit {
 
   // 算出点に何か入力されたら呼ばれる
   // 有効な入力行があったら次のボタンを有効にする
-  public isDesignPointEnable = false;
+  private isDesignPointEnable = false;
   public designPointChange(flg = this.points.designPointChange()): void {
     // if(!this.save.isManual()){
     //   flg = this.points.designPointChange();

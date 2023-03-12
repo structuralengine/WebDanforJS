@@ -10,6 +10,7 @@ import { TranslateService } from "@ngx-translate/core";
   templateUrl: './bars.component.html',
   styleUrls: ['./bars.component.scss', '../subNavArea.scss']
 })
+
 export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('grid') grid: SheetComponent;
@@ -22,6 +23,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   // private pileHeaders: object[] = new Array();
 
   public table_datas: any[];
+
   // タブのヘッダ名
   public groupe_name: string[];
 
@@ -40,6 +42,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
+
       const op = {
         showTop: false,
         reactive: true,
@@ -71,6 +74,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       };
       this.option_list.push(op);
     }
+
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
@@ -78,8 +82,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let i = 0; i < this.table_datas.length; i++) {
       this.groupe_name.push(this.bars.getGroupeName(i));
     }
-
-
   }
 
   ngAfterViewInit() {
@@ -273,8 +275,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   public activePageChenge(id: number): void {
-    console.log("bars.activePageChange");
-    
     this.activeButtons(id);
 
     this.options = this.option_list[id];

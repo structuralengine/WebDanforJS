@@ -163,9 +163,7 @@ export class InputDesignPointsService {
             member.positions.push(pos);
           }
         }
-
       }
-
     }
 
     return JSON.parse(

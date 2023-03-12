@@ -12,7 +12,7 @@ import { TranslateService } from "@ngx-translate/core";
   styleUrls: ['./safety-factors-material-strengths.component.scss', '../subNavArea.scss']
 })
 export class SafetyFactorsMaterialStrengthsComponent
-  implements OnInit, OnDestroy, AfterViewInit {
+implements OnInit, OnDestroy, AfterViewInit {
 
   // 安全係数
   @ViewChild('grid1') grid1: SheetComponent;
@@ -244,7 +244,6 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.options5 = this.option5_list[0];
     this.options6 = this.pile_factor_list[0];
     this.pile_factor_select_id = this.getPileFactorSelectId();
-
   }
 
   ngAfterViewInit() {
@@ -350,6 +349,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   ngOnDestroy(): void {
     this.saveData();
   }
+
   public saveData(): void {
     const safety_factor = {};
     const material_bar = {};
@@ -386,7 +386,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         sidebar: { fsy: bar[1].fsy1, fsu: bar[1].fsu1 },
         stirrup: { fsy: bar[2].fsy1, fsu: bar[2].fsu1 }
       },
-      {
+                          {
         tensionBar: { fsy: bar[0].fsy2, fsu: bar[0].fsu2 },
         sidebar: { fsy: bar[1].fsy2, fsu: bar[1].fsu2 },
         stirrup: { fsy: bar[2].fsy2, fsu: bar[2].fsu2 }
@@ -429,8 +429,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       material_steel,
       material_concrete,
       pile_factor
-    })
-
+    });
   }
 
   // 杭の施工条件を変更を処理する関数
@@ -442,13 +441,19 @@ export class SafetyFactorsMaterialStrengthsComponent
     }
     this.pile_factor_select_id = this.getPileFactorSelectId();
   }
+
   private getPileFactorSelectId(): string {
+
     const id = this.current_index
+
+    // すごい付け焼き刃対応。確認してちゃんと対応すべし
+    if(null === this.pile_factor_list[id] || undefined === this.pile_factor_list[id])
+      return "";
+
     const options6 = this.pile_factor_list[id];
     const result = options6.find((v) => v.selected === true);
     return result.id;
   }
-
 
   public activePageChenge(id: number): void {
 
@@ -494,6 +499,4 @@ export class SafetyFactorsMaterialStrengthsComponent
       }
     }
   }
-
-
 }

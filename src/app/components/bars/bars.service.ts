@@ -208,6 +208,7 @@ export class InputBarsService {
 
     // グリッド用データの作成
     const groupe_list = this.points.getGroupeList();
+
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];
       // 部材
@@ -297,7 +298,6 @@ export class InputBarsService {
       table_datas.push(table_groupe);
     }
 
-    
     return table_datas;
   }
 

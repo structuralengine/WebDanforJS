@@ -371,6 +371,7 @@ export class InputMembersService  {
 
   public getGroupes(): string[] {
     const id_list: string[] =  new Array();
+
     for (const m of this.member_list) {
       if (!('g_id' in m) || m.g_id == null || m.g_id === null || m.g_id.trim().length === 0) {
         continue;
