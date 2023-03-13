@@ -91,6 +91,8 @@ export class SheetComponent implements AfterViewInit, OnChanges {
       return true;
     };
 
+
+
     this.grid = pq.grid(this.div.nativeElement, this.options);
   }
 
@@ -120,4 +122,10 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     this.grid.refresh();
   }
 
+  refreshCell(obj: pq.gridT.cellObject) {
+    if (this.grid === null) {
+      return;
+    }
+    this.grid.refreshCell(obj);
+  }
 }

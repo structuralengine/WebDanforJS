@@ -49,7 +49,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       colModel: this.columnHeaders1,
       dataModel: { data: this.table_datas },
       freezeCols: 1,
-      beforeTableView:(evt, ui) => {
+      beforeTableView: (evt, ui) => {
         const dataV = this.table_datas.length;
         if (ui.initV == null) {
           return;
@@ -64,9 +64,13 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.activeButtons(0);
-    // this.grid.refreshDataAndView();
+
+    this.grid.refreshCell({
+      rowIndx: 0,
+      colIndx: 0,
+    });
   }
 
   // 指定行row まで、曲げモーメント入力データを読み取る
@@ -101,7 +105,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public activePageChenge(id: number): void {
 
-    if(id === 0) {
+    if (id === 0) {
       this.options.colModel = this.columnHeaders1;
     } else if (id === 1) {
       this.options.colModel = this.columnHeaders2;
@@ -120,10 +124,10 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     for (let i = 0; i <= this.table_datas.length; i++) {
       const data = document.getElementById("foc" + i);
       if (data != null) {
-        if(i === id){
+        if (i === id) {
           data.classList.add("is-active");
         } else if (data.classList.contains("is-active")) {
-            data.classList.remove("is-active");
+          data.classList.remove("is-active");
         }
       }
     }

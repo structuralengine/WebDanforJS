@@ -107,6 +107,11 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
+
+    this.grid.refreshCell({
+      rowIndx: 0,
+      colIndx: 0,
+    });
   }
 
   private setTitle(isManual: boolean): void {
