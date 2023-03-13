@@ -18,81 +18,78 @@ export class SheetComponent implements AfterViewInit, OnChanges {
 
   private createGrid() {
 
-    if(undefined !== this.options && null != this.options)
-    {
-      this.options.beforeCellKeyDown = (evt, ui) => {
-        const mov = 1;
+    this.options.beforeCellKeyDown = (evt, ui) => {
+      const mov = 1;
 
-        if (evt.key === 'Enter') {
-          const $cell = this.grid.getCell({
-            rowIndx: ui.rowIndx,
-            colIndx: ui.colIndx + mov,
-          });
+      if (evt.key === 'Enter') {
+        const $cell = this.grid.getCell({
+          rowIndx: ui.rowIndx,
+          colIndx: ui.colIndx + mov,
+        });
 
-          if (evt.shiftKey) {
-            // 「Shift」 と「Enter」を同時に押した際に左へセルを進める
-            if (ui.colIndx > 0) {
-              // 左に移動
-              const countCols = this.grid.getColModel().length - 1;
+        if (evt.shiftKey) {
+          // 「Shift」 と「Enter」を同時に押した際に左へセルを進める
+          if (ui.colIndx > 0) {
+            // 左に移動
+            const countCols = this.grid.getColModel().length - 1;
 
-              const colIndx = ui.colIndx > countCols ? countCols : ui.colIndx;
+            const colIndx = ui.colIndx > countCols ? countCols : ui.colIndx;
 
-              this.grid.setSelection({
-                rowIndx: ui.rowIndx,
-                colIndx: colIndx - mov,
-                focus: true,
-              });
-            } else {
-              // 前の行の右端に移動
-              if (ui.rowIndx - mov >= 0) {
-                this.grid.setSelection({
-                  rowIndx: ui.rowIndx - mov,
-                  colIndx: this.grid.getColModel().length,
-                  focus: true,
-                });
-              }
-            }
-          } else {
-            if ($cell.length > 0) {
-              // 右に移動
-              this.grid.setSelection({
-                rowIndx: ui.rowIndx,
-                colIndx: ui.colIndx + mov,
-                focus: true,
-              });
-            } else {
-              // 次の行の左端に移動
-              this.grid.setSelection({
-                rowIndx: ui.rowIndx + mov,
-                colIndx: 0,
-                focus: true,
-              });
-            }
-          }
-
-          return false;
-        }
-
-        if (evt.key === 'F2') {
-          const isEditableCell = this.grid.isEditableCell({ rowIndx: ui.rowIndx, dataIndx: ui.dataIndx });
-          if (isEditableCell !== false) {
-            // 「F2」ボタンを押すとセルにフォーカスし、編集状態にする
             this.grid.setSelection({
               rowIndx: ui.rowIndx,
-              colIndx: ui.colIndx,
+              colIndx: colIndx - mov,
               focus: true,
             });
-
-            this.grid.editCell({
+          } else {
+            // 前の行の右端に移動
+            if (ui.rowIndx - mov >= 0) {
+              this.grid.setSelection({
+                rowIndx: ui.rowIndx - mov,
+                colIndx: this.grid.getColModel().length,
+                focus: true,
+              });
+            }
+          }
+        } else {
+          if ($cell.length > 0) {
+            // 右に移動
+            this.grid.setSelection({
               rowIndx: ui.rowIndx,
-              colIndx: ui.colIndx,
+              colIndx: ui.colIndx + mov,
+              focus: true,
+            });
+          } else {
+            // 次の行の左端に移動
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx + mov,
+              colIndx: 0,
+              focus: true,
             });
           }
         }
 
-        return true;
-      };
-    }
+        return false;
+      }
+
+      if (evt.key === 'F2') {
+        const isEditableCell = this.grid.isEditableCell({ rowIndx: ui.rowIndx, dataIndx: ui.dataIndx });
+        if (isEditableCell !== false) {
+          // 「F2」ボタンを押すとセルにフォーカスし、編集状態にする
+          this.grid.setSelection({
+            rowIndx: ui.rowIndx,
+            colIndx: ui.colIndx,
+            focus: true,
+          });
+
+          this.grid.editCell({
+            rowIndx: ui.rowIndx,
+            colIndx: ui.colIndx,
+          });
+        }
+      }
+
+      return true;
+    };
 
     this.grid = pq.grid(this.div.nativeElement, this.options);
   }

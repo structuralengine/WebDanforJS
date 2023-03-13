@@ -31,7 +31,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     private translate: TranslateService
   ) { }
 
-
   ngOnInit() {
 
     this.setTitle(this.save.isManual());
@@ -97,7 +96,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
                   targetColumn.g_name = value;
                 }
               }
-
             }
 
             if (key === 'shape') {
@@ -108,7 +106,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
               this.table_datas[row].shape
                 = this.members.getShapeDispFromShapeID(this.members.getShapeIDFromUserInput(value));
             }
-
           }
         }
 
@@ -176,8 +173,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       {
         title: this.translate.instant("members.section_sh"),
-        dataType: 'string', dataIndx: 'shape', sortable: false, width: 80, nodrag: true,
-        //format: this.members.getLangShapeFormatter()
+        dataType: 'string', dataIndx: 'shape', sortable: false, width: 80, nodrag: true
       },
       {
         title: this.translate.instant("members.section"),
@@ -206,7 +202,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     );
   }
-
 
   // 指定行row 以降のデータを読み取る
   private loadData(row: number): void {
@@ -246,5 +241,4 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     const containerHeight = this.tableHeight();
     return Math.round(containerHeight / 30);
   }
-
 }

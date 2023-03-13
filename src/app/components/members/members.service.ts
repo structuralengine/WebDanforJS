@@ -7,7 +7,7 @@ import { TranslateService } from "@ngx-translate/core";
 export class InputMembersService  {
 
   // 部材情報
-  private member_list: any[];
+  private member_list:any[];
   private langs:string[] = ["en", "ja"];
   private shape_names:any=
     [
@@ -19,7 +19,6 @@ export class InputMembersService  {
     ];
 
   private lang_shape_names:any = {};
-  //private lang_shape_formatters:any = {};
 
   constructor(private translate: TranslateService) {
     this.clear();
@@ -38,28 +37,6 @@ export class InputMembersService  {
         this.lang_shape_names[lang].push(obj.members.t_shape.trim());
         this.lang_shape_names[lang].push(obj.members.r_shape.trim());
         this.lang_shape_names[lang].push(obj.members.oval.trim());
-
-        // pqGrid.colModel.formatに直接セットするとthisが参照できないみたいなので
-        // すごい面倒くさいがthisを使わないようにするためにlangごとにfunctionを
-        // 予め作っている.
-        /*
-        this.lang_shape_formatters[lang] = function(val) {
-
-          const shape_id = Number(val);
-          const names:string[] = [
-            " ",
-            obj.members.rectangle.trim(),
-            obj.members.t_shape.trim(),
-            obj.members.r_shape.trim(),
-            obj.members.oval.trim()
-          ];
-
-          if(names.length <= shape_id)
-            return " ";
-
-          return names[shape_id];
-          };
-        */
       });
     }
   }
@@ -166,7 +143,7 @@ export class InputMembersService  {
         } else
           def.m_len = column.m_len;
 
-        def.shape = this.getShapeIDFromUserInput(def.shape);
+        def.shape = this.getShapeIDFromUserInput(column.shape);
 
         this.member_list.push(def);
       }
@@ -185,43 +162,13 @@ export class InputMembersService  {
               def[k] = column[k];
           }
 
-          def.shape = this.getShapeIDFromUserInput(def.shape);
+          def.shape = this.getShapeIDFromUserInput(column.shape);
 
           this.member_list.push(def)
         }
       }
     }
   }
-
-  // 各国の言語で表現した形状から形状情報をIDの数値に変換する
-  /*
-  public getShapeIDFromDisp(value: string): number {
-
-    let result:number = 0;
-
-    if (value === null)
-      return result;
-
-    switch (value.trim()) {
-      case this.translate.instant("members.rectangle"):
-        result = 1 // '矩形';
-        break;
-      case this.translate.instant("members.t_shape"):
-        result = 2 // 'T形';
-        break;
-      case this.translate.instant("members.r_shape"):
-        result = 3 // '円形';
-        break;
-      case this.translate.instant("members.oval"):
-        result = 4 // '小判';
-        break;
-      default:
-        result = 0; // 未入力であることを意味する
-    }
-
-    return result;
-    }
-    */
 
   public translateData_old_to_1_13_7() {
 
@@ -302,6 +249,11 @@ export class InputMembersService  {
 
   // 有効なデータ存在したら true
   public isEnable(columns) {
+
+    if(!('g_id' in columns) || columns.g_id == null
+      || columns.g_id === null || columns.g_id.trim().length === 0)
+      return false;
+
     if(columns.g_name !== null && columns.g_name !== undefined){
       if(columns.g_name.trim().length > 0){
         return true;

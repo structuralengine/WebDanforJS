@@ -171,7 +171,6 @@ export class InputDesignPointsService {
         temp: groupe_list
       })
     ).temp;
-
   }
 
   // 同じグループの着目点リストを取得する
