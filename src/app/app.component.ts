@@ -258,12 +258,13 @@ export class AppComponent implements OnInit {
 
     this.fileName = (null===file_name?"":file_name);
 
-    //console.log("to be restored: ", json);
-
     this.save.readInputData(json);
 
-    this.memberChange(); // 左側のボタンを有効にする。
-    this.designPointChange(); // 左側のボタンを有効にする。
+    // 有効な部材データが有れば部材に伴う機能を有効にする
+    this.memberChange();
+
+    // 有効な部材グループと算出点データがあったらそれらに伴う機能を有効にする
+    this.designPointChange();
 
     return true;
   }
@@ -277,6 +278,9 @@ export class AppComponent implements OnInit {
   private _load_ui_state_realtime_database()
   {
     this.auth.onAuthStateChanged((credential) => {
+
+      var multi_login:boolean = false;
+
       if(credential){
         //console.log('User is logged in:', credential);
 
@@ -286,20 +290,37 @@ export class AppComponent implements OnInit {
 
         json$.subscribe(
           (j: string) => {
-            //console.log("JSON: ", j);
-
             const ui_filename_key:string = credential.uid + "_UI_FILENAME";
             var filename$:Observable<string> =
               this.ui_db.object<string>(ui_filename_key).valueChanges();
 
             filename$.subscribe((f: string) => {
-              //console.log("FILENAME: ", f);
               this._restore_ui_data(j, f);
             });
           });
+
+        const ui_login_date_key:string = credential.uid + "_LAST_LOGIN";
+        var r = this.ui_db.database.ref(ui_login_date_key);
+        var d:string = new Date().toString();
+        var init:boolean = true;
+        r.set(d).then(() => {
+          r.on('value', (snapshot) => {
+            if(init)
+              init = false;
+            else
+            {
+              multi_login = true;
+              this.auth.signOut();
+            }
+          });
+        });
       }
-      //else
-      //  console.log('User is logged out');
+      else {
+        if(multi_login) {
+          multi_login = false;
+          this.helper.alert("ほかからログインされた");
+        }
+      }
     });
   }
 
@@ -396,10 +417,14 @@ export class AppComponent implements OnInit {
   // 算出点に何か入力されたら呼ばれる
   // 有効な入力行があったら次のボタンを有効にする
   private isDesignPointEnable = false;
-  public designPointChange(flg = this.points.designPointChange()): void {
+  public designPointChange(flg = (this.points.designPointChange()
+    && 0 != this.members.getGroupeList().length)): void {
     // if(!this.save.isManual()){
     //   flg = this.points.designPointChange();
     // }
+
+    //console.log("FLG: ", this.points.designPointChange());
+    //console.log("group_list.len: ", this.members.getGroupeList().length);
 
     if (this.isDesignPointEnable !== flg) {
       for (const id of ["3", "4", "5", "6", "7", "10"]) {

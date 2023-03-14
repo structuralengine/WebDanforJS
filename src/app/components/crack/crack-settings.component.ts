@@ -3,6 +3,7 @@ import pq from 'pqgrid';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import { SheetComponent } from '../sheet/sheet.component';
+import { InputDesignPointsService } from '../design-points/design-points.service';
 import { InputCrackSettingsService } from './crack-settings.service';
 import { TranslateService } from "@ngx-translate/core";
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
@@ -29,6 +30,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     private crack: InputCrackSettingsService,
     private save: SaveDataService,
     public helper: DataHelperModule,
+    private points: InputDesignPointsService,
     private translate: TranslateService,
     private basic: InputBasicInformationService
   ) { }
@@ -58,11 +60,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
-    this.groupe_name = new Array();
-    for (let i = 0; i < this.table_datas.length; i++) {
-      this.groupe_name.push(this.crack.getGroupeName(i));
-    }
-
+    this.groupe_name = this.points.getGroupNameDispList();
   }
 
   ngAfterViewInit() {

@@ -5,6 +5,7 @@ import { SaveDataService } from 'src/app/providers/save-data.service';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from '@ngx-translate/core';
 import { ShearStrengthService } from './shear-strength.service';
+import { InputDesignPointsService } from '../design-points/design-points.service';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
 
 @Component({
@@ -28,6 +29,7 @@ export class ShearComponent implements OnInit {
   constructor(
     private shear: ShearStrengthService,
     private save: SaveDataService,
+    private points: InputDesignPointsService,
     public helper: DataHelperModule,
     private basic: InputBasicInformationService,
     private translate: TranslateService
@@ -58,11 +60,7 @@ export class ShearComponent implements OnInit {
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
-    this.groupe_name = new Array();
-    for (let i = 0; i < this.table_datas.length; i++) {
-      this.groupe_name.push(this.shear.getGroupeName(i));
-    }
-
+    this.groupe_name = this.points.getGroupNameDispList();
   }
 
   ngAfterViewInit() {
@@ -115,7 +113,6 @@ export class ShearComponent implements OnInit {
         }
       );
     }
-
   }
 
   public getGroupeName(i: number): string {

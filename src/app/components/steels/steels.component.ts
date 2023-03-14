@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import { InputSteelsService } from './steels.service';
+import { InputDesignPointsService } from '../design-points/design-points.service';
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
@@ -26,6 +27,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private steel: InputSteelsService,
     private save: SaveDataService,
+    private points: InputDesignPointsService,
     private translate: TranslateService
   ) { }
 
@@ -54,12 +56,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
-    this.groupe_name = new Array();
-    for (let i = 0; i < this.table_datas.length; i++) {
-      this.groupe_name.push(this.steel.getGroupeName(i));
-    }
-
-
+    this.groupe_name = this.points.getGroupNameDispList();
   }
 
   ngAfterViewInit() {

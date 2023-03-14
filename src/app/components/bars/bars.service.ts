@@ -209,6 +209,8 @@ export class InputBarsService {
     // グリッド用データの作成
     const groupe_list = this.points.getGroupeList();
 
+    //console.log("GROUPE_LIST: ", groupe_list);
+
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];
       // 部材
@@ -382,7 +384,6 @@ export class InputBarsService {
     return result;
   }
 
-
   public setTableColumns(table_datas: any[]) {
 
     this.bar_list = new Array();
@@ -457,7 +458,6 @@ export class InputBarsService {
   }
 
   public setPickUpData() {
-
   }
 
   public getSaveData(): any[] {
@@ -468,8 +468,9 @@ export class InputBarsService {
     this.bar_list = bar;
   }
 
-  public getGroupeName(i: number): string {
-    return this.points.getGroupeName(i);
+  // points.getGroupeに委譲
+  public getGroupe(i: number): any {
+    return this.points.getGroupe(i);
   }
 
   public matchBarSize(dia: any): number {
@@ -484,5 +485,4 @@ export class InputBarsService {
     }
     return result;
   }
-
 }

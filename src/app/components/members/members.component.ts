@@ -33,6 +33,8 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
 
+    //this.members.dump_member_list("members.components.ts:ngOnInit");
+
     this.setTitle(this.save.isManual());
 
     // グリッドの基本的な オプションを登録する
@@ -109,9 +111,18 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
 
+        // 処理量が多くなるけどとりあえずこれをやる必要がある
+        // 本当は行ごとに処理したい
+        this.saveData();
+
+        // ステート保存. TODO: 行やセルごとに部分更新
+        this.app.save_ui_state();
+
         // 何か変更があったら判定する
-        const flg: boolean = this.members.checkMemberEnables(this.table_datas)
+        const flg: boolean = this.members.checkMemberEnables(this.table_datas);
+
         this.app.memberChange(flg);
+        this.app.designPointChange();
       }
     };
 
@@ -205,6 +216,8 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // 指定行row 以降のデータを読み取る
   private loadData(row: number): void {
+    //this.members.dump_member_list("members.components.ts:loadData");
+
     for (let i = this.table_datas.length + 1; i <= row; i++) {
       const column = this.members.getTableColumns(i);
       this.table_datas.push(column);
@@ -212,14 +225,20 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    //this.members.dump_member_list("members.components.ts:ngAfterViewInit");
+
     this.grid.refreshDataAndView();
   }
 
   ngOnDestroy() {
+    //this.members.dump_member_list("members.components.ts:ngOnDestroy");
+
     this.saveData();
   }
 
   public saveData(): void {
+    //this.members.dump_member_list("members.components.ts:saveData");
+
     this.members.setTableColumns(this.table_datas, this.save.isManual());
 
     if (this.save.isManual()) {

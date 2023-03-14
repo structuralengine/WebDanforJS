@@ -82,7 +82,7 @@ export class InputDesignPointsService {
   }
 
   // グループNoでソートする
-  public getSortedGroupeList(isManual = false): any[] {
+  private getSortedGroupeList(isManual = false): any[] {
     // 一時リスト
     const temp_list = [];
     for (const groupe of this.getGroupeList(isManual)) {
@@ -188,9 +188,33 @@ export class InputDesignPointsService {
     return result;
   }
 
+  // 将来的にはキャッシュするべきなのでは？
+  public getGroupNameDispList(): string[] {
+    const gs = this.getSortedGroupeList();
+    var group_name_list = new Array();
+
+    for (let i = 0; i < gs.length; i++) {
+
+      const g = gs[i][0];
+      //var gr_disp:string = '(' + g.g_id + ')';
+      var gr_disp:string = g.g_id;
+
+      if(g.g_name !== undefined && g.g_name !== null && 0 != g.g_name.trim().length)
+        gr_disp = g.g_name;
+
+      group_name_list.push(gr_disp);
+    }
+
+    return group_name_list;
+  }
+
   public getGroupeName(i: number): string {
+    return this.getGroupe(i).g_name;
+  }
+
+  public getGroupe(i: number): any {
     const sorted_list = this.getSortedGroupeList();
-    return sorted_list[i][0].g_name;
+    return sorted_list[i][0];
   }
 
   // 着目点情報
@@ -238,12 +262,14 @@ export class InputDesignPointsService {
       // 部材長をセットする
       this.position_list.push(new_point);
     }
-
   }
 
   // 算出点に何か入力されたタイミング
   // 1行でも計算する断面が存在したら true
   public designPointChange(position_list: any = this.position_list): boolean {
+
+    //console.log("design-points.service.ts:designPointChange", this.position_list);
+
     for (const columns of position_list) {
       if (this.isEnable(columns)) {
         return true;

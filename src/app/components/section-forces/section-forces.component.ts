@@ -11,7 +11,8 @@ import pq from 'pqgrid';
 export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
-    private force: InputSectionForcesService) { }
+    private force: InputSectionForcesService,
+  ) { }
 
   @ViewChild('grid') grid: SheetComponent;
   public options: pq.gridT.options;

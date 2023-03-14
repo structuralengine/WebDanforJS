@@ -41,11 +41,6 @@ export class InputMembersService  {
     }
   }
 
-  // 使えないかも
-  //public getLangShapeFormatter(){
-  //  return this.lang_shape_formatters[this.translate.currentLang];
-  //}
-
   public clear(): void {
     this.member_list = new Array();
   }
@@ -118,10 +113,17 @@ export class InputMembersService  {
     return this.member_list.filter(v=>v.g_id === m.g_id);
   }
 
+  //public dump_member_list(trace: string) {
+  //
+  //  console.log(trace, this.member_list);
+  //}
+
   public setTableColumns(table_datas: any, isManual: boolean = false) {
 
     // 本来データと表示データが違うので行はコピーする必要がある
     // もうちょっと効率良くできる可能性もあるがとりあえず完全二重管理
+
+    //this.dump_member_list("members.service.ts:setTableColumnsはじめ");
 
     // 断面力手入力モードの場合に適用する
     this.member_list = new Array();
@@ -131,7 +133,7 @@ export class InputMembersService  {
 
         const def = this.default_member(column.m_no);
 
-        if (this.isEnable(column)) {
+//        if (this.isEnable(column)) {
           if (column.g_no === null) {
             column.g_id = '';
           }
@@ -140,8 +142,8 @@ export class InputMembersService  {
             if(k in column)
               def[k] = column[k];
           }
-        } else
-          def.m_len = column.m_len;
+//        } else
+//          def.m_len = column.m_len;
 
         def.shape = this.getShapeIDFromUserInput(column.shape);
 
@@ -150,7 +152,7 @@ export class InputMembersService  {
     } else {
       for (const column of table_datas) {
 
-        if (this.isEnable(column)) {
+//        if (this.isEnable(column)) {
           // グループNo の入力がない入力行には、仮のグループid をつける
           if (column.g_no === null) {
             column.g_id = 'blank'; //'row' + column.m_no; //仮のグループid
@@ -165,9 +167,11 @@ export class InputMembersService  {
           def.shape = this.getShapeIDFromUserInput(column.shape);
 
           this.member_list.push(def)
-        }
+//        }
       }
     }
+
+    //this.dump_member_list("members.service.ts:setTableColumns終わり");
   }
 
   public translateData_old_to_1_13_7() {
@@ -232,9 +236,7 @@ export class InputMembersService  {
       new_member.m_len = pos;
       this.member_list.push(new_member);
     }
-
   }
-
 
   // 部材に何か入力されたタイミング
   // 1行でも有効なデータ存在したら true
@@ -247,51 +249,57 @@ export class InputMembersService  {
     return false;
   }
 
-  // 有効なデータ存在したら true
-  public isEnable(columns) {
-
+  private is_invalid_g_id(columns):boolean {
     if(!('g_id' in columns) || columns.g_id == null
       || columns.g_id === null || columns.g_id.trim().length === 0)
-      return false;
-
-    if(columns.g_name !== null && columns.g_name !== undefined){
-      if(columns.g_name.trim().length > 0){
-        return true;
-      }
-    }
-    if(columns.shape !== null && columns.shape !== undefined){
       return true;
-    }
-    if(columns.B !== null && columns.B !== undefined){
-      return true;
-    }
-    if(columns.H !== null && columns.H !== undefined){
-      return true;
-    }
-    if(columns.Bt !== null && columns.Bt !== undefined){
-      return true;
-    }
-    if(columns.t !== null && columns.t !== undefined){
-      return true;
-    }
 
     return false;
   }
 
+  // 有効なデータ存在したら true
+  public isEnable(columns) {
+
+    if(this.is_invalid_g_id(columns))
+      return false;
+
+    //if(columns.g_name !== null && columns.g_name !== undefined && columns.g_name.trim().length > 0)
+    //  return true;
+
+    /*
+      if(columns.shape !== null && columns.shape !== undefined){
+      return true;
+      }
+      if(columns.B !== null && columns.B !== undefined){
+      return true;
+      }
+      if(columns.H !== null && columns.H !== undefined){
+      return true;
+      }
+      if(columns.Bt !== null && columns.Bt !== undefined){
+      return true;
+      }
+      if(columns.t !== null && columns.t !== undefined){
+      return true;
+      }
+    */
+
+    return true;
+  }
+
   public getGroupeName(i: number): string {
     const groupe = this.getGroupeList();
-
     const target = groupe[i];
     const first = target[0];
     let result: string = '';
     if(first.g_name === null){
       result = first.g_id;
-    } else if(first.g_name === ''){
+    } else if(first.g_name == ''){
       result = first.g_id;
     } else {
       result = first.g_name;
     }
-    if(result === ''){
+    if(result == ''){
       result = 'No' + i;
     }
     return result;
@@ -301,7 +309,7 @@ export class InputMembersService  {
   public getGroupeList(): any[] {
 
     // 全てのグループ番号をリストアップする
-    const id_list: string[] =  this.getGroupes();
+    const id_list: string[] = this.getGroupes();
 
     // グループ番号順に並べる
     id_list.sort();
@@ -314,6 +322,7 @@ export class InputMembersService  {
         item => item.g_id === id);
       result.push(members);
     }
+
     return JSON.parse(
       JSON.stringify({
         temp: result
@@ -325,9 +334,8 @@ export class InputMembersService  {
     const id_list: string[] =  new Array();
 
     for (const m of this.member_list) {
-      if (!('g_id' in m) || m.g_id == null || m.g_id === null || m.g_id.trim().length === 0) {
+      if(this.is_invalid_g_id(m))
         continue;
-      }
 
       if (id_list.find((value)=>value===m.g_id) == null) {
         id_list.push(m.g_id);

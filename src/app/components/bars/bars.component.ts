@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { InputBarsService } from './bars.service';
 import { SheetComponent } from '../sheet/sheet.component';
+import { InputDesignPointsService } from '../design-points/design-points.service';
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import pq from 'pqgrid';
 import { TranslateService } from "@ngx-translate/core";
@@ -30,6 +31,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private bars: InputBarsService,
     private save: SaveDataService,
+    private points: InputDesignPointsService,
     private translate: TranslateService
   ) { }
 
@@ -78,10 +80,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
-    this.groupe_name = new Array();
-    for (let i = 0; i < this.table_datas.length; i++) {
-      this.groupe_name.push(this.bars.getGroupeName(i));
-    }
+    this.groupe_name = this.points.getGroupNameDispList();
   }
 
   ngAfterViewInit() {
@@ -256,6 +255,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.saveData();
   }
+
   public saveData(): void {
     const a = [];
     for (const g of this.table_datas) {
@@ -273,8 +273,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     return containerHeight;
   }
 
-
   public activePageChenge(id: number): void {
+
     this.activeButtons(id);
 
     this.options = this.option_list[id];

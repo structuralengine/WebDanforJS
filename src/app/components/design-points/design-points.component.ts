@@ -99,10 +99,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
-    this.groupe_name = new Array();
-    for (let i = 0; i < this.table_datas.length; i++) {
-      this.groupe_name.push(this.points.getGroupeName(i));
-    }
+    this.groupe_name = this.points.getGroupNameDispList();
   }
 
   ngAfterViewInit() {

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular
 import { InputFatiguesService } from './fatigues.service';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { SheetComponent } from '../sheet/sheet.component';
+import { InputDesignPointsService } from '../design-points/design-points.service';
 import pq from 'pqgrid';
 import { AppComponent } from 'src/app/app.component';
 import { SaveDataService } from 'src/app/providers/save-data.service';
@@ -31,6 +32,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private fatigues: InputFatiguesService,
+    private points: InputDesignPointsService,
     private save: SaveDataService,
     private translate: TranslateService
   ) { }
@@ -66,11 +68,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
-    this.groupe_name = new Array();
-    for (let i = 0; i < this.table_datas.length; i++) {
-      this.groupe_name.push(this.fatigues.getGroupeName(i));
-    }
-
+    this.groupe_name = this.points.getGroupNameDispList();
   }
 
   ngAfterViewInit() {
