@@ -50,17 +50,16 @@ export class LoginDialogComponent implements OnInit {
     .then(auth => {
       this.connecting = false;
       // メールアドレス確認が済んでいるかどうか
-      if (!auth.user.emailVerified) {
-        console.log("HOGEHOGE");
-        this.auth.signOut();
-        // this.user.clear();
-        return Promise.reject(this.translate.instant("login-dialog.mail_check"));
-      }
+      //if (!auth.user.emailVerified) {
+      //  console.log("HOGEHOGE");
+      //  this.auth.signOut();
+      //  // this.user.clear();
+      //  return Promise.reject(this.translate.instant("login-dialog.mail_check"));
+      //}
 
       return this.activeModal.close('Submit');
     })
     .catch( err => {
-        console.log("MORIMORI");
       this.connecting = false;
       // this.user.loggedIn = false;
       this.loginError = true;

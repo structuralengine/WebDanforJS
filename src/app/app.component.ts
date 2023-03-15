@@ -26,6 +26,7 @@ export class AppComponent implements OnInit {
 
   public fileName: string="";
   public version: string;
+  private initial_login: boolean = true;
 
   constructor(
     private modalService: NgbModal,
@@ -279,10 +280,16 @@ export class AppComponent implements OnInit {
   {
     this.auth.onAuthStateChanged((credential) => {
 
-      var multi_login:boolean = false;
-
       if(credential){
-        //console.log('User is logged in:', credential);
+
+        // メールアドレス確認が済んでいるかどうか
+        if (!credential.emailVerified) {
+          this.auth.signOut();
+          this.helper.alert(this.translate.instant("login-dialog.mail_check"));
+          return;
+        }
+
+        console.log('LOGIN: ', credential);
 
         // 近い将来uidでなくグループID的なものになりそう
         const ui_data_key:string = credential.uid + "_UI_DATA_n";
@@ -302,25 +309,22 @@ export class AppComponent implements OnInit {
         const ui_login_date_key:string = credential.uid + "_LAST_LOGIN";
         var r = this.ui_db.database.ref(ui_login_date_key);
         var d:string = new Date().toString();
-        var init:boolean = true;
         r.set(d).then(() => {
           r.on('value', (snapshot) => {
-            if(init)
-              init = false;
+            if(this.initial_login)
+              this.initial_login = false;
             else
             {
-              multi_login = true;
+              this.initial_login = true;
+              r.off('value');
               this.auth.signOut();
+              this.helper.alert("ほかからログインされた");
             }
           });
         });
       }
-      else {
-        if(multi_login) {
-          multi_login = false;
-          this.helper.alert("ほかからログインされた");
-        }
-      }
+      else
+        console.log('LOGOUT:', credential);
     });
   }
 
