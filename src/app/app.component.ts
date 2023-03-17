@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
   public fileName: string="";
   public version: string;
-  private initial_login: boolean = true;
+  private last_login: string = ""; // ログイン中であるかどうかのフラグでもある
 
   constructor(
     private modalService: NgbModal,
@@ -276,12 +276,32 @@ export class AppComponent implements OnInit {
                           localStorage.getItem("AutoSavedFileName"));
   }
 
+  private _restore_from_realtime_database(user_info)
+  {
+    // 近い将来uidでなくグループID的なものになりそう
+    const ui_data_key:string = user_info.uid + "_UI_DATA_n";
+    var json$:Observable<string> = this.ui_db.object<string>(ui_data_key).valueChanges();
+
+    json$.subscribe(
+      (j: string) => {
+        const ui_filename_key:string = user_info.uid + "_UI_FILENAME";
+        var filename$:Observable<string> =
+          this.ui_db.object<string>(ui_filename_key).valueChanges();
+
+        filename$.subscribe((f: string) => {
+          this._restore_ui_data(j, f);
+        });
+      });
+  }
+
   private _load_ui_state_realtime_database()
   {
     this.auth.onAuthStateChanged((credential) => {
 
-      if(credential){
+      console.log("AuthStateChanged: " + (null===credential?"LOGOUT":"LOGIN"), credential);
 
+      if(null !== credential)
+      {
         // メールアドレス確認が済んでいるかどうか
         if (!credential.emailVerified) {
           this.auth.signOut();
@@ -289,42 +309,37 @@ export class AppComponent implements OnInit {
           return;
         }
 
-        console.log('LOGIN: ', credential);
-
-        // 近い将来uidでなくグループID的なものになりそう
-        const ui_data_key:string = credential.uid + "_UI_DATA_n";
-        var json$:Observable<string> = this.ui_db.object<string>(ui_data_key).valueChanges();
-
-        json$.subscribe(
-          (j: string) => {
-            const ui_filename_key:string = credential.uid + "_UI_FILENAME";
-            var filename$:Observable<string> =
-              this.ui_db.object<string>(ui_filename_key).valueChanges();
-
-            filename$.subscribe((f: string) => {
-              this._restore_ui_data(j, f);
-            });
-          });
-
         const ui_login_date_key:string = credential.uid + "_LAST_LOGIN";
         var r = this.ui_db.database.ref(ui_login_date_key);
-        var d:string = new Date().toString();
-        r.set(d).then(() => {
-          r.on('value', (snapshot) => {
-            if(this.initial_login)
-              this.initial_login = false;
-            else
-            {
-              this.initial_login = true;
-              r.off('value');
-              this.auth.signOut();
-              this.helper.alert("ほかからログインされた");
-            }
-          });
+
+        r.on('value', (snapshot) => {
+
+          if("" == this.last_login)
+          {
+            var d:string = new Date().toString();
+            r.set(d).then(() => {
+              console.log("LOGIN DATE: " + d);
+              this.last_login = d;
+              this._restore_from_realtime_database(credential);
+            });
+          }
+          else if(snapshot.val() == this.last_login)
+          {
+            console.log("DUPLICATE LOGIN DATE: " + snapshot.val());
+            this.helper.alert("同一端末でログインされた。データが競合するので注意");
+          }
+          else
+          {
+            console.log("OTHER LOGIN DATE: " + snapshot.val());
+            this.last_login = "";
+            r.off('value');
+            this.auth.signOut();
+            this.helper.alert("ほかからログインされた");
+          }
         });
       }
       else
-        console.log('LOGOUT:', credential);
+        this.last_login = "";
     });
   }
 
