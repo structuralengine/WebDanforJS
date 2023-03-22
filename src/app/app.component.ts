@@ -26,7 +26,8 @@ export class AppComponent implements OnInit {
 
   public fileName: string="";
   public version: string;
-  private last_login: string = ""; // ログイン中であるかどうかのフラグでもある
+  private my_login_date: string = ""; // ログイン中であるかどうかのフラグでもある
+  private my_login_uid: string = ""; // ログアウトされたときにログイン中のuidを覚えておくために使用
 
   constructor(
     private modalService: NgbModal,
@@ -63,6 +64,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.router.navigate(["/blank-page"]);
+    this.deactiveButtons();
+
     this.load_ui_state();
   }
 
@@ -294,60 +298,138 @@ export class AppComponent implements OnInit {
       });
   }
 
+  private _common_login_error_handler(login_date_local:number, ss, r)
+  {
+    console.log("D");
+    if(login_date_local == ss.val())
+    {
+      console.log("E");
+
+      // 同一ブラウザからのログイン
+      this.helper.alert("同一ブラウザでのログインを検知。ビューアモードに移行します");
+
+      // TODO
+      r.off('value');
+    }
+    else
+    {
+      console.log("F");
+
+      // 別のブラウザ（またはPC）からのログインを検知
+      console.log("OTHER LOGIN DATE: " + ss.val());
+      this.my_login_uid = "";
+      this.my_login_date = "";
+      r.off('value');
+      this.auth.signOut();
+      this.helper.alert("ほかからログインされたのでログアウトしました");
+    }
+  }
+
+  private _common_login_handler(login_date_local:number, ss, r): boolean
+  {
+    console.log("_common_login_handler: ", login_date_local);
+    console.log("my_login_date: ", this.my_login_date);
+
+    if(login_date_local <= parseInt(this.my_login_date) || ss.val() == this.my_login_date)
+    {
+      // 自分のログインのコールバックだから無視
+      console.log("C2");
+
+      return true;
+    }
+    else
+      this._common_login_error_handler(login_date_local, ss, r);
+  }
+
   private _load_ui_state_realtime_database()
   {
-    this.auth.onAuthStateChanged((credential) => {
-
-      console.log("AuthStateChanged: " + (null===credential?"LOGOUT":"LOGIN"), credential);
-
-      if(null !== credential)
+    this.auth.onAuthStateChanged((credential) =>
       {
-        // メールアドレス確認が済んでいるかどうか
-        if (!credential.emailVerified) {
-          this.auth.signOut();
-          this.helper.alert(this.translate.instant("login-dialog.mail_check"));
-          return;
-        }
+        console.log("AuthStateChanged: " + (null===credential?"LOGOUT":"LOGIN"), credential);
 
-        const ui_login_date_key:string = credential.uid + "_LAST_LOGIN";
-        var r = this.ui_db.database.ref(ui_login_date_key);
-
-        r.on('value', (snapshot) => {
-
-          if("" == this.last_login)
-          {
-            var d:string = new Date().toString();
-            r.set(d).then(() => {
-              console.log("LOGIN DATE: " + d);
-              this.last_login = d;
-              this._restore_from_realtime_database(credential);
-            });
-          }
-          else if(snapshot.val() == this.last_login)
-          {
-            console.log("DUPLICATE LOGIN DATE: " + snapshot.val());
-            this.helper.alert("同一端末でログインされた。データが競合するので注意");
-          }
-          else
-          {
-            console.log("OTHER LOGIN DATE: " + snapshot.val());
-            this.last_login = "";
-            r.off('value');
+        if(null !== credential)
+        {
+          // メールアドレス確認が済んでいるかどうか
+          if (!credential.emailVerified) {
             this.auth.signOut();
-            this.helper.alert("ほかからログインされた");
+            this.helper.alert(this.translate.instant("login-dialog.mail_check"));
+            return;
           }
-        });
-      }
-      else
-        this.last_login = "";
-    });
+
+          console.log("J");
+
+          this.my_login_uid = credential.uid;
+
+          const ui_login_date_key:string = this.my_login_uid + "_LAST_LOGIN";
+          const local_login_date_key = this.my_login_uid + "_LOGIN_DATE_LOCAL";
+
+          var d:string = new Date().getTime().toString();
+          localStorage.setItem(local_login_date_key, d);
+          console.log("date of invoking login", d);
+
+          this.my_login_date = d;
+
+          var r = this.ui_db.database.ref(ui_login_date_key);
+          r.transaction((old) => {
+
+            // どうやらold===nullの状態で一度呼ばれるらしい.
+            // 正式なoldの値が入るのはその後２回めで呼び出されたときらしい.
+            // 妙な仕様だ.
+            console.log("OLD, d: ", old, d);
+            if(null === old || parseInt(old) <= parseInt(d))
+              return d;
+            else
+              return; // トランザクションアボート
+
+          }, (err,committed,ss) => {
+
+            if(err)
+            {
+              // どう対処すべき？
+              console.log("K: Write transaction has finished with error: ", err);
+            }
+            else if(!committed)
+            {
+              // 書き込みが競合して書き込まれなかった。
+              // 最新より前のログインとみなしてログアウトなり編集不能にするなりする
+              console.log("L: Write transaction was aborted.");
+
+              var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
+              this._common_login_error_handler(login_date_local, ss, r);
+            }
+            else
+            {
+              console.log("A");
+
+              var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
+              if(this._common_login_handler(login_date_local, ss, r))
+              {
+                console.log("new local login date: ", login_date_local);
+
+                r.on('value', (snapshot) => {
+                  var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
+                  this._common_login_handler(login_date_local, snapshot, r);
+                });
+              }
+            }
+          });
+
+          console.log("G");
+        }
+        else // ログアウト
+        {
+          console.log("I");
+
+          this.ui_db.database.ref(this.my_login_uid + "_LAST_LOGIN").off('value');
+
+          this.my_login_uid = "";
+          this.my_login_date = "";
+        }
+      });
   }
 
   public load_ui_state()
   {
-    this.router.navigate(["/blank-page"]);
-    this.deactiveButtons();
-
     // ローカルから読み出す
     // this._load_ui_state_local();
 
