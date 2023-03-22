@@ -1094,7 +1094,7 @@ export class DsdDataService {
       strfix10 = this.readString(buff, 10);
       member.g_no = this.helper.toNumber(strfix10.trim());
       if (member.g_no === null) {
-        member.g_id = 'blank';
+        member.g_id = '';
       } else {
         member.g_id = member.g_no.toString();
       }
