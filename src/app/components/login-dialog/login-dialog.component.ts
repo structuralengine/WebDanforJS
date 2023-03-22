@@ -13,7 +13,6 @@ import { DataHelperModule } from 'src/app/providers/data-helper.module';
   styleUrls: ['./login-dialog.component.scss']
 })
 
-
 export class LoginDialogComponent implements OnInit {
   loginForm: FormGroup;
   loginUserName: string;

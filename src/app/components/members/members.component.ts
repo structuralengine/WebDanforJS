@@ -3,6 +3,7 @@ import { InputMembersService } from './members.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import { AppComponent } from 'src/app/app.component';
 import { SaveDataService } from 'src/app/providers/save-data.service';
+import { UIStateService } from "src/app/providers/ui-state.service";
 import pq from 'pqgrid';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { TranslateService } from "@ngx-translate/core";
@@ -28,6 +29,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     private points: InputDesignPointsService,
     private save: SaveDataService,
     private app: AppComponent,
+    private ui_state: UIStateService,
     private translate: TranslateService
   ) { }
 
@@ -116,7 +118,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
         this.saveData();
 
         // ステート保存. TODO: 行やセルごとに部分更新
-        this.app.save_ui_state();
+        this.ui_state.save_ui_state();
 
         // 何か変更があったら判定する
         const flg: boolean = this.members.checkMemberEnables(this.table_datas);
