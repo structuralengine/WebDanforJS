@@ -26,7 +26,7 @@ export class UIStateService {
     private save: SaveDataService
   ){}
 
-  public init_account(_app_id:string, _restore_callback)
+  public init_ui_state(_app_id:string, _restore_callback)
   {
     this.app_id = _app_id;
     this.restore_callback = _restore_callback;
@@ -63,13 +63,11 @@ export class UIStateService {
   {
     this.auth.currentUser.then(user=>{
 
-      console.log("BONGE");
       if(user === null) return;
 
       // 近い将来uidでなくグループID的なものになりそう
       const ui_data_key:string = user.uid + "_UI_DATA_n";
       const ui_filename_key:string = user.uid + "_UI_FILENAME";
-      console.log("MONGE: ", ui_data_key, ui_filename_key);
 
       this.ui_db.database.ref(ui_data_key).set(ui_data);
       this.ui_db.database.ref(ui_filename_key).set(filename);

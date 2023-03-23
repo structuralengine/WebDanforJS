@@ -65,7 +65,7 @@ export class AppComponent implements OnInit {
     this.router.navigate(["/blank-page"]);
     this.deactiveButtons();
 
-    this.ui_state.init_account("WebDanforJS", () =>
+    this.ui_state.init_ui_state("WebDanforJS", () =>
       {
         // 有効な部材データが有れば部材に伴う機能を有効にする
         this.memberChange();

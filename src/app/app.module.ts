@@ -30,6 +30,7 @@ import { InputCalclationPrintService } from "./components/calculation-print/calc
 import { SaveDataService } from "./providers/save-data.service";
 
 import { UserInfoService } from "./providers/user-info.service";
+import { UIStateService } from "./providers/ui-state.service";
 import { ConfigService } from ".//providers/config.service";
 
 import { MenuComponent } from "./components/menu/menu.component";
@@ -168,6 +169,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
   ],
   providers: [
     UserInfoService,
+    UIStateService,
     ConfigService,
 
     InputBasicInformationService,
