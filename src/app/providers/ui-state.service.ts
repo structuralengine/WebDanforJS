@@ -14,6 +14,7 @@ export class UIStateService {
   public file_name:string="";
 
   private app_id:string="";
+  private key_prefix:string="";
   private restore_callback=null;
   private my_login_date:string = ""; // ログイン中であるかどうかのフラグでもある
   private my_login_uid:string = ""; // ログアウトされたときにログイン中のuidを覚えておくために使用
@@ -61,17 +62,15 @@ export class UIStateService {
 
   private _save_ui_state_realtime_database(ui_data: any, filename: string)
   {
-    this.auth.currentUser.then(user=>{
+    if("" == this.my_login_uid)
+      return;
 
-      if(user === null) return;
+    // 近い将来uidでなくグループID的なものになりそう
+    const ui_data_key:string = this.key_prefix + "_UI_DATA_n";
+    const ui_filename_key:string = this.key_prefix + "_UI_FILENAME";
 
-      // 近い将来uidでなくグループID的なものになりそう
-      const ui_data_key:string = user.uid + "_UI_DATA_n";
-      const ui_filename_key:string = user.uid + "_UI_FILENAME";
-
-      this.ui_db.database.ref(ui_data_key).set(ui_data);
-      this.ui_db.database.ref(ui_filename_key).set(filename);
-    });
+    this.ui_db.database.ref(ui_data_key).set(ui_data);
+    this.ui_db.database.ref(ui_filename_key).set(filename);
   }
 
   private _restore_ui_data(json: string, _file_name: string): boolean
@@ -97,12 +96,12 @@ export class UIStateService {
   private _restore_from_realtime_database()
   {
     // 近い将来uidでなくグループID的なものになりそう
-    const ui_data_key:string = this.my_login_uid + "_UI_DATA_n";
+    const ui_data_key:string = this.key_prefix + "_UI_DATA_n";
     var json$:Observable<string> = this.ui_db.object<string>(ui_data_key).valueChanges();
 
     json$.subscribe(
       (j: string) => {
-        const ui_filename_key:string = this.my_login_uid + "_UI_FILENAME";
+        const ui_filename_key:string = this.key_prefix + "_UI_FILENAME";
         var filename$:Observable<string> =
           this.ui_db.object<string>(ui_filename_key).valueChanges();
 
@@ -133,6 +132,7 @@ export class UIStateService {
       console.log("OTHER LOGIN DATE: " + ss.val());
 
       this.my_login_uid = "";
+      this.key_prefix = "";
       this.my_login_date = "";
       r.off('value');
       this.auth.signOut();
@@ -176,8 +176,11 @@ export class UIStateService {
 
           this.my_login_uid = credential.uid;
 
-          const ui_login_date_key:string = this.my_login_uid + "_LAST_LOGIN";
-          const local_login_date_key = this.my_login_uid + "_LOGIN_DATE_LOCAL";
+          //this.key_prefix = credential.uid; // キーを全アプリ共通にするとき
+          this.key_prefix = credential.uid + "/" + this.app_id;
+
+          const ui_login_date_key:string = this.key_prefix + "_LAST_LOGIN";
+          const local_login_date_key = this.key_prefix + "_LOGIN_DATE_LOCAL";
 
           var d:string = new Date().getTime().toString();
           console.log("date of invoking login", d);
@@ -235,9 +238,10 @@ export class UIStateService {
         {
           console.log("I");
 
-          this.ui_db.database.ref(this.my_login_uid + "_LAST_LOGIN").off('value');
+          this.ui_db.database.ref(this.key_prefix + "_LAST_LOGIN").off('value');
 
           this.my_login_uid = "";
+          this.key_prefix = "";
           this.my_login_date = "";
         }
       });
