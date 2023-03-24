@@ -11,6 +11,7 @@ import { AppComponent } from "src/app/app.component";
 import { SheetComponent } from "../sheet/sheet.component";
 import pq from "pqgrid";
 import { TranslateService } from "@ngx-translate/core";
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: "app-design-points",
@@ -33,6 +34,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
     private points: InputDesignPointsService,
     private save: SaveDataService,
     private app: AppComponent,
+    private ui_state: UIStateService,
     private translate: TranslateService
   ) { }
 
@@ -74,7 +76,14 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
           }
-          // 何か変更があったら判定する
+
+          // ステート保存 ---------
+          // 他のテーブルデータの外部キー参照違反を防ぐため、
+          // 今のところ部材の変更時はすべてのデータを保存している
+          this.saveData();
+          this.ui_state.save_ui_state();
+
+          // 何か変更があったら判定する ----------
           let flg = false;
           for (const datas of this.table_datas) {
             if (this.points.designPointChange(datas) === true) {

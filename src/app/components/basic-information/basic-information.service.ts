@@ -479,6 +479,7 @@ export class InputBasicInformationService  {
     const id = (sp !== undefined) ? sp.id: -1;
     return id;
   }
+
   public set_specification1(index: number): any {
 
     const id: number = this.specification1_list.findIndex(
@@ -488,6 +489,9 @@ export class InputBasicInformationService  {
       obj => obj.selected = (obj.id === id) ? true : false);
 
     this.set_default_pickup();
+
+    // 部分オートセーブ
+    //this.ui_state.save_ui_state();
 
     return this.getSaveData()
   }

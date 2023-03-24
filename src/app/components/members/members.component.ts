@@ -113,14 +113,13 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
 
-        // 処理量が多くなるけどとりあえずこれをやる必要がある
-        // 本当は行ごとに処理したい
+        // ステート保存 ---------
+        // 他のテーブルデータの外部キー参照違反を防ぐため、
+        // 今のところ部材の変更時はすべてのデータを保存している
         this.saveData();
-
-        // ステート保存. TODO: 行やセルごとに部分更新
         this.ui_state.save_ui_state();
 
-        // 何か変更があったら判定する
+        // 何か変更があったら判定する --------
         const flg: boolean = this.members.checkMemberEnables(this.table_datas);
 
         this.app.memberChange(flg);

@@ -39,48 +39,47 @@ export class UIStateService {
     this._load_ui_state_realtime_database();
   }
 
-  public save_ui_state():string
+  public save_ui_filename()
+  {
+    // ローカル保存(今はやってない)
+    //localStorage.setItem("AutoSavedFileName", this.file_name);
+
+    const ui_filename_key:string = this.key_prefix + "_UI_FILENAME";
+    this.ui_db.database.ref(ui_filename_key).set(this.file_name);
+  }
+
+  // - key : first character must be '/' or completely empty
+  public save_ui_state(ui_data:any = null, key:string="")
   {
     // ステートメッセージとか出す？
 
-    const data:string = this.save.getInputText();
+    if(null === ui_data)
+      ui_data = this.save.getInputJson();
 
     // ローカル保存(今はやってない)
-    //this._save_ui_state_local(data, this.file_name);
+    //localStorage.setItem("AutoSaved", ui_data);
 
     // realtime database
-    this._save_ui_state_realtime_database(data, this.file_name);
-
-    return data;
-  }
-
-  private _save_ui_state_local(json: string, filename: string)
-  {
-    localStorage.setItem("AutoSaved", json);
-    localStorage.setItem("AutoSavedFileName", filename);
-  }
-
-  private _save_ui_state_realtime_database(ui_data: any, filename: string)
-  {
     if("" == this.my_login_uid)
       return;
 
-    // 近い将来uidでなくグループID的なものになりそう
-    const ui_data_key:string = this.key_prefix + "_UI_DATA_n";
-    const ui_filename_key:string = this.key_prefix + "_UI_FILENAME";
+    key = this.key_prefix + "_UI_DATA_n" + key;
 
-    this.ui_db.database.ref(ui_data_key).set(ui_data);
-    this.ui_db.database.ref(ui_filename_key).set(filename);
+    // 近い将来uidでなくグループID的なものになりそう
+    this.ui_db.database.ref(key).set(ui_data);
   }
 
-  private _restore_ui_data(json: string, _file_name: string): boolean
+  private _restore_ui_data(ui_data: any, _file_name: string): boolean
   {
-    if(null === json)
+    if(null === ui_data)
       return false;
 
     this.file_name = (null===_file_name?"":_file_name);
 
-    this.save.readInputData(json);
+    if('string' === typeof ui_data)
+      this._restore_ui_data(JSON.parse(ui_data), this.file_name);
+    else
+      this.save.setInputData(ui_data);
 
     this.restore_callback();
 
@@ -97,18 +96,15 @@ export class UIStateService {
   {
     // 近い将来uidでなくグループID的なものになりそう
     const ui_data_key:string = this.key_prefix + "_UI_DATA_n";
-    var json$:Observable<string> = this.ui_db.object<string>(ui_data_key).valueChanges();
+    const ui_filename_key:string = this.key_prefix + "_UI_FILENAME";
+    var r1 = this.ui_db.database.ref(ui_data_key);
 
-    json$.subscribe(
-      (j: string) => {
-        const ui_filename_key:string = this.key_prefix + "_UI_FILENAME";
-        var filename$:Observable<string> =
-          this.ui_db.object<string>(ui_filename_key).valueChanges();
-
-        filename$.subscribe((f: string) => {
-          this._restore_ui_data(j, f);
-        });
+    r1.once('value', (ui_data_ss) => {
+      var r2 = this.ui_db.database.ref(ui_filename_key);
+      r2.once('value', (filename_ss) => {
+        this._restore_ui_data(ui_data_ss.val(), filename_ss.val());
       });
+    });
   }
 
   private _common_login_error_handler(login_date_local:number, ss, r)
@@ -223,11 +219,11 @@ export class UIStateService {
               //var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
               //if(this._common_login_handler(login_date_local, ss, r))
               //{
-                r.on('value', (snapshot) => {
-                  var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
-                  this._common_login_handler(login_date_local, snapshot, r);
-                  console.log("new local login date: ", login_date_local);
-                });
+              r.on('value', (snapshot) => {
+                var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
+                this._common_login_handler(login_date_local, snapshot, r);
+                console.log("new local login date: ", login_date_local);
+              });
              // }
             }
           });

@@ -105,6 +105,7 @@ export class AppComponent implements OnInit {
     }
 
     this.ui_state.save_ui_state();
+    this.ui_state.save_ui_filename();
   }
 
   // ファイルを開く
@@ -123,7 +124,6 @@ export class AppComponent implements OnInit {
           .then((buff) => {
             const pik = this.dsdData.readDsdData(buff);
             this.open_done(modalRef);
-            this.ui_state.save_ui_state();
             if (pik !== null) {
               this.helper.alert(pik + this.translate.instant("menu.open"));
             }
@@ -138,7 +138,6 @@ export class AppComponent implements OnInit {
           .then((text) => {
             this.save.readInputData(text);
             this.open_done(modalRef);
-            this.ui_state.save_ui_state();
           })
           .catch((err) => {
             this.open_done(modalRef, err);
@@ -149,6 +148,9 @@ export class AppComponent implements OnInit {
   private open_done(modalRef, error = null) {
     // 後処理
     if (error === null) {
+      this.ui_state.save_ui_state();
+      this.ui_state.save_ui_filename();
+
       //this.pickup_file_name = this.save.getPickupFilename();
       this.memberChange(); // 左側のボタンを有効にする。
       this.designPointChange(); // 左側のボタンを有効にする。
@@ -168,6 +170,7 @@ export class AppComponent implements OnInit {
       this.ui_state.file_name = "";
       this.save.clear();
       this.ui_state.save_ui_state();
+      this.ui_state.save_ui_filename();
       this.memberChange(false); // 左側のボタンを無効にする。
     }, 10);
   }
@@ -201,8 +204,6 @@ export class AppComponent implements OnInit {
           this.save.readInputData(response.text);
           this.open_done(modalRef);
       }
-
-      this.ui_state.save_ui_state();
     }, 10);
   }
 
@@ -220,7 +221,7 @@ export class AppComponent implements OnInit {
     this.ui_state.file_name =
       this.electronService.ipcRenderer.sendSync('overWrite', this.ui_state.file_name, inputJson);
 
-    this.ui_state.save_ui_state();
+    this.ui_state.save_ui_filename(); // 上でthis.ui_state.file_nameが修正されている？ので一応更新
   }
 
   // ピックアップファイルを開く
