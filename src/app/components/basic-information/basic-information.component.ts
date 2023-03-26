@@ -4,6 +4,7 @@ import { SaveDataService } from '../../providers/save-data.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
 import { TranslateService } from "@ngx-translate/core";
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: 'app-basic-information',
@@ -40,6 +41,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   constructor(
     private basic: InputBasicInformationService,
     private save: SaveDataService,
+    private ui_state: UIStateService,
     private translate: TranslateService
   ) { }
 
@@ -144,6 +146,9 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   public setSpecification1(i: number): void {
 
     const basic = this.basic.set_specification1(i);
+
+    // 部分オートセーブ
+    this.ui_state.save_ui_state(basic, "/basic");
 
     this.specification1_list = basic.specification1_list; // 適用
     this.specification2_list = basic.specification2_list; // 仕様

@@ -65,6 +65,9 @@ export class UIStateService {
 
     key = this.key_prefix + "_UI_DATA_n" + key;
 
+    console.log("SAVE UI_DATA key: ", key);
+    console.log("SAVE UI_DATA: ", ui_data);
+
     // 近い将来uidでなくグループID的なものになりそう
     this.ui_db.database.ref(key).set(ui_data);
   }

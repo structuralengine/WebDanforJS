@@ -55,6 +55,7 @@ export class InputCrackSettingsService {
         let count = 0;
         for (let k = 0; k < member.positions.length; k++) {
           const pos = member.positions[k];
+          console.log("pos in Crack: ", pos);
           if (!this.points.isEnable(pos)) {
             continue;
           }

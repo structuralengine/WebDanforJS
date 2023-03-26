@@ -490,10 +490,7 @@ export class InputBasicInformationService  {
 
     this.set_default_pickup();
 
-    // 部分オートセーブ
-    //this.ui_state.save_ui_state();
-
-    return this.getSaveData()
+    return this.getSaveData();
   }
 
   public setSaveData(basic: any){

@@ -209,8 +209,6 @@ export class InputBarsService {
     // グリッド用データの作成
     const groupe_list = this.points.getGroupeList();
 
-    //console.log("GROUPE_LIST: ", groupe_list);
-
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];
       // 部材
@@ -232,7 +230,7 @@ export class InputBarsService {
           data.p_name = pos.p_name;
 
           if("sidebar" in data){
-            data["sidebar1"] = data["sidebar"]; 
+            data["sidebar1"] = data["sidebar"];
           }
 
           // データを2行に分ける
@@ -311,8 +309,15 @@ export class InputBarsService {
       result = def;
       this.bar_list.push(def);
     }
-    // 足りない入力行があれば足す
-    for(const key of ['rebar1', 'rebar2']){
+
+    // 足りない入力行があれば足す.
+    // firebaseのオートセーブデータを介すとnullのフィールドはフィールド自体が消失するため、
+    // nullがありうる全項目についてきちんと再セットする必要がある。
+    for(const key of ['haunch_M', 'haunch_V', 'tan']){
+      if(!(key in result))
+        result[key] = def[key];
+    }
+    for(const key of ['rebar1', 'rebar2', 'sidebar', 'stirrup', 'bend']){
       const d = def[key];
       for(const k of Object.keys(d)){
         if(!(k in result[key])){

@@ -20,6 +20,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
   private beamHeaders: object[] = new Array();
+
   // private columnHeaders: object[] = new Array();
   // private pileHeaders: object[] = new Array();
 
@@ -39,7 +40,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.setTitle(this.save.isManual());
 
-    this.table_datas = this.bars.getTableColumns();
+    this.table_datas = this.bars.getTableColumns(); // UIデータからテーブルに表示する用のデータを作る
 
     // グリッドの設定
     this.option_list = new Array();
