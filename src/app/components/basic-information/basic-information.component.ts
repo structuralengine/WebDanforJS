@@ -136,7 +136,6 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       specification2_list: this.specification2_list, // 仕様
       conditions_list: this.conditions_list         // 設計条件
     });
-
   }
 
   /// <summary>
