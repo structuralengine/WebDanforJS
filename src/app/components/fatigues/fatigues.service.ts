@@ -132,11 +132,26 @@ export class InputFatiguesService {
   public getTableColumn(index: any): any {
     let result = this.fatigue_list.find((value) => value.index === index);
     const bar = this.bars.getTableColumn(index);
+    const def = this.default_fatigue(index);
     if (result == null) {
-      result = this.default_fatigue(index);
+      result = def;
       result.titgle1 = bar.title1;
       this.fatigue_list.push(result);
     }
+
+    for(const key of ['M1', 'V1', 'M2', 'V2'])
+    {
+      if(undefined === result[key])
+        result[key] = def[key];
+      else
+      {
+        for (const k of Object.keys(def[key])) {
+          if(!(k in result[key]))
+            result[key][k] = def[key][k];
+        }
+      }
+    }
+
     result["title1"] = bar.rebar1.title;
     result["title2"] = bar.rebar2.title;
 

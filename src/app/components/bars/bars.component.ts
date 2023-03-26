@@ -73,6 +73,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
           }
+
+          
         }
       };
       this.option_list.push(op);

@@ -173,5 +173,10 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
+
+    const basic = this.basic.getSaveData();
+
+    // 部分オートセーブ
+    this.ui_state.save_ui_state(basic, "/basic");
   }
 }

@@ -317,15 +317,44 @@ export class InputBarsService {
       if(!(key in result))
         result[key] = def[key];
     }
-    for(const key of ['rebar1', 'rebar2', 'sidebar', 'stirrup', 'bend']){
+    for(const key of ['rebar1', 'rebar2', 'stirrup', 'bend']){
       const d = def[key];
-      for(const k of Object.keys(d)){
-        if(!(k in result[key])){
-          const re = result[key];
-          re[k] = d[k];
+      if(undefined === result[key])
+        result[key] = d;
+      else
+      {
+        for(const k of Object.keys(d)){
+          if(!(k in result[key])){
+            const re = result[key];
+            re[k] = d[k];
+          }
         }
       }
     }
+
+    var keys = ['sidebar2'];
+    if('sidebar' in result)
+    {
+      if(!('sidebar1' in result))
+        result['sidebar1'] = result['sidebar'];
+      delete result.sidebar;
+    }
+    else
+      keys.push('sidebar1');
+
+    for(const key of keys){
+      const d = def[key];
+      if(undefined === result[key])
+        result[key] = d;
+      else
+      {
+        for(const k of Object.keys(d)){
+          if(!(k in result[key]))
+            result[key][k] = d[k];
+        }
+      }
+    }
+
     return result;
   }
 
