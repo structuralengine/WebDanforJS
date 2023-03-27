@@ -7,6 +7,7 @@ import { InputDesignPointsService } from '../design-points/design-points.service
 import { InputCrackSettingsService } from './crack-settings.service';
 import { TranslateService } from "@ngx-translate/core";
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: 'app-crack-settings',
@@ -23,6 +24,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
   private columnHeaders: object[] = new Array();
 
   public table_datas: any[];
+
   // タブのヘッダ名
   public groupe_name: string[];
 
@@ -32,7 +34,8 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     public helper: DataHelperModule,
     private points: InputDesignPointsService,
     private translate: TranslateService,
-    private basic: InputBasicInformationService
+    private basic: InputBasicInformationService,
+    private ui_state: UIStateService
   ) { }
 
   ngOnInit() {
@@ -54,6 +57,10 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: (this.save.isManual()) ? 2 : 3,
+        change: (evt, ui) => {
+          this.saveData();
+          this.ui_state.save_ui_state(this.crack.getSaveData(), "/crack");
+        }
       };
       this.option_list.push(op);
     }
@@ -207,5 +214,4 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
       }
     }
   }
-
 }

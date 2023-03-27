@@ -74,6 +74,12 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       numberCell: { show: true }, // 行番号
       colModel: this.columnHeaders,
       dataModel: { data: this.table1_datas },
+      change: (evt, ui) => {
+        this.saveData();
+        // 部分オートセーブ
+        const basic = this.basic.getSaveData();
+        this.ui_state.save_ui_state(basic, "/basic");
+      },
     };
 
     this.options2 = {
@@ -85,6 +91,12 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       numberCell: { show: true }, // 行番号
       colModel: this.columnHeaders,
       dataModel: { data: this.table2_datas },
+      change: (evt, ui) => {
+        this.saveData();
+        // 部分オートセーブ
+        const basic = this.basic.getSaveData();
+        this.ui_state.save_ui_state(basic, "/basic");
+      },
     };
 
     this.options3 = {
@@ -96,6 +108,12 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       numberCell: { show: true }, // 行番号
       colModel: this.columnHeaders,
       dataModel: { data: this.table3_datas },
+      change: (evt, ui) => {
+        this.saveData();
+        // 部分オートセーブ
+        const basic = this.basic.getSaveData();
+        this.ui_state.save_ui_state(basic, "/basic");
+      },
     };
   }
 
@@ -114,9 +132,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
         { title: 'Pickup No', align: 'center', dataType: 'integer', dataIndx: 'no', sortable: false, width: 148, nodrag: true, },
       ];
     }
-
   }
-
 
   public isManual(): boolean {
     return this.save.isManual();

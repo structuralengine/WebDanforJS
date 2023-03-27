@@ -5,6 +5,7 @@ import { InputDesignPointsService } from '../design-points/design-points.service
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import pq from 'pqgrid';
 import { TranslateService } from "@ngx-translate/core";
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: 'app-bars',
@@ -33,6 +34,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     private bars: InputBarsService,
     private save: SaveDataService,
     private points: InputDesignPointsService,
+    private ui_state: UIStateService,
     private translate: TranslateService
   ) { }
 
@@ -74,7 +76,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           }
 
-          
+          // テーブルのデータをUIデータにセット
+          this.saveData();
+          this.ui_state.save_ui_state(this.bars.getSaveData(), "/bar");
         }
       };
       this.option_list.push(op);
