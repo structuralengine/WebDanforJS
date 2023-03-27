@@ -132,20 +132,31 @@ export class InputCrackSettingsService {
     this.crack_list = new Array();
 
     for (const column of table_datas) {
-      const b = this.default_crack(column.index);
-      b.m_no =   column.m_no;
-      b.g_name = column.g_name;
-      b.p_name = column.p_name;
-      b.con_u =  column.con_u;
-      b.con_l =  column.con_l;
-      b.con_s =  column.con_s;
-      b.vis_u =  column.vis_u;
-      b.vis_l =  column.vis_l;
-      b.ecsd_u = column.ecsd_u;
-      b.ecsd_l = column.ecsd_l;
-      b.kr =     column.kr;
-      b.k4 =     column.k4;
-      b.JRTT05 = column.JRTT05;
+      var b = this.default_crack(column.index);
+      console.log("default: ", b);
+      console.log("column: ", column);
+
+      // ちゃんと判定しないとundefinedとか入ってしまい、firebaseの処理でなんか変になる
+      for(const key in b)
+      {
+        if(undefined !== column[key])
+          b[key] = column[key];
+      }
+
+      //b.m_no =   column.m_no;
+      //b.g_name = column.g_name;
+      //b.p_name = column.p_name;
+      //b.con_u =  column.con_u;
+      //b.con_l =  column.con_l;
+      //b.con_s =  column.con_s;
+      //b.vis_u =  column.vis_u;
+      //b.vis_l =  column.vis_l;
+      //b.ecsd_u = column.ecsd_u;
+      //b.ecsd_l = column.ecsd_l;
+      //b.kr =     column.kr;
+      //b.k4 =     column.k4;
+      //b.JRTT05 = column.JRTT05;
+
       this.crack_list.push(b);
     }
   }
