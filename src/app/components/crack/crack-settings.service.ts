@@ -133,8 +133,8 @@ export class InputCrackSettingsService {
 
     for (const column of table_datas) {
       var b = this.default_crack(column.index);
-      console.log("default: ", b);
-      console.log("column: ", column);
+      //console.log("default: ", b);
+      //console.log("column: ", column);
 
       // ちゃんと判定しないとundefinedとか入ってしまい、firebaseの処理でなんか変になる
       for(const key in b)
