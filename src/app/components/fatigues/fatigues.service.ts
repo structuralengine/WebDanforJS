@@ -76,7 +76,7 @@ export class InputFatiguesService {
     const table_datas: any[] = new Array();
 
     // グリッド用データの作成
-    const groupe_list = this.points.getSortedGroupeList(); // this.points.getGroupeList();
+    const groupe_list = this.points.getGroupeList();
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];
       // 部材
@@ -152,8 +152,7 @@ export class InputFatiguesService {
     };
 
     // グリッド用データの作成
-    const groupe_list = this.points.getSortedGroupeList(); // this.points.getGroupeList();
-    for (const groupe of groupe_list){ 
+    for (const groupe of this.points.getGroupeList()) {
       // 部材
       let startFlg = false;
       for (let im = groupe.length - 1; im >= 0; im--) {

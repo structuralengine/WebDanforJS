@@ -87,7 +87,7 @@ export class ResultServiceabilityShearForceComponent implements OnInit {
 
     let page: any;
 
-    const groupe = this.points.getSortedGroupeList();// this.points.getGroupeList();
+    const groupe = this.points.getGroupeList();
     for (let ig = 0; ig < groupe.length; ig++) {
       const groupeName = this.points.getGroupeName(ig);
       page = {

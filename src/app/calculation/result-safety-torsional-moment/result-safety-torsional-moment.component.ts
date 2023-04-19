@@ -98,7 +98,7 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
 
     let page: any;
 
-    const groupe = this.points.getSortedGroupeList();// ();
+    const groupe = this.points.getGroupeList();
     for (let ig = 0; ig < groupe.length; ig++) {
       const groupeName = this.points.getGroupeName(ig);
       const g = groupe[ig];

@@ -180,7 +180,7 @@ export class SetDesignForceService {
 
   // 計算対象の着目点のみを抽出する
   private getEnableMembers(target: string): any[] {
-    const groupeList = this.points.getSortedGroupeList();// this.points.getGroupeList();
+    const groupeList = this.points.getGroupeList();
 
     // 計算対象ではない着目点を削除する
     for (let i = groupeList.length - 1; i >= 0; i--) {
@@ -283,7 +283,7 @@ export class SetDesignForceService {
       force.push([]);
     }
 
-    const groupe_list = this.points.getSortedGroupeList();// this.points.getGroupeList();
+    const groupe_list = this.points.getGroupeList();
 
     // 安全係数が有効か判定する
     for (const groupe of groupe_list) {

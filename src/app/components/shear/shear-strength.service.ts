@@ -37,7 +37,7 @@ export class ShearStrengthService {
     const table_datas: any[] = new Array();
 
     // グリッド用データの作成
-    const groupe_list = this.points.getSortedGroupeList(); //this.points.getGroupeList();
+    const groupe_list = this.points.getGroupeList();
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];
       // 部材

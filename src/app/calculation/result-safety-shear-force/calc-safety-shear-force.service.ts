@@ -347,7 +347,7 @@ export class CalcSafetyShearForceService {
       } else {
 
         // 標準のディープビーム式
-        V_rbc = this.helper.toNumber(safety.safety_factor.V_rbd);
+        V_rbc = this.helper.toNumber(safety.safety_factor.rbd);
         if (V_rbc === null) {
           V_rbc = 1.2;
         }

@@ -53,6 +53,7 @@ export class DsdDataService {
       };
 
       const obj = this.IsDSDFile(buff);
+
       buff['datVersID'] = obj.datVersID;
       buff['isManualInput'] = (obj.ManualInput > 0);
 
@@ -60,6 +61,7 @@ export class DsdDataService {
       if (buff.isManualInput) {
         this.FrmManualGetTEdata(buff, obj.ManualInput);
       }
+
       // 画面１ 基本データ
       this.GetKIHONscrn(buff);
       // 画面２  部材､断面データ
@@ -80,7 +82,7 @@ export class DsdDataService {
       if (buff.isManualInput) {
         return null;
       } else {
-        return buff.PickFile.trim();
+        return buff.PickFile?.trim();
       }
 
     } catch (e) {
@@ -526,7 +528,7 @@ export class DsdDataService {
         }
       }
 
-      for (const k1 of ['tensionBar', 'sidebar', 'stirrup', 'bend']) {
+      for (const k1 of ['tensionBar', 'sidebar1', 'stirrup', 'bend']) {
         for (const k2 of ['fsy', 'fsu']) {
           for (let j = 0; j < 2; j++) {
             let Kyodo = this.readInteger(buff);
@@ -620,14 +622,12 @@ export class DsdDataService {
       const D_Name = strFix100.trim();
 
       for (let i = 0; i < iDummyCount; i++) {
-        const Matr = this.readInteger(buff);
-        const Calc1 = this.readString(buff, 32);
-        const Calc2 = this.readSingle(buff);
+        // const Matr = this.readInteger(buff);
+        // const Calc1 = this.readString(buff, 32);
+        // const Calc2 = this.readSingle(buff);
       }
     }
-
     iDummyCount = this.readInteger(buff)
-
     for (let i = 0; i < iDummyCount; i++) {
       const index = i + 1;
 
@@ -698,13 +698,12 @@ export class DsdDataService {
     const bTekinShori = this.readByte(buff);
 
     const iDummyCount = this.readInteger(buff);
-
     for (let i = 0; i < iDummyCount; i++) {
       const index = i + 1;
 
       const bar = this.bars.getTableColumn(index);
       const m = this.members.getCalcData(bar.m_no);
-
+      if(!m) continue;
       const iType = this.readInteger(buff);
       const iNext = this.readInteger(buff);
       const MageSendan0 = this.readSingle(buff);
@@ -870,14 +869,14 @@ export class DsdDataService {
       const SokuR0 = this.readByte(buff);
       if (SokuR0 > 0) {
         if (m.g_no < 3 && m.shape !== '円形') {
-          bar.sidebar.side_dia = SokuR0;
+          bar.sidebar1.side_dia = SokuR0;
         }
       }
       const SokuR1 = this.readByte(buff);
       const SokuHON0 = this.readByte(buff);
       if (SokuHON0 > 0) {
         if (m.g_no < 3 && m.shape !== '円形') {
-          bar.sidebar.side_n = SokuHON0;
+          bar.sidebar1.side_n = SokuHON0;
         }
       }
       const SokuHON1 = this.readByte(buff);
@@ -886,8 +885,8 @@ export class DsdDataService {
         if (m.g_no < 2 && m.shape !== '円形') {
           const s1 = Math.floor(SokuKABURI0);
           const s2 = Math.ceil((SokuKABURI0 - s1) * 10000);
-          if (s1 > 0) bar.sidebar.side_cover = s1;
-          if (s2 > 0) bar.sidebar.side_ss = s2;
+          if (s1 > 0) bar.sidebar1.side_cover = s1;
+          if (s2 > 0) bar.sidebar1.side_ss = s2;
         }
       }
       const SokuKABURI1 = this.readSingle(buff);
@@ -1270,6 +1269,7 @@ export class DsdDataService {
   private readByte(buff: any): number {
     const view = this.getDataView(buff, 1);
     let num = view.getUint8(0);
+    // if (num === this.byte_max) num = null;
     if (num === this.byte_max) num = null;
     return num;
   }

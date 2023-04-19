@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
-import { DataHelperModule } from 'src/app/providers/data-helper.module';
 
 @Injectable({
   providedIn: 'root'
 })
-export class InputMembersService {
+export class InputMembersService  {
 
   // 部材情報
   private member_list: any[];
-  private langs: string[] = ["en", "ja"];
-  private shape_names: any =
+  private langs:string[] = ["en", "ja"];
+  private shape_names:any=
     [
       [],
       ["1", 'RC-矩形'],
@@ -19,14 +18,14 @@ export class InputMembersService {
       ["4", 'RC-小判']
     ];
 
-  private lang_shape_names: any = {};
+  private lang_shape_names:any = {};
   //private lang_shape_formatters:any = {};
 
-  constructor(private translate: TranslateService,
-    private helper: DataHelperModule) {
+  constructor(private translate: TranslateService) {
     this.clear();
 
-    for (const lang of this.langs) {
+    for(const lang of this.langs)
+    {
       this.translate.getTranslation(lang).subscribe((obj) => {
         this.shape_names[1].push(obj.members.rectangle.trim());
         this.shape_names[2].push(obj.members.t_shape.trim());
@@ -102,23 +101,22 @@ export class InputMembersService {
 
     // 対象データが無かった時に処理
     if (member !== undefined) {
-      if (result.g_no === null) {
+      if(result.g_no === null){
         result.g_id = '';
       }
 
-      for (const k of Object.keys(result)) {
-        if (k in member)
+      for(const k of Object.keys(result)){
+        if(k in member)
           result[k] = member[k];
       }
-    } else {
+    } else
       this.member_list.push(result);
-    }
 
     result.shape = this.getShapeDispFromShapeID(result.shape);
     return result;
   }
 
-  public getCalcData(m_no: number) {
+  public getCalcData(m_no: number){
     const result = this.getData(m_no);
     return JSON.parse(
       JSON.stringify({
@@ -127,12 +125,12 @@ export class InputMembersService {
     ).temp;
   }
 
-  private getData(m_no: number) {
-    return this.member_list.find((item) => item.m_no === m_no);
+  private getData(m_no: number){
+    return this.member_list.find( (item) => item.m_no === m_no );
   }
 
   // 同じグループの部材リストを取得する
-  public getSameGroupeMembers(m_no: number): any {
+  public getSameGroupeMembers(m_no: number): any{
 
     const m = this.getCalcData(m_no);
 
@@ -140,7 +138,7 @@ export class InputMembersService {
       return [];
     }
 
-    return this.member_list.filter(v => v.g_id === m.g_id);
+    return this.member_list.filter(v=>v.g_id === m.g_id);
   }
 
   public setTableColumns(table_datas: any, isManual: boolean = false) {
@@ -161,8 +159,8 @@ export class InputMembersService {
             column.g_id = '';
           }
 
-          for (const k of Object.keys(def)) {
-            if (k in column)
+          for(const k of Object.keys(def)){
+            if(k in column)
               def[k] = column[k];
           }
         } else
@@ -182,8 +180,8 @@ export class InputMembersService {
           }
 
           const def = this.default_member(column.m_no);
-          for (const k of Object.keys(def)) {
-            if (k in column)
+          for(const k of Object.keys(def)){
+            if(k in column)
               def[k] = column[k];
           }
 
@@ -227,12 +225,12 @@ export class InputMembersService {
 
   public translateData_old_to_1_13_7() {
 
-    for (let member of this.member_list)
+    for(let member of this.member_list)
       member.shape = this.getShapeIDFromUserInput(member.shape);
   }
 
   public getShapeDispFromShapeID(shape_id: number) {
-    if (this.lang_shape_names.length <= shape_id)
+    if(this.lang_shape_names.length <= shape_id)
       return 0;
     return this.lang_shape_names[this.translate.currentLang][shape_id];
   }
@@ -243,10 +241,11 @@ export class InputMembersService {
     if (key === null)
       return 0;
 
-    let key_ = key.trim();
+    let key_ = key?.trim();
 
-    for (let shape_id = 1; 4 >= shape_id; shape_id++) {
-      if (-1 != this.shape_names[shape_id].indexOf(key_))
+    for(let shape_id=1; 4>=shape_id; shape_id++)
+    {
+      if(-1 != this.shape_names[shape_id].indexOf(key_))
         return shape_id;
     }
 
@@ -264,17 +263,17 @@ export class InputMembersService {
 
     // 部材番号のもっとも大きい数
     let n = 0;
-    members.forEach((v, i, a) => {
+    members.forEach((v,i,a) => {
       n = Math.max(n, v.m_no);
     });
-    for (let m_no = 1; m_no <= n; m_no++) {
+    for(let m_no = 1; m_no <= n; m_no++){
       // 同じ部材番号を抽出
-      const tar = members.filter((v, i, a) => v.m_no === m_no);
-      if (tar.length === 0) {
+      const tar = members.filter((v,i,a) => v.m_no === m_no);
+      if(tar.length === 0){
         continue;
       }
       let pos = 0;
-      tar.forEach((v, i, a) => {
+      tar.forEach((v,i,a) => {
         pos = Math.max(pos, v.position);
       });
       // 今の入力を踏襲
@@ -293,8 +292,8 @@ export class InputMembersService {
   // 部材に何か入力されたタイミング
   // 1行でも有効なデータ存在したら true
   public checkMemberEnables(member_list: any = this.member_list): boolean {
-    for (const columns of member_list) {
-      if (this.isEnable(columns)) {
+    for(const columns of member_list){
+      if ( this.isEnable(columns)){
         return true;
       }
     }
@@ -303,24 +302,24 @@ export class InputMembersService {
 
   // 有効なデータ存在したら true
   public isEnable(columns) {
-    if (columns.g_name !== null && columns.g_name !== undefined) {
-      if (columns.g_name.trim().length > 0) {
+    if(columns.g_name !== null && columns.g_name !== undefined){
+      if(columns.g_name.trim().length > 0){
         return true;
       }
     }
-    if (columns.shape !== null && columns.shape !== undefined) {
+    if(columns.shape !== null && columns.shape !== undefined){
       return true;
     }
-    if (columns.B !== null && columns.B !== undefined) {
+    if(columns.B !== null && columns.B !== undefined){
       return true;
     }
-    if (columns.H !== null && columns.H !== undefined) {
+    if(columns.H !== null && columns.H !== undefined){
       return true;
     }
-    if (columns.Bt !== null && columns.Bt !== undefined) {
+    if(columns.Bt !== null && columns.Bt !== undefined){
       return true;
     }
-    if (columns.t !== null && columns.t !== undefined) {
+    if(columns.t !== null && columns.t !== undefined){
       return true;
     }
 
@@ -328,28 +327,19 @@ export class InputMembersService {
   }
 
   public getGroupeName(i: number): string {
-
-    // 一時リスト
-    const temp_list = [];
-    for (const groupe of this.getGroupeList()) {
-      if (this.helper.toNumber(groupe[0].g_no) !== null) {
-        temp_list[groupe[0].g_no * 10000] = groupe;
-      }
-    }
-
-    const groupe = temp_list.filter(x => Array.isArray(x)).map(x => x);
+    const groupe = this.getGroupeList();
 
     const target = groupe[i];
     const first = target[0];
     let result: string = '';
-    if (first.g_name === null) {
+    if(first.g_name === null){
       result = first.g_id;
-    } else if (first.g_name === '') {
+    } else if(first.g_name === ''){
       result = first.g_id;
     } else {
       result = first.g_name;
     }
-    if (result === '') {
+    if(result === ''){
       result = 'No' + i;
     }
     return result;
@@ -357,8 +347,12 @@ export class InputMembersService {
 
   // グループ別 部材情報{m_no, m_len, g_no, g_id, g_name, shape, B, H, Bt, t} の配列
   public getGroupeList(): any[] {
+
     // 全てのグループ番号をリストアップする
-    const id_list: string[] = this.getGroupes();
+    const id_list: string[] =  this.getGroupes();
+
+    // グループ番号順に並べる
+    id_list.sort();
 
     // グループ番号を持つ部材のリストを返す
     const result = new Array();
@@ -375,46 +369,27 @@ export class InputMembersService {
     ).temp;
   }
 
-  // グループNoでソートする
   public getGroupes(): string[] {
-    const temp_list = [];
-
+    const id_list: string[] =  new Array();
     for (const m of this.member_list) {
-      if (!('g_id' in m) || m.g_id === 'blank' || m.g_id == null || m.g_id === null || m.g_id.trim().length === 0) {
+      if (!('g_id' in m) || m.g_id == null || m.g_id === null || m.g_id.trim().length === 0) {
         continue;
       }
 
-      if (temp_list.find((value) => value === m.g_no) == null) {
-        temp_list.push(m.g_no);
-      }
-    }
-
-    temp_list.sort(function (a, b) {
-      return a - b;
-    });
-
-    const id_list: string[] = new Array();
-
-    for (const id of temp_list) {
-      const m = this.member_list.find((m) => m.g_no === id);
-
-      // g_id リストを出力するので、g_id が設定されている必要がある
-      if (m != null && m.g_id !== '') {
+      if (id_list.find((value)=>value===m.g_id) == null) {
         id_list.push(m.g_id);
       }
     }
-
     return id_list;
-
   }
 
   // 保存しているデータの取得
-  public getSaveData(): any {
+  public getSaveData():any{
     const result = [];
-    for (const m of this.member_list) {
+    for(const m of this.member_list){
       const def = this.default_member(m.m_no);
-      for (const k of Object.keys(def)) {
-        if (k in m)
+      for(const k of Object.keys(def)){
+        if(k in m)
           def[k] = m[k];
       }
       result.push(def)
@@ -426,10 +401,10 @@ export class InputMembersService {
   public setSaveData(members: any) {
 
     this.clear();
-    for (const m of members) {
+    for(const m of members){
       const def = this.default_member(m.m_no);
-      for (const k of Object.keys(def)) {
-        if (k in m) {
+      for(const k of Object.keys(def)){
+        if(k in m){
           def[k] = m[k];
         }
       }
