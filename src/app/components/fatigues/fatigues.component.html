@@ -4,15 +4,18 @@
       <label>
        <p translate>fatigues.durable</p>
       </label>
-      <input id="T" name="T" type="text" [(ngModel)]="service_life" />
+      <input id="T" name="T" type="text" [(ngModel)]="service_life"
+        (ngModelChange)="changeServiceLife('service_life')" />
     </div>
     <div class="input-container">
       <label>jA：</label>
-      <input id="jA" name="jA" type="text" [(ngModel)]="train_A_count" />
+      <input id="jA" name="jA" type="text" [(ngModel)]="train_A_count"
+        (ngModelChange)="changeServiceLife('train_A_count')" />
     </div>
     <div class="input-container">
       <label>jB：</label>
-      <input id="jB" name="jB" type="text" [(ngModel)]="train_B_count" />
+      <input id="jB" name="jB" type="text" [(ngModel)]="train_B_count"
+        (ngModelChange)="changeServiceLife('train_B_count')" />
     </div>
   </form>
 </div>

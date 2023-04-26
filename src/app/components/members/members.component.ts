@@ -117,7 +117,13 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
         // 他のテーブルデータの外部キー参照違反を防ぐため、
         // 今のところ部材の変更時はすべてのデータを保存している
         this.saveData();
-        this.ui_state.save_ui_state();
+
+        // オートセーブ機能 > 行
+        for (const property of ui.updateList) {
+          const { rowIndx } = property;
+          const rowData = this.members.getSaveData()[rowIndx];
+          this.ui_state.save_ui_row_state(rowData, "/members", rowIndx);
+        }
 
         // 何か変更があったら判定する --------
         const flg: boolean = this.members.checkMemberEnables(this.table_datas);

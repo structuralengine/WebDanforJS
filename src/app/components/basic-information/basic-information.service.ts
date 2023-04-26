@@ -544,10 +544,12 @@ export class InputBasicInformationService  {
 
     // this.specification2_list = basic.specification2_list;
     this.specification2_list = this.default_specification2(sp1);
-    for(const sp2 of this.specification2_list){
-      const _sp2 = basic.specification2_list.find(v=> v.id===sp2.id)
-      if(_sp2 != null){
-        sp2.selected = _sp2.selected;
+    for (const sp2 of this.specification2_list) {
+      if ('specification2_list' in basic) {
+        const _sp2 = basic.specification2_list.find(v => v.id === sp2.id)
+        if (_sp2 != null) {
+          sp2.selected = _sp2.selected;
+        }
       }
     }
 

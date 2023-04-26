@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ShearStrengthService } from './shear-strength.service';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: 'app-shear',
@@ -32,7 +33,8 @@ export class ShearComponent implements OnInit {
     private points: InputDesignPointsService,
     public helper: DataHelperModule,
     private basic: InputBasicInformationService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private ui_state: UIStateService,
   ) { }
 
   ngOnInit() {
@@ -54,6 +56,16 @@ export class ShearComponent implements OnInit {
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: (this.save.isManual()) ? 2 : 3,
+        change: (evt, ui) => {
+          this.saveData();
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            const rowData = this.shear.getSaveData()[rowIndx];
+            this.ui_state.save_ui_row_state(rowData, "/shear", rowIndx);
+          }
+        }
       };
       this.option_list.push(op);
     }
@@ -65,6 +77,10 @@ export class ShearComponent implements OnInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
+
+    // 画面初期化時にオートセーブ
+    this.saveData();
+    this.ui_state.save_ui_state(this.shear.getSaveData(), "/shear");
   }
 
   private setTitle(isManual: boolean): void {

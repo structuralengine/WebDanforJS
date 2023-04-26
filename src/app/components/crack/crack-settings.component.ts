@@ -59,7 +59,13 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         freezeCols: (this.save.isManual()) ? 2 : 3,
         change: (evt, ui) => {
           this.saveData();
-          this.ui_state.save_ui_state(this.crack.getSaveData(), "/crack");
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            const rowData = this.crack.getSaveData()[rowIndx];
+            this.ui_state.save_ui_row_state(rowData, "/crack", rowIndx);
+          }
         }
       };
       this.option_list.push(op);
@@ -72,6 +78,10 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
 
   ngAfterViewInit() {
     this.activeButtons(0);
+
+    // 画面初期化時にオートセーブ
+    this.saveData();
+    this.ui_state.save_ui_state(this.crack.getSaveData(), "/crack");
   }
 
   private setTitle(isManual: boolean): void {
@@ -176,6 +186,9 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   public saveData(): void {
+
+    // UI上は部材グループごとにテーブルを表示しているが、内部形式は全部が連結した形なので
+    // ここで変換する
     const a = [];
     for (const g of this.table_datas) {
       for (const e of g) {

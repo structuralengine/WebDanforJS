@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular
 import { InputSectionForcesService } from './section-forces.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: 'app-section-forces',
@@ -12,6 +13,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   constructor(
     private force: InputSectionForcesService,
+    private ui_state: UIStateService,
   ) { }
 
   @ViewChild('grid') grid: SheetComponent;
@@ -59,6 +61,17 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
           this.loadData(dataV + this.ROWS_COUNT);
           this.grid.refreshDataAndView();
         }
+      },
+      change: (evt, ui) => {
+        // オートセーブ機能
+        this.saveData();
+
+        // オートセーブ機能 > 行
+        for (const property of ui.updateList) {
+          const { rowIndx } = property;
+          const rowData = this.force.getSaveData()[rowIndx];
+          this.ui_state.save_ui_row_state(rowData, "/force", rowIndx);
+        }
       }
     };
 
@@ -72,6 +85,10 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       rowIndx: 0,
       colIndx: 0,
     });
+
+    // 画面初期化時にオートセーブ
+    this.saveData();
+    this.ui_state.save_ui_state(this.force.getSaveData(), "/force");
   }
 
   // 指定行row まで、曲げモーメント入力データを読み取る

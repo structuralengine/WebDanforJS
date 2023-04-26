@@ -5,6 +5,7 @@ import { SaveDataService } from 'src/app/providers/save-data.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
 import { TranslateService } from "@ngx-translate/core";
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: 'app-steels',
@@ -28,7 +29,8 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
     private steel: InputSteelsService,
     private save: SaveDataService,
     private points: InputDesignPointsService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private ui_state: UIStateService,
   ) { }
 
   ngOnInit() {
@@ -50,6 +52,16 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: (this.save.isManual()) ? 4 : 5,
+        change: (evt, ui) => {
+          this.saveData();
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            const rowData = this.steel.getSaveData()[rowIndx];
+            this.ui_state.save_ui_row_state(rowData, "/steel", rowIndx);
+          }
+        }
       };
       this.option_list.push(op);
     }
@@ -61,6 +73,10 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
+
+    // 画面初期化時にオートセーブ
+    this.saveData();
+    this.ui_state.save_ui_state(this.steel.getSaveData(), "/steel");
   }
 
   private setTitle(isManual: boolean): void {

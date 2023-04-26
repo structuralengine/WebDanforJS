@@ -65,6 +65,12 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     this.table2_datas = basic.pickup_shear_force;
     this.table3_datas = basic.pickup_torsional_moment;
 
+    // オートセーブ機能 > 行
+    const autoSaveRow = (keyName: string, rowIndx: number) => {
+      const rowData = this.basic.getSaveData()[keyName][rowIndx];
+      this.ui_state.save_ui_row_state(rowData, `/basic/${keyName}`, rowIndx);
+    };
+
     this.options1 = {
       height: 340,
       showTop: false,
@@ -76,9 +82,12 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       dataModel: { data: this.table1_datas },
       change: (evt, ui) => {
         this.saveData();
-        // 部分オートセーブ
-        const basic = this.basic.getSaveData();
-        this.ui_state.save_ui_state(basic, "/basic");
+
+        // オートセーブ機能 > 行
+        for (const property of ui.updateList) {
+          const { rowIndx } = property;
+          autoSaveRow('pickup_moment', rowIndx);
+        }
       },
     };
 
@@ -93,9 +102,12 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       dataModel: { data: this.table2_datas },
       change: (evt, ui) => {
         this.saveData();
-        // 部分オートセーブ
-        const basic = this.basic.getSaveData();
-        this.ui_state.save_ui_state(basic, "/basic");
+
+        // オートセーブ機能 > 行
+        for (const property of ui.updateList) {
+          const { rowIndx } = property;
+          autoSaveRow('pickup_shear_force', rowIndx);
+        }
       },
     };
 
@@ -110,11 +122,20 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       dataModel: { data: this.table3_datas },
       change: (evt, ui) => {
         this.saveData();
-        // 部分オートセーブ
-        const basic = this.basic.getSaveData();
-        this.ui_state.save_ui_state(basic, "/basic");
+
+        // オートセーブ機能 > 行
+        for (const property of ui.updateList) {
+          const { rowIndx } = property;
+          autoSaveRow('pickup_torsional_moment', rowIndx);
+        }
       },
     };
+  }
+
+  ngAfterViewInit() {
+    // 画面初期化時にオートセーブ
+    this.saveData();
+    this.ui_state.save_ui_state(this.basic.getSaveData(), "/basic");
   }
 
   private setTitle(isManual: boolean): void {
@@ -162,8 +183,10 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
 
     const basic = this.basic.set_specification1(i);
 
-    // 部分オートセーブ
-    this.ui_state.save_ui_state(basic, "/basic");
+    // オートセーブ機能 > オブジェクト
+    // ラジオボタンの場合、同じnameの値をすべて同時に更新する
+    const rowData = basic['specification1_list'];
+    this.ui_state.save_ui_state(rowData, `/basic/specification1_list`);
 
     this.specification1_list = basic.specification1_list; // 適用
     this.specification2_list = basic.specification2_list; // 仕様
@@ -191,7 +214,9 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
 
     const basic = this.basic.getSaveData();
 
-    // 部分オートセーブ
-    this.ui_state.save_ui_state(basic, "/basic");
+    // オートセーブ機能 > オブジェクト
+    // ラジオボタンの場合、同じnameの値をすべて同時に更新する
+    const rowData = basic['specification2_list'];
+    this.ui_state.save_ui_state(rowData, `/basic/specification2_list`);
   }
 }

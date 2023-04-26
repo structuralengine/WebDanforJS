@@ -7,6 +7,7 @@ import pq from 'pqgrid';
 import { AppComponent } from 'src/app/app.component';
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import { TranslateService } from "@ngx-translate/core";
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: 'app-fatigues',
@@ -34,7 +35,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     private fatigues: InputFatiguesService,
     private points: InputDesignPointsService,
     private save: SaveDataService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private ui_state: UIStateService,
   ) { }
 
   ngOnInit() {
@@ -62,6 +64,16 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: (this.save.isManual()) ? 4 : 5,
+        change: (evt, ui) => {
+          this.saveData();
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            const rowData = this.fatigues.getSaveData()['fatigue_list'][rowIndx];
+            this.ui_state.save_ui_row_state(rowData, "/fatigues/fatigue_list", rowIndx);
+          }
+        },
       };
       this.option_list.push(op);
     }
@@ -73,6 +85,10 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
+
+    // 画面初期化時にオートセーブ
+    this.saveData();
+    this.ui_state.save_ui_state(this.fatigues.getSaveData(), "/fatigues");
   }
 
   private setTitle(isManual: boolean): void {
@@ -253,6 +269,11 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     }
+  }
+
+  public changeServiceLife(name: string) {
+    this.saveData();
+    this.ui_state.save_ui_state(this.fatigues.getSaveData()[name], `/fatigues/${name}`);
   }
 
 }

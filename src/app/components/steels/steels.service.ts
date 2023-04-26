@@ -222,31 +222,33 @@ export class InputSteelsService {
       const column1 = table_datas[i];
       const column2 = table_datas[i + 1];
 
+      // realtime databaseで取り扱う場合、値が undefined のときエラーになる
+      // 値がないなら null をセットする必要がある
       const b = this.default_steels(column1.index);
       b.m_no = column1.m_no;
-      b.g_name = column1.g_name;
+      b.g_name = column1.g_name ?? null;
       b.position = column1.position;
       b.p_name = column1.p_name;
       b.b = column1.bh;
       b.h = column2.bh;
 
-      b['I'].title = column1.design_point_id;
-      b['I'].upper_cover =  column1.upper_left_cover;
-      b['I'].upper_width =  column1.upper_left_width;
-      b['I'].upper_thickness =  column1.upper_left_thickness;
-      b['I'].web_thickness =  column1.web_thickness;
-      b['I'].web_height =  column1.web_height;
-      b['I'].lower_width =  column1.lower_right_width;
-      b['I'].lower_thickness =  column1.lower_right_thickness;
+      b['I'].title = column1.design_point_id ?? null;
+      b['I'].upper_cover = column1.upper_left_cover ?? null;
+      b['I'].upper_width = column1.upper_left_width ?? null;
+      b['I'].upper_thickness = column1.upper_left_thickness ?? null;
+      b['I'].web_thickness = column1.web_thickness ?? null;
+      b['I'].web_height = column1.web_height ?? null;
+      b['I'].lower_width = column1.lower_right_width ?? null;
+      b['I'].lower_thickness = column1.lower_right_thickness ?? null;
 
-      b['H'].title = column2.design_point_id;
-      b['H'].left_cover =  column2.upper_left_cover;
-      b['H'].left_width =  column2.upper_left_width;
-      b['H'].left_thickness =  column2.upper_left_thickness;
-      b['H'].web_thickness =  column2.web_thickness;
-      b['H'].web_height =  column2.web_height;
-      b['H'].right_width =  column2.lower_right_width;
-      b['H'].right_thickness =  column2.lower_right_thickness;
+      b['H'].title = column2.design_point_id ?? null;
+      b['H'].left_cover = column2.upper_left_cover ?? null;
+      b['H'].left_width = column2.upper_left_width ?? null;
+      b['H'].left_thickness = column2.upper_left_thickness ?? null;
+      b['H'].web_thickness = column2.web_thickness ?? null;
+      b['H'].web_height = column2.web_height ?? null;
+      b['H'].right_width = column2.lower_right_width ?? null;
+      b['H'].right_thickness = column2.lower_right_thickness ?? null;
 
       this.steel_list.push(b);
     }

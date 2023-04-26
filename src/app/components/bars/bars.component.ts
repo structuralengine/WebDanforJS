@@ -78,7 +78,13 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
           // テーブルのデータをUIデータにセット
           this.saveData();
-          this.ui_state.save_ui_state(this.bars.getSaveData(), "/bar");
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            const rowData = this.bars.getSaveData()[rowIndx];
+            this.ui_state.save_ui_row_state(rowData, "/bar", rowIndx);
+          }
         }
       };
       this.option_list.push(op);
@@ -92,6 +98,10 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
+
+    // 画面初期化時にオートセーブ
+    this.saveData();
+    this.ui_state.save_ui_state(this.bars.getSaveData(), "/bar");
   }
 
   private setTitle(isManual: boolean): void {

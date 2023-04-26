@@ -5,6 +5,8 @@ import { TranslateService } from "@ngx-translate/core";
 import { SaveDataService } from "./save-data.service";
 import { DataHelperModule } from "./data-helper.module";
 import { Observable } from 'rxjs';
+import { InputMembersService } from '../components/members/members.service';
+import { InputDesignPointsService } from "../components/design-points/design-points.service";
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +26,10 @@ export class UIStateService {
     private ui_db: AngularFireDatabase,
     private helper: DataHelperModule,
     private translate: TranslateService,
-    private save: SaveDataService
-  ){}
+    private save: SaveDataService,
+    private members: InputMembersService,
+    private points: InputDesignPointsService,
+  ) { }
 
   public init_ui_state(_app_id:string, _restore_callback)
   {
@@ -56,6 +60,37 @@ export class UIStateService {
     if(null === ui_data)
       ui_data = this.save.getInputJson();
 
+    // realtime database
+    if ("" == this.my_login_uid) {
+      return;
+    }
+
+    const refKey = `${this.key_prefix}_UI_DATA_n${key}`;
+
+    console.log("SAVE UI_DATA: ", refKey, ui_data);
+
+    // 近い将来uidでなくグループID的なものになりそう
+    this.ui_db.database.ref(refKey).set(ui_data).then(() => {
+      console.log(`更新が完了: ${refKey}`);
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  // realtime databaseに「行」データを保存する
+  public save_ui_row_state(rowData: any = null, key: string = "", rowIndx: number) {
+    // rowIndxが未指定のときは処理を中断
+    if (rowIndx == null) {
+      console.log('rowIndxが未指定');
+      return;
+    }
+
+    // keyが未指定のときは処理を中断
+    if (key == '') {
+      console.log('keyが未指定');
+      return;
+    }
+
     // ローカル保存(今はやってない)
     //localStorage.setItem("AutoSaved", ui_data);
 
@@ -63,18 +98,26 @@ export class UIStateService {
     if("" == this.my_login_uid)
       return;
 
-    key = this.key_prefix + "_UI_DATA_n" + key;
+    const refKey = `${this.key_prefix}_UI_DATA_n${key}`;
 
-    console.log("SAVE UI_DATA key: ", key);
-    console.log("SAVE UI_DATA: ", ui_data);
+    console.log("SAVE ROW_DATA: ", refKey, rowData);
 
-    // 近い将来uidでなくグループID的なものになりそう
-    this.ui_db.database.ref(key).set(ui_data);
+    this.setItem(`${refKey}/${rowIndx}`, rowData);
   }
 
-  private _restore_ui_data(ui_data: any, _file_name: string): boolean
-  {
-    if(null === ui_data)
+  // Realtime Database上でキーを指定してセット
+  private setItem(key: string, newData: any) {
+    const ref = this.ui_db.database.ref(key);
+
+    ref.set(newData).then(() => {
+      console.log(`行の更新が完了: ${key}`);
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  private _restore_ui_data(ui_data: any, _file_name: string): boolean {
+    if (null === ui_data)
       return false;
 
     this.file_name = (null===_file_name?"":_file_name);

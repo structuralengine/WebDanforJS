@@ -5,6 +5,7 @@ import pq from 'pqgrid';
 import { InputMembersService } from '../members/members.service';
 import { visitAll } from '@angular/compiler';
 import { TranslateService } from "@ngx-translate/core";
+import { UIStateService } from "src/app/providers/ui-state.service";
 
 @Component({
   selector: 'app-safety-factors-material-strengths',
@@ -62,7 +63,8 @@ implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private members: InputMembersService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private ui_state: UIStateService,
   ) { }
 
   ngOnInit() {
@@ -173,7 +175,22 @@ implements OnInit, OnDestroy, AfterViewInit {
       // 杭の施工条件
       this.pile_factor_list.push(safety.pile_factor[id]);
 
+      // 現在選択中のグループID
+      const groupIdForRowData = (i) => {
+        const group = this.groupe_list[i];
+        const first = group[0];
+        const id = first.g_id;
+        return id;
+      };
+
+      // オートセーブ機能 > 行
+      const autoSaveRow = (keyName: string, rowIndx: number, groupId: string) => {
+        const rowData = this.safety.getSaveData()[keyName][groupId][rowIndx];
+        this.ui_state.save_ui_row_state(rowData, `/safety/${keyName}/${[groupId]}`, rowIndx);
+      };
+
       // グリッドの設定
+      // 安全係数
       this.option1_list.push({
         width: 1100,
         height: 280,
@@ -185,7 +202,20 @@ implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders1,
         dataModel: { data: this.table1_datas[i] },
         freezeCols: 1,
+        change: (evt, ui) => {
+          this.saveData();
+
+          const groupId = groupIdForRowData(i);
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            autoSaveRow('safety_factor', rowIndx, groupId);
+          }
+        },
       });
+
+      // 鉄筋材料強度
       this.option2_list.push({
         width: 550,
         height: 200,
@@ -197,7 +227,20 @@ implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders2,
         dataModel: { data: this.table2_datas[i] },
         freezeCols: 1,
+        change: (evt, ui) => {
+          this.saveData();
+
+          const groupId = groupIdForRowData(i);
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            autoSaveRow('material_bar', rowIndx, groupId);
+          }
+        },
       });
+
+      // コンクリート材料強度
       this.option3_list.push({
         width: 550,
         height: 105,
@@ -209,7 +252,20 @@ implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders3,
         dataModel: { data: this.table3_datas[i] },
         freezeCols: 1,
+        change: (evt, ui) => {
+          this.saveData();
+
+          const groupId = groupIdForRowData(i);
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            autoSaveRow('material_concrete', rowIndx, groupId);
+          }
+        },
       });
+
+      // 鉄骨 - 安全係数
       this.option4_list.push({
         width: 410,
         height: 205,
@@ -221,7 +277,20 @@ implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders4,
         dataModel: { data: this.table4_datas[i] },
         freezeCols: 1,
+        change: (evt, ui) => {
+          this.saveData();
+
+          const groupId = groupIdForRowData(i);
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            autoSaveRow('safety_factor', rowIndx, groupId);
+          }
+        },
       });
+
+      // 鉄骨材料強度
       this.option5_list.push({
         width: 570,
         height: 140,
@@ -233,6 +302,17 @@ implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders5,
         dataModel: { data: this.table5_datas[i] },
         freezeCols: 1,
+        change: (evt, ui) => {
+          this.saveData();
+
+          const groupId = groupIdForRowData(i);
+
+          // オートセーブ機能 > 行
+          for (const property of ui.updateList) {
+            const { rowIndx } = property;
+            autoSaveRow('material_steel', rowIndx, groupId);
+          }
+        },
       });
     }
 
@@ -248,6 +328,10 @@ implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
+
+    // 画面初期化時にオートセーブ
+    this.saveData();
+    this.ui_state.save_ui_state(this.safety.getSaveData(), "/safety");
   }
 
   private setTitle(): void {
