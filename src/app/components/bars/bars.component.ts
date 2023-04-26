@@ -237,7 +237,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'tanγ+tanβ', dataType: 'float', dataIndx: 'tan', sortable: false, width: 85, nodrag: true,
       },
       {
-        title: this.translate.instant("bars."),
+        title: this.translate.instant("bars.rebar_fo"),
         align: 'center', colModel: [
           {
             title: this.translate.instant("bars.dia"),
@@ -259,7 +259,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         nodrag: true,
       },
       {
-        title: this.translate.instant("bars."),
+        title: this.translate.instant("bars.process"),
         align: 'center', dataType: 'bool', dataIndx: 'enable', type: 'checkbox', sortable: false, width: 40, nodrag: true,
       },
     );

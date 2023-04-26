@@ -257,6 +257,7 @@
         "twist":"Twist",
         "member":"Member",
         "print":"Calculation printing",
+        "preparing":"Printing...",
         "p_login":"Please login"
     },
     "section-force-list":{

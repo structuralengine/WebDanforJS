@@ -13,7 +13,8 @@ export class InputDesignPointsService {
   // { index, m_no, p_id, position, p_name, isMyCalc, isVyCalc, isMzCalc, isVzCalc, isMtCalc, La },
 
   constructor(
-    private members: InputMembersService) {
+    private members: InputMembersService,
+    private helper: DataHelperModule) {
     this.clear();
   }
 
@@ -81,24 +82,6 @@ export class InputDesignPointsService {
     }
   }
 
-  // グループNoでソートする
-  private getSortedGroupeList(isManual = false): any[] {
-    // 一時リスト
-    const temp_list = [];
-    for (const groupe of this.getGroupeList(isManual)) {
-      temp_list[groupe[0].g_no * 10000] = groupe;
-    }
-
-    const sorted_list = temp_list.filter(x => Array.isArray(x)).map(x => x);
-
-    // console.log('sorted_list', sorted_list);
-    // for (const groupe of sorted_list) {
-    //   console.log(groupe[0].g_no, groupe[0].g_name);
-    // }
-
-    return sorted_list;
-  }
-
   public getTableColumns(isManual = false): any[] {
     const sorted_list = this.getSortedGroupeList(isManual);
 
@@ -136,7 +119,7 @@ export class InputDesignPointsService {
   //    { index, m_no, g_name, position, p_name, isMyCalc, isVyCalc, isMzCalc, isVzCalc, isMtCalc, La },
   //    ...
   //   }, ...
-  public getGroupeList(isManual = false): any[] {
+  public getSortedGroupeList(isManual = false): any[] {
 
     const groupe_list: any[] = this.members.getGroupeList();
 
