@@ -63,19 +63,20 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         }
       },
       change: (evt, ui) => {
+
         // オートセーブ機能
         this.saveData();
+        this.ui_state.save_ui_state(this.force.getSaveData(), "/force");
 
         // オートセーブ機能 > 行
-        for (const property of ui.updateList) {
-          const { rowIndx } = property;
-          const rowData = this.force.getSaveData()[rowIndx];
-          this.ui_state.save_ui_row_state(rowData, "/force", rowIndx);
-        }
+        // ロジックがまだ不十分と思えたので行ごとのオートセーブはいま無効にしている
+        //for (const property of ui.updateList) {
+        //  const { rowIndx } = property;
+        //  const rowData = this.force.getSaveData()[rowIndx];
+        //  this.ui_state.save_ui_row_state(rowData, "/force", rowIndx);
+        //}
       }
     };
-
-
   }
 
   ngAfterViewInit() {

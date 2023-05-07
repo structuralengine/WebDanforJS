@@ -78,13 +78,16 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
           // テーブルのデータをUIデータにセット
           this.saveData();
+          this.ui_state.save_ui_state(this.bars.getSaveData(), "/bar");
 
           // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            const rowData = this.bars.getSaveData()[rowIndx];
-            this.ui_state.save_ui_row_state(rowData, "/bar", rowIndx);
-          }
+          // ロジックが不完全なのでいったん無効とする
+          // UI画面上の行と内部管理上の行の対応を取る必要あり.
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  const rowData = this.bars.getSaveData()[rowIndx];
+          //  this.ui_state.save_ui_row_state(rowData, "/bar", rowIndx);
+          //}
         }
       };
       this.option_list.push(op);

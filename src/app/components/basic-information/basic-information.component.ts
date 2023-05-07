@@ -66,9 +66,14 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     this.table3_datas = basic.pickup_torsional_moment;
 
     // オートセーブ機能 > 行
-    const autoSaveRow = (keyName: string, rowIndx: number) => {
-      const rowData = this.basic.getSaveData()[keyName][rowIndx];
-      this.ui_state.save_ui_row_state(rowData, `/basic/${keyName}`, rowIndx);
+    // ロジックが甘いところがあり行ごとのオートセーブは無効化している
+    //const autoSaveRow = (keyName: string, rowIndx: number) => {
+    //  const rowData = this.basic.getSaveData()[keyName][rowIndx];
+    //  this.ui_state.save_ui_row_state(rowData, `/basic/${keyName}`, rowIndx);
+    //};
+
+    const autoSaveTable = (keyName: string) => {
+      this.ui_state.save_ui_state(this.basic.getSaveData()[keyName], `/basic/${keyName}`);
     };
 
     this.options1 = {
@@ -82,12 +87,14 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       dataModel: { data: this.table1_datas },
       change: (evt, ui) => {
         this.saveData();
+        autoSaveTable('pickup_moment');
 
         // オートセーブ機能 > 行
-        for (const property of ui.updateList) {
-          const { rowIndx } = property;
-          autoSaveRow('pickup_moment', rowIndx);
-        }
+        // ロジックが甘いところがあり行ごとのオートセーブは無効化している
+        //for (const property of ui.updateList) {
+        //  const { rowIndx } = property;
+        //  autoSaveRow('pickup_moment', rowIndx);
+        //}
       },
     };
 
@@ -102,12 +109,14 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       dataModel: { data: this.table2_datas },
       change: (evt, ui) => {
         this.saveData();
+        autoSaveTable('pickup_shear_force');
 
         // オートセーブ機能 > 行
-        for (const property of ui.updateList) {
-          const { rowIndx } = property;
-          autoSaveRow('pickup_shear_force', rowIndx);
-        }
+        // ロジックが甘いところがあり行ごとのオートセーブは無効化している
+        //for (const property of ui.updateList) {
+        //  const { rowIndx } = property;
+        //  autoSaveRow('pickup_shear_force', rowIndx);
+        //}
       },
     };
 
@@ -122,12 +131,14 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       dataModel: { data: this.table3_datas },
       change: (evt, ui) => {
         this.saveData();
+        autoSaveTable('pickup_torsional_moment');
 
         // オートセーブ機能 > 行
-        for (const property of ui.updateList) {
-          const { rowIndx } = property;
-          autoSaveRow('pickup_torsional_moment', rowIndx);
-        }
+        // ロジックが甘いところがあり行ごとのオートセーブは無効化している
+        //for (const property of ui.updateList) {
+        //  const { rowIndx } = property;
+        //  autoSaveRow('pickup_torsional_moment', rowIndx);
+        //}
       },
     };
   }

@@ -59,13 +59,14 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         freezeCols: (this.save.isManual()) ? 2 : 3,
         change: (evt, ui) => {
           this.saveData();
+          this.ui_state.save_ui_state(this.crack.getSaveData(), "/crack");
 
           // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            const rowData = this.crack.getSaveData()[rowIndx];
-            this.ui_state.save_ui_row_state(rowData, "/crack", rowIndx);
-          }
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  const rowData = this.crack.getSaveData()[rowIndx];
+          //  this.ui_state.save_ui_row_state(rowData, "/crack", rowIndx);
+          //}
         }
       };
       this.option_list.push(op);

@@ -81,13 +81,14 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           // 他のテーブルデータの外部キー参照違反を防ぐため、
           // 今のところ部材の変更時はすべてのデータを保存している
           this.saveData();
+          this.ui_state.save_ui_state(this.points.getSaveData(), "/points");
 
           // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            const rowData = this.points.getSaveData()[rowIndx];
-            this.ui_state.save_ui_row_state(rowData, "/points", rowIndx);
-          }
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  const rowData = this.points.getSaveData()[rowIndx];
+          //  this.ui_state.save_ui_row_state(rowData, "/points", rowIndx);
+          //}
 
           // 何か変更があったら判定する ----------
           let flg = false;

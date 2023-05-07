@@ -24,6 +24,7 @@ export class ShearComponent implements OnInit {
   private columnHeaders: object[] = new Array();
 
   public table_datas: any[];
+
   // タブのヘッダ名
   public groupe_name: string[];
 
@@ -58,13 +59,15 @@ export class ShearComponent implements OnInit {
         freezeCols: (this.save.isManual()) ? 2 : 3,
         change: (evt, ui) => {
           this.saveData();
+          this.ui_state.save_ui_state(this.shear.getSaveData(), "/shear");
 
           // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            const rowData = this.shear.getSaveData()[rowIndx];
-            this.ui_state.save_ui_row_state(rowData, "/shear", rowIndx);
-          }
+          // 行ごとのオートセーブはいま無効にしている. まだデータ構造とロジックの検証が必要
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  const rowData = this.shear.getSaveData()[rowIndx];
+          //  this.ui_state.save_ui_row_state(rowData, "/shear", rowIndx);
+          //}
         }
       };
       this.option_list.push(op);

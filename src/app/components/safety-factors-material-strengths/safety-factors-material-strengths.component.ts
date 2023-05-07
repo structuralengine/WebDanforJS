@@ -176,17 +176,21 @@ implements OnInit, OnDestroy, AfterViewInit {
       this.pile_factor_list.push(safety.pile_factor[id]);
 
       // 現在選択中のグループID
-      const groupIdForRowData = (i) => {
-        const group = this.groupe_list[i];
-        const first = group[0];
-        const id = first.g_id;
-        return id;
-      };
+      //const groupIdForRowData = (i) => {
+      //  const group = this.groupe_list[i];
+      //  const first = group[0];
+      //  const id = first.g_id;
+      //  return id;
+      //};
 
       // オートセーブ機能 > 行
-      const autoSaveRow = (keyName: string, rowIndx: number, groupId: string) => {
-        const rowData = this.safety.getSaveData()[keyName][groupId][rowIndx];
-        this.ui_state.save_ui_row_state(rowData, `/safety/${keyName}/${[groupId]}`, rowIndx);
+      //const autoSaveRow = (keyName: string, rowIndx: number, groupId: string) => {
+      //  const rowData = this.safety.getSaveData()[keyName][groupId][rowIndx];
+      //  this.ui_state.save_ui_row_state(rowData, `/safety/${keyName}/${[groupId]}`, rowIndx);
+      //};
+
+      const autoSaveTable = (keyName: string) => {
+        this.ui_state.save_ui_state(this.safety.getSaveData()[keyName], `/safety/${keyName}`);
       };
 
       // グリッドの設定
@@ -204,14 +208,15 @@ implements OnInit, OnDestroy, AfterViewInit {
         freezeCols: 1,
         change: (evt, ui) => {
           this.saveData();
+          autoSaveTable('safety_factor');
 
-          const groupId = groupIdForRowData(i);
-
-          // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            autoSaveRow('safety_factor', rowIndx, groupId);
-          }
+          //const groupId = groupIdForRowData(i);
+          //
+          //// オートセーブ機能 > 行
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  autoSaveRow('safety_factor', rowIndx, groupId);
+          //}
         },
       });
 
@@ -229,14 +234,15 @@ implements OnInit, OnDestroy, AfterViewInit {
         freezeCols: 1,
         change: (evt, ui) => {
           this.saveData();
+          autoSaveTable('material_bar');
 
-          const groupId = groupIdForRowData(i);
-
-          // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            autoSaveRow('material_bar', rowIndx, groupId);
-          }
+          //const groupId = groupIdForRowData(i);
+          //
+          //// オートセーブ機能 > 行
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  autoSaveRow('material_bar', rowIndx, groupId);
+          //}
         },
       });
 
@@ -254,14 +260,15 @@ implements OnInit, OnDestroy, AfterViewInit {
         freezeCols: 1,
         change: (evt, ui) => {
           this.saveData();
+          autoSaveTable('material_concrete');
 
-          const groupId = groupIdForRowData(i);
-
-          // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            autoSaveRow('material_concrete', rowIndx, groupId);
-          }
+          //const groupId = groupIdForRowData(i);
+          //
+          //// オートセーブ機能 > 行
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  autoSaveRow('material_concrete', rowIndx, groupId);
+          //}
         },
       });
 
@@ -279,14 +286,15 @@ implements OnInit, OnDestroy, AfterViewInit {
         freezeCols: 1,
         change: (evt, ui) => {
           this.saveData();
+          autoSaveTable('safety_factor');
 
-          const groupId = groupIdForRowData(i);
-
-          // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            autoSaveRow('safety_factor', rowIndx, groupId);
-          }
+          //const groupId = groupIdForRowData(i);
+          //
+          //// オートセーブ機能 > 行
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  autoSaveRow('safety_factor', rowIndx, groupId);
+          //}
         },
       });
 
@@ -304,14 +312,15 @@ implements OnInit, OnDestroy, AfterViewInit {
         freezeCols: 1,
         change: (evt, ui) => {
           this.saveData();
+          autoSaveTable('material_steel');
 
-          const groupId = groupIdForRowData(i);
-
-          // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            autoSaveRow('material_steel', rowIndx, groupId);
-          }
+          //const groupId = groupIdForRowData(i);
+          //
+          //// オートセーブ機能 > 行
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  autoSaveRow('material_steel', rowIndx, groupId);
+          //}
         },
       });
     }
