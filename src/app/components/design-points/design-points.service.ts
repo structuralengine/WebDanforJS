@@ -123,6 +123,8 @@ export class InputDesignPointsService {
 
     const groupe_list: any[] = this.members.getGroupeList();
 
+    console.log("GROUP LIST: ", groupe_list);
+
     for (const groupe of groupe_list) {
 
       for (const member of groupe) {

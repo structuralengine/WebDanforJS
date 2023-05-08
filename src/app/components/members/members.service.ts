@@ -326,6 +326,8 @@ export class InputMembersService {
     // 全てのグループ番号をリストアップする
     const id_list: string[] = this.getGroupes();
 
+    console.log("GROUP ID LIST: ", id_list);
+
     // グループ番号を持つ部材のリストを返す
     const result = new Array();
     for (const id of id_list) {
@@ -348,13 +350,20 @@ export class InputMembersService {
     const temp_list = [];
 
     for (const m of this.member_list) {
+
+      console.log("MEMBER: ", m);
+
       if(this.is_invalid_g_id(m))
         continue;
+
+      console.log("VALID");
 
       if (temp_list.find((value) => value === m.g_no) == null) {
         temp_list.push(m.g_no);
       }
     }
+
+    console.log("GROUP before sort: ", temp_list);
 
     temp_list.sort(function (a, b) {
       return a - b;
