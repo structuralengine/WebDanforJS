@@ -258,7 +258,10 @@ export class InputMembersService {
   private is_invalid_g_id(columns):boolean {
     if(!('g_id' in columns) || columns.g_id == null
       || columns.g_id === null || columns.g_id.trim().length === 0)
+    {
+      console.log("INVALID!");
       return true;
+    }
 
     return false;
   }
