@@ -257,45 +257,27 @@ export class InputMembersService {
     return false;
   }
 
-  private is_invalid_g_id(columns, isManual:boolean=false):boolean {
-    if(!('g_id' in columns)
-      || columns.g_id == null
-      || columns.g_id === null
-      || columns.g_id.trim().length === 0
-      || (isManual && columns.g_id == 'blank'))
-      return true;
-
-    return false;
-  }
-
   // 有効なデータ存在したら true
   private isEnable(columns) {
 
-    if(this.is_invalid_g_id(columns))
-      return false;
+    if(columns.g_name !== null && columns.g_name !== undefined && columns.g_name.trim().length > 0)
+      return true;
 
-    //if(columns.g_name !== null && columns.g_name !== undefined && columns.g_name.trim().length > 0)
-    //  return true;
-
-    /*
-      if(columns.shape !== null && columns.shape !== undefined){
+    if(columns.shape !== null && columns.shape !== undefined){
       return true;
-      }
-      if(columns.B !== null && columns.B !== undefined){
+    }
+    if(columns.B !== null && columns.B !== undefined){
       return true;
-      }
-      if(columns.H !== null && columns.H !== undefined){
+    }
+    if(columns.H !== null && columns.H !== undefined){
       return true;
-      }
-      if(columns.Bt !== null && columns.Bt !== undefined){
+    }
+    if(columns.Bt !== null && columns.Bt !== undefined){
       return true;
-      }
-      if(columns.t !== null && columns.t !== undefined){
+    }
+    if(columns.t !== null && columns.t !== undefined){
       return true;
-      }
-    */
-
-    return true;
+    }
   }
 
   public getGroupeName(i: number): string {
@@ -356,7 +338,11 @@ export class InputMembersService {
 
     for (const m of this.member_list) {
 
-      if(this.is_invalid_g_id(m, isManual))
+      if(!('g_id' in columns)
+        || columns.g_id == null
+        || columns.g_id === null
+        || columns.g_id.trim().length === 0
+        || (isManual && columns.g_id == 'blank'))
         continue;
 
       if (temp_list.find((value) => value === m.g_no) == null) {
