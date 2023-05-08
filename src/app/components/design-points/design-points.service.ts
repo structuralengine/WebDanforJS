@@ -152,6 +152,7 @@ export class InputDesignPointsService {
       }
     }
 
+    // コピー目的？
     return JSON.parse(
       JSON.stringify({
         temp: groupe_list
@@ -194,9 +195,16 @@ export class InputDesignPointsService {
     return group_name_list;
   }
 
+  public getGroupeName(i: number, isManual:boolean=false): string {
+    const sorted_list = this.getSortedGroupeList(isManual);
+    return sorted_list[i][0].g_name;
+  }
+
+  /*
   public getGroupeName(i: number): string {
     return this.getGroupe(i).g_name;
-  }
+    }
+  */
 
   public getGroupe(i: number): any {
     const sorted_list = this.getSortedGroupeList();
