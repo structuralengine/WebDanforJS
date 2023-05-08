@@ -42,7 +42,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
 
     this.setTitle(this.save.isManual());
 
-    this.table_datas = this.crack.getTableColumns();
+    this.table_datas = this.crack.getTableColumns(this.save.isManual());
 
     // グリッドの設定
     this.options = new Array();

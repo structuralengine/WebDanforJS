@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
+//import { SaveDataService } from 'src/app/providers/save-data.service';
 import { LanguagesService } from 'src/app/providers/languages.service';
 
 @Injectable({
@@ -24,7 +25,8 @@ export class InputMembersService {
 
   constructor(private translate: TranslateService,
               private helper: DataHelperModule,
-              private language: LanguagesService
+              private language: LanguagesService,
+              //private save: SaveDataService
              ) {
     this.clear();
 
@@ -255,19 +257,19 @@ export class InputMembersService {
     return false;
   }
 
-  private is_invalid_g_id(columns):boolean {
-    if(!('g_id' in columns) || columns.g_id == null
-      || columns.g_id === null || columns.g_id.trim().length === 0)
-    {
-      console.log("INVALID!");
+  private is_invalid_g_id(columns, isManual:boolean=false):boolean {
+    if(!('g_id' in columns)
+      || columns.g_id == null
+      || columns.g_id === null
+      || columns.g_id.trim().length === 0
+      || (isManual && columns.g_id == 'blank'))
       return true;
-    }
 
     return false;
   }
 
   // 有効なデータ存在したら true
-  public isEnable(columns) {
+  private isEnable(columns) {
 
     if(this.is_invalid_g_id(columns))
       return false;
@@ -325,9 +327,9 @@ export class InputMembersService {
   }
 
   // グループ別 部材情報{m_no, m_len, g_no, g_id, g_name, shape, B, H, Bt, t} の配列
-  public getGroupeList(): any[] {
+  public getGroupeList(isManual:boolean=false): any[] {
     // 全てのグループ番号をリストアップする
-    const id_list: string[] = this.getGroupes();
+    const id_list: string[] = this.getGroupes(isManual);
 
     console.log("GROUP ID LIST: ", id_list);
 
@@ -348,25 +350,19 @@ export class InputMembersService {
   }
 
   // グループNoでソートする
-  public getGroupes(): string[] {
+  public getGroupes(isManual:boolean=false): string[] {
 
     const temp_list = [];
 
     for (const m of this.member_list) {
 
-      console.log("MEMBER: ", m);
-
-      if(this.is_invalid_g_id(m))
+      if(this.is_invalid_g_id(m, isManual))
         continue;
-
-      console.log("VALID");
 
       if (temp_list.find((value) => value === m.g_no) == null) {
         temp_list.push(m.g_no);
       }
     }
-
-    console.log("GROUP before sort: ", temp_list);
 
     temp_list.sort(function (a, b) {
       return a - b;

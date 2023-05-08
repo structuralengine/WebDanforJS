@@ -119,11 +119,12 @@ export class InputDesignPointsService {
   //    { index, m_no, g_name, position, p_name, isMyCalc, isVyCalc, isMzCalc, isVzCalc, isMtCalc, La },
   //    ...
   //   }, ...
-  public getSortedGroupeList(isManual = false): any[] {
+  public getSortedGroupeList(isManual:boolean=false): any[] {
 
-    const groupe_list: any[] = this.members.getGroupeList();
+    const groupe_list: any[] = this.members.getGroupeList(isManual);
 
     console.log("GROUP LIST: ", groupe_list);
+    console.log("Manual mode: ", isManual);
 
     for (const groupe of groupe_list) {
 

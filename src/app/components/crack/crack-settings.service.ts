@@ -41,12 +41,12 @@ export class InputCrackSettingsService {
     };
   }
 
-  public getTableColumns(): any[] {
+  public getTableColumns(isManual:boolean=false): any[] {
 
     const table_datas: any[] = new Array();
 
     // グリッド用データの作成
-    const groupe_list = this.points.getSortedGroupeList(); // this.points.getGroupeList();
+    const groupe_list = this.points.getSortedGroupeList(isManual); // this.points.getGroupeList();
 
     console.log("Sorted group list: ", groupe_list);
 
