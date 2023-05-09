@@ -68,7 +68,8 @@ export class InputCrackSettingsService {
           data.b = member.B;
           data.h = member.H;
           data.position = pos.position;
-          data.g_name = pos.g_name;
+          //data.g_name = pos.g_name;
+          data.g_name = member.g_name;
           data.p_name = pos.p_name;
           data.g_id = member.g_id;
 
@@ -84,10 +85,12 @@ export class InputCrackSettingsService {
   public getTableColumn(index: any): any {
 
     let result = this.crack_list.find((value) => value.index === index);
+
     if (result == null) {
       result = this.default_crack(index);
       this.crack_list.push(result);
     }
+
     return result;
   }
 
@@ -202,8 +205,8 @@ export class InputCrackSettingsService {
     this.crack_list = crack;
   }
 
-  public getGroupeName(i: number): string {
-    return this.points.getGroupeName(i);
+  public getGroupeName(i: number, isManual:boolean=false): string {
+    return this.points.getGroupeName(i, isManual);
   }
 
 }

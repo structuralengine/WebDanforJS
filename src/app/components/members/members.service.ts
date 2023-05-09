@@ -338,11 +338,11 @@ export class InputMembersService {
 
     for (const m of this.member_list) {
 
-      if(!('g_id' in columns)
-        || columns.g_id == null
-        || columns.g_id === null
-        || columns.g_id.trim().length === 0
-        || (isManual && columns.g_id == 'blank'))
+      if(!('g_id' in m)
+        || m.g_id == null
+        || m.g_id === null
+        || m.g_id.trim().length === 0
+        || (isManual && m.g_id == 'blank'))
         continue;
 
       if (temp_list.find((value) => value === m.g_no) == null) {
