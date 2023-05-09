@@ -37,10 +37,13 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     private save: SaveDataService,
     private translate: TranslateService,
     private ui_state: UIStateService,
-  ) { }
+  ) {
+    console.log("FATIGUE COMPONENT, constructor");
+  }
 
   ngOnInit() {
 
+    console.log("FATIGUE COMPONENT, ngOnInit: ");
     const fatigues = this.fatigues.getSaveData();
 
     this.train_A_count = fatigues.train_A_count;
@@ -49,7 +52,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.setTitle(this.save.isManual());
 
-    this.table_datas = this.fatigues.getTableColumns();
+    this.table_datas = this.fatigues.getTableColumns(this.save.isManual());
 
     // グリッドの設定
     this.options = new Array();
@@ -66,13 +69,15 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         freezeCols: (this.save.isManual()) ? 4 : 5,
         change: (evt, ui) => {
           this.saveData();
+          this.ui_state.save_ui_state(this.fatigues.getSaveData()['fatigue_list'],
+                                      "/fatigues/fatigue_list");
 
           // オートセーブ機能 > 行
-          for (const property of ui.updateList) {
-            const { rowIndx } = property;
-            const rowData = this.fatigues.getSaveData()['fatigue_list'][rowIndx];
-            this.ui_state.save_ui_row_state(rowData, "/fatigues/fatigue_list", rowIndx);
-          }
+          //for (const property of ui.updateList) {
+          //  const { rowIndx } = property;
+          //  const rowData = this.fatigues.getSaveData()['fatigue_list'][rowIndx];
+          //  this.ui_state.save_ui_row_state(rowData, "/fatigues/fatigue_list", rowIndx);
+          //}
         },
       };
       this.option_list.push(op);
@@ -80,7 +85,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
-    this.groupe_name = this.points.getGroupNameDispList();
+    this.groupe_name = this.points.getGroupNameDispList(this.save.isManual());
   }
 
   ngAfterViewInit() {
@@ -88,7 +93,9 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // 画面初期化時にオートセーブ
     this.saveData();
+    console.log("IGIGIGIGIGIG");
     this.ui_state.save_ui_state(this.fatigues.getSaveData(), "/fatigues");
+    console.log("IGIGIGIGIGIG2");
   }
 
   private setTitle(isManual: boolean): void {

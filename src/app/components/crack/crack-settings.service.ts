@@ -68,7 +68,7 @@ export class InputCrackSettingsService {
           data.b = member.B;
           data.h = member.H;
           data.position = pos.position;
-          //data.g_name = pos.g_name;
+          //data.g_name = pos.g_name; // ?
           data.g_name = member.g_name;
           data.p_name = pos.p_name;
           data.g_id = member.g_id;

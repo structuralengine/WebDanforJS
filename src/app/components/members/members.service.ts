@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
-//import { SaveDataService } from 'src/app/providers/save-data.service';
 import { LanguagesService } from 'src/app/providers/languages.service';
 
 @Injectable({
@@ -25,8 +24,7 @@ export class InputMembersService {
 
   constructor(private translate: TranslateService,
               private helper: DataHelperModule,
-              private language: LanguagesService,
-              //private save: SaveDataService
+              private language: LanguagesService
              ) {
     this.clear();
 
@@ -313,7 +311,7 @@ export class InputMembersService {
     // 全てのグループ番号をリストアップする
     const id_list: string[] = this.getGroupes(isManual);
 
-    console.log("GROUP ID LIST: ", id_list);
+    //console.log("GROUP ID LIST: ", id_list);
 
     // グループ番号を持つ部材のリストを返す
     const result = new Array();
@@ -323,6 +321,8 @@ export class InputMembersService {
         item => item.g_id === id);
       result.push(members);
     }
+
+    //console.log("GROUP ID LIST result: ", result);
 
     return JSON.parse(
       JSON.stringify({

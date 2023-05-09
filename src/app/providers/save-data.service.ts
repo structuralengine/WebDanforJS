@@ -386,8 +386,6 @@ export class SaveDataService {
 
     if(this.isOlder('1.13.7', filetVer)) {
 
-      //console.log("translate!!");
-
       // 各国語の形状名を形状名キーに直す
       this.members.translateData_old_to_1_13_7();
       return;

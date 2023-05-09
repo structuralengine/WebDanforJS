@@ -20,15 +20,26 @@ export class InputFatiguesService {
     private points: InputDesignPointsService,
     private bars: InputBarsService
   ) {
+    console.log("FATIGUE SERVICE, BEFORE constructor", this);
     this.clear();
+    console.log("FATIGUE SERVICE, AFTER constructor", this);
   }
+
   public clear(): void {
+
+    console.log("FATIGUE SERVICE, BEFORE clear", this);
+
+    // ここでの数値型へのnull代入はなぜか効いていない
+    // なんで？？
     this.train_A_count = null; // A列車本数
     this.train_B_count = null; // B列車本数
     this.service_life = null; // 耐用年数
     this.reference_count = 2000000;
 
     this.fatigue_list = new Array();
+
+    // ↑でnullを代入した数値型のメンバ(train_A_countなど)がundefinedになっている
+    console.log("FATIGUE SERVICE, AFTER clear", this);
   }
 
   // 疲労情報
@@ -72,11 +83,11 @@ export class InputFatiguesService {
     return result;
   }
 
-  public getTableColumns(): any[] {
+  public getTableColumns(isManual:boolean=false): any[] {
     const table_datas: any[] = new Array();
 
     // グリッド用データの作成
-    const groupe_list = this.points.getSortedGroupeList(); // this.points.getGroupeList();
+    const groupe_list = this.points.getSortedGroupeList(isManual);
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];
       // 部材
@@ -306,11 +317,30 @@ export class InputFatiguesService {
 
       this.fatigue_list.push(f);
     }
+
+    console.log("FATIGUE SERVICE setTableColumns: ", this);
   }
 
   public setPickUpData() {}
 
   public getSaveData(): any {
+    console.log("FATIGUE, getSaveData");
+
+    // よくわからないが数値型のメンバがundefinedになってしまうことがあるので
+    // その場合はnullを代入する
+    // (そうしないとfirebaseの処理でエラーが出る)
+    if(undefined === this.train_A_count)
+      this.train_A_count=null;
+    if(undefined === this.train_B_count)
+      this.train_B_count=null;
+    if(undefined === this.service_life)
+      this.service_life=null;
+
+    console.log("TRAIN_A_COUNT:", this.train_A_count);
+    console.log("TRAIN_B_COUNT:", this.train_B_count);
+    console.log("SERVICE_LIFE:", this.service_life);
+    console.log("REF_CNT:", this.reference_count);
+
     return {
       fatigue_list: this.fatigue_list,
       train_A_count: this.train_A_count,

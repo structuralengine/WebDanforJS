@@ -67,11 +67,11 @@ export class UIStateService {
 
     const refKey = `${this.key_prefix}_UI_DATA_n${key}`;
 
-    console.log("SAVE UI_DATA: ", refKey, ui_data);
+    //console.log("SAVE UI_DATA: ", refKey, ui_data);
 
     // 近い将来uidでなくグループID的なものになりそう
     this.ui_db.database.ref(refKey).set(ui_data).then(() => {
-      console.log(`更新が完了: ${refKey}`);
+      //console.log(`更新が完了: ${refKey}`);
     }).catch((error) => {
       console.error(error);
     });

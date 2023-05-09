@@ -123,8 +123,8 @@ export class InputDesignPointsService {
 
     const groupe_list: any[] = this.members.getGroupeList(isManual);
 
-    console.log("GROUP LIST: ", groupe_list);
-    console.log("Manual mode: ", isManual);
+    //console.log("GROUP LIST: ", groupe_list);
+    //console.log("Manual mode: ", isManual);
 
     for (const groupe of groupe_list) {
 
@@ -176,8 +176,10 @@ export class InputDesignPointsService {
   }
 
   // 将来的にはキャッシュするべきなのでは？
-  public getGroupNameDispList(): string[] {
-    const gs = this.getSortedGroupeList();
+  public getGroupNameDispList(isManual:boolean=false): string[] {
+
+    const gs = this.getSortedGroupeList(isManual);
+
     var group_name_list = new Array();
 
     for (let i = 0; i < gs.length; i++) {

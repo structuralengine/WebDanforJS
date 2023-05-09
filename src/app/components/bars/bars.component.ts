@@ -42,7 +42,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.setTitle(this.save.isManual());
 
-    this.table_datas = this.bars.getTableColumns(); // UIデータからテーブルに表示する用のデータを作る
+    // UIデータからテーブルに表示する用のデータを作る
+    this.table_datas = this.bars.getTableColumns(this.save.isManual());
 
     // グリッドの設定
     this.option_list = new Array();
@@ -96,7 +97,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[0];
 
     // タブのタイトルとなる
-    this.groupe_name = this.points.getGroupNameDispList();
+    this.groupe_name = this.points.getGroupNameDispList(this.save.isManual());
   }
 
   ngAfterViewInit() {

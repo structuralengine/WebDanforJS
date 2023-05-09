@@ -202,12 +202,12 @@ export class InputBarsService {
     };
   }
 
-  public getTableColumns(): any[] {
+  public getTableColumns(isManual:boolean=false): any[] {
 
     const table_datas: any[] = new Array();
 
     // グリッド用データの作成
-    const groupe_list = this.points.getSortedGroupeList(); //this.points.getGroupeList();
+    const groupe_list = this.points.getSortedGroupeList(isManual);
 
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];
