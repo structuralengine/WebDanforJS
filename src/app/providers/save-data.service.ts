@@ -382,7 +382,7 @@ export class SaveDataService {
     const programVer: string = packageJson.version;
     let filetVer: string = '0.0.0';
     if('ver' in jsonData)
-      filetVer = jsonData['ver'];
+      filetVer = jsonData['ver'] as string;
 
     if(this.isOlder('1.13.7', filetVer)) {
 

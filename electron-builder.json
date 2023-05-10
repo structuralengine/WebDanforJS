@@ -31,8 +31,6 @@
   "win": {
     "icon": "dist/assets/icons",
     "publisherName": "MALME INC.",
-    "certificateFile": "C:/Users/81806/set/setting.pfx",
-    "certificatePassword": "1610701250",
     "target": "nsis",
     "asar": false
   },

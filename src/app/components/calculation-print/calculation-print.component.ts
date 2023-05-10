@@ -3,14 +3,14 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { InputCalclationPrintService } from './calculation-print.service';
 import { SaveDataService } from '../../providers/save-data.service';
 
-import { AngularFireAuth } from '@angular/fire/auth';
+import { Auth, getAuth } from "@angular/fire/auth";
 import { UserInfoService } from 'src/app/providers/user-info.service';
 import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { LanguagesService } from "../../providers/languages.service";
 
 import printJS from "print-js";
-import { ElectronService } from "ngx-electron";
+import { ElectronService } from 'src/app/providers/electron.service';
 import packageJson from '../../../../package.json';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment";
@@ -39,12 +39,14 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     private router: Router,
     private http: HttpClient,
     private user: UserInfoService,
-    public auth: AngularFireAuth,
+    public auth: Auth,
     public electronService: ElectronService,
     private translate: TranslateService,
     public language: LanguagesService,
     private helper: DataHelperModule
-  ) {}
+  ) {
+    this.auth = getAuth();
+  }
 
   ngOnInit() {
 
@@ -84,57 +86,56 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   // 計算開始
   onClick() {
 
-    this.auth.currentUser.then(user=>{
-      if(user === null){
-        this.helper.alert(this.translate.instant("calculation-print.p_login"));
-        return;
-      }
+    const user = this.auth.currentUser;
+    if(user === null){
+      this.helper.alert(this.translate.instant("calculation-print.p_login"));
+      return;
+    }
 
-      this.user.clear(user.uid);
+    this.user.clear(user.uid);
 
-      //console.log('印刷データ準備中...');
+    //console.log('印刷データ準備中...');
 
-      this.loading_enable();
+    this.loading_enable();
 
-      this.saveData();
-      var ui_data: any = this.save.getInputJson();
-      ui_data["lang"] = this.language.browserLang;
-      ui_data["uid"] = user.uid;
+    this.saveData();
+    var ui_data: any = this.save.getInputJson();
+    ui_data["lang"] = this.language.browserLang;
+    ui_data["uid"] = user.uid;
 
-      var column_data = new Array();
-      for(var i=0; this.table_datas.length>i; i++)
-        column_data.push({GroupName: this.table_datas[i].g_name,
-                          Checked: this.table_datas[i].calc_checked});
+    var column_data = new Array();
+    for(var i=0; this.table_datas.length>i; i++)
+      column_data.push({GroupName: this.table_datas[i].g_name,
+                        Checked: this.table_datas[i].calc_checked});
 
-      ui_data["member_group_selection"] = column_data;
+    ui_data["member_group_selection"] = column_data;
 
-      const url = environment.calcURL2; // サーバ側で集計もPDF生成もするバージョンのAzureFunction
+    const url = environment.calcURL; // サーバ側で集計もPDF生成もするバージョンのAzureFunction
 
-      this.http
-        .post(url, ui_data, {
-          headers: new HttpHeaders({
-            "Content-Type": "application/json",
-            "Accept": "*/*"
-          }),
-          responseType: "text"
-        })
-        .subscribe(
-          (response) => {
-            this.loading_disable();
-            this.showPDF(response.toString());
-          },
-          (err) => {
-            this.loading_disable();
-            console.log("Error response: ", err);
-            this.helper.alert(err['error']);
-          }
-        );
-    });
+    this.http
+      .post(url, ui_data, {
+        headers: new HttpHeaders({
+          "Content-Type": "application/json",
+          "Accept": "*/*"
+        }),
+        responseType: "text"
+      })
+      .subscribe(
+        (response) => {
+          this.loading_disable();
+          this.showPDF(response.toString());
+        },
+        (err) => {
+          this.loading_disable();
+          console.log("Error response: ", err);
+          this.helper.alert(err['error']);
+        }
+      );
   }
 
   private showPDF(base64: string) {
 
-    if (this.electronService.isElectronApp) {
+    if (this.electronService.isElectron) {
       // electron の場合
       const byteCharacters = atob(base64);
       let byteNumbers = new Array(byteCharacters.length);

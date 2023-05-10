@@ -57,7 +57,7 @@
     </div>
 
     <div class="login-area">
-      <div *ngIf="auth.user | async as user; else showLogin" class="userInfo">
+      <div *ngIf="auth.currentUser as user; else showLogin" class="userInfo">
         <div ngbDropdown>
           <a class="icon file" id="dropdownBasic1" class="menu-btn" ngbDropdownToggle onfocus="this.blur();"><i
               class="far fa-user-circle"></i>{{ user.displayName }}</a>

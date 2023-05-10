@@ -10,7 +10,9 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 import { AppRoutingModule } from "./app-routing.module";
 
-import { AngularFireModule } from "@angular/fire";
+import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 import { AppComponent } from "./app.component";
 
@@ -53,7 +55,7 @@ import { SheetComponent } from "./components/sheet/sheet.component";
 import { environment } from "src/environments/environment";
 
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
-import { ElectronService, NgxElectronModule } from "ngx-electron";
+import { ElectronService } from "./providers/electron.service";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { ChatComponent } from './components/chat/chat.component';
 import { ShearComponent } from './components/shear/shear.component';
@@ -62,78 +64,74 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
   new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    AppRoutingModule,
-    DragDropModule,
-    BrowserAnimationsModule,
-    NgbModule,
-    NgxPrintModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    DataHelperModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: httpLoaderFactory,
-        deps: [HttpClient],
-      },
-      defaultLanguage: "ja",
-    }),
-    NgxElectronModule
-  ],
-  declarations: [
-    AppComponent,
-    MenuComponent,
-    LoginDialogComponent,
-    WaitDialogComponent,
-    BasicInformationComponent,
-    MembersComponent,
-    DesignPointsComponent,
-    BarsComponent,
-    FatiguesComponent,
-    SafetyFactorsMaterialStrengthsComponent,
-    SectionForcesComponent,
-    CalculationPrintComponent,
-    BlankPageComponent,
-
-    SheetComponent,
-
-    SteelsComponent,
-    CrackSettingsComponent,
-    ChatComponent,
-    ShearComponent,
-  ],
-  entryComponents: [
-    LoginDialogComponent,
-    WaitDialogComponent,
-  ],
-  providers: [
-    UserInfoService,
-    UIStateService,
-    ConfigService,
-
-    InputBasicInformationService,
-    InputMembersService,
-    InputDesignPointsService,
-    InputBarsService,
-    InputSteelsService,
-    InputFatiguesService,
-    InputSafetyFactorsMaterialStrengthsService,
-    InputSectionForcesService,
-    InputCalclationPrintService,
-    SaveDataService,
-
-    // 計算結果コンポーネントで他のコンポーネントから使いまわされるものは
-    // declarations だけではなくココ(providers) にも宣言して
-    // 他のコンポーネントから機能の一部を使えるようにする
-
-    ElectronService
-  ],
-  bootstrap: [AppComponent],
+    imports: [
+        BrowserModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        AppRoutingModule,
+        DragDropModule,
+        BrowserAnimationsModule,
+        NgbModule,
+        NgxPrintModule,
+        provideFirebaseApp(() => initializeApp(environment.firebase)),
+        provideAuth(() => getAuth()),
+        provideFirestore(() => getFirestore()),
+        DataHelperModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: httpLoaderFactory,
+                deps: [HttpClient],
+            },
+            defaultLanguage: "ja",
+        }),
+    ],
+    declarations: [
+        AppComponent,
+        MenuComponent,
+        LoginDialogComponent,
+        WaitDialogComponent,
+        BasicInformationComponent,
+        MembersComponent,
+        DesignPointsComponent,
+        BarsComponent,
+        FatiguesComponent,
+        SafetyFactorsMaterialStrengthsComponent,
+        SectionForcesComponent,
+        CalculationPrintComponent,
+        BlankPageComponent,
+        SheetComponent,
+        SteelsComponent,
+        CrackSettingsComponent,
+        ChatComponent,
+        ShearComponent,
+    ],
+  //entryComponents: [
+  //  LoginDialogComponent,
+  //  WaitDialogComponent,
+  //],
+    providers: [
+        UserInfoService,
+      UIStateService,
+        ConfigService,
+        InputBasicInformationService,
+        InputMembersService,
+        InputDesignPointsService,
+        InputBarsService,
+        InputSteelsService,
+        InputFatiguesService,
+        InputSafetyFactorsMaterialStrengthsService,
+        InputSectionForcesService,
+        InputCalclationPrintService,
+        SaveDataService,
+        // 計算結果コンポーネントで他のコンポーネントから使いまわされるものは
+        // declarations だけではなくココ(providers) にも宣言して
+        // 他のコンポーネントから機能の一部を使えるようにする
+        ElectronService
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}
 

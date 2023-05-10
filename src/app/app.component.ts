@@ -77,7 +77,7 @@ export class AppComponent implements OnInit {
 
   public isElectronApp():boolean
   {
-    return this.electronService.isElectronApp;
+    return this.electronService.isElectron;
   }
 
   // ファイルを保存
