@@ -7,9 +7,9 @@ import { InputDesignPointsService } from "../design-points/design-points.service
   providedIn: "root",
 })
 export class InputFatiguesService {
-  public train_A_count: number; // A列車本数
-  public train_B_count: number; // B列車本数
-  public service_life: number; // 耐用年数
+  public train_A_count: number|null; // A列車本数
+  public train_B_count: number|null; // B列車本数
+  public service_life: number|null; // 耐用年数
   public reference_count: number; // 200万回
 
   // 疲労情報

@@ -16,9 +16,9 @@ import { UIStateService } from "src/app/providers/ui-state.service";
 })
 export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  public train_A_count: number;
-  public train_B_count: number;
-  public service_life: number;
+  public train_A_count: number|null;
+  public train_B_count: number|null;
+  public service_life: number|null;
 
   @ViewChild('grid') grid: SheetComponent;
   public options: pq.gridT.options;
