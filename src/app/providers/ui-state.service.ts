@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase } from "@angular/fire/database";
-import { AngularFireAuth } from '@angular/fire/auth';
 import { TranslateService } from "@ngx-translate/core";
 import { SaveDataService } from "./save-data.service";
 import { DataHelperModule } from "./data-helper.module";
 import { Observable } from 'rxjs';
 import { InputMembersService } from '../components/members/members.service';
 import { InputDesignPointsService } from "../components/design-points/design-points.service";
+
+//import { AngularFireAuth } from '@angular/fire/compat/auth';
+//import { AngularFireDatabase } from '@angular/fire/compat/database';
+//import { Component, inject } from '@angular/core';
+import { Database, getDatabase,
+         ref, off, onValue, set, runTransaction } from '@angular/fire/database';
+import { Auth, getAuth } from "@angular/fire/auth";
 
 @Injectable({
   providedIn: 'root'
@@ -22,14 +27,19 @@ export class UIStateService {
   private my_login_uid:string = ""; // ログアウトされたときにログイン中のuidを覚えておくために使用
 
   constructor(
-    private auth: AngularFireAuth,
-    private ui_db: AngularFireDatabase,
+    //private auth: AngularFireAuth,
+    //private ui_db: AngularFireDatabase,
     private helper: DataHelperModule,
     private translate: TranslateService,
     private save: SaveDataService,
     private members: InputMembersService,
     private points: InputDesignPointsService,
-  ) { }
+    private ui_db: Database,
+    private auth: Auth
+  ) {
+    this.auth = getAuth();
+    this.ui_db = getDatabase();
+  }
 
   public init_ui_state(_app_id:string, _restore_callback)
   {
@@ -49,7 +59,8 @@ export class UIStateService {
     //localStorage.setItem("AutoSavedFileName", this.file_name);
 
     const ui_filename_key:string = this.key_prefix + "_UI_FILENAME";
-    this.ui_db.database.ref(ui_filename_key).set(this.file_name);
+    //this.ui_db.database.ref(ui_filename_key).set(this.file_name);
+    set(ref(this.ui_db, ui_filename_key), this.file_name);
   }
 
   // - key : first character must be '/' or completely empty
@@ -61,16 +72,15 @@ export class UIStateService {
       ui_data = this.save.getInputJson();
 
     // realtime database
-    if ("" == this.my_login_uid) {
+    if ("" == this.my_login_uid)
       return;
-    }
 
     const refKey = `${this.key_prefix}_UI_DATA_n${key}`;
 
     //console.log("SAVE UI_DATA: ", refKey, ui_data);
 
     // 近い将来uidでなくグループID的なものになりそう
-    this.ui_db.database.ref(refKey).set(ui_data).then(() => {
+    set(ref(this.ui_db, refKey), ui_data).then(() => {
       //console.log(`更新が完了: ${refKey}`);
     }).catch((error) => {
       console.error(error);
@@ -107,9 +117,9 @@ export class UIStateService {
 
   // Realtime Database上でキーを指定してセット
   private setItem(key: string, newData: any) {
-    const ref = this.ui_db.database.ref(key);
+    const r = ref(this.ui_db, key);
 
-    ref.set(newData).then(() => {
+    set(r, newData).then(() => {
       console.log(`行の更新が完了: ${key}`);
     }).catch((error) => {
       console.error(error);
@@ -143,17 +153,20 @@ export class UIStateService {
     // 近い将来uidでなくグループID的なものになりそう
     const ui_data_key:string = this.key_prefix + "_UI_DATA_n";
     const ui_filename_key:string = this.key_prefix + "_UI_FILENAME";
-    var r1 = this.ui_db.database.ref(ui_data_key);
+    var r1 = ref(this.ui_db, ui_data_key);
 
-    r1.once('value', (ui_data_ss) => {
-      var r2 = this.ui_db.database.ref(ui_filename_key);
-      r2.once('value', (filename_ss) => {
+    var detach_func1 = onValue(r1, (ui_data_ss) => {
+      var r2 = ref(this.ui_db, ui_filename_key);
+      var detach_func2 = onValue(r2, (filename_ss) => {
         this._restore_ui_data(ui_data_ss.val(), filename_ss.val());
+        detach_func2();
       });
+
+      detach_func1();
     });
   }
 
-  private _common_login_error_handler(login_date_local:number, ss, r)
+  private _common_login_error_handler(login_date_local:number, ss, unsub=null)
   {
     console.log("D");
     if(login_date_local > parseInt(this.my_login_date))
@@ -164,7 +177,8 @@ export class UIStateService {
       this.helper.alert("同一ブラウザでのログインを検知。ビューアモードに移行します");
 
       // TODO
-      r.off('value');
+      if(null !== unsub)
+        unsub();
     }
     else
     {
@@ -176,13 +190,14 @@ export class UIStateService {
       this.my_login_uid = "";
       this.key_prefix = "";
       this.my_login_date = "";
-      r.off('value');
+      if(null !== unsub)
+        unsub();
       this.auth.signOut();
       this.helper.alert("ほかからログインされたのでログアウトしました");
     }
   }
 
-  private _common_login_handler(login_date_local:number, ss, r): boolean
+  private _common_login_handler(login_date_local:number, ss, unsub): boolean
   {
     console.log("_common_login_handler: ", login_date_local);
     console.log("my_login_date: ", this.my_login_date);
@@ -196,7 +211,7 @@ export class UIStateService {
       return true;
     }
     else
-      this._common_login_error_handler(login_date_local, ss, r);
+      this._common_login_error_handler(login_date_local, ss, unsub);
   }
 
   private _load_ui_state_realtime_database()
@@ -230,8 +245,8 @@ export class UIStateService {
           this.my_login_date = d;
           localStorage.setItem(local_login_date_key, d);
 
-          var r = this.ui_db.database.ref(ui_login_date_key);
-          r.transaction((old) => {
+          var r = ref(this.ui_db, ui_login_date_key);
+          runTransaction(r, (old) => {
 
             // どうやらold===nullの状態で一度呼ばれるらしい.
             // 正式なoldの値が入るのはその後２回めで呼び出されたときらしい.
@@ -242,21 +257,23 @@ export class UIStateService {
             else
               return; // トランザクションアボート
 
-          }, (err,committed,ss) => {
+          }).then(result => {
 
-            if(err)
-            {
-              // どう対処すべき？
-              console.log("K: Write transaction has finished with error: ", err);
-            }
-            else if(!committed)
+            //if(err)
+            //{
+            //  // どう対処すべき？
+            //  console.log("K: Write transaction has finished with error: ", err);
+            //}
+            //else
+            if(!result.committed)
             {
               // 書き込みが競合して書き込まれなかった。
               // 最新より前のログインとみなしてログアウトなり編集不能にするなりする
               console.log("L: Write transaction was aborted.");
 
               var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
-              this._common_login_error_handler(login_date_local, ss, r);
+              this._common_login_error_handler(login_date_local, result.snapshot);
+              off(r, 'value');
             }
             else
             {
@@ -265,12 +282,12 @@ export class UIStateService {
               //var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
               //if(this._common_login_handler(login_date_local, ss, r))
               //{
-              r.on('value', (snapshot) => {
+              var unsub = onValue(r, (snapshot) => {
                 var login_date_local:number = parseInt(localStorage.getItem(local_login_date_key));
-                this._common_login_handler(login_date_local, snapshot, r);
+                this._common_login_handler(login_date_local, snapshot, unsub);
                 console.log("new local login date: ", login_date_local);
               });
-             // }
+              // }
             }
           });
 
@@ -280,7 +297,7 @@ export class UIStateService {
         {
           console.log("I");
 
-          this.ui_db.database.ref(this.key_prefix + "_LAST_LOGIN").off('value');
+          off(ref(this.ui_db, this.key_prefix + "_LAST_LOGIN"), 'value');
 
           this.my_login_uid = "";
           this.key_prefix = "";

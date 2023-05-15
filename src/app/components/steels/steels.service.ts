@@ -63,12 +63,11 @@ export class InputSteelsService {
     };
   }
 
-
-  public getTableColumns(): any[] {
+  public getTableColumns(isManual:boolean=false): any[] {
 
     const table_datas: any[] = new Array();
+    const groupe_list = this.points.getSortedGroupeList(isManual); //this.points.getGroupeList();
 
-    const groupe_list = this.points.getSortedGroupeList(); //this.points.getGroupeList();
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];
       // 部材

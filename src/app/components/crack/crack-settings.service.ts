@@ -47,7 +47,7 @@ export class InputCrackSettingsService {
     // グリッド用データの作成
     const groupe_list = this.points.getSortedGroupeList(isManual); // this.points.getGroupeList();
 
-    console.log("Sorted group list: ", groupe_list);
+    //console.log("Sorted group list: ", groupe_list);
 
     for (let i = 0; i < groupe_list.length; i++) {
       const table_groupe = [];

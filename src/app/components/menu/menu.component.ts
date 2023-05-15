@@ -20,6 +20,7 @@ import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { InputMembersService } from "../members/members.service";
 import { InputDesignPointsService } from "../design-points/design-points.service";
 import { Auth, getAuth } from "@angular/fire/auth";
+//import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 import { LanguagesService } from "../../providers/languages.service";
 
@@ -38,6 +39,7 @@ export class MenuComponent {
     private helper: DataHelperModule,
     private router: Router,
     private config: ConfigService,
+    //public auth: AngularFireAuth,
     public auth: Auth,
     public language: LanguagesService,
   ) {

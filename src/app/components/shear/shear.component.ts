@@ -42,7 +42,7 @@ export class ShearComponent implements OnInit {
 
     this.setTitle(this.save.isManual());
 
-    this.table_datas = this.shear.getTableColumns();
+    this.table_datas = this.shear.getTableColumns(this.save.isManual());
 
     // グリッドの設定
     this.options = new Array();
@@ -74,8 +74,10 @@ export class ShearComponent implements OnInit {
     }
     this.options = this.option_list[0];
 
+    console.log("TABLE DATA: ", this.table_datas);
+
     // タブのタイトルとなる
-    this.groupe_name = this.points.getGroupNameDispList();
+    this.groupe_name = this.points.getGroupNameDispList(this.save.isManual());
   }
 
   ngAfterViewInit() {
@@ -83,7 +85,10 @@ export class ShearComponent implements OnInit {
 
     // 画面初期化時にオートセーブ
     this.saveData();
+
+    console.log("mogemogemoge");
     this.ui_state.save_ui_state(this.shear.getSaveData(), "/shear");
+    console.log("mogemogemoge2");
   }
 
   private setTitle(isManual: boolean): void {

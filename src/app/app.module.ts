@@ -13,6 +13,11 @@ import { AppRoutingModule } from "./app-routing.module";
 import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getDatabase, provideDatabase } from '@angular/fire/database';
+
+//import firebase from 'firebase/compat/app';
+//import { AngularFireModule } from '@angular/fire/compat';
+//import { AngularFireDatabaseModule } from '@angular/fire/compat/database';
 
 import { AppComponent } from "./app.component";
 
@@ -74,10 +79,12 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
         DragDropModule,
         BrowserAnimationsModule,
         NgbModule,
-        NgxPrintModule,
+      NgxPrintModule,
+      //AngularFireModule.initializeApp(environment.firebase),
         provideFirebaseApp(() => initializeApp(environment.firebase)),
         provideAuth(() => getAuth()),
-        provideFirestore(() => getFirestore()),
+      provideFirestore(() => getFirestore()),
+      provideDatabase(() => getDatabase()),
         DataHelperModule,
         TranslateModule.forRoot({
             loader: {

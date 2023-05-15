@@ -76,7 +76,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     // タブのタイトルとなる
     this.groupe_name = this.points.getGroupNameDispList(this.save.isManual());
 
-    console.log("END crack:ngOnInit: ", this.table_datas);
+    //console.log("END crack:ngOnInit: ", this.table_datas);
   }
 
   ngAfterViewInit() {
@@ -86,7 +86,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     this.saveData();
     this.ui_state.save_ui_state(this.crack.getSaveData(), "/crack");
 
-    console.log("END crack:ngAfterViewInit");
+    //console.log("END crack:ngAfterViewInit");
   }
 
   private setTitle(isManual: boolean): void {

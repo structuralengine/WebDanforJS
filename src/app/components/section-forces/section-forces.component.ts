@@ -3,6 +3,7 @@ import { InputSectionForcesService } from './section-forces.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
 import { UIStateService } from "src/app/providers/ui-state.service";
+import { InputDesignPointsService } from '../design-points/design-points.service';
 
 @Component({
   selector: 'app-section-forces',
@@ -13,6 +14,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   constructor(
     private force: InputSectionForcesService,
+    private points: InputDesignPointsService,
     private ui_state: UIStateService,
   ) { }
 
@@ -64,9 +66,26 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       },
       change: (evt, ui) => {
 
+        console.log("change event", ui);
+
         // オートセーブ機能
         this.saveData();
         this.ui_state.save_ui_state(this.force.getSaveData(), "/force");
+
+        // 算出点名を変えていたら、もしくは行が増えたり減ったりしていたら
+        // pointsもアップデートしなくてはいけない
+        var need_to_update_points:boolean = false;
+        for(var i=0; !need_to_update_points && ui.updateList.length>i; i++)
+        {
+          if('p_name' in ui.updateList[i].newRow)
+          {
+            need_to_update_points=true;
+            break;
+          }
+        }
+
+        //if(need_to_update_points || ui.addList.length != 0 || ui.deleteList.length)
+          this.ui_state.save_ui_state(this.points.getSaveData(), "/points");
 
         // オートセーブ機能 > 行
         // ロジックがまだ不十分と思えたので行ごとのオートセーブはいま無効にしている

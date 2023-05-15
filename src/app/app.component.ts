@@ -5,7 +5,7 @@ import { InputMembersService } from "./components/members/members.service";
 import { ConfigService } from "./providers/config.service";
 import { DsdDataService } from "src/app/providers/dsd-data.service";
 import { SaveDataService } from "./providers/save-data.service";
-import { ElectronService } from 'ngx-electron';
+import { ElectronService } from './providers/electron.service';
 import { DataHelperModule } from "./providers/data-helper.module";
 import { UIStateService } from "./providers/ui-state.service";
 import { NgbModal, ModalDismissReasons } from "@ng-bootstrap/ng-bootstrap";
@@ -96,7 +96,7 @@ export class AppComponent implements OnInit {
     const inputJson: string = this.save.getInputText();
 
     // 保存する
-    if(this.electronService.isElectronApp) {
+    if(this.electronService.isElectron) {
       this.ui_state.file_name =
         this.electronService.ipcRenderer.sendSync('saveFile', this.ui_state.file_name, inputJson);
     } else {

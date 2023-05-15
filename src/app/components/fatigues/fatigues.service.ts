@@ -20,14 +20,14 @@ export class InputFatiguesService {
     private points: InputDesignPointsService,
     private bars: InputBarsService
   ) {
-    console.log("FATIGUE SERVICE, BEFORE constructor", this);
+    //console.log("FATIGUE SERVICE, BEFORE constructor", this);
     this.clear();
-    console.log("FATIGUE SERVICE, AFTER constructor", this);
+    //console.log("FATIGUE SERVICE, AFTER constructor", this);
   }
 
   public clear(): void {
 
-    console.log("FATIGUE SERVICE, BEFORE clear", this);
+    //console.log("FATIGUE SERVICE, BEFORE clear", this);
 
     // ここでの数値型へのnull代入はなぜか効いていない
     // なんで？？
@@ -39,7 +39,7 @@ export class InputFatiguesService {
     this.fatigue_list = new Array();
 
     // ↑でnullを代入した数値型のメンバ(train_A_countなど)がundefinedになっている
-    console.log("FATIGUE SERVICE, AFTER clear", this);
+    //console.log("FATIGUE SERVICE, AFTER clear", this);
   }
 
   // 疲労情報
@@ -99,6 +99,9 @@ export class InputFatiguesService {
           if (!this.points.isEnable(pos)) {
             continue;
           }
+
+          //console.log("POS: ", pos);
+
           // barデータに（部材、着目点など）足りない情報を追加する
           const data: any = this.getTableColumn(pos.index);
 
@@ -318,13 +321,13 @@ export class InputFatiguesService {
       this.fatigue_list.push(f);
     }
 
-    console.log("FATIGUE SERVICE setTableColumns: ", this);
+    //console.log("FATIGUE SERVICE setTableColumns: ", this);
   }
 
   public setPickUpData() {}
 
   public getSaveData(): any {
-    console.log("FATIGUE, getSaveData");
+    //console.log("FATIGUE, getSaveData");
 
     // よくわからないが数値型のメンバがundefinedになってしまうことがあるので
     // その場合はnullを代入する
@@ -336,10 +339,10 @@ export class InputFatiguesService {
     if(undefined === this.service_life)
       this.service_life=null;
 
-    console.log("TRAIN_A_COUNT:", this.train_A_count);
-    console.log("TRAIN_B_COUNT:", this.train_B_count);
-    console.log("SERVICE_LIFE:", this.service_life);
-    console.log("REF_CNT:", this.reference_count);
+    //console.log("TRAIN_A_COUNT:", this.train_A_count);
+    //console.log("TRAIN_B_COUNT:", this.train_B_count);
+    //console.log("SERVICE_LIFE:", this.service_life);
+    //console.log("REF_CNT:", this.reference_count);
 
     return {
       fatigue_list: this.fatigue_list,

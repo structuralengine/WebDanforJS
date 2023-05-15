@@ -32,16 +32,19 @@ export class ShearStrengthService {
     };
   }
 
-  public getTableColumns(): any[] {
+  public getTableColumns(isManual:boolean=false): any[] {
 
     const table_datas: any[] = new Array();
 
     // グリッド用データの作成
-    const groupe_list = this.points.getSortedGroupeList(); //this.points.getGroupeList();
+    const groupe_list = this.points.getSortedGroupeList(isManual);
     for (let i = 0; i < groupe_list.length; i++) {
+
       const table_groupe = [];
+
       // 部材
       for (const member of groupe_list[i]) {
+
         // 着目点
         let count = 0;
         for (let k = 0; k < member.positions.length; k++) {
@@ -55,7 +58,8 @@ export class ShearStrengthService {
           data.b = member.B;
           data.h = member.H;
           data.position = pos.position;
-          data.g_name = pos.g_name;
+          //data.g_name = pos.g_name;
+          data.g_name = member.g_name;
           data.p_name = pos.p_name;
           data.g_id = member.g_id;
 
@@ -75,6 +79,9 @@ export class ShearStrengthService {
       result = this.default_shear(index);
       this.shear_list.push(result);
     }
+
+    console.log("RESULT: ", result);
+
     return result;
   }
 
@@ -100,6 +107,8 @@ export class ShearStrengthService {
     this.shear_list = new Array();
 
     for (const column of table_datas) {
+      console.log("SHEAR: ", column);
+
       const b = this.default_shear(column.index);
       b.m_no =      column.m_no;
       b.g_name =    column.g_name;
@@ -109,6 +118,8 @@ export class ShearStrengthService {
       b.L =         column.L;
       this.shear_list.push(b);
     }
+
+    console.log("SHEAR LIST: ", this.shear_list);
   }
 
   public setPickUpData() {

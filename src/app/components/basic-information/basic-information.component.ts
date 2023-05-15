@@ -192,6 +192,8 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   /// <param name='i'>選択された番号</param>
   public setSpecification1(i: number): void {
 
+    console.log("SET_SPECIFICATION_1: ", i);
+
     const basic = this.basic.set_specification1(i);
 
     // オートセーブ機能 > オブジェクト
@@ -219,6 +221,8 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
 
   /// 仕様 変更時の処理
   public setSpecification2(id: number): void {
+    console.log("SET_SPECIFICATION_2: ", id);
+
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;

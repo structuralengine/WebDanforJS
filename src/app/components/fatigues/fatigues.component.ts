@@ -37,13 +37,10 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     private save: SaveDataService,
     private translate: TranslateService,
     private ui_state: UIStateService,
-  ) {
-    console.log("FATIGUE COMPONENT, constructor");
-  }
+  ) { }
 
   ngOnInit() {
 
-    console.log("FATIGUE COMPONENT, ngOnInit: ");
     const fatigues = this.fatigues.getSaveData();
 
     this.train_A_count = fatigues.train_A_count;
@@ -93,9 +90,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // 画面初期化時にオートセーブ
     this.saveData();
-    console.log("IGIGIGIGIGIG");
     this.ui_state.save_ui_state(this.fatigues.getSaveData(), "/fatigues");
-    console.log("IGIGIGIGIGIG2");
   }
 
   private setTitle(isManual: boolean): void {
