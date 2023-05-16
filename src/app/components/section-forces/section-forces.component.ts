@@ -66,7 +66,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       },
       change: (evt, ui) => {
 
-        console.log("change event", ui);
+//        console.log("change event", ui);
 
         // オートセーブ機能
         this.saveData();

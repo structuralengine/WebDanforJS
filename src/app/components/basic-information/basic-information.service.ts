@@ -13,7 +13,7 @@ export class InputBasicInformationService  {
   public pickup_torsional_moment: any[];
 
   // 適用 に関する変数
-  private specification1_list: any[];
+  public specification1_list: any[];
 
   // 仕様 に関する変数
   public specification2_list: any[];
@@ -32,7 +32,7 @@ export class InputBasicInformationService  {
     this.pickup_shear_force = new Array();
     this.pickup_torsional_moment = new Array();
 
-    this.specification1_list = new Array();
+    //this.specification1_list = new Array();
     this.specification2_list = new Array();
     this.conditions_list = new Array();
 
@@ -42,12 +42,12 @@ export class InputBasicInformationService  {
 
   private default_specification1(): any {
     return [
-      { 
-        id: 0, 
+      {
+        id: 0,
         title: this.translate.instant("basic-information.rail"),
         selected: true },
-      { 
-        id: 1, 
+      {
+        id: 1,
         title: this.translate.instant("basic-information.Pilipinas"),
         selected: false }
     ];
@@ -94,14 +94,12 @@ export class InputBasicInformationService  {
       }
       tmp_torsional.push(def);
     }
+
     this.pickup_torsional_moment = tmp_torsional;
 
-
+    // 下もデフォルトに戻す
     this.specification2_list = this.default_specification2(sp1);
-
     this.conditions_list = this.default_conditions(sp1);
-
-
   }
 
   // 曲げモーメントテーブルの初期値
@@ -391,6 +389,7 @@ export class InputBasicInformationService  {
     }
     return result;
   }
+
   public set_specification2(id: number): any {
 
     if( this.specification2_list.find(e => e.id === id) == null) {
@@ -399,7 +398,6 @@ export class InputBasicInformationService  {
 
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
-
   }
 
   // 設計条件の初期値
@@ -430,12 +428,16 @@ export class InputBasicInformationService  {
     }
     return result;
   }
+
+  // コンポーネントに直接参照をセットしているから呼び出し不要
   public set_conditions(id: string, value: boolean): any {
 
     const target = this.conditions_list.find(e => e.id === id);
     if( target == null) {
       return;
     }
+
+    //console.log("TARGET: ", target);
 
     target.selected = value;
   }
@@ -548,11 +550,13 @@ export class InputBasicInformationService  {
       if ('specification2_list' in basic) {
         const _sp2 = basic.specification2_list.find(v => v.id === sp2.id)
         if (_sp2 != null) {
+          console.log("NOT NULL", sp2, _sp2);
           sp2.selected = _sp2.selected;
         }
       }
     }
 
+    console.log("SAVE?: ", this.specification2_list);
 
     this.conditions_list = basic.conditions_list;
   }

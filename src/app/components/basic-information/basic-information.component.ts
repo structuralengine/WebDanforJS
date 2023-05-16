@@ -14,8 +14,8 @@ import { UIStateService } from "src/app/providers/ui-state.service";
 export class BasicInformationComponent implements OnInit, OnDestroy {
 
   private columnHeaders: object[] = [];
-  public specification1_select_id: number;
-  public specification2_select_id: number;
+  //public specification1_select_id: number;
+  // public specification2_select_id: number;
 
   @ViewChild('grid1') grid1: SheetComponent;
   private table1_datas: any[] = [];
@@ -30,16 +30,16 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   public options3: pq.gridT.options;
 
   // 適用 に関する変数
-  public specification1_list: any[];
+  //public specification1_list: any[];
 
   // 仕様 に関する変数
-  public specification2_list: any[];
+  //public specification2_list: any[];
 
   // 設計条件
   public conditions_list: any[];
 
   constructor(
-    private basic: InputBasicInformationService,
+    public basic: InputBasicInformationService,
     private save: SaveDataService,
     private ui_state: UIStateService,
     private translate: TranslateService
@@ -47,23 +47,25 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    console.log("basic-information.ngOnInit", this.basic.specification2_list);
+
     const basic = this.basic.getSaveData();
 
     // 適用
-    this.specification1_list = basic.specification1_list;
-    this.specification1_select_id = this.basic.get_specification1();
+    //this.specification1_list = this.basic.specification1_list;
+    //this.specification1_select_id = this.basic.get_specification1();
     // 仕様
-    this.specification2_list = basic.specification2_list;
-    this.specification2_select_id = this.basic.get_specification2();
+    //this.specification2_list = this.basic.specification2_list;
+    //this.specification2_select_id = this.basic.get_specification2();
     //  設計条件
-    this.conditions_list = basic.conditions_list;
+    this.conditions_list = this.basic.conditions_list; // serviceのリストの参照が設定される
 
     // pickUp テーブル の初期化
     this.setTitle(this.save.isManual());
 
-    this.table1_datas = basic.pickup_moment;
-    this.table2_datas = basic.pickup_shear_force;
-    this.table3_datas = basic.pickup_torsional_moment;
+    this.table1_datas = this.basic.pickup_moment;
+    this.table2_datas = this.basic.pickup_shear_force;
+    this.table3_datas = this.basic.pickup_torsional_moment;
 
     // オートセーブ機能 > 行
     // ロジックが甘いところがあり行ごとのオートセーブは無効化している
@@ -143,11 +145,13 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     };
   }
 
-  ngAfterViewInit() {
-    // 画面初期化時にオートセーブ
-    this.saveData();
-    this.ui_state.save_ui_state(this.basic.getSaveData(), "/basic");
-  }
+  //ngAfterViewInit() {
+  //  console.log("basic-information.ngAfterViewInit");
+  //
+  //  // 画面初期化時にオートセーブ
+  //  this.saveData();
+  //  this.ui_state.save_ui_state(this.basic.getSaveData(), "/basic");
+  //}
 
   private setTitle(isManual: boolean): void {
 
@@ -175,15 +179,26 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   }
 
   public saveData(): void {
+
+    // serviceに直接セットしているので無効にした
     this.basic.setSaveData({
       pickup_moment: this.table1_datas,
       pickup_shear_force: this.table2_datas,
       pickup_torsional_moment: this.table3_datas,
 
-      specification1_list: this.specification1_list, // 適用
-      specification2_list: this.specification2_list, // 仕様
-      conditions_list: this.conditions_list         // 設計条件
+      specification1_list: this.basic.specification1_list, // 適用
+      specification2_list: this.basic.specification2_list, // 仕様
+      conditions_list: this.basic.conditions_list         // 設計条件
     });
+  }
+
+  public setConditions(id: string, checked: boolean): void {
+
+    console.log("setCondition: ", id, checked);
+    //this.basic.set_conditions(id, checked); // バインドでserviceの参照を直接操作しているから不要
+
+    const basic = this.basic.getSaveData();
+    this.ui_state.save_ui_state(basic['conditions_list'], `/basic/conditions_list`);
   }
 
   /// <summary>
@@ -192,46 +207,42 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   /// <param name='i'>選択された番号</param>
   public setSpecification1(i: number): void {
 
-    console.log("SET_SPECIFICATION_1: ", i);
-
     const basic = this.basic.set_specification1(i);
 
     // オートセーブ機能 > オブジェクト
     // ラジオボタンの場合、同じnameの値をすべて同時に更新する
-    const rowData = basic['specification1_list'];
-    this.ui_state.save_ui_state(rowData, `/basic/specification1_list`);
+    //const rowData = basic['specification1_list'];
+    this.ui_state.save_ui_state(basic, `/basic`);
 
-    this.specification1_list = basic.specification1_list; // 適用
-    this.specification2_list = basic.specification2_list; // 仕様
-    this.conditions_list = basic.conditions_list;         //  設計条件
+    //this.specification1_list = basic.specification1_list; // 適用
+    //this.specification2_list = basic.specification2_list; // 仕様
+    //this.conditions_list = basic.conditions_list;         //  設計条件
+    //
+    //this.table1_datas = basic.pickup_moment;
+    //this.table2_datas = basic.pickup_shear_force;
+    //this.table3_datas = basic.pickup_torsional_moment;
+    //
+    //if (!(this.grid1 == null))
+    //  this.grid1.refreshDataAndView();
+    //if (!(this.grid2 == null))
+    //  this.grid2.refreshDataAndView();
+    //if (!(this.grid3 == null))
+    //  this.grid3.refreshDataAndView();
 
-    this.table1_datas = basic.pickup_moment;
-    this.table2_datas = basic.pickup_shear_force;
-    this.table3_datas = basic.pickup_torsional_moment;
-
-    if (!(this.grid1 == null))
-      this.grid1.refreshDataAndView();
-    if (!(this.grid2 == null))
-      this.grid2.refreshDataAndView();
-    if (!(this.grid3 == null))
-      this.grid3.refreshDataAndView();
-
-    this.specification1_select_id = i;
+    //this.specification1_select_id = i;
   }
 
   /// 仕様 変更時の処理
   public setSpecification2(id: number): void {
-    console.log("SET_SPECIFICATION_2: ", id);
 
-    this.specification2_list.map(
-      obj => obj.selected = (obj.id === id) ? true : false);
-    this.specification2_select_id = id;
+    this.basic.set_specification2(id);
 
-    const basic = this.basic.getSaveData();
+    //const basic = this.basic.getSaveData();
 
     // オートセーブ機能 > オブジェクト
     // ラジオボタンの場合、同じnameの値をすべて同時に更新する
-    const rowData = basic['specification2_list'];
-    this.ui_state.save_ui_state(rowData, `/basic/specification2_list`);
+    //const rowData = basic['specification2_list'];
+    //this.ui_state.save_ui_state(rowData, `/basic/specification2_list`);
+    this.ui_state.save_ui_state(this.basic.specification2_list, `/basic/specification2_list`);
   }
 }
