@@ -354,12 +354,19 @@ export class DataHelperModule {
 
       // 断面形状の列のみ、特殊な挙動をする
       if (wTD[0].innerText !== '断面形状'
-        && wTD[0].innerText !== 'Cross-sectional shape') {
+         && wTD[0].innerText !== 'Cross-sectional shape') { // 英語版にも対応
+
         for (var j = 0; j < wTD.length; j++) {
-          const a: string = wTD[j].innerText;
-          const b = a.replace(" ", "");
-          const c = b.replace("\n", "");
-          wTR_Text += c;
+
+          // テストデータを作る目的のためのにはこの処理はないほうがよい
+          //const a: string = wTD[j].innerText;
+          //const b = a.replace(" ", "");
+          //const c = b.replace("\n", "");
+          //wTR_Text += c;
+
+          // かわりにこれを入れる
+          wTR_Text += wTD[j].innerText;
+
           if (j === wTD.length - 1) {
             wTR_Text += "";
           } else {
