@@ -11,7 +11,7 @@ import { FatiguesComponent } from './components/fatigues/fatigues.component';
 import { SafetyFactorsMaterialStrengthsComponent } from './components/safety-factors-material-strengths/safety-factors-material-strengths.component';
 import { SectionForcesComponent } from './components/section-forces/section-forces.component';
 import { CalculationPrintComponent } from './components/calculation-print/calculation-print.component';
-//import { ResultViewerComponent } from './calculation/result-viewer/result-viewer.component';
+import { ResultViewerComponent } from './old_calc_for_test/result-viewer/result-viewer.component';
 import { CrackSettingsComponent } from './components/crack/crack-settings.component';
 import { ShearComponent } from './components/shear/shear.component';
 
@@ -29,7 +29,7 @@ const routes: Routes = [
     { path: 'safety-factors-material-strengths', component: SafetyFactorsMaterialStrengthsComponent },
     { path: 'section-forces', component: SectionForcesComponent },
     { path: 'calculation-print', component: CalculationPrintComponent },
-//    { path: 'result-viewer', component: ResultViewerComponent },
+    { path: 'result-viewer', component: ResultViewerComponent },
     { path: 'blank-page', component: BlankPageComponent }
 ];
 

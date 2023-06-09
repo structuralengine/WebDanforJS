@@ -70,8 +70,6 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
         'g_name': data.g_name
       });
     }
-
-    
   }
 
   ngOnDestroy() {
@@ -90,6 +88,20 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     this.calc.setColumnData(this.table_datas);
   }
 
+  // テストデータ生成
+  // JavaScriptで照査表・総括表を作っていたときの処理はテストデータ生成として生かしている
+  generateTestData() {
+    const user = this.auth.currentUser;
+    if(user === null){
+      this.helper.alert(this.translate.instant("calculation-print.p_login"));
+      return;
+    }
+
+    this.user.clear(user.uid);
+
+    this.router.navigate(['/result-viewer']);
+  }
+
   // 計算開始
   onClick() {
 
@@ -100,8 +112,6 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     }
 
     this.user.clear(user.uid);
-
-    //console.log('印刷データ準備中...');
 
     this.loading_enable();
 

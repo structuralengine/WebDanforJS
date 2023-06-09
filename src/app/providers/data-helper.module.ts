@@ -351,8 +351,10 @@ export class DataHelperModule {
       var wTR_Text = "";
       const rowspan_text = this.getRowSpan(spanList);
       wTR_Text += rowspan_text;
+
       // 断面形状の列のみ、特殊な挙動をする
-      if (wTD[0].innerText !== '断面形状') {
+      if (wTD[0].innerText !== '断面形状'
+        && wTD[0].innerText !== 'Cross-sectional shape') {
         for (var j = 0; j < wTD.length; j++) {
           const a: string = wTD[j].innerText;
           const b = a.replace(" ", "");

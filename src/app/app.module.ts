@@ -51,7 +51,44 @@ import { CrackSettingsComponent } from "./components/crack/crack-settings.compon
 import { CalculationPrintComponent } from "./components/calculation-print/calculation-print.component";
 import { SheetComponent } from "./components/sheet/sheet.component";
 
+import { ResultDataService } from "./old_calc_for_test/result-data.service";
+import { CalcSafetyMomentService } from "./old_calc_for_test/result-safety-moment/calc-safety-moment.service";
+import { CalcSafetyShearForceService } from "./old_calc_for_test/result-safety-shear-force/calc-safety-shear-force.service";
+import { CalcSafetyFatigueMomentService } from "./old_calc_for_test/result-safety-fatigue-moment/calc-safety-fatigue-moment.service";
+import { CalcSafetyFatigueShearForceService } from "./old_calc_for_test/result-safety-fatigue-shear-force/calc-safety-fatigue-shear-force.service";
+import { CalcServiceabilityMomentService } from "./old_calc_for_test/result-serviceability-moment/calc-serviceability-moment.service";
+import { CalcServiceabilityShearForceService } from "./old_calc_for_test/result-serviceability-shear-force/calc-serviceability-shear-force.service";
+import { CalcDurabilityMomentService } from "./old_calc_for_test/result-durability-moment/calc-durability-moment.service";
+import { CalcRestorabilityMomentService } from "./old_calc_for_test/result-restorability-moment/calc-restorability-moment.service";
+import { CalcRestorabilityShearForceService } from "./old_calc_for_test/result-restorability-shear-force/calc-restorability-shear-force.service";
+import { CalcEarthquakesMomentService } from "./old_calc_for_test/result-earthquakes-moment/calc-earthquakes-moment.service";
+import { CalcEarthquakesShearForceService } from "./old_calc_for_test/result-earthquakes-shear-force/calc-earthquakes-shear-force.service";
+import { CalcRestorabilityTorsionalMomentService } from "./old_calc_for_test/result-restorability-torsional-moment/calc-restorability-torsional-moment.service";
+
+import { ResultViewerComponent } from "./old_calc_for_test/result-viewer/result-viewer.component";
+import { ResultSafetyMomentComponent } from "./old_calc_for_test/result-safety-moment/result-safety-moment.component";
+import { ResultSafetyShearForceComponent } from "./old_calc_for_test/result-safety-shear-force/result-safety-shear-force.component";
+import { ResultSafetyTorsionalMomentComponent } from "./old_calc_for_test/result-safety-torsional-moment/result-safety-torsional-moment.component";
+
+import { ResultDurabilityMomentComponent } from "./old_calc_for_test/result-durability-moment/result-durability-moment.component";
+import { ResultSafetyFatigueMomentComponent } from "./old_calc_for_test/result-safety-fatigue-moment/result-safety-fatigue-moment.component";
+import { ResultSafetyFatigueShearForceComponent } from "./old_calc_for_test/result-safety-fatigue-shear-force/result-safety-fatigue-shear-force.component";
+import { ResultServiceabilityMomentComponent } from "./old_calc_for_test/result-serviceability-moment/result-serviceability-moment.component";
+import { ResultServiceabilityShearForceComponent } from "./old_calc_for_test/result-serviceability-shear-force/result-serviceability-shear-force.component";
+import { ResultRestorabilityMomentComponent } from "./old_calc_for_test/result-restorability-moment/result-restorability-moment.component";
+import { ResultRestorabilityShearForceComponent } from "./old_calc_for_test/result-restorability-shear-force/result-restorability-shear-force.component";
+import { ResultEarthquakesMomentComponent } from "./old_calc_for_test/result-earthquakes-moment/result-earthquakes-moment.component";
+import { ResultEarthquakesShearForceComponent } from "./old_calc_for_test/result-earthquakes-shear-force/result-earthquakes-shear-force.component";
+import { ResultSummaryTableComponent } from "./old_calc_for_test/result-summary-table/result-summary-table.component";
+import { ResultMinimumReinforcementComponent } from "./old_calc_for_test/result-minimum-reinforcement/result-minimum-reinforcement.component";
+import { SectionForceListComponent } from "./old_calc_for_test/section-force-list/section-force-list.component";
+
+import { SetDesignForceService } from "./old_calc_for_test/set-design-force.service";
+import { SetPostDataService } from "./old_calc_for_test/set-post-data.service";
 import { environment } from "src/environments/environment";
+import { ResultServiceabilityTorsionalMomentComponent } from "./old_calc_for_test/result-serviceability-torsional-moment/result-serviceability-torsional-moment.component";
+import { ResultRestorabilityTorsionalMomentComponent } from "./old_calc_for_test/result-restorability-torsional-moment/result-restorability-torsional-moment.component";
+import { ResultEarthquakesTorsionalMomentComponent } from "./old_calc_for_test/result-earthquakes-torsional-moment/result-earthquakes-torsional-moment.component";
 
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { ElectronService } from "./providers/electron.service";
@@ -92,6 +129,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
         MenuComponent,
         LoginDialogComponent,
         WaitDialogComponent,
+    ResultViewerComponent,
         BasicInformationComponent,
         MembersComponent,
         DesignPointsComponent,
@@ -104,7 +142,29 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
         SheetComponent,
         SteelsComponent,
         CrackSettingsComponent,
-        ChatComponent,
+
+    ResultSafetyMomentComponent,
+    ResultSafetyShearForceComponent,
+    ResultDurabilityMomentComponent,
+    ResultSafetyFatigueMomentComponent,
+    ResultSafetyFatigueShearForceComponent,
+    ResultServiceabilityMomentComponent,
+    ResultServiceabilityShearForceComponent,
+    ResultRestorabilityMomentComponent,
+    ResultRestorabilityShearForceComponent,
+    ResultEarthquakesMomentComponent,
+    ResultEarthquakesShearForceComponent,
+    ResultSummaryTableComponent,
+    SectionForceListComponent,
+    SteelsComponent,
+    CrackSettingsComponent,
+    ResultMinimumReinforcementComponent,
+    ResultSafetyTorsionalMomentComponent,
+    ResultServiceabilityTorsionalMomentComponent,
+    ResultRestorabilityTorsionalMomentComponent,
+    ResultEarthquakesTorsionalMomentComponent,
+
+      ChatComponent,
         ShearComponent,
     ],
     providers: [
@@ -120,7 +180,38 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
         InputSectionForcesService,
         InputCalclationPrintService,
         SaveDataService,
-        // 計算結果コンポーネントで他のコンポーネントから使いまわされるものは
+
+    SaveDataService,
+
+    ResultDataService,
+    CalcSafetyMomentService,
+    CalcSafetyShearForceService,
+    CalcSafetyFatigueMomentService,
+    CalcSafetyFatigueShearForceService,
+    CalcServiceabilityMomentService,
+    CalcServiceabilityShearForceService,
+    CalcDurabilityMomentService,
+    CalcRestorabilityMomentService,
+    CalcRestorabilityShearForceService,
+    CalcEarthquakesMomentService,
+    CalcEarthquakesShearForceService,
+
+    SetDesignForceService,
+    SetPostDataService,
+
+    // 計算結果コンポーネントで他のコンポーネントから使いまわされるものは
+    // declarations だけではなくココ(providers) にも宣言して
+    // 他のコンポーネントから機能の一部を使えるようにする
+    ResultSafetyShearForceComponent,
+    ResultSafetyTorsionalMomentComponent,
+    ResultSafetyMomentComponent,
+    ResultRestorabilityMomentComponent,
+    ResultRestorabilityShearForceComponent,
+    ResultServiceabilityMomentComponent,
+    ResultRestorabilityTorsionalMomentComponent,
+    ResultEarthquakesTorsionalMomentComponent,
+
+      // 計算結果コンポーネントで他のコンポーネントから使いまわされるものは
         // declarations だけではなくココ(providers) にも宣言して
         // 他のコンポーネントから機能の一部を使えるようにする
         ElectronService
