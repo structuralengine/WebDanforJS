@@ -358,14 +358,13 @@ export class DataHelperModule {
 
         for (var j = 0; j < wTD.length; j++) {
 
-          // テストデータを作る目的のためのにはこの処理はないほうがよい
-          //const a: string = wTD[j].innerText;
+          // 英語版のテストデータを作る目的のためのに少し改変
+          // 日本語版ではスペースを詰めたい？
+          const a: string = wTD[j].innerText;
           //const b = a.replace(" ", "");
           //const c = b.replace("\n", "");
-          //wTR_Text += c;
-
-          // かわりにこれを入れる
-          wTR_Text += wTD[j].innerText;
+          const c = a.replace("\n", " ");
+          wTR_Text += c;
 
           if (j === wTD.length - 1) {
             wTR_Text += "";
