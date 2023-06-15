@@ -91,13 +91,8 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   // テストデータ生成
   // JavaScriptで照査表・総括表を作っていたときの処理はテストデータ生成として生かしている
   generateTestData() {
-    const user = this.auth.currentUser;
-    if(user === null){
-      this.helper.alert(this.translate.instant("calculation-print.p_login"));
-      return;
-    }
-
-    this.user.clear(user.uid);
+    if(this.auth.currentUser !== null)
+      this.user.clear(this.auth.currentUser.uid);
 
     this.router.navigate(['/result-viewer']);
   }
@@ -171,23 +166,28 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
 
   downloadSummary() {
 
-    const filename = "dummy.xlsx";
-    this._save_summary(filename);
+    let filename = document.getElementById("filename_in_menu").innerText;
 
-    //this.http.get('assets/' + filename, { responseType: 'arraybuffer' })
-    //  .subscribe((binaryData: ArrayBuffer) => {
-    //    this.summary_data = binaryData;
-    //    this._save_summary(filename);
-    //  });
-  }
+    //console.log("FILENAME: ", filename);
+    const pos = filename.lastIndexOf('.');
+    if (pos !== -1)
+      filename = filename.slice(0, pos);
 
-  private _save_summary(filename: string)
-  {
+    filename = "EXCEL_SRC_" + filename + ".xlsx"
+
     let file = new Blob([this.summary_data],
                         { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
     let fileURL = URL.createObjectURL(file);
-    window.open(fileURL, "_blank");
+
+    const link = document.createElement("a");
+    link.href = fileURL;
+    link.download = filename
+    link.click();
+
+    // For Firefox it is necessary to delay revoking the ObjectURL.
+    setTimeout(() => {
+      window.URL.revokeObjectURL(fileURL);
+    }, 250);
 
     //const out_filename = "out_" + filename;
     //

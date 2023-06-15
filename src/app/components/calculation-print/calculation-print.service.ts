@@ -9,6 +9,8 @@ export class InputCalclationPrintService {
   public print_selected: any;
   public calc_checked: boolean[];
 
+  public test_id: string = "TEST ID HERE";
+
   constructor(private members: InputMembersService) {
     this.clear();
   }

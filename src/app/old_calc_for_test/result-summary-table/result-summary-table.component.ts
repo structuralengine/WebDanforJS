@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { CalcSummaryTableService } from './calc-summary-table.service';
 import { TranslateService } from "@ngx-translate/core";
+import { InputCalclationPrintService } from "../../components/calculation-print/calculation-print.service";
 
 @Component({
   selector: 'app-result-summary-table',
   templateUrl: './result-summary-table.component.html',
   styleUrls: ['./result-summary-table.component.scss']
 })
-export class ResultSummaryTableComponent implements OnInit {
+export class ResultSummaryTableComponent implements OnInit, AfterViewInit {
   //
   public summary_table: any;
   public isSRC: boolean = false;
@@ -16,7 +17,8 @@ export class ResultSummaryTableComponent implements OnInit {
   constructor(
     private helper: DataHelperModule,
     private calc: CalcSummaryTableService,
-    private translate: TranslateService
+    private calc_print: InputCalclationPrintService,
+    private translate: TranslateService,
     ) { }
 
   ngOnInit() {
@@ -47,10 +49,51 @@ export class ResultSummaryTableComponent implements OnInit {
     document.body.appendChild(selBox);
     selBox.focus();
     selBox.select();
+
     document.execCommand("copy");
+    //navigator.clipboard.writeText(selBox.value);
+
     document.body.removeChild(selBox);
 
-    this.helper.alert(this.translate.instant("result-summary-table.copy"));
+    //console.log("CSV DATA??: ", this.helper.table_To_text($tbody));
+
+    let filename = this.calc_print.test_id;
+
+    //console.log("FILENAME: ", filename);
+    const pos = filename.lastIndexOf('.');
+    if (pos !== -1)
+      filename = filename.slice(0, pos);
+
+    filename = "JS_out_" + filename + ".csv"
+
+    let file = new Blob([this.helper.table_To_text($tbody)], { type: 'text/csv' });
+    let fileURL = URL.createObjectURL(file);
+
+    const link = document.createElement("a");
+    link.href = fileURL;
+    link.download = filename
+    link.click();
+
+    // For Firefox it is necessary to delay revoking the ObjectURL.
+    setTimeout(() => {
+      window.URL.revokeObjectURL(fileURL);
+    }, 250);
+
+    //window.location.assign(fileURL);
+    //URL.revokeObjectURL(fileURL);
   }
 
+  ngAfterViewInit(): void {
+    /*
+      document.querySelector('copybutton').addEventListener('click', () => {
+      navigator.clipboard.writeText(this.helper.table_To_text($tbody))
+      .then(() => {
+      console.log('Text copied.');
+      })
+      .catch(() => {
+      console.log('Failed to copy text.');
+      });
+      });
+    */
+  }
 }

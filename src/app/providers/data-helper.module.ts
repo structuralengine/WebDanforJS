@@ -431,7 +431,7 @@ export class DataHelperModule {
       H_text += b[2];
 
       if (j === wTD.length - 1) {
-        B_text += "\n";
+        B_text += "\r\n";
         H_text += "";
       } else {
         B_text += "\t";
@@ -472,8 +472,8 @@ export class DataHelperModule {
       }
     }
     text += '\t';
-    side += '\n';
-    shape += '\n';
+    side += '\r\n';
+    shape += '\r\n';
 
     const size: string = text + B_text + "\t".repeat(wTD[0].colSpan - 1) + '高さ\t\t' + H_text;
 

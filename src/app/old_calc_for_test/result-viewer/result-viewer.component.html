@@ -134,8 +134,9 @@
     <button styleSheetFile="assets/css/result-viewer.component.css" printSectionId="print_section"
       ngxPrint>Print</button>
     <ng-container *ngIf="printSummaryTable()">
-      <button (click)="summaryTableShow()" translate>result-viewer.summary</button>
+      <button id="summary_table_button_for_test" (click)="summaryTableShow()" translate>result-viewer.summary</button>
     </ng-container>
+    <p id="check_summary_table_for_test">Wait until summary table done...</p>
 
   </div>
 

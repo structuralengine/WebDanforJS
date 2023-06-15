@@ -66,7 +66,9 @@ export class ResultViewerComponent implements OnInit {
     private user: UserInfoService,
     private translate: TranslateService,
     private helper: DataHelperModule
-  ) { }
+  )
+  {
+  }
 
   ngOnInit() {
 
@@ -103,12 +105,13 @@ export class ResultViewerComponent implements OnInit {
   public printSummaryTable(): boolean {
     if(!this._printSummaryTable){
       if( this.summary.checkDone() === true){
-        this.helper.alert(
-          this.user.deduct_points 
-          + this.translate.instant("result-viewer.deduct_points") 
-          + this.user.daily_points 
-          + this.translate.instant("result-viewer.daily_points")
-          );
+        //this.helper.alert(
+        //  this.user.deduct_points 
+        //  + this.translate.instant("result-viewer.deduct_points") 
+        //  + this.user.daily_points 
+        //  + this.translate.instant("result-viewer.daily_points")
+        //  );
+        document.querySelector('#check_summary_table_for_test').innerHTML="DONE!!!";
         this._printSummaryTable = true;
       }
     }
