@@ -52,7 +52,9 @@
               "pqgrid", 
               "encoding-japanese",
               "print-js",
-              "file-saver"
+              "file-saver",
+              "base64-js",
+              "js-sha256"
             ]
           },
           "configurations": {

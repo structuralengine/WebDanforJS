@@ -466,5 +466,9 @@
     "calc-durability-moment":{
         "check_crack":"Check the crack data.",
         "changing_error":"It seems that the data in this.crack_list is changing."
+    },
+    "window": {
+        "closeTitle": "Confirm",
+        "closeMessage": "Changes may not to be saved. Are you sure you want to quit?"
     }
 }

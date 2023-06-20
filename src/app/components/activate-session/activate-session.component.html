@@ -1,0 +1,6 @@
+<div *ngIf="userInfoService.userProfile && userInfoService.activeSession && userInfoService.clientId != userInfoService.activeSession" class="activate-session">
+    <div class="activate-session-inner">
+        <p>通信が切断されました。</p>
+        <button (click)="userInfoService.setActiveSession()">再接続</button>
+    </div>
+</div>

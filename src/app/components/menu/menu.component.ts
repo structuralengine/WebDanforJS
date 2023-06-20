@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, ViewChild } from "@angular/core";
+﻿import { Component, HostListener, OnInit, ViewChild } from "@angular/core";
 import { NgbModal, ModalDismissReasons } from "@ng-bootstrap/ng-bootstrap";
 import { AppComponent } from "../../app.component";
 
@@ -26,6 +26,9 @@ import { LanguagesService } from "../../providers/languages.service";
 import { ElectronService } from "src/app/providers/electron.service";
 import packageJson from '../../../../package.json';
 import { TranslateService } from "@ngx-translate/core";
+import { KeycloakService } from 'keycloak-angular';
+import { KeycloakProfile } from 'keycloak-js';
+import { UserInfoService } from "src/app/providers/user-info.service";
 
 @Component({
   selector: "app-menu",
@@ -47,10 +50,13 @@ export class MenuComponent implements OnInit {
     private dsdData: DsdDataService,
     private router: Router,
     private config: ConfigService,
+    public user: UserInfoService,
     public auth: Auth,
     public language: LanguagesService,
     public electronService: ElectronService,
-    private translate: TranslateService
+    private translate: TranslateService,
+
+    private readonly keycloak: KeycloakService
   ) {
     this.auth = getAuth();
     this.fileName = "";
@@ -59,12 +65,23 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.renew();
+    this._renew();
   }
 
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload($event: BeforeUnloadEvent) {
+    if (!this.electronService.isElectron) {
+      $event.returnValue = "Your work will be lost. Do you want to leave this site?";
+    }
+  }
+  
   // 新規作成
   renew(): void {
     this.router.navigate(["/blank-page"]);
+    this._renew();
+  }
+
+  private _renew(): void {
     this.app.deactiveButtons();
 
     // this.fileName = "";
@@ -241,15 +258,23 @@ export class MenuComponent implements OnInit {
   }
 
   // ログイン関係
-  logIn(): void {
-    this.modalService.open(LoginDialogComponent, {backdrop: false}).result.then((result) => {});
+  async logIn() {
+    if (this.electronService.isElectron) {
+      this.modalService.open(LoginDialogComponent, {backdrop: false}).result.then((result) => {});
+    } else {
+      this.keycloak.login();
+    }
   }
 
   logOut(): void {
-    // this.user.clear();
-    this.auth.signOut();
+    if (this.electronService.isElectron) {
+      this.user.setUserProfile(null);
+    } else {
+      this.keycloak.logout(window.location.origin);
+      this.user.setUserProfile(null);
+    }
   }
-
+  
   public goToLink() {
     window.open(
       "https://liberating-rodent-f3f.notion.site/697a045460394d03a8dc859f15bf97ea",

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from "./data-helper.module";
+import { ElectronService } from "./electron.service";
 
 @Injectable({
   providedIn: "root",
@@ -16,7 +17,8 @@ export class LanguagesService {
 
   constructor(
     public translate: TranslateService,
-    public helper: DataHelperModule
+    public helper: DataHelperModule,
+    public electronService: ElectronService,
   ) {
 
     if(translate.getBrowserLang() in this.languageIndex)
@@ -26,10 +28,16 @@ export class LanguagesService {
 
     //console.log("BROWSER LANG: ", this.browserLang);
     translate.use(this.browserLang);
+    if (this.electronService.isElectron) {
+      this.electronService.ipcRenderer.send('change-lang', this.browserLang);
+    }
   }
 
   public trans(key: string) {
     this.browserLang = key;
     this.translate.use(this.browserLang);
+    if (this.electronService.isElectron) {
+      this.electronService.ipcRenderer.send('change-lang', this.browserLang);
+    }
   }
 }

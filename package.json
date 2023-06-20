@@ -1,6 +1,6 @@
 {
   "name": "web-dan-for-js",
-  "version": "1.14.0",
+  "version": "2.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host=127.0.0.1",
@@ -47,6 +47,7 @@
     "@ngx-translate/http-loader": "^6.0.0",
     "@popperjs/core": "^2.11.7",
     "angular-cli-ghpages": "^1.0.0",
+    "axios": "^1.4.0",
     "bootstrap": "^4.5.0",
     "electron-is-dev": "^2.0.0",
     "electron-nsis": "0.0.1-alpha",
@@ -58,6 +59,9 @@
     "jquery": "^3.6.0",
     "jquery-ui-pack": "^1.12.3",
     "jszip": "^3.10.1",
+    "keycloak-angular": "^13.1.0",
+    "keycloak-js": "^20.0.5",
+    "nanoid": "^4.0.2",
     "ngx-print": "~1.2.1",
     "pqgrid": "file:./paramquery-8.4.0/",
     "print-js": "^1.6.0",

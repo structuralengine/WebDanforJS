@@ -100,8 +100,8 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   // 計算開始
   onClick() {
 
-    const user = this.auth.currentUser;
-    if(user === null){
+    const user = this.user.userProfile;
+    if(!user){
       this.helper.alert(this.translate.instant("calculation-print.p_login"));
       return;
     }

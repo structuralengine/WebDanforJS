@@ -466,5 +466,9 @@
     "calc-durability-moment":{
         "check_crack":"ひび割れデータを確認してください。",
         "changing_error":"this.crack_listのデータが変化しているエラーと思われます。"
+    },
+    "window": {
+        "closeTitle": "確認",
+        "closeMessage": "変更内容が保存されません。本当に終了しますか？"
     }
 }

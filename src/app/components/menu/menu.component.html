@@ -57,10 +57,10 @@
     </div>
 
     <div class="login-area">
-      <div *ngIf="auth.currentUser as user; else showLogin" class="userInfo">
+      <div *ngIf="user.userProfile as user; else showLogin" class="userInfo">
         <div ngbDropdown>
           <a class="icon file" id="dropdownBasic1" class="menu-btn" ngbDropdownToggle onfocus="this.blur();"><i
-              class="far fa-user-circle"></i>{{ user.displayName }}</a>
+              class="far fa-user-circle"></i>{{ user.lastName + user.firstName }}</a>
           <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
             <a (click)="auth.signOut()" (click)="logOut()" class="menu-btn logOut"translate>menu.logout</a>
           </div>

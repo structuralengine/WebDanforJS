@@ -17,7 +17,6 @@ import { ShearComponent } from './components/shear/shear.component';
 
 
 const routes: Routes = [
-    { path: '', redirectTo: '/blank-page', pathMatch: 'full' },
     { path: 'basic-information', component: BasicInformationComponent },
     { path: 'members', component: MembersComponent },
     { path: 'design-points', component: DesignPointsComponent },

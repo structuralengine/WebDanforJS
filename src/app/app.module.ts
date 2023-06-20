@@ -1,6 +1,6 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
+import { APP_INITIALIZER, NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { HttpClientModule, HttpClient } from "@angular/common/http";
@@ -96,8 +96,25 @@ import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { ChatComponent } from './components/chat/chat.component';
 import { ShearComponent } from './components/shear/shear.component';
 
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import { ActivateSessionComponent } from './components/activate-session/activate-session.component';
+
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
   new TranslateHttpLoader(http, "./assets/i18n/", ".json");
+
+function initializeKeycloak(keycloak: KeycloakService) {
+    console.log("initializaing keycloak");
+    return () => keycloak.init({
+        config: {
+            url: 'https://auth.structuralengine.com',
+            realm: 'structural-engine',
+            clientId: 'structural-engine'
+        },
+        initOptions: {
+            onLoad: 'check-sso',
+        }
+    });
+}
 
 @NgModule({
     imports: [
@@ -111,6 +128,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
         BrowserAnimationsModule,
         NgbModule,
         NgxPrintModule,
+        KeycloakAngularModule,
         provideFirebaseApp(() => initializeApp(environment.firebase)),
         provideAuth(() => getAuth()),
         provideFirestore(() => getFirestore()),
@@ -166,6 +184,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
 
       ChatComponent,
         ShearComponent,
+        ActivateSessionComponent,
     ],
     providers: [
         UserInfoService,
@@ -216,7 +235,13 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
       // 計算結果コンポーネントで他のコンポーネントから使いまわされるものは
         // declarations だけではなくココ(providers) にも宣言して
         // 他のコンポーネントから機能の一部を使えるようにする
-        ElectronService
+        ElectronService,
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initializeKeycloak,
+            multi: true,
+            deps: [KeycloakService]
+        },
     ],
     bootstrap: [AppComponent]
 })
