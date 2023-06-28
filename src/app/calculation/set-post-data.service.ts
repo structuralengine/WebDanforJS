@@ -82,7 +82,7 @@ export class SetPostDataService {
 
     const postObject = {
       production: environment.production,
-      uid: this.user.uid,
+      uid: '3opZKn1P9GWHbCeKJfjsXDmu1It2',
       speci1: this.basic.get_specification1(),
       InputData: postData,
     };

@@ -74,16 +74,16 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
 
   // 計算開始
   onClick() {
-
-    this.auth.currentUser.then(user=>{
-      if(user === null){
-        this.helper.alert(this.translate.instant("calculation-print.p_login"));
-        return;
-      }
-      this.user.clear(user.uid);
+    // this.auth.currentUser.then(user=>{
+    //   if(user === null){
+    //     this.helper.alert(this.translate.instant("calculation-print.p_login"));
+    //     return;
+    //   }
+    //   this.user.clear(user.uid);
       
-      this.router.navigate(['/result-viewer']);
-    });
+    //   this.router.navigate(['/result-viewer']);
+    // });
+    this.router.navigate(['/result-viewer']);
   }
 
   public isManual(): boolean{
