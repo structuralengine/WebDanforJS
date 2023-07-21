@@ -9,7 +9,8 @@
         "logout":"Logout",
         "login":"Login",
         "fail":"Failed to open the file. status:",
-        "open":"Please open"
+        "open":"Please open",
+        "acceptedFile":"Please choose pik or csv file format"
     },
     "login-dialog":{
         "createAccount":"Creat account",
