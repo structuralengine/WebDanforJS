@@ -259,7 +259,9 @@
         "member":"部材",
         "print":"計算印刷",
         "preparing":"印刷中...",
-        "p_login":"ログインしてください。"
+        "p_login":"ログインしてください。",
+        "download":"総括表ダウンロード",
+        "downloading":"ダウンロード中"
     },
     "section-force-list":{
         "m_no":"部材\n番号",
