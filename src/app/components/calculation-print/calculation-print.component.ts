@@ -63,7 +63,6 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.print_calculate_checked = this.calc.print_selected.print_calculate_checked;
     this.print_section_force_checked = this.calc.print_selected.print_section_force_checked;
     this.print_summary_table_checked = this.calc.print_selected.print_summary_table_checked;
@@ -92,7 +91,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
 
   public saveData(): void {
     this.calc.print_selected.print_calculate_checked = this.print_calculate_checked;
-    this.calc.print_selected.print_section_force_checked = this.print_section_force_checked;
+    this.calc.print_selected.print_section_force_checked = this.isManual() === true ? this.calc.print_selected.print_section_force_checked : this.print_section_force_checked;
     this.calc.print_selected.print_summary_table_checked = this.print_summary_table_checked;
 
     this.calc.print_selected.calculate_moment_checked = this.calculate_moment_checked;

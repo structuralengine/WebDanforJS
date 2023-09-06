@@ -60,11 +60,17 @@ export class InputCalclationPrintService {
 
   public setSaveData(calc: any): void {
     this.print_selected = this.default_print_selected();
-    for(const key in Object.keys(this.print_selected)){
+    Object.entries(this.print_selected).forEach(entry => {
+      const [key, value] = entry;
       if(key in calc){
         this.print_selected[key] = calc[key];
       }
-    }
+    });
+    // for(const key in Object.keys(this.print_selected)){
+    //   if(key in calc){
+    //     this.print_selected[key] = calc[key];
+    //   }
+    // }
   }
 
 }
