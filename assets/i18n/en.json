@@ -1,11 +1,15 @@
 {
     "menu": {
         "softName": "WebDanforJS",
+        "file": "file",
         "newEntry":"Create a new file",
         "openFile":"Open file",
         "saveFile":"Save a file",
         "overwrite":"overwrite save",
         "openPick":"Open the pickup file",
+        "language": "Language",
+        "help": "Help",
+        "control": "Control",
         "logout":"Logout",
         "login":"Login",
         "fail":"Failed to open the file. status:",
@@ -77,7 +81,9 @@
         "vl_u":"Usage limit (variable load)",
         "d_torsion_judge":"Durability For examination and judgment of torsional cracks",
         "jr_com":"JR companies",
+        "jr_standard":"Japan Railways Standard",
         "jr_com5":"JR companies from 2023",
+        "jr_stan5":"Japan Railways Standard from 2023",
         "trans":"Transport Organization",
         "trans5":"Transport Organization from 2023",
         "jr_east":"JR East",
@@ -187,7 +193,7 @@
         "m_len":"Distance (mm)"
     },
     "fatigues":{
-        "durable":"Durable life：",
+        "durable":"Durable life",
         "m_no":"Member\nNo",
         "position":"Position",
         "p_name":"Calculated point name",
@@ -252,7 +258,10 @@
         "dc":"Design condition",
         "s_table":"Summary table of section force",
         "p_check":"Performance check",
+        "safety_ratio":"Safety ratio list",
         "check":"Check",
+        "axis_maxmin":"Axis force max/min",
+        "consider":"Consider",
         "bend":"Bending",
         "shear":"Shear",
         "twist":"Twist",
@@ -469,6 +478,11 @@
     "calc-durability-moment":{
         "check_crack":"Check the crack data.",
         "changing_error":"It seems that the data in this.crack_list is changing."
+    },
+    "modal": {
+        "close": "Close",
+        "cancel": "Cancel",
+        "ok": "OK"
     },
     "window": {
         "closeTitle": "Confirm",
