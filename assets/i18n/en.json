@@ -5,7 +5,7 @@
         "newEntry":"Create a new file",
         "openFile":"Open file",
         "saveFile":"Save a file",
-        "overwrite":"overwrite save",
+        "overwrite":"Overwrite save",
         "openPick":"Open the pickup file",
         "language": "Language",
         "help": "Help",
@@ -14,7 +14,8 @@
         "login":"Login",
         "fail":"Failed to open the file. status:",
         "open":"Please open",
-        "acceptedFile":"Please choose pik or csv file format"
+        "acceptedFile":"Please choose pik or csv file format",
+        "NewWindow":"New window"
     },
     "login-dialog":{
         "createAccount":"Creat account",
@@ -66,6 +67,7 @@
         "safe_pv":"Safety (fatigue fracture) Permanent + variable",
         "safe_d":"Safety (destruction)",
         "r_ex":"Restorability (damage) Except during an earthquake",
+        "u_damage": "Usability (damage)",
         "r_at":"Restorability (damage) At the time of an earthquake",
         "min_rebar":"Minimum rebar amount",
         "u_stress":"Use limit For studying edge stress",
@@ -246,6 +248,7 @@
         "safe_ff":"Safety (fatigue fracture)",
         "safe_d":"Safety (destruction)",
         "r_ex":"Restorability (damage) Except during an earthquake",
+        "u_damage":"Usability (damage)",
         "r_at":"Restorability (damage) At the time of an earthquake",
         "min_rebar":"Minimum rebar amount",
         "dont_use":"Do not use",
@@ -486,6 +489,13 @@
     },
     "window": {
         "closeTitle": "Confirm",
-        "closeMessage": "Changes may not to be saved. Are you sure you want to quit?"
+        "closeMessage": "Changes may not to be saved. Are you sure you want to quit?",
+        "confirm": "Information being entered is discarded?"
+    },
+    "action_key":{
+        "copy": "Copy",
+        "paste": "Paste",
+        "undo": "Undo",
+        "cut": "Cut"
     }
 }
