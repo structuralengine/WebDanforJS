@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { CommonModule } from "@angular/common";
+import { CommonModule, HashLocationStrategy, LocationStrategy } from "@angular/common";
 import { APP_INITIALIZER, NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
@@ -141,6 +141,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         PreviewExcelComponent
     ],
     providers: [
+        {provide: LocationStrategy, useClass: HashLocationStrategy},
         UserInfoService,
         ConfigService,
         InputBasicInformationService,
@@ -166,7 +167,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         NgbActiveModal,
     ],
     entryComponents: [PreviewExcelComponent],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
 })
 export class AppModule {}
 
