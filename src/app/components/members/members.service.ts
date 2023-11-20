@@ -211,7 +211,7 @@ export class InputMembersService {
       return 0;
 
 
-    return this.lang_shape_names[this.language.browserLang][shape_id];
+    return this.lang_shape_names[this.language?.browserLang][shape_id];
   }
 
   // 入力された文字列から形状IDを返す
