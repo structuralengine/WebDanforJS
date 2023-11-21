@@ -141,7 +141,6 @@ function initializeKeycloak(keycloak: KeycloakService) {
         PreviewExcelComponent
     ],
     providers: [
-        {provide: LocationStrategy, useClass: HashLocationStrategy},
         UserInfoService,
         ConfigService,
         InputBasicInformationService,
