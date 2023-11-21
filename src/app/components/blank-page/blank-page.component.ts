@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-blank-page',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./blank-page.component.scss']
 })
 export class BlankPageComponent {
-  constructor() { }
+  constructor(route : Router) { 
+    route.navigate(['/']);
+  }
 }
