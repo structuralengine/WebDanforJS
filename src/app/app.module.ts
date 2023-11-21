@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { CommonModule, HashLocationStrategy, LocationStrategy } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { APP_INITIALIZER, NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
