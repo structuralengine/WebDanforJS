@@ -29,7 +29,7 @@ const routes: Routes = [
     { path: 'section-forces', component: SectionForcesComponent },
     { path: 'calculation-print', component: CalculationPrintComponent },
 //    { path: 'result-viewer', component: ResultViewerComponent },
-    { path: '**', component: BlankPageComponent }
+    { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 
 @NgModule({
