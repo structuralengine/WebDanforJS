@@ -117,7 +117,7 @@ export class SaveDataService {
             return;
         }
         // 最初の行か判定する
-        if (data.mark !== oldMark) {
+        if(data.mark !== oldMark ){
           i = 0;
         }
         oldMark = data.mark;
@@ -129,14 +129,14 @@ export class SaveDataService {
         const pickup2 = pickup1[data.pickUpNo];
 
         let pickup3 = { index: i + 1, m_no: data.m_no, p_id: data.p_id, position: data.position };
-        if (pickup2.length > i) {
+        if( pickup2.length > i){
           pickup3 = pickup2[i];
         } else {
           pickup2.push(pickup3);
         }
 
         if (!(data.mark in pickup3)) {
-          pickup3[data.mark] = { max: {}, min: {} };
+          pickup3[data.mark] = {max: {}, min: {}};
         }
         const pickup4 = pickup3[data.mark];
 
@@ -309,7 +309,7 @@ export class SaveDataService {
     }
     if ("pickup_data" in jsonData) {
       this.pickup_data = jsonData.pickup_data;
-    } else {
+    } else{
       this.pickup_filename = '';
     }
 
@@ -384,25 +384,15 @@ export class SaveDataService {
     this.updateOldData(jsonData);
   }
 
-  //Hide design condition
-  public hideDC(inputText: any): boolean {
-    const jsonData: any = JSON.parse(inputText);
-    if ("members" in jsonData) {
-      const hide = this.members.checkHideDesignCondition(jsonData.members);
-      return hide;
-    }
-    return false;
-  }
-
   /// ファイルのバージョンによってはデータに手を加える必要がある
   private updateOldData(jsonData: object): void {
 
     const programVer: string = packageJson.version;
     let filetVer: string = '0.0.0';
-    if ('ver' in jsonData)
+    if('ver' in jsonData)
       filetVer = jsonData['ver'] as string;
 
-    if (this.isOlder('1.13.7', filetVer)) {
+    if(this.isOlder('1.13.7', filetVer)) {
 
       //console.log("translate!!");
 
@@ -433,7 +423,7 @@ export class SaveDataService {
     ).temp;
   }
 
-  public getPickupFilename(): string {
+  public getPickupFilename(): string{
     return this.pickup_filename;
   }
 }

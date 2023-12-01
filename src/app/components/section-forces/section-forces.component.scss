@@ -1,5 +1,5 @@
 .c-subNavArea {
-    padding-top: 10px;
+    padding-top: 11px;
     background: var(--base-950);
 
     &__nav {
@@ -106,15 +106,10 @@
 }
 
 .c-sheetArea {
-    padding-top: 10px;
+    padding-top: 24px;
     padding-left: 16px;
-    padding-right: 10px;
-    padding-bottom: 10px;
+    padding-right: 16px;
+    padding-bottom: 16px;
     background: var(--base-900);
     height: 688px;
-}
-
-.s-border{
-    position: fixed;
-    width: 89.5%;
 }

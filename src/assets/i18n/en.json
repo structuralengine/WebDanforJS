@@ -91,7 +91,6 @@
         "jr_east":"JR East",
         "limit100":"The upper limit of the cover used for the crack width limit is 100 mm.",
         "apex":"Place one reinforcing bar at the apex in a circular cross section",
-        "adopt":"Adopt a rebar placement method that reduces shear capacity in a circular section",
         "Mud":"Mud when calculating βn in shear strength does not consider axial force"
     },
     "members" :{
@@ -109,8 +108,7 @@
         "g_no":"Group No",
         "g_name":"Part name",
         "section":"Cross section (mm)",
-        "part_n":"Number of parts",
-        "group": "Group No. in \"Member/Cross Section\" is blank"
+        "part_n":"Number of parts"
     },
     "section-forces":{
         "b_check":"Bending check",

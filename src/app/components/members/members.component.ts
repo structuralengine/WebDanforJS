@@ -83,6 +83,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
         ]
       },
       change: (evt, ui) => {
+        debugger;
         for (const property of ui.updateList) {
           for (const key of Object.keys(property.newRow)) {
             const old = property.oldRow[key];
@@ -152,8 +153,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
         const flg: boolean = this.members.checkMemberEnables(this.table_datas)
         this.app.memberChange(flg);
 
-        // save data when change
-        this.saveData();
       }
     };
 
@@ -277,9 +276,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public saveData(): void {
     this.members.setTableColumns(this.table_datas, this.save.isManual());
-
-    //set g-type again
-    this.members.setGTypeForMembers();
 
     if (this.save.isManual()) {
       // 断面力手入力モードの時 部材・断面の入力があったら

@@ -6,7 +6,6 @@ import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from '@ngx-translate/core';
 import { ShearStrengthService } from './shear-strength.service';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
-import { InputMembersService } from '../members/members.service';
 
 @Component({
   selector: 'app-shear',
@@ -28,14 +27,11 @@ export class ShearComponent implements OnInit {
 
   constructor(
     private shear: ShearStrengthService,
-    private members: InputMembersService,
     private save: SaveDataService,
     public helper: DataHelperModule,
     private basic: InputBasicInformationService,
     private translate: TranslateService
-  ) { 
-    this.members.checkGroupNo();
-  }
+  ) { }
 
   ngOnInit() {
 

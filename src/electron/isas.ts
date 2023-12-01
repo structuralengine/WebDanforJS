@@ -19,7 +19,7 @@ async function createWindow() {
 
   // 通常版と違う箇所 -----
   mainWindow.setMenuBarVisibility(true);
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
   // --------------------
 
   mainWindow.on('close', function (e) {

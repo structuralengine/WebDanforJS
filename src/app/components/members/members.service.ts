@@ -2,12 +2,6 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { LanguagesService } from 'src/app/providers/languages.service';
-import { InputBasicInformationService } from '../basic-information/basic-information.service';
-import { forEach } from 'jszip';
-import { parse } from 'path';
-import { toDouble } from 'igniteui-angular-core';
-import { publicDecrypt } from 'crypto';
-import { log } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -29,10 +23,9 @@ export class InputMembersService {
   private lang_shape_names: any = {};
 
   constructor(private translate: TranslateService,
-    private helper: DataHelperModule,
-    private language: LanguagesService,
-    private basicService: InputBasicInformationService,
-  ) {
+              private helper: DataHelperModule,
+              private language: LanguagesService
+             ) {
     this.clear();
 
     for (const lang of this.langs) {
@@ -55,15 +48,7 @@ export class InputMembersService {
   public clear(): void {
     this.member_list = new Array();
   }
-  public checkGroupNo(){
-    let grNo = this.getGroupes();
-    let memList = this.getSaveData();
-    let check = memList.filter(x =>  x.g_name !== "" || x.B != null || x.H != null || x.t != null);
-    if(grNo.length == 0 && check.length > 0){
-      this.helper.alert(this.translate.instant("members.group"))
-    }
-    console.log(grNo);
-  }
+
   // 部材情報
   public default_member(m_no: number): any {
     // メモ:
@@ -75,7 +60,6 @@ export class InputMembersService {
       g_no: null,
       g_id: '',
       g_name: '',
-      g_type: undefined, //set g-Type == undefined
       shape: 0,
       B: null,
       H: null,
@@ -412,13 +396,12 @@ export class InputMembersService {
       }
       result.push(def)
     }
-    console.log("data save", this.member_list);
-    
     return result;
   }
 
   // 内部保持用のデータに変換
   public setSaveData(members: any) {
+
     this.clear();
     for (const m of members) {
       const def = this.default_member(m.m_no);
@@ -427,71 +410,7 @@ export class InputMembersService {
           def[k] = m[k];
         }
       }
-      this.setGType(def, m.g_type);
       this.member_list.push(def)
     }
-  }
-
-
-  //Set for g_type in member
-  public setGTypeForMembers() {
-    this.member_list.forEach(m => {
-      this.setGType(m);
-    })
-    //console.log(this.member_list);
-  }
-
-  //Set for g_type in member
-  public setGType(member: any, gType?: any) {
-    if (member.g_id === undefined || member.g_id === "blank"){
-      member.g_type = null;
-      return;
-    }
-    if (gType === undefined || gType === null) {
-      const conditions_list = this.basicService.conditions_list;
-      var jr003 = conditions_list.find(e => e.id === "JR-003");
-      var jr005 = conditions_list.find(e => e.id === "JR-005");
-      // Circle
-      if (member.shape === 3) {
-        if (jr003.selected === false && jr005.selected === true) member.g_type = 1;
-        if (jr003.selected === true && jr005.selected === false) member.g_type = 2;
-        if (jr003.selected === false && jr005.selected === false) member.g_type = 3;
-      }
-
-      // rectangle or t-shape
-      if (member.shape === 1 || member.shape === 2) {
-        member.g_type = null;
-      }
-      // oval
-      if (member.shape === 4) {
-        member.g_type = 1;
-      }
-    }
-    else {
-      member.g_type = gType;
-    }
-  }
-
-  public checkHideDesignCondition(members: any[]) {
-    //true -> hide; false ->  show
-    let filterMembers = members.filter(member => member.shape === 3 && "g_type" in member);
-    if (filterMembers == undefined || filterMembers.length === 0) return false;
-    //check has multi group
-    let gNos = filterMembers.map(member => member.g_id);
-    let isOnlyG = gNos.every((val, i, arr) => val === arr[0]);
-    if (isOnlyG) return false;
-
-    //Check value each of group
-    let hide = false;
-    let firstElement = filterMembers[0];
-    filterMembers.forEach((val, i) => {
-      if (i > 0 &&
-        val.g_no !== firstElement.g_no &&
-        val.g_type !== firstElement.g_type) {
-        hide = true
-        return;
-      }
-    })
-    return hide;
   }
 }

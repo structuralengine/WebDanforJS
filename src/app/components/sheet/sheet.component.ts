@@ -20,7 +20,6 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   isMemberQuestionActive = false;
   isCrackQuestionActive = false;
   isSafetyQuestionActive = false;
-  public colsShow: any[] = new Array();
 
   @HostListener('document:mouseover', ['$event'])
   toggleActive(event: Event) {
@@ -29,26 +28,26 @@ export class SheetComponent implements AfterViewInit, OnChanges {
       { iconId: '#crack-question', tableId: '#crack-table', activeProp: 'isCrackQuestionActive' },
       { iconId: '#safety-question', tableId: '#safety-table', activeProp: 'isSafetyQuestionActive' }
     ];
-
+  
     for (let element of elements) {
       this.handleElementActivation(element, event);
     }
   }
-
+  
   handleElementActivation(element: any, event: Event) {
     const elQAIcon = window.document.querySelector(element.iconId);
     const elTable = window.document.querySelector(element.tableId);
     const grandEl = elQAIcon?.parentElement?.parentElement;
-
+  
     this[element.activeProp] = grandEl?.classList.contains('active') || false;
-
+  
     if (grandEl?.contains(event.target as Node)) {
       grandEl.classList.add('active');
     } else if (elTable.contains(event.target as Node) && this[element.activeProp]) {
     } else {
       grandEl?.classList.remove('active');
     }
-  }
+  }  
 
   private createGrid() {
     this.options.beforeCellKeyDown = (evt, ui) => {
@@ -75,76 +74,43 @@ export class SheetComponent implements AfterViewInit, OnChanges {
 
         if (evt.shiftKey) {
           // 「Shift」 と「Tab」を同時に押した際に左へセルを進める
-          if (!(ui.rowIndx === 0 && ui.colIndx === 0)) {
-            const indexCrr = this.colsShow.indexOf(ui.colIndx);
-            let colPre = this.colsShow[indexCrr - 1];
-            if (indexCrr === 0) {
-              colPre = this.colsShow[this.colsShow.length - 1]
+          if (ui.colIndx > 0) {
+            // 左に移動
+            const countCols = this.grid.getColModel().length - 1;
+
+            const colIndx = ui.colIndx > countCols ? countCols : ui.colIndx;
+
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx,
+              colIndx: colIndx - mov,
+              focus: true,
+            });
+          } else {
+            // 前の行の右端に移動
+            if (ui.rowIndx - mov >= 0) {
               this.grid.setSelection({
                 rowIndx: ui.rowIndx - mov,
-                colIndx: colPre,
-                focus: true,
-              });
-            }
-            else {
-              this.grid.setSelection({
-                rowIndx: ui.rowIndx,
-                colIndx: colPre,
+                colIndx: this.grid.getColModel().length,
                 focus: true,
               });
             }
           }
-          // if (ui.colIndx > 0) {
-          //   // 左に移動
-          //   const countCols = this.grid.getColModel().length - 1;
-          //   const colIndx = ui.colIndx > countCols ? countCols : ui.colIndx;
-          //   this.grid.setSelection({
-          //     rowIndx: ui.rowIndx,
-          //     colIndx: colIndx - mov,
-          //     focus: true,
-          //   });
-          // } else {
-          //   // 前の行の右端に移動
-          //   if (ui.rowIndx - mov >= 0) {
-          //     this.grid.setSelection({
-          //       rowIndx: ui.rowIndx - mov,
-          //       colIndx: this.grid.getColModel().length,
-          //       focus: true,
-          //     });
-          //   }
-          // }
         } else {
-          const indexCrr = this.colsShow.indexOf(ui.colIndx);
-          let colNext = this.colsShow[indexCrr + 1];
-          if (indexCrr === this.colsShow.length - 1) {
+          if ($cell.length > 0) {
+            // 右に移動
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx,
+              colIndx: ui.colIndx + mov,
+              focus: true,
+            });
+          } else {
+            // 次の行の左端に移動
             this.grid.setSelection({
               rowIndx: ui.rowIndx + mov,
               colIndx: 0,
               focus: true,
             });
           }
-          else {
-            this.grid.setSelection({
-              rowIndx: ui.rowIndx,
-              colIndx: colNext,
-              focus: true,
-            });
-          }
-          // if ($cell.length > 0) {
-          //   // 右に移動
-          //   this.grid.setSelection({
-          //     rowIndx: ui.rowIndx,
-          //     colIndx: ui.colIndx + mov,
-          //     focus: true,
-          //   });
-          // } else {
-          //   // 次の行の左端に移動
-          //   this.grid.setSelection({
-          //     rowIndx: ui.rowIndx + mov,
-          //     colIndx: 0,
-          //     focus: true,
-          //   });
-          // }
         }
 
         return false;
@@ -169,63 +135,9 @@ export class SheetComponent implements AfterViewInit, OnChanges {
 
       return true;
     };
-    //when pressed, entering end into cell will advance to the next row, locking events behind to not advance to the next cell
-    this.options.editorKeyDown = (evt, ui) => {
-      let mov = 1;
-      if (evt.keyCode === 13) {
-        this.grid.setSelection({
-          rowIndx: ui.rowIndx + mov,
-          colIndx: ui.colIndx,
-          focus: true,
-        });
-        return false;
-      }
-      //key tab
-      if (evt.keyCode === 9) {
-        if (evt.shiftKey){
-          if (!(ui.rowIndx === 0 && ui.colIndx === 0)) {
-            const indexCrr = this.colsShow.indexOf(ui.colIndx);
-            let colPre = this.colsShow[indexCrr - 1];
-            if (indexCrr === 0) {
-              colPre = this.colsShow[this.colsShow.length - 1]
-              this.grid.setSelection({
-                rowIndx: ui.rowIndx - mov,
-                colIndx: colPre,
-                focus: true,
-              });
-            }
-            else {
-              this.grid.setSelection({
-                rowIndx: ui.rowIndx,
-                colIndx: colPre,
-                focus: true,
-              });
-            }
-          }
-        }
-        else
-        {
-          const indexCrr = this.colsShow.indexOf(ui.colIndx);
-          let colNext = this.colsShow[indexCrr + 1];
-          if (indexCrr === this.colsShow.length - 1) {
-            this.grid.setSelection({
-              rowIndx: ui.rowIndx + mov,
-              colIndx: 0,
-              focus: true,
-            });
-          }
-          else {
-            this.grid.setSelection({
-              rowIndx: ui.rowIndx,
-              colIndx: colNext,
-              focus: true,
-            });
-          }
-        }
-        return false;
-      }
-      return true;
-    }
+
+
+
     this.grid = pq.grid(this.div.nativeElement, this.options);
   }
 
@@ -239,8 +151,6 @@ export class SheetComponent implements AfterViewInit, OnChanges {
 
   ngAfterViewInit() {
     this.createGrid();
-    this.setColsShow();
-    // console.log(this.colsShow);
   }
 
   refreshDataAndView() {
@@ -262,15 +172,5 @@ export class SheetComponent implements AfterViewInit, OnChanges {
       return;
     }
     this.grid.refreshCell(obj);
-  }
-
-  public setColsShow() {
-    let cols = this.grid.getColModel();
-    this.colsShow = new Array();
-    cols.forEach((val, i) => {
-      if (val.hidden !== true) {
-        this.colsShow.push(i)
-      }
-    })
   }
 }

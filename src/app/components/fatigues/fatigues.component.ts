@@ -6,7 +6,6 @@ import pq from 'pqgrid';
 import { AppComponent } from 'src/app/app.component';
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import { TranslateService } from "@ngx-translate/core";
-import { InputMembersService } from '../members/members.service';
 
 @Component({
   selector: 'app-fatigues',
@@ -34,9 +33,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private fatigues: InputFatiguesService,
     private save: SaveDataService,
-    private translate: TranslateService,
-    private members: InputMembersService,
-    ) { this.members.checkGroupNo();}
+    private translate: TranslateService
+  ) { }
 
   ngOnInit() {
 

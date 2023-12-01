@@ -66,8 +66,8 @@ export class SafetyFactorsMaterialStrengthsComponent
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private members: InputMembersService,
     private translate: TranslateService,
-    private cdref: ChangeDetectorRef,
-  ) { this.members.checkGroupNo();}
+    private cdref: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
     this.setTitle();

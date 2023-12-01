@@ -311,11 +311,6 @@ export class InputFatiguesService {
     this.service_life = fatigues.service_life;
   }
 
-  public setInputData(train_A_count: any, train_B_count : any, service_life : any) {
-    this.train_A_count = train_A_count;
-    this.train_B_count = train_B_count;
-    this.service_life = service_life;
-  }
   public getGroupeName(i: number): string {
     return this.points.getGroupeName(i);
   }
