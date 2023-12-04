@@ -1,11 +1,15 @@
 {
     "menu": {
         "softName": "WebDanforJS",
+        "file": "file",
         "newEntry":"Create a new file",
         "openFile":"Open file",
         "saveFile":"Save a file",
         "overwrite":"Overwrite save",
         "openPick":"Open the pickup file",
+        "language": "Language",
+        "help": "Manual",
+        "control": "Control",
         "logout":"Logout",
         "login":"Login",
         "fail":"Failed to open the file. status:",
@@ -79,12 +83,15 @@
         "vl_u":"Usage limit (variable load)",
         "d_torsion_judge":"Durability For examination and judgment of torsional cracks",
         "jr_com":"JR companies",
+        "jr_standard":"Japan Railways Standard",
         "jr_com5":"JR companies from 2023",
+        "jr_stan5":"Japan Railways Standard from 2023",
         "trans":"Transport Organization",
         "trans5":"Transport Organization from 2023",
         "jr_east":"JR East",
         "limit100":"The upper limit of the cover used for the crack width limit is 100 mm.",
         "apex":"Place one reinforcing bar at the apex in a circular cross section",
+        "adopt":"Adopt a rebar placement method that reduces shear capacity in a circular section",
         "Mud":"Mud when calculating βn in shear strength does not consider axial force"
     },
     "members" :{
@@ -94,7 +101,7 @@
         "shape":"Shape",
         "rectangle":"Rectangle",
         "t_shape":"T shape",
-        "r_shape":"Round",
+        "r_shape":"Round,Circle",
         "oval":"oval",
         "circle":"Round/Circle",
         "m_no":"Member\nNo",
@@ -102,7 +109,8 @@
         "g_no":"Group No",
         "g_name":"Part name",
         "section":"Cross section (mm)",
-        "part_n":"Number of parts"
+        "part_n":"Number of parts",
+        "group": "Group No. in \"Member/Cross Section\" is blank"
     },
     "section-forces":{
         "b_check":"Bending check",
@@ -190,7 +198,7 @@
         "m_len":"Distance (mm)"
     },
     "fatigues":{
-        "durable":"Durable life：",
+        "durable":"Durable life",
         "m_no":"Member\nNo",
         "position":"Position",
         "p_name":"Calculated point name",

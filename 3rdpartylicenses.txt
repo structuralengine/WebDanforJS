@@ -337,6 +337,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
+guid-typescript
+ISC
+
 has
 MIT
 Copyright (c) 2013 Thiago de Arruda
