@@ -35,9 +35,12 @@
         "steels":"Steel arrangement",
         "shear":"Shear strength",
         "crack":"Crack data",
+        "durability":"Durability data",
         "fatigues":"Fatigue data",
         "sf_ms":"Safety factor / Material strength",
-        "calc_print":"Calculation / Printing"
+        "calc_print":"Calculation / Printing",
+        "material_condition": "Material strength/ verification condition",
+        "durability_data":"Durability Data"
     },
     "blank-page":{
         "cs_pc":"Cross-section performance check",
@@ -58,10 +61,11 @@
         "dc":"Design condition",
         "sre_cross":"Stress used for cross-section inspection",
         "rail":"Railway",
+        "road":"Road 'trial'",
         "Pilipinas": "Railway for pilipinas",
         "japan_civil":"Japan Society of Civil Engineers",
-        "d_stress":"Durability For studying edge stress",
-        "pl_d":"Durability (permanent load)",
+        "d_stress":"Durability and Usability For studying edge stress",
+        "pl_d":"Durability and Usability Permanent action",
         "safe_limit":"Safety (fatigue fracture) Fatigue limit",
         "safe_pa":"Safety (fatigue destruction) Permanent action",
         "safe_pv":"Safety (fatigue fracture) Permanent + variable",
@@ -91,8 +95,39 @@
         "jr_east":"JR East",
         "limit100":"The upper limit of the cover used for the crack width limit is 100 mm.",
         "apex":"Place one reinforcing bar at the apex in a circular cross section",
+        "Mud":"Mud when calculating βn in shear strength does not consider axial force",
+        "limit_design_method":"limit design method",
+        "partial_coefficient_method":"partial coefficient method",
+        "allowable_stress_method":"allowable stress method",
         "adopt":"Adopt a rebar placement method that reduces shear capacity in a circular section",
-        "Mud":"Mud when calculating βn in shear strength does not consider axial force"
+        "note_img": "※ The numbers in [] correspond to the numbers in the table below (combination of actions)."
+    },
+    "basic-information-road":{
+        "bs_dcp_of_is": "Durability Corrosion protection of internal steel [1]",
+        "bs_durability_fatigue": "Durability Fatigue of concrete members [13]",
+        "bs_lcc1": "Load carrying capacity Limit states 1, 3 (permanent action)[1]",
+        "bs_lcc2_8": "Load carrying capacity Limit states 1, 3 (variable action) [2-8]",
+        "bs_lcc9": "Load carrying capacity Limit states 1, 3 (variable action)[9]",
+        "bs_lcc10": "Load carrying capacity Limit states 1, 3 (variable action)[10]",
+        "bs_lcc11": "Load carrying capacity Limit states 1, 3 (accidental action) [11]",
+        "bs_lcc12": "Load carrying capacity Limit states 1, 3 (accidental action) [12]",
+        "bs_min_rebar_amount": "Minimum rebar amount[1-10]",
+        "sfv_dcp_of_is": "Durability Corrosion protection of internal steel [1]",
+        "sfv_durability_fatigue": "Durability Fatigue of concrete members [13]",
+        "sfv_lcc1": "Load carrying capacity Limit states 1, 3 (permanent action)[1]",
+        "sfv_lcc2_8": "Load carrying capacity Limit states 1, 3 (variable action) [2-8]",
+        "sfv_lcc9": "Load carrying capacity Limit states 1, 3 (variable action)[9]",
+        "sfv_lcc10": "Load carrying capacity Limit states 1, 3 (variable action)[10]",
+        "sfv_lcc11": "Load carrying capacity Limit states 1, 3 (accidental action) [11]",
+        "sfv_lcc12": "Load carrying capacity Limit states 1, 3 (accidental action) [12]",
+        "tv_dcp_of_is": "Durability Corrosion protection of internal steel [1]",
+        "tv_durability_fatigue": "Durability Fatigue of concrete members [13]",
+        "tv_lcc1": "Load carrying capacity Limit states 1, 3 (permanent action)[1]",
+        "tv_lcc2_8": "Load carrying capacity Limit states 1, 3 (variable action) [2-8]",
+        "tv_lcc9": "Load carrying capacity Limit states 1, 3 (variable action)[9]",
+        "tv_lcc10": "Load carrying capacity Limit states 1, 3 (variable action)[10]",
+        "tv_lcc11": "Load carrying capacity Limit states 1, 3 (accidental action) [11]",
+        "tv_lcc12": "Load carrying capacity Limit states 1, 3 (accidental action) [12]"
     },
     "members" :{
         "section_sh":"Cross-sectional shape",
@@ -194,8 +229,12 @@
         "position":"Position",
         "p_name":"Calculated point name",
         "s_len":"Shear span length (mm)",
+        "s_len_a":"Shear span length\n a(mm)",
         "fixed_end":"fixed end",
-        "m_len":"Distance (mm)"
+        "m_len":"Distance (mm)",
+        "consider_shear":"Consider the effect of shear span ratio",
+        "concrete":"concrete",
+        "reinforcement_bar":"shear reinforcement bar"
     },
     "fatigues":{
         "durable":"Durable life",
@@ -212,6 +251,36 @@
         "for_s":"For shear",
         "hoop":"Hoop",
         "fold":"folding"
+    },
+    "material-strength-verifiaction-condition":{
+        "com_type":"Component Type",
+        "other_con":"Other conditions",
+        "base_stan":"Base Standard",
+        "ge_pa":"General parts",
+        "fla_for_flo_sla":"Flange for floor slab",
+        "sub":"Substructure",
+        "sep":"The upper limit of the characteristic value Sc of shear force that concrete can bear is not taken into account",
+        "rsb_con":"Reinforcing bar ・ Concrete",
+        "rebar_ax":"Axial rebar",
+        "rebar_la":"Lateral rebar",
+        "stirrup":"Stirrup",     
+        "ys":"Yield strength(N/mm2)",
+        "d25":"D25 or less",
+        "d29":"D29 and above",
+        "dts":"Design tensile strength(N/mm2)",
+        "r_mta":"Reinforcing bar material strength",   
+        "sei_ver": "Seismic Verification Conditions",
+        "c_mta":"Concrete material strength",
+        "si": "Situation",
+        "pl_ex": "Plasticization・ Expect",
+        "lv_e": "Level 2 earthquake motionType",
+        "var_st": "Variable Action Control Status",
+        "acc_st": "Accidental Action Control Status",
+        "fck":"Design standard strength of concrete fck(N/mm2)",
+        "max_ca":"Maximum dimensions of coarse aggregate (mm)",
+        "text_mes":"If 'Design standard strength of concrete fck>30', not considered",
+        "co":"Corbel",
+        "do_not":"Do not except axial effect on shear forces that concrete can bear"
     },
     "safety-factors-material-strengths":{
         "rsb_con":"Reinforcing bar / Concrete",
@@ -430,6 +499,12 @@
         "tention": "",
         "member":"Member",
         "number":""
+    },
+    "durability":{
+        "m_no":"Member\nNo" ,
+        "position":"Position",
+        "p_name":"Part name",
+        "under_blow_groundwater":"Under or Below\ngroundwater level"
     },
     "result-durability-moment":{
         "u_bend_vfry_rslt":"Usability (appearance) Results of verification of bending cracks"
