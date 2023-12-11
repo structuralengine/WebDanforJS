@@ -1,11 +1,11 @@
 {
   "name": "web-dan-for-js",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host=127.0.0.1",
-    "build": "ng build --configuration production --base-href \"https://webdan.malme.app/\" && angular-cli-ghpages",
-    "build-actions": "ng build --configuration production --base-href \"https://webdan.malme.app/\"",
+    "build": "ng build --configuration production --base-href \"https://webdan.malme.app/\" && npm run filecopy3 && angular-cli-ghpages",
+    "build-actions": "ng build --configuration production --base-href \"https://webdan.malme.app/\" && npm run filecopy3",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
@@ -16,6 +16,7 @@
     "start:prod": "electron dist/index.js",
     "filecopy1": "node -e \"require('fs').copyFileSync('dev-app-update.yml', 'dist/dev-app-update.yml')\"",
     "filecopy2": "node -e \"require('fs').copyFileSync('app-update.yml', 'dist/app-update.yml')\"",
+    "filecopy3": "node -e \"require('fs').copyFileSync('src/404.html', 'dist/404.html')\"",
     "electron:isas": "npm run build:isas && npx electron-builder build --windows",
     "build:isas": "ng build --configuration production --optimization --extract-licenses --build-optimizer && webpack --config webpack.electron.isas.config.js && npm run filecopy1 && npm run filecopy2"
   },

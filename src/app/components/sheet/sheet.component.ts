@@ -51,6 +51,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   }
 
   private createGrid() {
+    console.log("this.options", this.options)
     this.options.beforeCellKeyDown = (evt, ui) => {
       const mov = 1;
       // Enterで下に移動
@@ -240,7 +241,6 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit() {
     this.createGrid();
     this.setColsShow();
-    // console.log(this.colsShow);
   }
 
   refreshDataAndView() {

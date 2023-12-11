@@ -93,7 +93,7 @@
         <table  *ngIf="fck<=30; else textMes">
           <thead>
             <tr>
-              <th rowspan="2">
+              <th rowspan="2" width="204px">
                 <p translate>material-strength-verifiaction-condition.si</p>
               </th>
               <th rowspan="2">
@@ -109,13 +109,12 @@
             <ng-container *ngFor="let item of options4; index as i">               
                              
               <tr *ngIf="item.title != null ">
-                <td style="text-align: left">{{item.title}}</td>
+                <td style="text-align: left; font-size: 12px;">{{item.title}}</td>
                 <td class="center" width="70px">
                   <input type="checkbox" name="pla_ex{{i}}" id="pla_ex{{i}}" [value]="item.id"
-                    [checked]="item.selected"  (change)="setCheckboxPlastic(i)" />
+                    [checked]="item.selected"  (change)="setCheckboxPlastic(i)"/>
                 </td>
-                <td  style="text-align: center;" width="80px" *ngIf="!item.selected ; else elseBlock" >
-                  <div class="diagonalRising"></div>
+                <td class="diagonalRising" style="text-align: center;" width="80px" *ngIf="!item.selected || i==0; else elseBlock" >                  
                 </td>
               </tr>
               <ng-template #elseBlock>                

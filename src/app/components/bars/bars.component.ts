@@ -6,6 +6,7 @@ import pq from 'pqgrid';
 import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from '../members/members.service';
 import { MenuService } from '../menu/menu.service';
+import { data } from 'jquery';
 
 @Component({
   selector: 'app-bars',
@@ -27,6 +28,34 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public table_datas: any[];
   // タブのヘッダ名
   public groupe_name: string[];
+  public style ={"pointer-events":"none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size":"0" }
+  public styleShaded1:any =   { 
+    haunch_height : { ...this.style},
+  }
+  public styleShaded2 ={
+    stirrup_dia :{...this.style},
+    stirrup_n:{...this.style},
+    stirrup_ss:{...this.style},
+    bending_dia:{...this.style},
+    bending_n:{...this.style},
+    bending_ss:{...this.style},
+    bending_angle:{...this.style},
+    
+  }
+  public prop={edit: false,show:false}
+  public propShaded1:any =   { 
+    haunch_height : { ...this.prop},
+  }
+  public propShaded2 ={
+    stirrup_dia :{...this.prop},
+    stirrup_n:{...this.prop},
+    stirrup_ss:{...this.prop},
+    bending_dia:{...this.prop},
+    bending_n:{...this.prop},
+    bending_ss:{...this.prop},
+    bending_angle:{...this.prop},
+    
+  }
 
   constructor(
     private members: InputMembersService,
@@ -40,12 +69,19 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.setTitle(this.save.isManual());
-
     this.table_datas = this.bars.getTableColumns();
 
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
+      this.table_datas[i].forEach((data:any,index:any)=>{
+       if(this.activeTab==="rebar_ax"){
+        if(index % 2!==0){
+          data.pq_cellstyle=this.styleShaded1;
+          data.pq_cellprop=this.propShaded1
+        }
+       }
+       })
       const op = {
         showTop: false,
         reactive: true,
@@ -151,6 +187,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // 共通する項目
+    if(this.menuService.selectedRoad){
     this.beamHeaders.push(
       {
         title: this.translate.instant("bars.p_name"),
@@ -257,6 +294,140 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'tanγ+tanβ', dataType: 'float', dataIndx: 'tan', sortable: false, width: 85, nodrag: true,
       },
       {
+        title: this.translate.instant("bars.rebar_fo"), cls:"col-disabled", editable:false, 
+        align: 'center', colModel: [
+          {
+            title: this.translate.instant("bars.dia"),
+            dataType: 'integer', dataIndx: 'bending_dia', sortable: false, width: 70, nodrag: true, cls:"col-disabled" , editable:false
+          },
+          {
+            title: this.translate.instant("bars.number"),
+            dataType: 'float', dataIndx: 'bending_n', sortable: false, width: 70, nodrag: true, cls:"col-disabled" , editable:false
+          },
+          {
+            title: this.translate.instant("bars.ss"),
+            dataType: 'float', dataIndx: 'bending_ss', sortable: false, width: 70, nodrag: true, cls:"col-disabled" , editable:false
+          },
+          {
+            title: this.translate.instant("bars.angle"),
+            dataType: 'float', dataIndx: 'bending_angle', sortable: false, width: 70, nodrag: true, cls:"col-disabled", editable:false 
+          }
+        ],
+        nodrag: true,
+      },
+      {
+        title: this.translate.instant("bars.process"),
+        align: 'center', dataType: 'bool', dataIndx: 'enable', type: 'checkbox', sortable: false, width: 40, nodrag: true,
+      },
+    );
+    }
+    else{
+    this.beamHeaders.push(
+      {
+        title: this.translate.instant("bars.p_name"),
+        dataType: 'string', dataIndx: 'p_name', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+      },
+      {
+        title: this.translate.instant("bars.bh"),
+        align: 'center', dataType: 'float', dataIndx: 'bh', editable: false, frozen: true, sortable: false, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+      },
+      {
+        title: this.translate.instant("bars.haunch"),
+        align: 'center', colModel: [
+          {
+            title: this.translate.instant("bars.bending"),
+            align: 'center', colModel: [
+              {
+                title: this.translate.instant("bars.shear"),
+                align: 'center', dataType: 'float', dataIndx: 'haunch_height', frozen: true, sortable: false, width: 85, nodrag: true,
+              },
+            ],
+            nodrag: true,
+          }
+        ],
+        nodrag: true,
+      },
+      {
+        title: this.translate.instant("bars.position"),
+        align: 'center', dataType: 'string', dataIndx: 'design_point_id', frozen: true, editable: true, sortable: false, width: 40, nodrag: true,
+      },
+      {
+        title: this.translate.instant("bars.rebar_ax"),
+        align: 'center', colModel: [
+          {
+            title: this.translate.instant("bars.dia"),
+            dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.number"),
+            dataType: 'float', dataIndx: 'rebar_n', sortable: false, width: 70, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.cover"),
+            dataType: 'float', dataIndx: 'rebar_cover', sortable: false, width: 55, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.lines"),
+            dataType: 'float', dataIndx: 'rebar_lines', sortable: false, width: 55, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.space"),
+            dataType: 'float', dataIndx: 'rebar_space', sortable: false, width: 55, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.ss"),
+            dataType: 'float', dataIndx: 'rebar_ss', sortable: false, width: 55, nodrag: true,
+          }
+        ],
+        nodrag: true,
+      },
+      {
+        title: this.translate.instant("bars.rebar_la"),
+        align: 'center', colModel: [
+          {
+            title: this.translate.instant("bars.dia"),
+            dataType: 'integer', dataIndx: 'side_dia', sortable: false, width: 70, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.pieces"),
+            dataType: 'float', dataIndx: 'side_n', sortable: false, width: 70, nodrag: true,
+          },
+          {
+            title: sideCoverTitle, dataType: 'float', dataIndx: 'side_cover', sortable: false, width: 85, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.ss"),
+            dataType: 'float', dataIndx: 'side_ss', sortable: false, width: 70, nodrag: true,
+          }
+        ],
+        nodrag: true,
+      },
+      {
+        title: this.translate.instant("bars.rebar_ob"),
+        dataType: 'float', dataIndx: 'cos', sortable: false, width: 85, nodrag: true,
+      },
+      {
+        title: 'tanγ+tanβ', dataType: 'float', dataIndx: 'tan', sortable: false, width: 85, nodrag: true,
+      },
+      {
+        title: this.translate.instant("bars.rebar_sh"),
+        align: 'center', colModel: [
+          {
+            title: this.translate.instant("bars.dia"),
+            dataType: 'integer', dataIndx: 'stirrup_dia', sortable: false, width: 70, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.number"),
+            dataType: 'float', dataIndx: 'stirrup_n', sortable: false, width: 70, nodrag: true,
+          },
+          {
+            title: this.translate.instant("bars.ss"),
+            dataType: 'float', dataIndx: 'stirrup_ss', sortable: false, width: 70, nodrag: true,
+          }
+        ],
+        nodrag: true,
+      },
+      {
         title: this.translate.instant("bars.rebar_fo"),
         align: 'center', colModel: [
           {
@@ -283,6 +454,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         align: 'center', dataType: 'bool', dataIndx: 'enable', type: 'checkbox', sortable: false, width: 40, nodrag: true,
       },
     );
+    }
   }
 
   public getGroupeName(i: number): string {
@@ -312,7 +484,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public activePageChenge(id: number): void {
     this.activeButtons(id);
-
+    
     this.options = this.option_list[id];
     this.grid.options = this.options;
     this.grid.refreshDataAndView();
@@ -334,18 +506,40 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public setActiveTab(tab: string) {
     this.activeTab = tab;
-
+    for (let i = 0; i < this.table_datas.length; i++) {
+      
+      this.table_datas[i].forEach((data:any,index:any)=>{
+        data.pq_cellstyle={};
+        data.pq_cellprop={}
+       if(this.activeTab==="rebar_ax"){
+        if(index % 2!==0){
+          data.pq_cellstyle=this.styleShaded1;
+          data.pq_cellprop=this.propShaded1
+        }
+       }
+       if(this.activeTab!=="rebar_ax"){
+        if(index % 2!==0){
+          data.pq_cellstyle=this.styleShaded2;
+          data.pq_cellprop= this.propShaded2
+        }
+         if(index % 2===0){
+          data.pq_cellstyle=this.styleShaded1;
+          data.pq_cellprop=this.propShaded1
+        }
+       }
+       })
+      }
     let FIXED_CELLS_COUNT = this.save.isManual() ? 4 : 5;
     let CHECK_CELL_INDEX = this.save.isManual() ? 24 : 25;
     
     let cellIndexMap = {
       "rebar_ax": {
-        default: { start: 6, end: 16 },
-        manual: { start: 5, end: 15 }
+        default: { start: 6, end: 17 },
+        manual: { start: 5, end: 16 }
       },
       "default": {
-        default: { start: 17, end: 24 },
-        manual: { start: 16, end: 23 }
+        default: { start: 18, end: 24 },
+        manual: { start: 17, end: 23 }
       }
     };
     

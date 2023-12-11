@@ -34,6 +34,7 @@
     }
     .tobble-section {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       column-gap: 8px;
       padding: 16px 16px 0;
@@ -84,7 +85,7 @@
           border-radius: 8px;
           border: 1px solid var(--base-700);
           background: var(--base-950);
-
+          margin-bottom: 5px;
           &.active {
               border: 1px solid var(--primary-800);
               background: var(--checkbox_selected);
@@ -111,13 +112,20 @@
     padding-right: 10px;
     padding-bottom: 10px;
     background: var(--base-900);
-    // height: 688px;
-    height: 500px;
+    height: 680px;
+    // height: 500px;
 }
 
-.section-img{
-    padding-right: 40px;
-    img{
-      width: 100%;
+.s-border{
+    position: fixed;
+    width: 89.5%;
+}
+
+.disabled {
+    pointer-events: none;
+    color: var(--text_disabled);
+    a {
+        pointer-events: none;
+        color: var(--text_disabled);
     }
 }

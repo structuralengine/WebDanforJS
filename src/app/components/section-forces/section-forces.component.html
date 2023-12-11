@@ -15,13 +15,13 @@
         </li>
         <!-- ねじり -->
         <li class="c-subNavArea__navItem">
-          <a (click)="activePageChenge(2)" id="foc2" class="c-subNavArea__navItemTitle">
+          <a (click)="activePageChenge(2)" id="foc2" class="c-subNavArea__navItemTitle" [class.disabled]="selectedRoad">
             <span translate>section-forces.t_check</span>
           </a>
         </li>
       </ul>
     </nav>
-    <div class="tobble-section">
+    <div class="tobble-section" *ngIf="!selectedRoad;else block">
       <div
         class="tobble-container"
         *ngFor="let group of currentColGroupKeys"
@@ -31,24 +31,33 @@
         <div class="tobble">
           <div class="tobble-icon"></div>
         </div>
-        <div class="tobble-label">
-          <ng-container [ngSwitch]="group">
+        <div class="tobble-label" >
+          <ng-container  [ngSwitch]="group">
             <span *ngSwitchCase="'stress'">耐久性</span>
             <span *ngSwitchCase="'safe-ff'">安全性（疲労破壊）</span>
             <span *ngSwitchCase="'safe-destruct'">安全性（破壊）</span>
-            <span *ngSwitchCase="'recover-ex-earth'"
-              >復旧性（損傷）地震時以外</span
-            >
+            <span *ngSwitchCase="'recover-ex-earth'">復旧性（損傷）地震時以外</span>
             <span *ngSwitchCase="'recover-earth'">復旧性（損傷）地震時</span>
             <span *ngSwitchCase="'rebar'">最小鉄筋量</span>
           </ng-container>
         </div>
       </div>
     </div>
+    <ng-template #block>
+      <div class="tobble-section">
+        <div class="tobble-container" *ngFor="let group of currentSW" (click)="toggleDataLoad(group.id)"
+        [ngClass]="{ active: toggleStatus[group.id] }">
+        <div class="tobble">
+          <div class="tobble-icon"></div>
+        </div>
+        <div class="tobble-label">
+          <span>{{group.title}}</span>
+        </div>
+      </div>
+      </div>
+    </ng-template>
   </div>
-  
   <div class="c-sheetArea">
     <app-sheet #grid [options]="options"></app-sheet>
   </div>
-  <div class="container-fluid mt-16 section-img" ><img [src]="imgLink"></div>
 </div>

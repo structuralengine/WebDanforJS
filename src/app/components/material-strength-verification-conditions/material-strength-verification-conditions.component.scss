@@ -54,6 +54,7 @@ h5 {
 .safety-factors,
 .material-strength {
   display: inline-block;
+  margin-bottom: 20px;
 }
 
 .safety-factors,
@@ -82,7 +83,7 @@ h5 {
     text-align: center;
     padding: 0;
     line-height: 1.5;
-    background: var(--table_row_even_bg);
+    background: var(--table_row_even_bg);   
   }
 
   td {
@@ -113,8 +114,7 @@ h5 {
     }
   } 
   .diagonalRising {
-    border: solid #0000003d 0.11px;
-    transform: rotate(-15deg);
+    background: linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)
   }
   .levelType{
     background: transparent;
