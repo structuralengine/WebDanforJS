@@ -852,6 +852,7 @@ export class InputBasicInformationService {
     this.pickup_shear_force = this.default_pickup_shear(sp1, sp2);
     for (let i = 0; i < basic.pickup_shear_force.length; i++) {
       const e = this.pickup_shear_force[i];
+      if(e === undefined ||e === null ) continue
       const t = basic.pickup_shear_force[i];
       for (const k of Object.keys(e)) {
         if (k === 'title')
@@ -867,6 +868,7 @@ export class InputBasicInformationService {
     if ("pickup_torsional_moment" in basic) {
       for (let i = 0; i < basic.pickup_torsional_moment.length; i++) {
         const e = this.pickup_torsional_moment[i];
+        if(e === undefined ||e === null ) continue
         const t = basic.pickup_torsional_moment[i];
         for (const k of Object.keys(e)) {
           if (k === 'title')

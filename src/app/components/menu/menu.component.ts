@@ -35,6 +35,7 @@ import { KeycloakProfile } from 'keycloak-js';
 import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
+import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
 
 @Component({
   selector: "app-menu",
@@ -95,6 +96,7 @@ export class MenuComponent implements OnInit {
     public user: UserInfoService,
     private basic: InputBasicInformationService,
     private fatigues: InputFatiguesService,
+    private menuBehaviorSubject: MenuBehaviorSubject,
     // public auth: Auth,
     public language: LanguagesService,
     public electronService: ElectronService,
@@ -434,9 +436,9 @@ export class MenuComponent implements OnInit {
       this.grid2.refreshDataAndView();
     if (!(this.grid3 == null))
       this.grid3.refreshDataAndView();
-
     this.specification1_select_id = i;
     this.menuService.selectApply(i);
+    this.menuBehaviorSubject.setValue(i.toString());
     this.router.navigate(['./basic-information']);
     for (let i = 0; i <= 12; i++) {
       const data = document.getElementById(i + "");
