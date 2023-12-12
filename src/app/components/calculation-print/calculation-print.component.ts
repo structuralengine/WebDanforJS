@@ -45,6 +45,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   public table_datas: any[];
 
   public hasSummary: boolean = false;
+  public selectedRoad: boolean = true;
   private summary_data;
 
   constructor(
@@ -64,7 +65,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    console.log(this.selectedRoad,"selectedRoad");
     this.print_calculate_checked = this.calc.print_selected.print_calculate_checked;
     this.print_section_force_checked = this.calc.print_selected.print_section_force_checked;
     this.print_summary_table_checked = this.calc.print_selected.print_summary_table_checked;

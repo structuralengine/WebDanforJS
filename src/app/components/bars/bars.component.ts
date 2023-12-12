@@ -7,6 +7,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from '../members/members.service';
 import { MenuService } from '../menu/menu.service';
 import { data } from 'jquery';
+import { log } from 'console';
 
 @Component({
   selector: 'app-bars',
@@ -455,6 +456,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       },
     );
     }
+
+    console.log(this.beamHeaders, "header");
   }
 
   public getGroupeName(i: number): string {
@@ -549,19 +552,45 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     
     let startCellIndex = start;
     let endCellIndex = end;
+
+    console.log(this.grid.grid.getColModel());
+
     if (this.menuService.selectedRoad) {
       this.grid.grid.getColModel().forEach((column, index) => {
-        if (tab === "rebar_ax" && index == 20) {
+        if (tab === "rebar_ax" && column.dataIndx === "tan")
+        {
           column.hidden = false;
-        } else if (tab === "rebar_sh" && index == 20) {
+        }
+        else if (tab === "rebar_ax" && column.dataIndx === "stirrup_dia")
+        {
           column.hidden = true;
-        } else {
-          const isInTargetRange =
-            index >= startCellIndex && index <= endCellIndex;
+        }
+        else if (tab === "rebar_sh" && column.dataIndx === "tan")
+        {
+          column.hidden = true;
+        }
+        else if (tab === "rebar_sh" && column.dataIndx === "stirrup_dia")
+        {
+          column.hidden = false;
+        }
+        else{
+          const isInTargetRange = index >= startCellIndex && index <= endCellIndex;
           const isFixedCell = index <= FIXED_CELLS_COUNT;
           const isCheckCell = index === CHECK_CELL_INDEX;
           column.hidden = !(isInTargetRange || isFixedCell || isCheckCell);
         }
+
+        // if (tab === "rebar_ax" && index == 20) {
+        //   column.hidden = false;
+        // } else if (tab === "rebar_sh" && index == 20) {
+        //   column.hidden = true;
+        // } else {
+        //   const isInTargetRange =
+        //     index >= startCellIndex && index <= endCellIndex;
+        //   const isFixedCell = index <= FIXED_CELLS_COUNT;
+        //   const isCheckCell = index === CHECK_CELL_INDEX;
+        //   column.hidden = !(isInTargetRange || isFixedCell || isCheckCell);
+        // }
       });
     } else {
       this.grid.grid.getColModel().forEach((column, index) => {

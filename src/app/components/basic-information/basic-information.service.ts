@@ -794,6 +794,20 @@ export class InputBasicInformationService {
     return this.getSaveData();
   }
 
+  //Temporary: If road Selected and all spe2 id false
+  private setDefault() {
+    const isRoad = this.specification1_list.find((v, i) => {
+      return v.id === 2 && v.selected === true;
+    })
+    const allFalse = this.specification2_list.every((v, i) => v.selected === false)
+    if(isRoad && allFalse)
+    {
+      this.specification2_list.map((v, i)=> {
+        if(v.id === 6) v.selected = true
+      })
+    }
+  }
+
   public setSaveData(basic: any) {
     this.specification1_list = this.default_specification1();
     for (const sp1 of this.specification1_list) {
@@ -813,6 +827,8 @@ export class InputBasicInformationService {
         sp2.selected = _sp2.selected;
       }
     }
+    this.setDefault();
+
     const sp2: number = this.get_specification2();
 
     this.pickup_moment = this.default_pickup_moment(sp1, sp2);

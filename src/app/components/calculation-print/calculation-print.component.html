@@ -28,7 +28,9 @@
               [(ngModel)]="calculate_shear_force_checked"
               [checked]="calculate_shear_force_checked"
             />
-            <span translate class="checkbox-parts">calculation-print.shear</span>
+            <span translate class="checkbox-parts"
+              >calculation-print.shear</span
+            >
           </label>
         </div>
         <div>
@@ -42,7 +44,9 @@
               [(ngModel)]="calculate_torsional_moment_checked"
               [checked]="calculate_torsional_moment_checked"
             />
-            <span translate class="checkbox-parts">calculation-print.twist</span>
+            <span translate class="checkbox-parts"
+              >calculation-print.twist</span
+            >
           </label>
         </div>
       </div>
@@ -65,7 +69,12 @@
       </div>
     </div>
     <div class="button-container">
-      <button  [disabled]="!isAnyDownloadCheckboxChecked()" (click)="downloadSummaryFun4()" id="downloadButton" translate>
+      <button
+        [disabled]="!isAnyDownloadCheckboxChecked()"
+        (click)="downloadSummaryFun4()"
+        id="downloadButton"
+        translate
+      >
         calculation-print.download
       </button>
     </div>
@@ -88,9 +97,15 @@
               [value]="print_section_force"
               [(ngModel)]="print_section_force_checked"
               [checked]="print_section_force_checked"
+              [disabled]="selectedRoad"
               (click)="changeButton($event)"
             />
-            <span translate class="checkbox-parts">calculation-print.s_table</span>
+            <span
+              translate
+              class="checkbox-parts"
+              [style.color]="selectedRoad ? 'gray' : 'inherit'"
+              >calculation-print.s_table</span
+            >
           </label>
         </div>
         <div>
@@ -105,7 +120,9 @@
               [checked]="print_calculate_checked"
               (click)="changeButton($event)"
             />
-            <span translate class="checkbox-parts">calculation-print.p_check</span>
+            <span translate class="checkbox-parts"
+              >calculation-print.p_check</span
+            >
           </label>
         </div>
         <div>
@@ -117,15 +134,25 @@
               class="checkbox-input"
               [(ngModel)]="print_safety_ratio_checked"
               [checked]="print_safety_ratio_checked"
+              [disabled]="selectedRoad"
               (click)="changeButton($event)"
             />
-            <span translate class="checkbox-parts">calculation-print.safety_ratio</span>
+            <span
+              translate
+              class="checkbox-parts"
+              [style.color]="selectedRoad ? 'gray' : 'inherit'"
+              >calculation-print.safety_ratio</span
+            >
           </label>
         </div>
       </fieldset>
     </div>
     <div class="button-container">
-      <button [disabled]="!isAnyPrintCheckboxChecked()" (click)="pdfSummary()" id="printButton">
+      <button
+        [disabled]="!isAnyPrintCheckboxChecked()"
+        (click)="pdfSummary()"
+        id="printButton"
+      >
         <span translate>calculation-print.print</span>
       </button>
     </div>

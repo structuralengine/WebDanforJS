@@ -22,10 +22,9 @@
         </div>
       </div>
     </div>
-    
-    <div class="container-fluid mt-16 basic-note-img"><span translate>basic-information.note_img</span></div>
-
-    <div class="container-fluid mt-16 basic-img" ><img [src]="imgLink"></div>
+    <div *ngIf="menuService.selectedRoad === true">
+      <div class="container-fluid mt-16 basic-note-img"><span translate>basic-information.note_img</span></div>
+      <div class="container-fluid mt-16 basic-img" ><img [src]="imgLink"></div>
+    </div>
   </div>
-
 </ng-container>
