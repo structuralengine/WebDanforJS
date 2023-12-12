@@ -329,7 +329,6 @@ export class MenuComponent implements OnInit {
         })
         .catch((err) => {
           modalRef.close();
-          console.log(err);
         });
     } else {
       this.helper.alert(this.translate.instant("menu.acceptedFile"));

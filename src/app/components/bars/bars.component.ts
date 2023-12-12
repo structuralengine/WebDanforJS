@@ -456,8 +456,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       },
     );
     }
-
-    console.log(this.beamHeaders, "header");
   }
 
   public getGroupeName(i: number): string {
