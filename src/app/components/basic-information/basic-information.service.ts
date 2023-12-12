@@ -963,7 +963,7 @@ export class InputBasicInformationService {
       specs.forEach(item => {
         switch(item.id) {
           case 0:
-            item.title = this.translate.instant("basic-information.jr_com");
+            item.title = this.translate.instant("basic-information.jr_standard");
             break;
           case 1:
             item.title = this.translate.instant("basic-information.trans");
@@ -972,7 +972,7 @@ export class InputBasicInformationService {
             item.title = this.translate.instant("basic-information.jr_east");
             break;
           case 3:
-            item.title = this.translate.instant("basic-information.jr_com5");
+            item.title = this.translate.instant("basic-information.jr_stan5");
             break;
           case 4:
             item.title = this.translate.instant("basic-information.trans5");

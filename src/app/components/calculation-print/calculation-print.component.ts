@@ -21,8 +21,6 @@ import { PreviewExcelComponent } from '../preview-excel/preview-excel.component'
 import { merge } from 'rxjs';
 import { Guid } from 'guid-typescript';
 import { MenuService } from '../menu/menu.service';
-import { InputBasicInformationService } from '../basic-information/basic-information.service';
-import { MenuBehaviorSubject } from '../menu/menu-behavior-subject.service';
 
 @Component({
   selector: 'app-calculation-print',
@@ -52,13 +50,11 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   private summary_data;
 
   constructor(
-    private basic: InputBasicInformationService,
     private calc: InputCalclationPrintService,
     private save: SaveDataService,
     private router: Router,
     private http: HttpClient,
     private user: UserInfoService,
-    private menuBehaviorSubject: MenuBehaviorSubject,
     // public auth: Auth,
     public electronService: ElectronService,
     private translate: TranslateService,
@@ -71,23 +67,20 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-   
     this.selectedRoad=this.menuService.selectedRoad
     this.print_calculate_checked = this.calc.print_selected.print_calculate_checked;
-    let basic : any = {};
-    basic = this.basic.getSaveData();
-    if(basic.specification2_list[0].selected === true){
-      this.print_section_force_checked = true;
-    }
-    else{
-      this.print_section_force_checked = this.calc.print_selected.print_section_force_checked;
-    }
+    this.print_section_force_checked = this.calc.print_selected.print_section_force_checked;
     this.print_summary_table_checked = this.calc.print_selected.print_summary_table_checked;
     this.print_safety_ratio_checked = this.calc.print_selected.print_safety_ratio_checked;
 
     this.calculate_moment_checked = true;
     this.calculate_shear_force_checked = true;
-    this.calculate_torsional_moment_checked = true;
+    if(this.menuService.selectedRoad == true){
+
+      this.calculate_torsional_moment_checked = false;
+    }else {
+      this.calculate_torsional_moment_checked = true;
+    }
 
     this.consider_moment_checked = true;
 
@@ -98,19 +91,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
         'g_name': data.g_name
       });
     }
-    this.menuBehaviorSubject.menuBehaviorSubject$.subscribe((i) =>{
-      this.print_section_force_checked = false
-      this.print_calculate_checked = false;
-      this.print_safety_ratio_checked = false;
-      this.calc.print_selected.print_section_force_checked = false
-      this.calc.print_selected.print_calculate_checked = false;
-      this.calc.print_selected.print_safety_ratio_checked = false;
 
-      if(basic.specification2_list[0].selected === true){
-        this.print_section_force_checked = true;
-        this.calc.print_selected.print_section_force_checked = true;
-      }
-    } );
 
   }
 

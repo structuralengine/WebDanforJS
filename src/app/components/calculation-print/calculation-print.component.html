@@ -43,8 +43,12 @@
               [value]="calculate_torsional_moment_checked"
               [(ngModel)]="calculate_torsional_moment_checked"
               [checked]="calculate_torsional_moment_checked"
+              [disabled]="selectedRoad"
             />
-            <span translate class="checkbox-parts"
+            <span
+              translate
+              class="checkbox-parts"
+              [style.color]="selectedRoad ? 'gray' : ''"
               >calculation-print.twist</span
             >
           </label>
