@@ -421,10 +421,15 @@ export class MenuComponent implements OnInit {
         obj.selected = (obj.id === 6) ? true : false);
         this.specification2_select_id = 6;
     }
+    
 
     this.specification2_list = basic.specification2_list; // 仕様
     this.conditions_list = basic.conditions_list;         //  設計条件
-
+    if(i === 0)
+    {
+      basic.specification2_list.find(obj => obj.id === 0).selected = true; 
+      this.specification2_select_id = 0;
+    }
     this.table1_datas = basic.pickup_moment;
     this.table2_datas = basic.pickup_shear_force;
     this.table3_datas = basic.pickup_torsional_moment;
