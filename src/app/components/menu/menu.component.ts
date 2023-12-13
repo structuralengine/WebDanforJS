@@ -73,6 +73,8 @@ export class MenuComponent implements OnInit {
 
   // 仕様 に関する変数
   public specification2_list: any[];
+  public array1: any[]; // Replace "any" with the appropriate type for your data
+  public array2: any[]; // Replace "any" with the appropriate type for your data
 
   // 設計条件
   public conditions_list: any[];
@@ -110,13 +112,20 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.menuService.selectedRoad = false;
+    this.menuService.selectedRoad = false;  
     this._renew();
     this.windows = this.multiWindowService.getKnownWindows();
     this.setDefaultOpenControl();
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+     // Separate specification2_list into array1 and array2 when the data becomes available
+     if (this.specification2_list) {
+      this.array1 = this.specification2_list.filter(item => item.id < 3);
+      this.array2 = this.specification2_list.filter(item => item.id >= 3);
+
+    }
+    
   }
 
   @HostListener('window:beforeunload', ['$event'])

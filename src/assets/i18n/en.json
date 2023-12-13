@@ -100,7 +100,9 @@
         "partial_coefficient_method":"partial coefficient method",
         "allowable_stress_method":"allowable stress method",
         "adopt":"Adopt a rebar placement method that reduces shear capacity in a circular section",
-        "note_img": "※ The numbers in [] correspond to the numbers in the table below (combination of actions)."
+        "note_img": "※ The numbers in [] correspond to the numbers in the table below (combination of actions).",
+        "04_version": "2004 edition",
+        "23_version": "2023 edition"
     },
     "basic-information-road":{
         "bs_dcp_of_is": "Durability Corrosion protection of internal steel [1]",

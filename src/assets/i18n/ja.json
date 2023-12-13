@@ -100,7 +100,9 @@
         "partial_coefficient_method":"部分係数法",
         "allowable_stress_method":"許容応力度法",
         "adopt":"円形断面のせん断耐力が小さくなるような鉄筋配置を採用",
-        "note_img": "※[]内の数値は下表（作用の組合せ）の番号に対応"
+        "note_img": "※[]内の数値は下表（作用の組合せ）の番号に対応",
+        "04_version": "平成16年度版",
+        "23_version": "令和５年度版"
     },
     "basic-information-road":{
         "bs_dcp_of_is": "耐久性 内部鋼材の防食[1]",

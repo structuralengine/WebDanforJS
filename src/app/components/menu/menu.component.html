@@ -247,13 +247,21 @@
           >
             basic-information.spec
           </p>
-          <ng-container *ngFor="let item of specification2_list; index as i">
+          <p
+            *ngIf="specification2_list.length > 0"
+            class="specification"
+            translate
+            [style]="'padding-left:15px'"
+          >
+            basic-information.04_version
+          </p>
+          <ng-container *ngFor="let item of array1; index as i">
             <div
               class="d-flex"
               [ngClass]="{
                 'spec-rdo-active': specification2_select_id === item.id,
                 'spec-rdo': specification2_select_id !== item.id,
-                'disabled' : item.id === 5
+                disabled: item.id === 5
               }"
             >
               <input
@@ -263,12 +271,48 @@
                 [(ngModel)]="specification2_select_id"
                 [value]="item.id"
                 [checked]="item.selected"
-                (change)="setSpecification2(item.id)" 
+                (change)="setSpecification2(item.id)"
                 [disabled]="item.id === 5 ? true : false"
               />
-              <label class="form-check-label" for="specification2{{ item.id }}">{{
-                item.title | translate
-              }}</label>
+              <label
+                class="form-check-label"
+                for="specification2{{ item.id }}"
+                >{{ item.title | translate }}</label
+              >
+            </div>
+          </ng-container>
+          <p
+            *ngIf="specification2_list.length > 0"
+            class="specification"
+            translate
+            [style]="'padding-left:15px'"
+          >
+            basic-information.23_version
+          </p>
+          <ng-container *ngFor="let item of array2; index as i">
+            <div
+              class="d-flex"
+              [ngClass]="{
+                'spec-rdo-active': specification2_select_id === item.id,
+                'spec-rdo': specification2_select_id !== item.id,
+                disabled: item.id === 5
+              }"
+            >
+              <input
+                type="radio"
+                name="specification2"
+                id="specification2{{ item.id }}"
+                [(ngModel)]="specification2_select_id"
+                [value]="item.id"
+                [checked]="item.selected"
+                (change)="setSpecification2(item.id)"
+                [disabled]="item.id === 5 ? true : false"
+              />
+              <label
+                class="form-check-label"
+                for="specification2{{ item.id }}"
+                >{{ item.title | translate }}</label
+              >
             </div>
           </ng-container>
         </div>
