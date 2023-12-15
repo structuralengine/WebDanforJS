@@ -644,6 +644,13 @@ export class InputBasicInformationService {
             title: this.translate.instant("basic-information.trans5"),
             selected: false,
           },
+          {
+            id: 7,
+            title: this.translate.instant(
+              "basic-information.allowable_stress_method"
+            ),
+            selected: false,
+          },
           // { id: 5, title: 'ＪＲ東日本（既存構造物）', selected: false }
         ];
         break;
@@ -668,13 +675,13 @@ export class InputBasicInformationService {
             ),
             selected: false,
           },
-          {
-            id: 7,
-            title: this.translate.instant(
-              "basic-information.allowable_stress_method"
-            ),
-            selected: false,
-          },
+          // {
+          //   id: 7,
+          //   title: this.translate.instant(
+          //     "basic-information.allowable_stress_method"
+          //   ),
+          //   selected: false,
+          // },
         ];
         break;
       default:
@@ -827,6 +834,11 @@ export class InputBasicInformationService {
         sp2.selected = _sp2.selected;
       }
     }
+    this.specification2_list.forEach((data:any)=>{
+      if( data.id===7){
+        this.menuService.setStressMethod(data.selected)
+      }
+    })
     this.setDefault();
 
     const sp2: number = this.get_specification2();

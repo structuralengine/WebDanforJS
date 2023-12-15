@@ -253,7 +253,7 @@
               [ngClass]="{
                 'spec-rdo-active': specification2_select_id === item.id,
                 'spec-rdo': specification2_select_id !== item.id,
-                'disabled' : item.id === 5 || item.id === 7
+                'disabled' : item.id === 5
               }"
             >
               <input
@@ -263,8 +263,8 @@
                 [(ngModel)]="specification2_select_id"
                 [value]="item.id"
                 [checked]="item.selected"
-                (change)="setSpecification2(item.id)" 
-                [disabled]="(item.id === 5 || item.id === 7) ? true : false"
+                (change)="setSpecification2(item.id,'click')" 
+                [disabled]="(item.id === 5) ? true : false"
               />
               <label class="form-check-label" for="specification2{{ item.id }}">{{
                 item.title | translate
