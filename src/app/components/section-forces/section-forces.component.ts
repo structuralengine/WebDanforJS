@@ -1,3 +1,4 @@
+import { parse } from 'path';
 import { forEach } from 'jszip';
 import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import { InputSectionForcesService } from './section-forces.service';
@@ -7,6 +8,7 @@ import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { MenuService } from '../menu/menu.service';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
 import { log } from 'console';
+import { hide } from '@popperjs/core';
 
 
 @Component({
@@ -70,6 +72,9 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   public imgLink ="";
   public selectedRoad = false;
   public currentSW: any[];
+  public groupActive: any[];
+  public toggleStatusPick: { [key: string]: boolean } = {};
+  public toggleStatusShear: { [key: string]: boolean } = {};
 
   ngOnInit() {
     this.selectedRoad = this.menu.selectedRoad;
@@ -86,58 +91,58 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     this.initTable ();
 
-    let currentLang = this.translate.currentLang;
-    switch (currentLang) {
-      case "en": {
-        this.imgLink = "assets/img/basic-information/en.png";
-        break;
-      }
-      case "ja": {
-        this.imgLink = "assets/img/basic-information/jp.png";
-        break;
-      }
-      default: {
-      }
-    }
-    this.translate.onDefaultLangChange.subscribe((event: LangChangeEvent) => {
-      switch (event.lang) {
-        case "en": {
-          this.imgLink = "assets/img/basic-information/en.png";
-          break;
-        }
-        case "ja": {
-          this.imgLink = "assets/img/basic-information/jp.png";
-          break;
-        }
-        default: {
-        }
-      }
-    });
-    this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
-      switch (event.lang) {
-        case "en": {
-          this.imgLink = "assets/img/basic-information/en.png";
-          break;
-        }
-        case "ja": {
-          this.imgLink = "assets/img/basic-information/jp.png";
-          break;
-        }
-        default: {
-        }
-      }
-    });
-    //this.setColGroupsAndKeys(0);
-    if (JSON.stringify(this.force.toggleStatus) != '{}') {
-      this.toggleStatus = this.force.toggleStatus;
-      this.currentColGroupKeys = Object.keys(this.force.toggleStatus);      
-    } else {
-      this.currentColGroups = this.bendingColGroups;
-      this.currentColGroupKeys = Object.keys(this.currentColGroups);
-      for (const group of this.currentColGroupKeys) {
-        this.toggleStatus[group] = true;
-      }
-    }
+    // let currentLang = this.translate.currentLang;
+    // switch (currentLang) {
+    //   case "en": {
+    //     this.imgLink = "assets/img/basic-information/en.png";
+    //     break;
+    //   }
+    //   case "ja": {
+    //     this.imgLink = "assets/img/basic-information/jp.png";
+    //     break;
+    //   }
+    //   default: {
+    //   }
+    // }
+    // this.translate.onDefaultLangChange.subscribe((event: LangChangeEvent) => {
+    //   switch (event.lang) {
+    //     case "en": {
+    //       this.imgLink = "assets/img/basic-information/en.png";
+    //       break;
+    //     }
+    //     case "ja": {
+    //       this.imgLink = "assets/img/basic-information/jp.png";
+    //       break;
+    //     }
+    //     default: {
+    //     }
+    //   }
+    // });
+    // this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
+    //   switch (event.lang) {
+    //     case "en": {
+    //       this.imgLink = "assets/img/basic-information/en.png";
+    //       break;
+    //     }
+    //     case "ja": {
+    //       this.imgLink = "assets/img/basic-information/jp.png";
+    //       break;
+    //     }
+    //     default: {
+    //     }
+    //   }
+    // });
+    // //this.setColGroupsAndKeys(0);
+    // if (JSON.stringify(this.force.toggleStatus) != '{}') {
+    //   this.toggleStatus = this.force.toggleStatus;
+    //   this.currentColGroupKeys = Object.keys(this.force.toggleStatus);      
+    // } else {
+    //   this.currentColGroups = this.bendingColGroups;
+    //   this.currentColGroupKeys = Object.keys(this.currentColGroups);
+    //   for (const group of this.currentColGroupKeys) {
+    //     this.toggleStatus[group] = true;
+    //   }
+    // }
 
     // this.setColGroupsAndKeys(0);
     // this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
@@ -374,12 +379,13 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     this.currentSW = currentSW;
   }
-
   private setColGroupsAndKeys(id: number): void {
+    this.groupActive = [];
     if(this.menu.selectedRoad)
     {
       //set for CurrentColGroupKeys
       this.setTitleGroupsRoad(id);
+      this.toggleStatus = {};
 
       //set title again
       this.columnHeaders1 = this.force.getColumnHeaders1();
@@ -388,8 +394,10 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
       if (id === 0) {
         this.currentColGroups = this.bendingColGroupsRoad;
+        this.toggleStatus = this.toggleStatusPick
       } else if (id === 1) {
         this.currentColGroups = this.shearColGroupsRoad;
+        this.toggleStatus = this.toggleStatusShear
       } else if (id === 2) {
         this.currentColGroups = this.torsionalColGroupsRoad;
       }
@@ -409,6 +417,13 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       if (this.toggleStatus[group] === undefined) {
         this.toggleStatus[group] = true;
       }
+      if (this.selectedRoad) {
+        if(this.toggleStatus[group])
+        {
+          const id = parseInt(group.slice(1));
+          this.groupActive.push(id);
+        }
+      }
     }
   }
 
@@ -420,8 +435,46 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         column.hidden = !this.toggleStatus[group];
       }
     });
+    if(this.selectedRoad)
+    {
+      if(group.includes('B'))
+      {
+        const returnHeader = this.reloadHeader(group, this.force.getColumnHeaders1());
+        this.columnHeaders1 = returnHeader
+        this.options.colModel = this.columnHeaders1;
+      }
+      else if(group.includes('S'))
+      {
+        const returnHeader = this.reloadHeader(group, this.force.getColumnHeaders2());
+        this.columnHeaders1 = returnHeader
+        this.options.colModel = this.columnHeaders1;
+      }
+    }
     this.grid.refreshDataAndView();
     this.grid.setColsShow();
+  }
+
+  public reloadHeader(group: string, headers: any) {
+    let returnHeader = headers;
+    const hidden = !this.toggleStatus[group];
+    const id = parseInt(group.slice(1));
+    if (hidden)
+      this.groupActive = this.groupActive.filter((value, index) => value !== id);
+    else
+      this.groupActive.splice(id, 0, id);
+
+    returnHeader[1].colModel = returnHeader[1].colModel.filter((value, index) => this.groupActive.includes(index));
+    returnHeader[2].colModel = returnHeader[2].colModel.filter((value, index) => this.groupActive.includes(index + 2));
+
+    const hideParent1 = this.groupActive.find(value => value < 2);
+    if(hideParent1 === undefined || hideParent1 === null) returnHeader.splice(1,1);
+
+    const hideParent2 = this.groupActive.find(value => value >= 2);
+    if(hideParent2 === undefined || hideParent2 === null) 
+    {
+      returnHeader.splice(returnHeader.length - 1,1);
+    }
+    return returnHeader;
   }
 
   // 指定行row まで、曲げモーメント入力データを読み取る
@@ -435,7 +488,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnDestroy(): void {
     this.saveData();
-    this.saveDataCol();
+    // this.saveDataCol();
   }
   public saveData(): void {
     this.force.setTableColumns(this.table_datas);
@@ -448,9 +501,9 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   // 表の高さを計算する
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
-    // containerHeight -= 250;
-    containerHeight -= 30;
-    containerHeight /= 2;
+    containerHeight -= 250;
+    // containerHeight -= 30;
+    // containerHeight /= 2;
 
     return containerHeight;
   }
@@ -462,6 +515,9 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   public activePageChenge(id: number): void {
+    if(this.selectedRoad){
+      this.groupActive = [];
+    }
     this.setColGroupsAndKeys(id);
 
     if (id === 0) {

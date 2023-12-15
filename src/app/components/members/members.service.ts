@@ -233,7 +233,8 @@ export class InputMembersService {
 
     if (key === undefined || key === null)
       return 0;
-
+    if (typeof key != 'string')
+      key = String(key);
     let key_ = key.trim();
 
     for (let shape_id = 1; 4 >= shape_id; shape_id++) {

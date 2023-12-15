@@ -7,6 +7,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from '../members/members.service';
 import { MenuService } from '../menu/menu.service';
 import { data } from 'jquery';
+import { log } from 'console';
 
 @Component({
   selector: 'app-bars',
@@ -161,6 +162,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private setTitle(isManual: boolean): void {
+    this.beamHeaders = [];
     if (isManual) {
       // 断面力手入力モードの場合
       this.beamHeaders = [
@@ -273,6 +275,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         dataType: 'float', dataIndx: 'cos', sortable: false, width: 85, nodrag: true,
       },
       {
+        title: 'tanγ+tanβ', dataType: 'float', dataIndx: 'tan', sortable: false, width: 85, nodrag: true,
+      },
+      {
         title: this.translate.instant("bars.rebar_sh"),
         align: 'center', colModel: [
           {
@@ -289,9 +294,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         ],
         nodrag: true,
-      },
-      {
-        title: 'tanγ+tanβ', dataType: 'float', dataIndx: 'tan', sortable: false, width: 85, nodrag: true,
       },
       {
         title: this.translate.instant("bars.rebar_fo"), cls:"col-disabled", editable:false, 
@@ -483,10 +485,13 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
 
   public activePageChenge(id: number): void {
+    // this.setTitle(this.save.isManual());
+    // this.option_list[id].colModel = this.beamHeaders
     this.activeButtons(id);
     
     this.options = this.option_list[id];
     this.grid.options = this.options;
+    this.setActiveTab(this.activeTab);
     this.grid.refreshDataAndView();
   }
 
@@ -507,7 +512,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public setActiveTab(tab: string) {
     this.activeTab = tab;
     for (let i = 0; i < this.table_datas.length; i++) {
-      
       this.table_datas[i].forEach((data:any,index:any)=>{
         data.pq_cellstyle={};
         data.pq_cellprop={}
@@ -542,7 +546,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         manual: { start: 17, end: 23 }
       }
     };
-    
     const mode = this.save.isManual() ? "manual" : "default";
     const tabType = cellIndexMap[tab] || cellIndexMap["default"];
     const { start, end } = tabType[mode];
@@ -550,19 +553,33 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     let startCellIndex = start;
     let endCellIndex = end;
     if (this.menuService.selectedRoad) {
-      this.grid.grid.getColModel().forEach((column, index) => {
-        if (tab === "rebar_ax" && index == 20) {
-          column.hidden = false;
-        } else if (tab === "rebar_sh" && index == 20) {
-          column.hidden = true;
-        } else {
-          const isInTargetRange =
-            index >= startCellIndex && index <= endCellIndex;
-          const isFixedCell = index <= FIXED_CELLS_COUNT;
-          const isCheckCell = index === CHECK_CELL_INDEX;
-          column.hidden = !(isInTargetRange || isFixedCell || isCheckCell);
-        }
-      });
+      const newHeader = this.loadHeaderRoad(tab);
+      this.options.colModel = newHeader;
+      this.grid.options = this.options;
+
+      // this.grid.grid.getColModel().forEach((column, index) => {
+      //   if (tab === "rebar_ax" && column.dataIndx === "tan")
+      //   {
+      //     column.hidden = false;
+      //   }
+      //   else if (tab === "rebar_ax" && column.dataIndx === "stirrup_dia")
+      //   {
+      //     column.hidden = true;
+      //   }
+      //   else if (tab === "rebar_sh" && column.dataIndx === "tan")
+      //   {
+      //     column.hidden = true;
+      //   }
+      //   else if (tab === "rebar_sh" && column.dataIndx === "stirrup_dia")
+      //   {
+      //     column.hidden = false;
+      //   }
+      //   else{
+      //     const isInTargetRange = index >= startCellIndex && index <= endCellIndex;
+      //     const isFixedCell = index <= FIXED_CELLS_COUNT;
+      //     const isCheckCell = index === CHECK_CELL_INDEX;
+      //     column.hidden = !(isInTargetRange || isFixedCell || isCheckCell);
+      //   }
     } else {
       this.grid.grid.getColModel().forEach((column, index) => {
         const isInTargetRange =
@@ -573,5 +590,21 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
     this.grid.refreshDataAndView();
+  }
+
+  private loadHeaderRoad(tab: string)
+  {
+    let newHeader = [];
+    const mode = this.save.isManual() ?  0 : 1;
+    if(tab === "rebar_ax"){
+      const cols = [9,10];
+      newHeader = this.beamHeaders.filter((v, i) => !cols.includes(i - mode));
+    }
+    else
+    {
+      const cols = [5,6,7,8];
+      newHeader = this.beamHeaders.filter((v, i) => !cols.includes(i - mode));
+    }
+    return newHeader
   }
 }

@@ -272,7 +272,7 @@
                 [value]="item.id"
                 [checked]="item.selected"
                 (change)="setSpecification2(item.id)"
-                [disabled]="item.id === 5 ? true : false"
+                [disabled]="item.id === 5 || item.id === 7 ? true : false"
               />
               <label
                 class="form-check-label"

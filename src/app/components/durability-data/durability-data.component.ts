@@ -105,7 +105,6 @@ export class DurabilityDataComponent implements OnInit, OnDestroy, AfterViewInit
       };
       this.option_list.push(op);
     }
-    console.log("sssss");
     this.options = this.option_list[0];
 
     // タブのタイトルとなる

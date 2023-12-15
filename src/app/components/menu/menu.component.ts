@@ -35,6 +35,7 @@ import { KeycloakProfile } from 'keycloak-js';
 import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
+import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
 
 @Component({
   selector: "app-menu",
@@ -97,6 +98,7 @@ export class MenuComponent implements OnInit {
     public user: UserInfoService,
     private basic: InputBasicInformationService,
     private fatigues: InputFatiguesService,
+    private menuBehaviorSubject: MenuBehaviorSubject,
     // public auth: Auth,
     public language: LanguagesService,
     public electronService: ElectronService,
@@ -421,6 +423,15 @@ export class MenuComponent implements OnInit {
 
     const basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
+
+    ///temporary set default spe_2.2: "partial coefficient method"
+    if(i === 2)
+    {
+      basic.specification2_list.map(obj => 
+        obj.selected = (obj.id === 6) ? true : false);
+        this.specification2_select_id = 6;
+    }
+
     this.specification2_list = basic.specification2_list; // 仕様
     this.conditions_list = basic.conditions_list;         //  設計条件
 
@@ -434,9 +445,9 @@ export class MenuComponent implements OnInit {
       this.grid2.refreshDataAndView();
     if (!(this.grid3 == null))
       this.grid3.refreshDataAndView();
-
     this.specification1_select_id = i;
     this.menuService.selectApply(i);
+    this.menuBehaviorSubject.setValue(i.toString());
     this.router.navigate(['./basic-information']);
     for (let i = 0; i <= 12; i++) {
       const data = document.getElementById(i + "");
