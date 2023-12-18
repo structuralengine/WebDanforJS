@@ -322,7 +322,7 @@
             <span translate>app.shear</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad">
+        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad && !menuService.selectedStressMethod">
           <a
             routerLink="./crack"
             routerLinkActive="selected-item"

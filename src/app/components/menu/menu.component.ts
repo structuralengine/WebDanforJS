@@ -271,7 +271,7 @@ export class MenuComponent implements OnInit {
             this.basic.set_specification1_data_file(this.specification1_list_file);
             this.specification2_list_file = basicFile.specification2_list;
             this.specification2_list_file.forEach(el => {
-              this.setSpecification2(el.id);
+              this.setSpecification2(el.id,"");
             })
             this.open_done(modalRef);
           })
@@ -411,35 +411,36 @@ export class MenuComponent implements OnInit {
   }
 
   public setSpecification1(i: number): void {
-
+    this.basic.id=i;
     const basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
-
+    
     ///temporary set default spe_2.2: "partial coefficient method"
     if(i === 2)
     {
+      this.menuService.setStressMethod(false)
       basic.specification2_list.map(obj => 
         obj.selected = (obj.id === 6) ? true : false);
         this.specification2_select_id = 6;
-    }
-
-    this.specification2_list = basic.specification2_list; // 仕様
-    this.conditions_list = basic.conditions_list;         //  設計条件
-
-    this.table1_datas = basic.pickup_moment;
-    this.table2_datas = basic.pickup_shear_force;
-    this.table3_datas = basic.pickup_torsional_moment;
-
-    if (!(this.grid1 == null))
-      this.grid1.refreshDataAndView();
-    if (!(this.grid2 == null))
-      this.grid2.refreshDataAndView();
-    if (!(this.grid3 == null))
-      this.grid3.refreshDataAndView();
-    this.specification1_select_id = i;
-    this.menuService.selectApply(i);
-    this.menuBehaviorSubject.setValue(i.toString());
-    this.router.navigate(['./basic-information']);
+      }
+      
+      this.specification2_list = basic.specification2_list; // 仕様
+      this.conditions_list = basic.conditions_list;         //  設計条件
+      
+      this.table1_datas = basic.pickup_moment;
+      this.table2_datas = basic.pickup_shear_force;
+      this.table3_datas = basic.pickup_torsional_moment;
+      
+      if (!(this.grid1 == null))
+       this.grid1.refreshDataAndView();
+      if (!(this.grid2 == null))
+       this.grid2.refreshDataAndView();
+      if (!(this.grid3 == null))
+       this.grid3.refreshDataAndView();
+      this.specification1_select_id = i;
+      this.menuService.selectApply(i);
+      this.menuBehaviorSubject.setValue(i.toString());
+      this.router.navigate(['./basic-information']);
     for (let i = 0; i <= 12; i++) {
       const data = document.getElementById(i + "");
       if (data != null) {
@@ -452,9 +453,43 @@ export class MenuComponent implements OnInit {
   }
 
   /// 仕様 変更時の処理
-  public setSpecification2(id: number): void {
+  public setSpecification2(id: number,type:string): void {
     this.specification2_list.map(
-      obj => obj.selected = (obj.id === id) ? true : false);
+      obj => {
+        obj.selected = (obj.id === id) ? true : false
+        if(id===7 && type ==="click"){
+          this.menuService.setStressMethod(obj.selected);
+          this.basic.id=3;
+          const basic = this.basic.set_specification1(3);
+          this.table1_datas = basic.pickup_moment;
+          this.table2_datas = basic.pickup_shear_force;
+          this.table3_datas = basic.pickup_torsional_moment;
+          if (!(this.grid1 == null))
+           this.grid1.refreshDataAndView();
+          if (!(this.grid2 == null))
+           this.grid2.refreshDataAndView();
+          if (!(this.grid3 == null))
+           this.grid3.refreshDataAndView();
+          this.menuBehaviorSubject.setValue("3");
+          this.router.navigate(['./basic-information']);
+        }
+        if(id!==7 && type ==="click"){
+          this.menuService.setStressMethod(false);
+          this.basic.id=this.specification1_select_id;
+          const basic = this.basic.set_specification1(this.specification1_select_id);
+          this.table1_datas = basic.pickup_moment;
+          this.table2_datas = basic.pickup_shear_force;
+          this.table3_datas = basic.pickup_torsional_moment;
+          if (!(this.grid1 == null))
+            this.grid1.refreshDataAndView();
+          if (!(this.grid2 == null))
+            this.grid2.refreshDataAndView();
+          if (!(this.grid3 == null))
+            this.grid3.refreshDataAndView();
+          this.menuBehaviorSubject.setValue(this.specification1_select_id.toString());
+          this.router.navigate(['./basic-information']);
+        }
+      });
     this.specification2_select_id = id;
   }
 
