@@ -101,10 +101,10 @@
         "allowable_stress_method":"許容応力度法",
         "adopt":"円形断面のせん断耐力が小さくなるような鉄筋配置を採用",
         "note_img": "※[]内の数値は下表（作用の組合せ）の番号に対応",
-        "constant":"Constant",
-        "temporary":"Temporary",
-        "seismic":"Seismic",
-        "const-temp":"Constant/Temporary"
+        "constant":"Constant 1",
+        "temporary":"Temporary 1",
+        "seismic":"Seismic 1",
+        "const-temp":"Constant/Temporary 1"
     },
     "basic-information-road":{
         "bs_dcp_of_is": "耐久性 内部鋼材の防食[1]",

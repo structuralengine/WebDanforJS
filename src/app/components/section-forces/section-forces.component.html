@@ -21,7 +21,7 @@
         </li>
       </ul>
     </nav>
-    <div class="tobble-section" *ngIf="!selectedRoad;else block">
+    <div class="tobble-section" *ngIf="!selectedRoad && !selectedStressMethod ;else block">
       <div
         class="tobble-container"
         *ngFor="let group of currentColGroupKeys"

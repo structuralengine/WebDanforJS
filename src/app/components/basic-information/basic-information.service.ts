@@ -927,12 +927,14 @@ export class InputBasicInformationService {
         sp1.selected = _sp1.selected;
       }
     }
+   if(this.id===0){
     basic.specification2_list.forEach((data:any)=>{
       if( data.id===7){
         this.menuService.setStressMethod(data.selected);
         data.selected? this.id=3 :this.id=0
       }
     })
+   }
     const sp1: number = this.get_specification1();
 
     //Then get specification_list 2;

@@ -54,7 +54,11 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   public bendingColGroupsRoad : any;
   public shearColGroupsRoad : any;
-  public torsionalColGroupsRoad: any;;
+  public torsionalColGroupsRoad: any;
+
+  public bendingColGroupsStressMethod : any;
+  public shearColGroupsStressMethod : any;
+  public torsionalColGroupsStressMethod: any;
 
   public toggleStatus: { [key: string]: boolean } = {};
 
@@ -71,6 +75,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   private columnHeaders3: object[];
   public imgLink ="";
   public selectedRoad = false;
+  public selectedStressMethod = false;
   public currentSW: any[];
   public groupActive: any[];
   public toggleStatusPick: { [key: string]: boolean } = {};
@@ -78,16 +83,23 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnInit() {
     this.selectedRoad = this.menu.selectedRoad;
+    this.selectedStressMethod= this.menu.selectedStressMethod
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.saveData();
       if(this.menu.selectedRoad){
         this.setKeyGroupsRoad()
+      }
+      if(this.menu.selectedStressMethod){
+        this.setKeyGroupsStressMethod()
       }
       this.initTable ();
     });
 
     if(this.menu.selectedRoad){
       this.setKeyGroupsRoad()
+    }
+    if(this.menu.selectedStressMethod){
+      this.setKeyGroupsStressMethod()
     }
     this.initTable ();
 
@@ -219,12 +231,16 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.setColGroupsAndKeys(0);
 
     //Set active start
-    if(this.menu.selectedRoad){
-      this.bendingColGroupKeys = Object.keys(this.bendingColGroupsRoad);
-    }
-    else
-    {
-      this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
+    if(this.menu.selectedStressMethod){
+      this.bendingColGroupKeys = Object.keys(this.bendingColGroupsStressMethod);
+    }else{
+      if(this.menu.selectedRoad){
+        this.bendingColGroupKeys = Object.keys(this.bendingColGroupsRoad);
+      }
+      else
+      {
+        this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
+      }
     }
     for (const group of this.bendingColGroupKeys) {
       this.toggleStatus[group] = true;
@@ -341,7 +357,38 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     });
     this.torsionalColGroupsRoad = torsionalRoad;
   }
+  private setKeyGroupsStressMethod(){
+    const basic = this.basic.getSaveData();
+    this.bendingColGroupsStressMethod = {};
+    this.shearColGroupsStressMethod = {};
+    this.torsionalColGroupsStressMethod = {};
+    let pickup_moment = basic.pickup_moment;
 
+    //bending
+    let bendingStressMethod: any = new Object, iB = 1;
+    pickup_moment.forEach((value, index) => {
+      let key = "B" + value.id;
+      bendingStressMethod[key] = { start: iB, end: iB + 1 };
+      iB += 2;
+    });
+    this.bendingColGroupsStressMethod = bendingStressMethod;
+    //Shear
+    let shearStressMethod: any = new Object, iS = 1;
+    basic.pickup_shear_force.forEach((value, index) => {
+      let key = "S" + value.id;
+      shearStressMethod[key] = { start: iS, end: iS + 2 };
+      iS += 3;
+    });
+    this.shearColGroupsStressMethod = shearStressMethod;
+    //Torsional
+    let torsionalStressMethod: any = new Object, iT = 1;
+    basic.pickup_torsional_moment.forEach((value, index) => {
+      let key = "T" + value.id;
+      torsionalStressMethod[key] = { start: iT, end: iT + 3 };
+      iT += 4;
+    });
+    this.torsionalColGroupsStressMethod = torsionalStressMethod;
+  }
   private setTitleGroupsRoad(id: number) {
     const basic = this.basic.getSaveData();
     //Set title switch
@@ -379,37 +426,89 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     this.currentSW = currentSW;
   }
+  private setTitleGroupsStressMethod(id: number) {
+    const basic = this.basic.getSaveData();
+    let currentSW = new Array();
+    if (id === 0) {
+      let pickup_moment = basic.pickup_moment;
+      pickup_moment.forEach((value, index) => {
+        let key = "B" + value.id;
+        currentSW.push({
+          id: key,
+          title: value.title,
+        })
+      });
+    } else if (id === 1) {
+      basic.pickup_shear_force.forEach((value, index) => {
+        let key = "S" + value.id;
+        currentSW.push({
+          id: key,
+          title: value.title,
+        })
+      });
+    } else if (id === 2) {
+      basic.pickup_torsional_moment.forEach((value, index) => {
+        let key = "T" + value.id;
+        currentSW.push({
+          id: key,
+          title: value.title,
+        })
+      });
+    }
+    this.currentSW = currentSW;
+  }
   private setColGroupsAndKeys(id: number): void {
     this.groupActive = [];
-    if(this.menu.selectedRoad)
-    {
-      //set for CurrentColGroupKeys
-      this.setTitleGroupsRoad(id);
+    if(this.menu.selectedStressMethod){
+      this.setTitleGroupsStressMethod(id);
       this.toggleStatus = {};
-
+  
       //set title again
       this.columnHeaders1 = this.force.getColumnHeaders1();
       this.columnHeaders2 = this.force.getColumnHeaders2();
       this.columnHeaders3 = this.force.getColumnHeaders3();
 
       if (id === 0) {
-        this.currentColGroups = this.bendingColGroupsRoad;
+        this.currentColGroups = this.bendingColGroupsStressMethod;
         this.toggleStatus = this.toggleStatusPick
       } else if (id === 1) {
-        this.currentColGroups = this.shearColGroupsRoad;
+        this.currentColGroups = this.shearColGroupsStressMethod;
         this.toggleStatus = this.toggleStatusShear
       } else if (id === 2) {
-        this.currentColGroups = this.torsionalColGroupsRoad;
+        this.currentColGroups = this.torsionalColGroupsStressMethod;
       }
-    }
-    else
-    {
-      if (id === 0) {
-        this.currentColGroups = this.bendingColGroups;
-      } else if (id === 1) {
-        this.currentColGroups = this.shearColGroups;
-      } else if (id === 2) {
-        this.currentColGroups = this.torsionalColGroups;
+    }else {
+      if(this.menu.selectedRoad)
+      {
+        //set for CurrentColGroupKeys
+        this.setTitleGroupsRoad(id);
+       
+        this.toggleStatus = {};
+  
+        //set title again
+        this.columnHeaders1 = this.force.getColumnHeaders1();
+        this.columnHeaders2 = this.force.getColumnHeaders2();
+        this.columnHeaders3 = this.force.getColumnHeaders3();
+  
+        if (id === 0) {
+          this.currentColGroups = this.bendingColGroupsRoad;
+          this.toggleStatus = this.toggleStatusPick
+        } else if (id === 1) {
+          this.currentColGroups = this.shearColGroupsRoad;
+          this.toggleStatus = this.toggleStatusShear
+        } else if (id === 2) {
+          this.currentColGroups = this.torsionalColGroupsRoad;
+        }
+      }
+      else
+      {
+        if (id === 0) {
+          this.currentColGroups = this.bendingColGroups;
+        } else if (id === 1) {
+          this.currentColGroups = this.shearColGroups;
+        } else if (id === 2) {
+          this.currentColGroups = this.torsionalColGroups;
+        }
       }
     }
     this.currentColGroupKeys = Object.keys(this.currentColGroups);
@@ -417,7 +516,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       if (this.toggleStatus[group] === undefined) {
         this.toggleStatus[group] = true;
       }
-      if (this.selectedRoad) {
+      if (this.selectedRoad || this.selectedStressMethod) {
         if(this.toggleStatus[group])
         {
           const id = parseInt(group.slice(1));
@@ -449,6 +548,10 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         this.columnHeaders1 = returnHeader
         this.options.colModel = this.columnHeaders1;
       }
+    }
+    if(this.selectedStressMethod)
+    {
+      
     }
     this.grid.refreshDataAndView();
     this.grid.setColsShow();
@@ -515,7 +618,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   public activePageChenge(id: number): void {
-    if(this.selectedRoad){
+    if(this.selectedRoad || this.selectedStressMethod){
       this.groupActive = [];
     }
     this.setColGroupsAndKeys(id);

@@ -472,10 +472,19 @@ export class MenuComponent implements OnInit {
            this.grid3.refreshDataAndView();
           this.menuBehaviorSubject.setValue("3");
           this.router.navigate(['./basic-information']);
+          for (let i = 0; i <= 12; i++) {
+            const data = document.getElementById(i + "");
+            if (data != null) {
+              if (data.classList.contains("is-active")) {
+                data.classList.remove("is-active");
+              }
+            }
+          }
+          document.getElementById("0").classList.add("is-active");
         }
         if(id!==7 && type ==="click"){
           this.menuService.setStressMethod(false);
-          this.basic.id=this.specification1_select_id;
+          this.basic.id=0;
           const basic = this.basic.set_specification1(this.specification1_select_id);
           this.table1_datas = basic.pickup_moment;
           this.table2_datas = basic.pickup_shear_force;
@@ -488,6 +497,15 @@ export class MenuComponent implements OnInit {
             this.grid3.refreshDataAndView();
           this.menuBehaviorSubject.setValue(this.specification1_select_id.toString());
           this.router.navigate(['./basic-information']);
+          for (let i = 0; i <= 12; i++) {
+            const data = document.getElementById(i + "");
+            if (data != null) {
+              if (data.classList.contains("is-active")) {
+                data.classList.remove("is-active");
+              }
+            }
+          }
+          document.getElementById("0").classList.add("is-active");
         }
       });
     this.specification2_select_id = id;
