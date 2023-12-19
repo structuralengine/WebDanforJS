@@ -208,3 +208,9 @@ body {
 .col-disabled{
     color: gray !important;
 }
+.col-check{
+    input[type="checkbox"]:checked {
+        accent-color: #00C95F;
+        background-color: opacify($color: #000000, $amount: 0);
+    }
+}

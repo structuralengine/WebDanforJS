@@ -255,7 +255,8 @@
         "weld":"Welded joint",
         "for_s":"For shear",
         "hoop":"Hoop",
-        "fold":"folding"
+        "fold":"folding",
+        "components":"Components subjected to repetitive stress"
     },
     "material-strength-verifiaction-condition":{
         "com_type":"Component Type",
