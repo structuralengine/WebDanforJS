@@ -6,7 +6,7 @@ import { visitAll } from '@angular/compiler';
 import { TranslateService } from "@ngx-translate/core";
 
 @Component({
-  selector: 'app-safety-factors-material-strengths',
+  selector: 'app-safety-factors-material-strengths-stress-method',
   templateUrl: './safety-factors-material-strengths-stress-method.component.html',
   styleUrls: ['./safety-factors-material-strengths-stress-method.component.scss', '../subNavArea.scss']
 })

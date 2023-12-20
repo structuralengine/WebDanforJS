@@ -9,7 +9,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from '../members/members.service';
 
 @Component({
-  selector: 'app-fatigues',
+  selector: 'app-fatigues-stress-method',
   templateUrl: './fatigues-stress-method.component.html',
   styleUrls: ['./fatigues-stress-method.component.scss', '../subNavArea.scss']
 })

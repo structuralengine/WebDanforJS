@@ -11,7 +11,7 @@ import { hide } from '@popperjs/core';
 
 
 @Component({
-  selector: 'app-section-forces',
+  selector: 'app-section-forces-stress-method',
   templateUrl: './section-forces-stress-method.component.html',
   styleUrls: ['./section-forces-stress-method.component.scss']
 })
