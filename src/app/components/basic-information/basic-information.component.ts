@@ -5,7 +5,11 @@ import { SaveDataService } from '../../providers/save-data.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
+
+import { forEach } from 'jszip';
+
 import { MenuBehaviorSubject } from '../menu/menu-behavior-subject.service';
+
 
 @Component({
   selector: 'app-basic-information',
@@ -103,6 +107,18 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     this.table1_datas = basic.pickup_moment;
     this.table2_datas = basic.pickup_shear_force;
     this.table3_datas = basic.pickup_torsional_moment;
+
+    if(this.isManual()){
+      this.table1_datas.forEach(el => {
+        el.no = null
+      });
+      this.table2_datas.forEach(el => {
+        el.no = null
+      });
+      this.table3_datas.forEach(el => {
+        el.no = null
+      });
+    }
 
     this.options1 = {
       height: 340,
@@ -240,11 +256,11 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
 
   private setTitle(isManual: boolean): void {
 
-    if (isManual) {
-      // 断面力手入力モードの場合の項目
-      this.columnHeaders = [];
-      this.columnHeaderDisableds = [];
-    } else {
+    // if (isManual) {
+    //   // 断面力手入力モードの場合の項目
+    //   this.columnHeaders = [];
+    //   this.columnHeaderDisableds = [];
+    // } else {
       // ピックアップファイルを使う場合の項目
       this.columnHeaders = [
         {
@@ -261,7 +277,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
         },
         { title: 'Pickup No', align: 'center', dataType: 'integer', dataIndx: 'no', sortable: false, width: 100, nodrag: true, cls:"col-disabled" },
       ];
-    }
+    // }
   }
 
 

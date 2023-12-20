@@ -104,7 +104,11 @@ export class InputMembersService {
       this.member_list.push(result);
     }
 
-    result.shape = this.getShapeDispFromShapeID(result.shape);
+    if (typeof(result.shape) === 'number') {
+      result.shape = this.getShapeDispFromShapeID(Number(result.shape));
+    }else {
+      result.shape = this.getShapeDispFromShapeID(this.getShapeIDFromUserInput(result.shape));
+    }
     return result;
   }
 

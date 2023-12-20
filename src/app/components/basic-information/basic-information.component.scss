@@ -87,3 +87,26 @@ fieldset {
   color: #FFFFFF; 
   font-size: 14px;
 }
+.basic-layout-csf{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  .outter-info{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    .info-cross-sectional-force{
+      background: #FFFFFF;
+      color: #000000;
+      padding: 4px 8px;
+      border: 4px solid #817e7e;
+      position: absolute;
+      left: 44%;
+      -ms-transform: translateY(-50%);
+      transform: translateX(-50%);
+      top: 20%;
+      font-size: 20px;
+    }
+  }
+  
+}

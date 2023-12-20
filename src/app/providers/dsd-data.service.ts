@@ -241,7 +241,7 @@ export class DsdDataService {
 
     let iDummyCount: number;
     iDummyCount = this.readInteger(buff)
-
+    let mData:any=[]
     for (let i = 0; i < iDummyCount; i++) {
 
       try {
@@ -436,15 +436,17 @@ export class DsdDataService {
           for (const key of Object.keys(fatigue)) {
             if (key === 'index') continue;
             fatigue[key] = f2[key];
-          }
+          }       
         }
+        mData.push(m);
       } catch (e) {
         throw (e);
       }
-
+     
     }
-
-
+    if (buff.isManualInput) {
+      this.members.setSaveData(mData)
+    }
   }
 
   // 画面５　安全係数の画面
