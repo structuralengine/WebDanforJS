@@ -36,6 +36,7 @@ import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
+import { InputBasicInformationStressMethodService } from "../basic-information-stress-method/basic-information-stress-method.service";
 
 @Component({
   selector: "app-menu",
@@ -95,6 +96,7 @@ export class MenuComponent implements OnInit {
     private config: ConfigService,
     public user: UserInfoService,
     private basic: InputBasicInformationService,
+    private basicStressMethod: InputBasicInformationStressMethodService,
     private fatigues: InputFatiguesService,
     private menuBehaviorSubject: MenuBehaviorSubject,
     // public auth: Auth,
@@ -266,12 +268,12 @@ export class MenuComponent implements OnInit {
 
             //Read file
             this.save.readInputData(text);
-            let basicFile = this.save.getBasicData();
+            let basicFile = this.save.getBasicData(this.router.url);
             this.specification1_list_file = basicFile.specification1_list;
             this.basic.set_specification1_data_file(this.specification1_list_file);
             this.specification2_list_file = basicFile.specification2_list;
             this.specification2_list_file.forEach(el => {
-              this.setSpecification2(el.id);
+              this.setSpecification2(el.id,"");
             })
             this.open_done(modalRef);
           })
@@ -411,13 +413,14 @@ export class MenuComponent implements OnInit {
   }
 
   public setSpecification1(i: number): void {
-
+    this.basicStressMethod.id=i;
     const basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
 
     ///temporary set default spe_2.2: "partial coefficient method"
     if(i === 2)
     {
+      this.menuService.setStressMethod(false)
       basic.specification2_list.map(obj => 
         obj.selected = (obj.id === 6) ? true : false);
         this.specification2_select_id = 6;
@@ -440,7 +443,7 @@ export class MenuComponent implements OnInit {
     this.menuService.selectApply(i);
     this.menuBehaviorSubject.setValue(i.toString());
     this.router.navigate(['./basic-information']);
-    for (let i = 0; i <= 12; i++) {
+    for (let i = 0; i <= 16; i++) {
       const data = document.getElementById(i + "");
       if (data != null) {
         if (data.classList.contains("is-active")) {
@@ -452,24 +455,87 @@ export class MenuComponent implements OnInit {
   }
 
   /// 仕様 変更時の処理
-  public setSpecification2(id: number): void {
+  public setSpecification2(id: number,type:string): void {
     this.specification2_list.map(
-      obj => obj.selected = (obj.id === id) ? true : false);
+      obj => {
+        obj.selected = (obj.id === id) ? true : false
+        
+        if(id===7 && type ==="click"){
+          this.menuService.setStressMethod(true);
+          this.basicStressMethod.id=3
+          let basic = this.basicStressMethod.set_specification1(3);
+          this.table1_datas = basic.pickup_moment;
+          this.table2_datas = basic.pickup_shear_force;
+          this.table3_datas = basic.pickup_torsional_moment;
+          if (!(this.grid1 == null))
+           this.grid1.refreshDataAndView();
+          if (!(this.grid2 == null))
+           this.grid2.refreshDataAndView();
+          if (!(this.grid3 == null))
+           this.grid3.refreshDataAndView();
+          this.menuBehaviorSubject.setValue("3");
+          this.router.navigate(['./basic-information-stress-method']);
+          for (let i = 0; i <= 16; i++) {
+            const data = document.getElementById(i + "");
+            if (data != null) {
+              if (data.classList.contains("is-active")) {
+                data.classList.remove("is-active");
+              }
+            }
+          }  
+          document.getElementById("13")?.classList.add("is-active");
+        }
+        if(id!==7 && type ==="click"){
+          this.menuService.setStressMethod(false);
+          this.basicStressMethod.id=0
+          let basic= this.basicStressMethod.set_specification1(this.specification1_select_id);
+          this.table1_datas = basic.pickup_moment;
+          this.table2_datas = basic.pickup_shear_force;
+          this.table3_datas = basic.pickup_torsional_moment;
+          if (!(this.grid1 == null))
+            this.grid1.refreshDataAndView();
+          if (!(this.grid2 == null))
+            this.grid2.refreshDataAndView();
+          if (!(this.grid3 == null))
+            this.grid3.refreshDataAndView();
+          this.menuBehaviorSubject.setValue(this.specification1_select_id.toString());
+          this.router.navigate(['./basic-information']);
+          for (let i = 0; i <= 16; i++) {
+            const data = document.getElementById(i + "");
+            if (data != null) {
+              if (data.classList.contains("is-active")) {
+                data.classList.remove("is-active");
+              }
+            }
+          }
+          document.getElementById("0")?.classList.add("is-active");
+        }
+      });
     this.specification2_select_id = id;
   }
 
   // 耐用年数, jA, jB
   public openShiyoJoken() {
-    const basic = this.basic.getSaveData();
-    // 適用
-    this.basic.updateTitleSpecification(1, basic.specification1_list)
-    this.specification1_list = basic.specification1_list;
-    this.specification1_select_id = this.basic.get_specification1();
-
+    let basic:any
+     if(this.router.url==="/basic-information-stress-method")
+     {
+      basic = this.basicStressMethod.getSaveData();
+    // 仕様
+    this.basic.updateTitleSpecification(2, basic.specification2_list)
+    this.specification2_list = basic.specification2_list;
+    this.specification2_select_id = this.basicStressMethod.get_specification2();
+     }else{
+      basic = this.basic.getSaveData();
     // 仕様
     this.basic.updateTitleSpecification(2, basic.specification2_list)
     this.specification2_list = basic.specification2_list;
     this.specification2_select_id = this.basic.get_specification2();
+     }
+    // 適用
+    this.basic.updateTitleSpecification(1, basic.specification1_list)
+    this.specification1_list = basic.specification1_list;
+    this.specification1_select_id = this.basic.get_specification1();
+      
     //  設計条件
     this.basic.updateTitleCondition(basic.conditions_list)
     this.conditions_list = basic.conditions_list;
@@ -489,15 +555,27 @@ export class MenuComponent implements OnInit {
   }
 
   public saveData(): void {
-    this.basic.setSaveData({
-      pickup_moment: this.table1_datas,
-      pickup_shear_force: this.table2_datas,
-      pickup_torsional_moment: this.table3_datas,
-
-      specification1_list: this.specification1_list, // 適用
-      specification2_list: this.specification2_list, // 仕様
-      conditions_list: this.conditions_list         // 設計条件
-    });
+    if(this.router.url==="/basic-information-stress-method"){
+      this.basicStressMethod.setSaveData({
+        pickup_moment: this.table1_datas,
+        pickup_shear_force: this.table2_datas,
+        pickup_torsional_moment: this.table3_datas,
+  
+        specification1_list: this.specification1_list, // 適用
+        specification2_list: this.specification2_list, // 仕様
+        conditions_list: this.conditions_list         // 設計条件
+      });
+    }else{
+      this.basic.setSaveData({
+        pickup_moment: this.table1_datas,
+        pickup_shear_force: this.table2_datas,
+        pickup_torsional_moment: this.table3_datas,
+  
+        specification1_list: this.specification1_list, // 適用
+        specification2_list: this.specification2_list, // 仕様
+        conditions_list: this.conditions_list         // 設計条件
+      });
+    }
   }
 
   public changeDesignCondition(item: any) {

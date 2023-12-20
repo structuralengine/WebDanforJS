@@ -71,7 +71,6 @@ export class SafetyFactorsMaterialStrengthsComponent
 
   ngOnInit() {
     this.setTitle();
-
     const safety = this.safety.getTableColumns();
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
     this.groupe_list = safety.groupe_list;
