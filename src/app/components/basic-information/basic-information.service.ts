@@ -1,9 +1,9 @@
-import { InputBasicInformationStressMethodService } from './../basic-information-stress-method/basic-information-stress-method.service';
 import { forEach } from 'jszip';
 import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from '../menu/menu.service';
+import { InputBasicInformationStressMethodService } from '../basic-information-stress-method/basic-information-stress-method.service';
 
 @Injectable({
   providedIn: "root",
@@ -42,7 +42,6 @@ export class InputBasicInformationService {
 
     this.specification1_list = this.default_specification1();
     this.set_default_pickup();
-    this.basicStressMethod.id=0
   }
 
   private default_specification1(): any {
@@ -78,11 +77,9 @@ export class InputBasicInformationService {
   }
   /// get_specification1 によって変わる項目の設定
   private set_default_pickup(): void {
-    let sp1 = this.get_specification1();
+    const sp1 = this.get_specification1();
     const sp2 = this.get_specification2();
-    if(this.basicStressMethod.id===3){
-      sp1 = 3
-    }
+
     // 曲げモーメントテーブル
     const keys_moment = this.default_pickup_moment(sp1, sp2);
     // 古い入力があれば no の入力を 保持
@@ -122,15 +119,9 @@ export class InputBasicInformationService {
     }
     this.pickup_torsional_moment = tmp_torsional;
 
-    if(sp1===3){
-      this.specification2_list = this.default_specification2(1);
+    this.specification2_list = this.default_specification2(sp1);
 
-      this.conditions_list = this.default_conditions(1);
-    }else{
-      this.specification2_list = this.default_specification2(sp1);
-
-      this.conditions_list = this.default_conditions(sp1);
-    }
+    this.conditions_list = this.default_conditions(sp1);
   }
 
   // 曲げモーメントテーブルの初期値
@@ -667,38 +658,7 @@ export class InputBasicInformationService {
         break;
 
       case 1: // 土木学会
-        result = [{
-          id: 0,
-          title: this.translate.instant("basic-information.jr_standard"),
-          selected: false,
-        },
-        {
-          id: 1,
-          title: this.translate.instant("basic-information.trans"),
-          selected: false,
-        },
-        {
-          id: 2,
-          title: this.translate.instant("basic-information.jr_east"),
-          selected: false,
-        },
-        {
-          id: 3, // JR各社 令和5年 RC標準
-          title: this.translate.instant("basic-information.jr_stan5"),
-          selected: false,
-        },
-        {
-          id: 4, // 運輸機構 令和5年 RC標準
-          title: this.translate.instant("basic-information.trans5"),
-          selected: false,
-        },
-        {
-          id: 7,
-          title: this.translate.instant(
-            "basic-information.allowable_stress_method"
-          ),
-          selected: true,
-        },];
+        result = [];
         break;
 
       case 2: // 港湾
@@ -817,6 +777,7 @@ export class InputBasicInformationService {
     const sp = this.specification1_list.find(
       (value) => value.selected === true
     );
+
     return sp != undefined ? sp.id : 0;
   }
 
@@ -868,12 +829,7 @@ export class InputBasicInformationService {
 
     //Then get specification_list 2;
     // this.specification2_list = basic.specification2_list;
-    
-    if(this.basicStressMethod.id=== 3){
-      this.specification2_list = this.default_specification2(0);
-    }else{
-      this.specification2_list = this.default_specification2(sp1);
-    }
+    this.specification2_list = this.default_specification2(sp1);
     for (const sp2 of this.specification2_list) {
       const _sp2 = basic.specification2_list.find((v) => v.id === sp2.id);
       if (_sp2 != null) {
@@ -1016,7 +972,7 @@ export class InputBasicInformationService {
       specs.forEach(item => {
         switch(item.id) {
           case 0:
-            item.title = this.translate.instant("basic-information.jr_com");
+            item.title = this.translate.instant("basic-information.jr_standard");
             break;
           case 1:
             item.title = this.translate.instant("basic-information.trans");
@@ -1025,7 +981,7 @@ export class InputBasicInformationService {
             item.title = this.translate.instant("basic-information.jr_east");
             break;
           case 3:
-            item.title = this.translate.instant("basic-information.jr_com5");
+            item.title = this.translate.instant("basic-information.jr_stan5");
             break;
           case 4:
             item.title = this.translate.instant("basic-information.trans5");
