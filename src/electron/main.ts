@@ -40,14 +40,16 @@ async function createWindow() {
 // const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 // autoUpdater.setFeedURL(feed)
 
+autoUpdater.on('update-available', () => {
+    autoUpdater.downloadUpdate();
+});
+
 autoUpdater.on('update-downloaded', function (e) {
   let langText = require(`../assets/i18n/${locale}.json`)
   let choice = dialog.showMessageBoxSync(this,
     {
       type: 'question',
       buttons: [langText.modal.reboot, langText.modal.cancel],
-      defaultId: 0,
-      cancelId: 999,
       title: langText.modal.updateTitle,
       message: langText.modal.updateMessage,
     });
@@ -59,9 +61,7 @@ autoUpdater.on('update-downloaded', function (e) {
 
 app.whenReady().then(async () => {
 
-  await autoUpdater.checkForUpdates();
   await createWindow();
-
   if (!isDev) {
     // 起動時に1回だけ
     log.info(`アップデートがあるか確認します。${app.name} ${app.getVersion()}`);
@@ -71,7 +71,7 @@ app.whenReady().then(async () => {
 });
 
 // アップデート --------------------------------------------------
-//autoUpdater.checkForUpdatesAndNotify();
+autoUpdater.checkForUpdatesAndNotify();
 
 // Angular -> Electron --------------------------------------------------
 ipcMain.on("newWindow", async() => await createWindow())
