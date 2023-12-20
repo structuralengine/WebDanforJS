@@ -52,7 +52,6 @@ export class BasicInformationStressMethodComponent implements OnInit, OnDestroy 
   ) { }
   public imgLink ="";
   ngOnInit() {
-    document.getElementById("13")?.classList.add("is-active");
     let currentLang = this.translate.currentLang;
     switch (currentLang) {
       case "en": {
@@ -92,7 +91,6 @@ export class BasicInformationStressMethodComponent implements OnInit, OnDestroy 
   onInitData(){
     let basic : any = {};
     basic = this.basicStressMethod.getSaveData();
-    console.log(basic)
     // 適用
     this.specification1_list = basic.specification1_list;
     this.specification1_select_id = this.basicStressMethod.get_specification1();

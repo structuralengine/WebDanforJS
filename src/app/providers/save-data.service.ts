@@ -322,8 +322,7 @@ export class SaveDataService {
     // 設計条件
     if ("basic" in jsonData) {
       this.basic.setSaveData(jsonData.basic);
-      this.basicStressMethod.setSaveData(jsonData.basic);
-      
+      this.basicStressMethod.setSaveData(jsonData.basic);     
     } else {
       this.basic.clear();
       this.basicStressMethod.clear()
@@ -448,11 +447,7 @@ export class SaveDataService {
     return this.pickup_filename;
   }
 
-  public getBasicData(url:string): any{
-    if(url==="/basic-information-stress-method"){
-      return this.basic;
-    }else{
-      return this.basicStressMethod;
-    }
+  public getBasicData(): any{
+    return this.basic;
   }
 }

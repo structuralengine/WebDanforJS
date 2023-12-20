@@ -53,7 +53,6 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   ) { }
   public imgLink ="";
   ngOnInit() {
-    document.getElementById("0")?.classList.add("is-active");
     let currentLang = this.translate.currentLang;
     switch (currentLang) {
       case "en": {

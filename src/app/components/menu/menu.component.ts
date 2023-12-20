@@ -268,7 +268,7 @@ export class MenuComponent implements OnInit {
 
             //Read file
             this.save.readInputData(text);
-            let basicFile = this.save.getBasicData(this.router.url);
+            let basicFile = this.save.getBasicData();
             this.specification1_list_file = basicFile.specification1_list;
             this.basic.set_specification1_data_file(this.specification1_list_file);
             this.specification2_list_file = basicFile.specification2_list;

@@ -695,7 +695,7 @@ export class InputBasicInformationStressMethodService {
           {
             id: 0,
             title: this.translate.instant("basic-information.jr_standard"),
-            selected: true,
+            selected: false,
           },
           {
             id: 1,
@@ -722,7 +722,7 @@ export class InputBasicInformationStressMethodService {
             title: this.translate.instant(
               "basic-information.allowable_stress_method"
             ),
-            selected: false,
+            selected: true,
           },
           // { id: 5, title: 'ＪＲ東日本（既存構造物）', selected: false }
         ];
@@ -930,6 +930,7 @@ export class InputBasicInformationStressMethodService {
       }
     }
     if(this.id===0){
+      
     basic.specification2_list.forEach((data:any)=>{
       if( data.id===7){
         this.menuService.setStressMethod(data.selected);
@@ -937,12 +938,13 @@ export class InputBasicInformationStressMethodService {
       }
     })
    }
-    const sp1: number = this.get_specification1();
-
+    let sp1: number = this.get_specification1();
+  
     //Then get specification_list 2;
     // this.specification2_list = basic.specification2_list;
    
     if(this.id=== 3){
+      sp1 = 3
       this.specification2_list = this.default_specification2(0);
      }else{
       this.specification2_list = this.default_specification2(sp1);
