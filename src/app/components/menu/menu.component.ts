@@ -413,11 +413,7 @@ export class MenuComponent implements OnInit {
   }
 
   public setSpecification1(i: number): void {
-<<<<<<< HEAD
-    this.basic.id=i;
-=======
     this.basicStressMethod.id=i;
->>>>>>> Anhdt_#288_1
     const basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
     
@@ -428,28 +424,6 @@ export class MenuComponent implements OnInit {
       basic.specification2_list.map(obj => 
         obj.selected = (obj.id === 6) ? true : false);
         this.specification2_select_id = 6;
-<<<<<<< HEAD
-      }
-      
-      this.specification2_list = basic.specification2_list; // 仕様
-      this.conditions_list = basic.conditions_list;         //  設計条件
-      
-      this.table1_datas = basic.pickup_moment;
-      this.table2_datas = basic.pickup_shear_force;
-      this.table3_datas = basic.pickup_torsional_moment;
-      
-      if (!(this.grid1 == null))
-       this.grid1.refreshDataAndView();
-      if (!(this.grid2 == null))
-       this.grid2.refreshDataAndView();
-      if (!(this.grid3 == null))
-       this.grid3.refreshDataAndView();
-      this.specification1_select_id = i;
-      this.menuService.selectApply(i);
-      this.menuBehaviorSubject.setValue(i.toString());
-      this.router.navigate(['./basic-information']);
-    for (let i = 0; i <= 12; i++) {
-=======
     }
 
     this.specification2_list = basic.specification2_list; // 仕様
@@ -470,7 +444,6 @@ export class MenuComponent implements OnInit {
     this.menuBehaviorSubject.setValue(i.toString());
     this.router.navigate(['./basic-information']);
     for (let i = 0; i <= 16; i++) {
->>>>>>> Anhdt_#288_1
       const data = document.getElementById(i + "");
       if (data != null) {
         if (data.classList.contains("is-active")) {
@@ -486,18 +459,11 @@ export class MenuComponent implements OnInit {
     this.specification2_list.map(
       obj => {
         obj.selected = (obj.id === id) ? true : false
-<<<<<<< HEAD
-        if(id===7 && type ==="click"){
-          this.menuService.setStressMethod(obj.selected);
-          this.basic.id=3;
-          const basic = this.basic.set_specification1(3);
-=======
         
         if(id===7 && type ==="click"){
           this.menuService.setStressMethod(true);
           this.basicStressMethod.id=3
           let basic = this.basicStressMethod.set_specification1(3);
->>>>>>> Anhdt_#288_1
           this.table1_datas = basic.pickup_moment;
           this.table2_datas = basic.pickup_shear_force;
           this.table3_datas = basic.pickup_torsional_moment;
@@ -508,28 +474,14 @@ export class MenuComponent implements OnInit {
           if (!(this.grid3 == null))
            this.grid3.refreshDataAndView();
           this.menuBehaviorSubject.setValue("3");
-<<<<<<< HEAD
-          this.router.navigate(['./basic-information']);
-          for (let i = 0; i <= 12; i++) {
-=======
           this.router.navigate(['./basic-information-stress-method']);
           for (let i = 0; i <= 16; i++) {
->>>>>>> Anhdt_#288_1
             const data = document.getElementById(i + "");
             if (data != null) {
               if (data.classList.contains("is-active")) {
                 data.classList.remove("is-active");
               }
             }
-<<<<<<< HEAD
-          }
-          document.getElementById("0").classList.add("is-active");
-        }
-        if(id!==7 && type ==="click"){
-          this.menuService.setStressMethod(false);
-          this.basic.id=0;
-          const basic = this.basic.set_specification1(this.specification1_select_id);
-=======
           }  
           document.getElementById("13")?.classList.add("is-active");
         }
@@ -537,7 +489,6 @@ export class MenuComponent implements OnInit {
           this.menuService.setStressMethod(false);
           this.basicStressMethod.id=0
           let basic= this.basicStressMethod.set_specification1(this.specification1_select_id);
->>>>>>> Anhdt_#288_1
           this.table1_datas = basic.pickup_moment;
           this.table2_datas = basic.pickup_shear_force;
           this.table3_datas = basic.pickup_torsional_moment;
@@ -549,11 +500,7 @@ export class MenuComponent implements OnInit {
             this.grid3.refreshDataAndView();
           this.menuBehaviorSubject.setValue(this.specification1_select_id.toString());
           this.router.navigate(['./basic-information']);
-<<<<<<< HEAD
-          for (let i = 0; i <= 12; i++) {
-=======
           for (let i = 0; i <= 16; i++) {
->>>>>>> Anhdt_#288_1
             const data = document.getElementById(i + "");
             if (data != null) {
               if (data.classList.contains("is-active")) {
@@ -561,11 +508,7 @@ export class MenuComponent implements OnInit {
               }
             }
           }
-<<<<<<< HEAD
-          document.getElementById("0").classList.add("is-active");
-=======
           document.getElementById("0")?.classList.add("is-active");
->>>>>>> Anhdt_#288_1
         }
       });
     this.specification2_select_id = id;
