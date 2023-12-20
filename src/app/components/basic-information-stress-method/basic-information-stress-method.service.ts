@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import { MenuBehaviorSubject } from './../menu/menu-behavior-subject.service';
-=======
-import { InputBasicInformationStressMethodService } from './../basic-information-stress-method/basic-information-stress-method.service';
->>>>>>> Anhdt_#288_1
 import { forEach } from 'jszip';
 import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
@@ -12,7 +7,7 @@ import { MenuService } from '../menu/menu.service';
 @Injectable({
   providedIn: "root",
 })
-export class InputBasicInformationService {
+export class InputBasicInformationStressMethodService {
   // pick up table に関する変数
   public pickup_moment: any[];
   public pickup_shear_force: any[];
@@ -27,16 +22,12 @@ export class InputBasicInformationService {
   // 設計条件
   public conditions_list: any[];
 
-  public id:number=0
+  public id:number =0
 
   constructor(
     private helper: DataHelperModule,
     private translate: TranslateService,
-    private menuService: MenuService,
-<<<<<<< HEAD
-=======
-    private basicStressMethod: InputBasicInformationStressMethodService,
->>>>>>> Anhdt_#288_1
+    private menuService: MenuService
   ) {
     this.clear();
   }
@@ -51,11 +42,7 @@ export class InputBasicInformationService {
 
     this.specification1_list = this.default_specification1();
     this.set_default_pickup();
-<<<<<<< HEAD
     this.id=0
-=======
-    this.basicStressMethod.id=0
->>>>>>> Anhdt_#288_1
   }
 
   private default_specification1(): any {
@@ -93,12 +80,9 @@ export class InputBasicInformationService {
   private set_default_pickup(): void {
     let sp1 = this.get_specification1();
     const sp2 = this.get_specification2();
-<<<<<<< HEAD
-=======
-    if(this.basicStressMethod.id===3){
+    if(this.id===3){
       sp1 = 3
     }
->>>>>>> Anhdt_#288_1
     // 曲げモーメントテーブル
     const keys_moment = this.default_pickup_moment(sp1, sp2);
     // 古い入力があれば no の入力を 保持
@@ -209,6 +193,7 @@ export class InputBasicInformationService {
           },
         ];
         break;
+
       case 2: // 道
         result = [
           {
@@ -366,6 +351,7 @@ export class InputBasicInformationService {
       //   break;
       default:
       // まだ対応していない
+      break;
     }
     return result;
   }
@@ -542,6 +528,7 @@ export class InputBasicInformationService {
       //   break;
       default:
       // まだ対応していない
+      break;
     }
     return result;
   }
@@ -689,6 +676,7 @@ export class InputBasicInformationService {
       //   break;
       default:
       // まだ対応していない
+      break;
     }
     return result;
   }
@@ -707,7 +695,7 @@ export class InputBasicInformationService {
           {
             id: 0,
             title: this.translate.instant("basic-information.jr_standard"),
-            selected: true,
+            selected: false,
           },
           {
             id: 1,
@@ -734,15 +722,14 @@ export class InputBasicInformationService {
             title: this.translate.instant(
               "basic-information.allowable_stress_method"
             ),
-            selected: false,
+            selected: true,
           },
           // { id: 5, title: 'ＪＲ東日本（既存構造物）', selected: false }
         ];
         break;
 
       case 1: // 土木学会
-<<<<<<< HEAD
-        result =  result = [
+        result = [
           {
             id: 0,
             title: this.translate.instant("basic-information.jr_standard"),
@@ -776,41 +763,7 @@ export class InputBasicInformationService {
             selected: true,
           },
           // { id: 5, title: 'ＪＲ東日本（既存構造物）', selected: false }
-        ];;
-=======
-        result = [{
-          id: 0,
-          title: this.translate.instant("basic-information.jr_standard"),
-          selected: false,
-        },
-        {
-          id: 1,
-          title: this.translate.instant("basic-information.trans"),
-          selected: false,
-        },
-        {
-          id: 2,
-          title: this.translate.instant("basic-information.jr_east"),
-          selected: false,
-        },
-        {
-          id: 3, // JR各社 令和5年 RC標準
-          title: this.translate.instant("basic-information.jr_stan5"),
-          selected: false,
-        },
-        {
-          id: 4, // 運輸機構 令和5年 RC標準
-          title: this.translate.instant("basic-information.trans5"),
-          selected: false,
-        },
-        {
-          id: 7,
-          title: this.translate.instant(
-            "basic-information.allowable_stress_method"
-          ),
-          selected: true,
-        },];
->>>>>>> Anhdt_#288_1
+        ];
         break;
 
       case 2: // 港湾
@@ -926,15 +879,9 @@ export class InputBasicInformationService {
   }
 
   public get_specification1(): number {
-    let sp = this.specification1_list.find(
+    const sp = this.specification1_list.find(
       (value) => value.selected === true
-    );
-<<<<<<< HEAD
-    if(this.id === 3){
-      return  3 
-     }
-=======
->>>>>>> Anhdt_#288_1
+    );  
     return sp != undefined ? sp.id : 0;
   }
 
@@ -950,7 +897,6 @@ export class InputBasicInformationService {
     // const id: number = this.specification1_list.findIndex(
     //   (value) => value.id === index
     // );
-
     if(id!==3){
       this.specification1_list.map(
         (obj) => (obj.selected = obj.id === id ? true : false)
@@ -983,7 +929,8 @@ export class InputBasicInformationService {
         sp1.selected = _sp1.selected;
       }
     }
-   if(this.id===0){
+    if(this.id===0){
+      
     basic.specification2_list.forEach((data:any)=>{
       if( data.id===7){
         this.menuService.setStressMethod(data.selected);
@@ -991,23 +938,17 @@ export class InputBasicInformationService {
       }
     })
    }
-    const sp1: number = this.get_specification1();
-
+    let sp1: number = this.get_specification1();
+  
     //Then get specification_list 2;
     // this.specification2_list = basic.specification2_list;
-<<<<<<< HEAD
-    this.specification2_list = this.default_specification2(sp1);
+   
     if(this.id=== 3){
+      sp1 = 3
       this.specification2_list = this.default_specification2(0);
-     }
-=======
-    
-    if(this.basicStressMethod.id=== 3){
-      this.specification2_list = this.default_specification2(0);
-    }else{
+     }else{
       this.specification2_list = this.default_specification2(sp1);
-    }
->>>>>>> Anhdt_#288_1
+     }
     for (const sp2 of this.specification2_list) {
       const _sp2 = basic.specification2_list.find((v) => v.id === sp2.id);
       if (_sp2 != null) {

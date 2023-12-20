@@ -1,6 +1,5 @@
 import { MenuService } from './../menu/menu.service';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { InputBasicInformationService } from './basic-information.service';
 import { SaveDataService } from '../../providers/save-data.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
@@ -9,15 +8,15 @@ import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
 import { forEach } from 'jszip';
 
 import { MenuBehaviorSubject } from '../menu/menu-behavior-subject.service';
+import { InputBasicInformationStressMethodService } from './basic-information-stress-method.service';
 
 
 @Component({
-  selector: 'app-basic-information',
-  templateUrl: './basic-information.component.html',
-  styleUrls: ['./basic-information.component.scss']
+  selector: 'app-basic-information-stress-method',
+  templateUrl: './basic-information-stress-method.component.html',
+  styleUrls: ['./basic-information-stress-method.component.scss']
 })
-export class BasicInformationComponent implements OnInit, OnDestroy {
-
+export class BasicInformationStressMethodComponent implements OnInit, OnDestroy {
   private columnHeaders: object[] = [];
   private columnHeaderDisableds: object[] = [];
   public specification1_select_id: number;
@@ -45,11 +44,11 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   public conditions_list: any[];
 
   constructor(
-    private basic: InputBasicInformationService,
+    private basicStressMethod: InputBasicInformationStressMethodService,
     private save: SaveDataService,
     private translate: TranslateService,
     private menuBehaviorSubject: MenuBehaviorSubject,
-    private menuService: MenuService,
+    private menuService: MenuService
   ) { }
   public imgLink ="";
   ngOnInit() {
@@ -91,13 +90,13 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   }
   onInitData(){
     let basic : any = {};
-    basic = this.basic.getSaveData();
+    basic = this.basicStressMethod.getSaveData();
     // 適用
     this.specification1_list = basic.specification1_list;
-    this.specification1_select_id = this.basic.get_specification1();
+    this.specification1_select_id = this.basicStressMethod.get_specification1();
     // 仕様
     this.specification2_list = basic.specification2_list;
-    this.specification2_select_id = this.basic.get_specification2();
+    this.specification2_select_id = this.basicStressMethod.get_specification2();
     //  設計条件
     this.conditions_list = basic.conditions_list;
 
@@ -290,7 +289,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   }
 
   public saveData(): void {
-    this.basic.setSaveData({
+    this.basicStressMethod.setSaveData({
       pickup_moment: this.table1_datas,
       pickup_shear_force: this.table2_datas,
       pickup_torsional_moment: this.table3_datas,
@@ -308,7 +307,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   /// <param name='i'>選択された番号</param>
   public setSpecification1(i: number): void {
 
-    const basic = this.basic.set_specification1(i);
+    const basic = this.basicStressMethod.set_specification1(i);
 
     this.specification1_list = basic.specification1_list; // 適用
     this.specification2_list = basic.specification2_list; // 仕様
@@ -336,8 +335,8 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   public setSpecification2(id: number): void {
     // this.specification2_list.map(
     //   obj => obj.selected = (obj.id === id) ? true : false);
-    this.basic.set_specification2(id);
-    const basic = this.basic.getSaveData();
+    this.basicStressMethod.set_specification2(id);
+    const basic = this.basicStressMethod.getSaveData();
 
     this.table1_datas = basic.pickup_moment;
     this.table2_datas = basic.pickup_shear_force;

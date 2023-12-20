@@ -52,7 +52,7 @@ export class LoginDialogComponent implements OnInit {
     const email = this.loginForm.get('email').value;
     const password = this.loginForm.get('password').value;
     let data = qs.stringify({
-      'client_id': 'structural-engine',
+      'client_id': 'malme-mypage',
       'grant_type': 'password',
       'username': email,
       'password': password,

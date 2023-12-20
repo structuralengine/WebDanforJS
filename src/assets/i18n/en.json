@@ -101,11 +101,18 @@
         "allowable_stress_method":"allowable stress method",
         "adopt":"Adopt a rebar placement method that reduces shear capacity in a circular section",
         "note_img": "※ The numbers in [] correspond to the numbers in the table below (combination of actions).",
+<<<<<<< HEAD
+=======
+        "noti_section_force":"No 'Basic Data' input is required for 'Cross Sectional Force' mode.",
+>>>>>>> Anhdt_#288_1
         "constant":"Constant",
         "temporary":"Temporary",
         "seismic":"Seismic",
         "const-temp":"Constant/Temporary"
+<<<<<<< HEAD
         
+=======
+>>>>>>> Anhdt_#288_1
     },
     "basic-information-road":{
         "bs_dcp_of_is": "Durability Corrosion protection of internal steel [1]",

@@ -14,6 +14,7 @@ import { ShearStrengthService } from "../components/shear/shear-strength.service
 
 import packageJson from '../../../package.json';
 import { InputMaterialStrengthVerificationConditionService } from "../components/material-strength-verification-conditions/material-strength-verification-conditions.service";
+import { InputBasicInformationStressMethodService } from "../components/basic-information-stress-method/basic-information-stress-method.service";
 
 @Injectable({
   providedIn: "root",
@@ -44,6 +45,7 @@ export class SaveDataService {
     private bars: InputBarsService,
     private steel: InputSteelsService,
     private basic: InputBasicInformationService,
+    private basicStressMethod: InputBasicInformationStressMethodService,
     private points: InputDesignPointsService,
     private shear: ShearStrengthService,
     private crack: InputCrackSettingsService,
@@ -52,7 +54,7 @@ export class SaveDataService {
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private material: InputMaterialStrengthVerificationConditionService,
     private force: InputSectionForcesService,
-    private calc: InputCalclationPrintService
+    private calc: InputCalclationPrintService,
   ) {
     this.arrayAxis = this.safety.arrayAxis;
     this.clear();
@@ -62,6 +64,7 @@ export class SaveDataService {
     this.pickup_filename = "";
     this.pickup_data = {};
     this.basic.clear();
+    this.basicStressMethod.clear();
     this.members.clear();
     this.shear.clear();
     this.crack.clear();
@@ -319,8 +322,10 @@ export class SaveDataService {
     // 設計条件
     if ("basic" in jsonData) {
       this.basic.setSaveData(jsonData.basic);
+      this.basicStressMethod.setSaveData(jsonData.basic);     
     } else {
       this.basic.clear();
+      this.basicStressMethod.clear()
     }
     // 部材情報
     if ("members" in jsonData) {

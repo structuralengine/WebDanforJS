@@ -11,12 +11,36 @@
     <nav>
       <ul class="c-mainNavArea__nav">
         <!-- ホーム -->
-        <li class="c-mainNavArea__navItem">
+        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedStressMethod">
           <a
             routerLink="./basic-information"
             routerLinkActive="selected-item"
             (click)="activePageChenge(0)"
             id="0"
+            class="c-mainNavArea__navItemTitle"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M22 9.60417C20.8889 10.0208 20.3333 10.8194 20.3333 12C20.3333 13.1806 20.8889 13.9792 22 14.3958C21.7222 15.5069 21.3056 16.4965 20.75 17.3646C20.4722 17.2257 20.125 17.1563 19.7083 17.1563C19.0139 17.1563 18.4063 17.4167 17.8854 17.9375C17.0521 18.7708 16.8785 19.7083 17.3646 20.75C16.4965 21.3056 15.5069 21.7222 14.3958 22C13.9792 20.8889 13.1806 20.3333 12 20.3333C10.8194 20.3333 10.0208 20.8889 9.60417 22C8.49305 21.7222 7.50348 21.3056 6.63542 20.75C7.12153 19.7083 6.94792 18.7708 6.11458 17.9375C5.59375 17.4167 4.98611 17.1563 4.29167 17.1563C3.875 17.1563 3.52778 17.2257 3.25 17.3646C2.69444 16.4965 2.27778 15.5069 2 14.3958C3.11112 13.9792 3.66667 13.1806 3.66667 12C3.66667 10.8194 3.11112 10.0208 2 9.60417C2.27778 8.5625 2.69444 7.57292 3.25 6.63542C3.52778 6.77431 3.875 6.84375 4.29167 6.84375C5.02084 6.84375 5.62847 6.6007 6.11458 6.11458C6.94792 5.28125 7.12153 4.32639 6.63542 3.25C7.50348 2.69444 8.49305 2.27778 9.60417 2C10.0208 3.11112 10.8194 3.66667 12 3.66667C13.1806 3.66667 13.9792 3.11112 14.3958 2C15.5069 2.27778 16.4965 2.69444 17.3646 3.25C16.8785 4.32639 17.0521 5.28125 17.8854 6.11458C18.3715 6.6007 18.9792 6.84375 19.7083 6.84375C20.125 6.84375 20.4722 6.77431 20.75 6.63542C21.3056 7.50348 21.7222 8.49305 22 9.60417ZM9.08333 14.9688C9.91667 15.7674 10.9062 16.1667 12.0521 16.1667C13.1979 16.1667 14.1788 15.7587 14.9948 14.9427C15.8108 14.1267 16.2188 13.1458 16.2188 12C16.2188 10.8542 15.8108 9.87327 14.9948 9.05729C14.1788 8.24132 13.1979 7.83333 12.0521 7.83333C10.9062 7.83333 9.92535 8.24132 9.10938 9.05729C8.2934 9.87327 7.88542 10.8542 7.88542 12C7.88542 13.1458 8.28472 14.1354 9.08333 14.9688Z"
+                stroke="white"
+                stroke-width="2"
+              />
+            </svg>
+            <span translate>app.basic_info</span>
+          </a>
+        </li>
+        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod">
+          <a
+            routerLink="./basic-information-stress-method"
+            routerLinkActive="selected-item"
+            (click)="activePageChenge(13)"
+            id="13"
             class="c-mainNavArea__navItemTitle"
           >
             <svg
@@ -91,12 +115,67 @@
             <span translate>app.members</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" [class.disabled]="!isManual()">
+        <li class="c-mainNavArea__navItem" [class.disabled]="!isManual()" *ngIf="!menuService.selectedStressMethod">
           <a
             routerLink="./section-forces"
             routerLinkActive="selected-item"
             (click)="activePageChenge(8)"
             id="8"
+            class="c-mainNavArea__navItemTitle"
+            [class.disabled]="!isManual()"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M11.3457 2.97099L11.3457 8.50099"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M15 5.66054L11.3394 1.99995L7.67882 5.66054"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M11.6543 20.529L11.6543 14.999"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8 17.8395L11.6606 21.5L15.3212 17.8395"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M3 12L21 12"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span translate>app.section_force</span>
+          </a>
+        </li>
+        <li class="c-mainNavArea__navItem" [class.disabled]="!isManual()" *ngIf="menuService.selectedStressMethod">
+          <a
+            routerLink="./section-forces-stress-method"
+            routerLinkActive="selected-item"
+            (click)="activePageChenge(14)"
+            id="14"
             class="c-mainNavArea__navItemTitle"
             [class.disabled]="!isManual()"
           >
@@ -348,7 +427,7 @@
             <span translate>app.crack</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad">
+        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad  && !menuService.selectedStressMethod">
           <a
             routerLink="./fatigues"
             routerLinkActive="selected-item"
@@ -373,12 +452,67 @@
             <span translate>app.fatigues</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad">
+        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod">
+          <a
+            routerLink="./fatigues-stress-method"
+            routerLinkActive="selected-item"
+            (click)="activePageChenge(15)"
+            id="15"
+            class="c-mainNavArea__navItemTitle disabled"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2 22.5C2.64407 18.0705 2.46447 11.5 6 11.5C8 11.5 8.5 14.5 10.5 14C13.9979 13.1255 11 2.5001 15.5 2.5C20 2.4999 16.5 11.25 19 12.5C20 13 21 12.5 22.5 11"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span translate>app.fatigues</span>
+          </a>
+        </li>
+        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad && !menuService.selectedStressMethod">
           <a
             routerLink="./safety-factors-material-strengths"
             routerLinkActive="selected-item"
             (click)="activePageChenge(7)"
             id="7"
+            class="c-mainNavArea__navItemTitle disabled"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M12.5 1L17.2631 9.25H7.73686L12.5 1Z" fill="white" />
+              <path d="M12.5 1L17.2631 9.25H7.73686L12.5 1Z" stroke="black" />
+              <circle cx="16.5" cy="16.5" r="4.5" fill="white" />
+              <rect
+                x="9.5"
+                y="11"
+                width="7.5"
+                height="7.5"
+                transform="rotate(90 9.5 11)"
+                fill="white"
+              />
+            </svg>
+            <span translate>app.sf_ms</span>
+          </a>
+        </li>
+        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod">
+          <a
+            routerLink="./safety-factors-material-strengths-stress-method"
+            routerLinkActive="selected-item"
+            (click)="activePageChenge(16)"
+            id="16"
             class="c-mainNavArea__navItemTitle disabled"
           >
             <svg
