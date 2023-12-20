@@ -564,12 +564,15 @@
     "modal": {
         "close": "Close",
         "cancel": "Cancel",
-        "ok": "OK"
+        "ok": "OK",
+        "reboot": "Reboot"
     },
     "window": {
         "closeTitle": "Confirm",
         "closeMessage": "Changes may not to be saved. Are you sure you want to quit?",
-        "confirm": "Information being entered is discarded?"
+        "confirm": "Information being entered is discarded?",
+        "updateTitle": "App update",
+        "updateMessage": "Update is available. \nDo you want to reboot to perform the update?"
     },
     "action_key":{
         "copy": "Copy",

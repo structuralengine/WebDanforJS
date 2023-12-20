@@ -564,12 +564,15 @@
     "modal": {
         "close": "閉じる",
         "cancel": "キャンセル",
-        "ok": "OK"
+        "ok": "OK",
+        "reboot": "Reboot"
     },
     "window": {
         "closeTitle": "確認",
         "closeMessage": "変更内容が保存されません。本当に終了しますか？",
-        "confirm": "入力中のデータは破棄されますがよろしいですか？"
+        "confirm": "入力中のデータは破棄されますがよろしいですか？",
+        "updateTitle": "App update",
+        "updateMessage": "Update is available. \nDo you want to reboot to perform the update?"
     },
     "action_key":{
         "copy": "コピー",

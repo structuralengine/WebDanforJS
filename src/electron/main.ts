@@ -34,7 +34,32 @@ async function createWindow() {
   await mainWindow.loadFile('index.html');
 }
 
+
+//Temp code
+// const server = "https://hazel.scarvite.now.sh/"
+// const feed = `${server}/update/${process.platform}/${app.getVersion()}`
+// autoUpdater.setFeedURL(feed)
+
+autoUpdater.on('update-downloaded', function (e) {
+  let langText = require(`../assets/i18n/${locale}.json`)
+  let choice = dialog.showMessageBoxSync(this,
+    {
+      type: 'question',
+      buttons: [langText.modal.reboot, langText.modal.cancel],
+      defaultId: 0,
+      cancelId: 999,
+      title: langText.modal.updateTitle,
+      message: langText.modal.updateMessage,
+    });
+  if (choice==0) {
+    autoUpdater.quitAndInstall(); 
+  }
+}
+);
+
 app.whenReady().then(async () => {
+
+  await autoUpdater.checkForUpdates();
   await createWindow();
 
   if (!isDev) {
@@ -46,7 +71,7 @@ app.whenReady().then(async () => {
 });
 
 // アップデート --------------------------------------------------
-autoUpdater.checkForUpdatesAndNotify();
+//autoUpdater.checkForUpdatesAndNotify();
 
 // Angular -> Electron --------------------------------------------------
 ipcMain.on("newWindow", async() => await createWindow())
