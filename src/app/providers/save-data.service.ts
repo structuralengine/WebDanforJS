@@ -1,3 +1,4 @@
+import { InputFatiguesStressMethodService } from './../components/fatigues-stress-method/fatigues-stress-method.service';
 import { Injectable } from "@angular/core";
 import { DataHelperModule } from "./data-helper.module";
 import { InputBarsService } from "../components/bars/bars.service";
@@ -15,6 +16,7 @@ import { ShearStrengthService } from "../components/shear/shear-strength.service
 import packageJson from '../../../package.json';
 import { InputMaterialStrengthVerificationConditionService } from "../components/material-strength-verification-conditions/material-strength-verification-conditions.service";
 import { InputBasicInformationStressMethodService } from "../components/basic-information-stress-method/basic-information-stress-method.service";
+import { InputSectionForcesStressMethodService } from "../components/section-forces-stress-method/section-forces-stress-method.service";
 
 @Injectable({
   providedIn: "root",
@@ -50,10 +52,12 @@ export class SaveDataService {
     private shear: ShearStrengthService,
     private crack: InputCrackSettingsService,
     private fatigues: InputFatiguesService,
+    private fatiguesStressMethod: InputFatiguesStressMethodService,
     private members: InputMembersService,
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private material: InputMaterialStrengthVerificationConditionService,
     private force: InputSectionForcesService,
+    private forceStressMethod: InputSectionForcesStressMethodService,
     private calc: InputCalclationPrintService,
   ) {
     this.arrayAxis = this.safety.arrayAxis;
@@ -71,8 +75,10 @@ export class SaveDataService {
     this.points.clear();
     this.bars.clear();
     this.fatigues.clear();
+    this.fatiguesStressMethod.clear();
     this.safety.clear();
     this.force.clear();
+    this.forceStressMethod.clear();
     this.material.clear();
   }
 
@@ -367,8 +373,11 @@ export class SaveDataService {
     // 疲労情報
     if ("fatigues" in jsonData) {
       this.fatigues.setSaveData(jsonData.fatigues);
+      this.fatiguesStressMethod.setSaveData(jsonData.fatigues);
     } else {
       this.fatigues.clear();
+      this.fatiguesStressMethod.clear();
+
     }
     // 安全係数情報
     if ("safety" in jsonData) {
@@ -381,8 +390,10 @@ export class SaveDataService {
     // 断面力手入力情報
     if ("force" in jsonData) {
       this.force.setSaveData(jsonData.force);
+      this.forceStressMethod.setSaveData(jsonData.force)
     } else {
       this.force.clear();
+      this.forceStressMethod.clear();
     }
     // 計算印刷設定
     if ("calc" in jsonData) {
