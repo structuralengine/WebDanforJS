@@ -35,7 +35,7 @@
             <span translate>app.basic_info</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod">
+        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod && !menuService.selectedRoad">
           <a
             routerLink="./basic-information-stress-method"
             routerLinkActive="selected-item"
@@ -170,7 +170,7 @@
             <span translate>app.section_force</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" [class.disabled]="!isManual()" *ngIf="menuService.selectedStressMethod">
+        <li class="c-mainNavArea__navItem" [class.disabled]="!isManual()" *ngIf="menuService.selectedStressMethod && !menuService.selectedRoad">
           <a
             routerLink="./section-forces-stress-method"
             routerLinkActive="selected-item"
@@ -452,7 +452,7 @@
             <span translate>app.fatigues</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod">
+        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod && !menuService.selectedRoad">
           <a
             routerLink="./fatigues-stress-method"
             routerLinkActive="selected-item"
@@ -507,7 +507,7 @@
             <span translate>app.sf_ms</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod">
+        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedStressMethod && !menuService.selectedRoad">
           <a
             routerLink="./safety-factors-material-strengths-stress-method"
             routerLinkActive="selected-item"
