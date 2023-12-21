@@ -459,6 +459,7 @@ export class MenuComponent implements OnInit {
       obj => {
         obj.selected = (obj.id === id) ? true : false
         if(id===7 && type ==="click"){
+          this.basicStressMethod.id=3
           this.menuService.setStressMethod(true);
           this.router.navigate(['./basic-information-stress-method']);
           for (let i = 0; i <= 16; i++) {

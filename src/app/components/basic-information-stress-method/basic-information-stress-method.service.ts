@@ -22,6 +22,8 @@ export class InputBasicInformationStressMethodService {
   // 設計条件
   public conditions_list: any[];
 
+  public id:number=0
+
   constructor(
     private helper: DataHelperModule,
     private translate: TranslateService,
@@ -40,6 +42,7 @@ export class InputBasicInformationStressMethodService {
 
     this.specification1_list = this.default_specification1();
     this.set_default_pickup();
+    this.id=0
   }
 
   private default_specification1(): any {
@@ -733,11 +736,15 @@ export class InputBasicInformationStressMethodService {
         sp1.selected = _sp1.selected;
       }
     }
-    basic.specification2_list.forEach((data:any)=>{
-      if( data.id===7){
-        this.menuService.setStressMethod(data.selected);
-      }
-    })
+    if(this.id===0){
+      basic.specification2_list.forEach((data:any)=>{
+        if( data.id===7){
+          this.menuService.setStressMethod(data.selected);
+          data.selected? this.id===3 : this.id===0
+        }
+      })
+    }
+    
     let sp1: number = this.get_specification1();
   
     //Then get specification_list 2;
