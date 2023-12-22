@@ -22,7 +22,7 @@ export class InputBasicInformationStressMethodService {
   // 設計条件
   public conditions_list: any[];
 
-  public id:number =0
+  public id:number=0
 
   constructor(
     private helper: DataHelperModule,
@@ -78,11 +78,9 @@ export class InputBasicInformationStressMethodService {
   }
   /// get_specification1 によって変わる項目の設定
   private set_default_pickup(): void {
-    let sp1 = this.get_specification1();
+    const sp1 = this.get_specification1();
     const sp2 = this.get_specification2();
-    if(this.id===3){
-      sp1 = 3
-    }
+    
     // 曲げモーメントテーブル
     const keys_moment = this.default_pickup_moment(sp1, sp2);
     // 古い入力があれば no の入力を 保持
@@ -122,15 +120,10 @@ export class InputBasicInformationStressMethodService {
     }
     this.pickup_torsional_moment = tmp_torsional;
 
-    if(sp1===3){
-      this.specification2_list = this.default_specification2(1);
+    this.specification2_list = this.default_specification2(sp1);
 
-      this.conditions_list = this.default_conditions(1);
-    }else{
-      this.specification2_list = this.default_specification2(sp1);
-
-      this.conditions_list = this.default_conditions(sp1);
-    }
+    this.conditions_list = this.default_conditions(sp1);
+    
   }
 
   // 曲げモーメントテーブルの初期値
@@ -145,50 +138,21 @@ export class InputBasicInformationStressMethodService {
         result = [
           {
             id: 0,
-            title: this.translate.instant("basic-information.d_stress"),
+            title: this.translate.instant(
+              "basic-information.constant"
+            ),
             no: null,
           },
           {
             id: 1,
-            title: this.translate.instant("basic-information.pl_d"),
+            title: this.translate.instant(
+              "basic-information.temporary"
+            ),
             no: null,
           },
           {
             id: 2,
-            title: this.translate.instant("basic-information.safe_limit"),
-            no: null,
-          },
-          {
-            id: 3,
-            title: this.translate.instant("basic-information.safe_pa"),
-            no: null,
-          },
-          {
-            id: 4,
-            title: this.translate.instant("basic-information.safe_pv"),
-            no: null,
-          },
-          {
-            id: 5,
-            title: this.translate.instant("basic-information.safe_d"),
-            no: null,
-          },
-          {
-            id: 6,
-            title:
-              specification2 != 3 && specification2 != 4
-                ? this.translate.instant("basic-information.r_ex")
-                : this.translate.instant("basic-information.u_damage"),
-            no: null,
-          },
-          {
-            id: 7,
-            title: this.translate.instant("basic-information.r_at"),
-            no: null,
-          },
-          {
-            id: 8,
-            title: this.translate.instant("basic-information.min_rebar"),
+            title: this.translate.instant("basic-information.seismic"),
             no: null,
           },
         ];
@@ -199,45 +163,20 @@ export class InputBasicInformationStressMethodService {
           {
             id: 0,
             title: this.translate.instant(
-              "basic-information-road.bs_dcp_of_is"
+              "basic-information.constant"
             ),
             no: null,
           },
           {
             id: 1,
             title: this.translate.instant(
-              "basic-information-road.bs_durability_fatigue"
+              "basic-information.temporary"
             ),
             no: null,
           },
           {
             id: 2,
-            title: this.translate.instant("basic-information-road.bs_lcc1"),
-            no: null,
-          },
-          {
-            id: 3,
-            title: this.translate.instant("basic-information-road.bs_lcc2_8"),
-            no: null,
-          },
-          {
-            id: 4,
-            title: this.translate.instant("basic-information-road.bs_lcc9"),
-            no: null,
-          },
-          {
-            id: 5,
-            title: this.translate.instant("basic-information-road.bs_lcc10"),
-            no: null,
-          },
-          {
-            id: 6,
-            title: this.translate.instant("basic-information-road.bs_lcc11"),
-            no: null,
-          },
-          {
-            id: 7,
-            title: this.translate.instant("basic-information-road.bs_lcc12"),
+            title: this.translate.instant("basic-information.seismic"),
             no: null,
           },
           // {
@@ -372,45 +311,16 @@ export class InputBasicInformationStressMethodService {
         result = [
           {
             id: 0,
-            title: this.translate.instant("basic-information.d_shear_judge"),
+            title: this.translate.instant(
+              "basic-information.const-temp"
+            ),
             no: null,
           },
           {
             id: 1,
-            title: this.translate.instant("basic-information.pl_d"),
-            no: null,
-          },
-          {
-            id: 2,
-            title: this.translate.instant("basic-information.vl_d"),
-            no: null,
-          },
-          {
-            id: 3,
-            title: this.translate.instant("basic-information.safe_pa"),
-            no: null,
-          },
-          {
-            id: 4,
-            title: this.translate.instant("basic-information.safe_pv"),
-            no: null,
-          },
-          {
-            id: 5,
-            title: this.translate.instant("basic-information.safe_d"),
-            no: null,
-          },
-          {
-            id: 6,
-            title:
-              specification2 != 3 && specification2 != 4
-                ? this.translate.instant("basic-information.r_ex")
-                : this.translate.instant("basic-information.u_damage"),
-            no: null,
-          },
-          {
-            id: 7,
-            title: this.translate.instant("basic-information.r_at"),
+            title: this.translate.instant(
+              "basic-information.seismic"
+            ),
             no: null,
           },
         ];
@@ -421,45 +331,15 @@ export class InputBasicInformationStressMethodService {
           {
             id: 0,
             title: this.translate.instant(
-              "basic-information-road.sfv_dcp_of_is"
+              "basic-information.const-temp"
             ),
             no: null,
           },
           {
             id: 1,
             title: this.translate.instant(
-              "basic-information-road.sfv_durability_fatigue"
+              "basic-information.seismic"
             ),
-            no: null,
-          },
-          {
-            id: 2,
-            title: this.translate.instant("basic-information-road.sfv_lcc1"),
-            no: null,
-          },
-          {
-            id: 3,
-            title: this.translate.instant("basic-information-road.sfv_lcc2_8"),
-            no: null,
-          },
-          {
-            id: 4,
-            title: this.translate.instant("basic-information-road.sfv_lcc9"),
-            no: null,
-          },
-          {
-            id: 5,
-            title: this.translate.instant("basic-information-road.sfv_lcc10"),
-            no: null,
-          },
-          {
-            id: 6,
-            title: this.translate.instant("basic-information-road.sfv_lcc11"),
-            no: null,
-          },
-          {
-            id: 7,
-            title: this.translate.instant("basic-information-road.sfv_lcc12"),
             no: null,
           },
         ];
@@ -550,30 +430,16 @@ export class InputBasicInformationStressMethodService {
         result = [
           {
             id: 0,
-            title: this.translate.instant("basic-information.d_torsion_judge"),
+            title: this.translate.instant(
+              "basic-information.const-temp"
+            ),
             no: null,
           },
           {
             id: 1,
-            title: this.translate.instant("basic-information.pl_d"),
-            no: null,
-          },
-          {
-            id: 5,
-            title: this.translate.instant("basic-information.safe_d"),
-            no: null,
-          },
-          {
-            id: 6,
-            title:
-              specification2 != 3 && specification2 != 4
-                ? this.translate.instant("basic-information.r_ex")
-                : this.translate.instant("basic-information.u_damage"),
-            no: null,
-          },
-          {
-            id: 7,
-            title: this.translate.instant("basic-information.r_at"),
+            title: this.translate.instant(
+              "basic-information.seismic"
+            ),
             no: null,
           },
         ];
@@ -584,45 +450,15 @@ export class InputBasicInformationStressMethodService {
           {
             id: 0,
             title: this.translate.instant(
-              "basic-information-road.tv_dcp_of_is"
+              "basic-information.const-temp"
             ),
             no: null,
           },
           {
             id: 1,
             title: this.translate.instant(
-              "basic-information-road.tv_durability_fatigue"
+              "basic-information.seismic"
             ),
-            no: null,
-          },
-          {
-            id: 2,
-            title: this.translate.instant("basic-information-road.tv_lcc1"),
-            no: null,
-          },
-          {
-            id: 3,
-            title: this.translate.instant("basic-information-road.tv_lcc2_8"),
-            no: null,
-          },
-          {
-            id: 4,
-            title: this.translate.instant("basic-information-road.tv_lcc9"),
-            no: null,
-          },
-          {
-            id: 5,
-            title: this.translate.instant("basic-information-road.tv_lcc10"),
-            no: null,
-          },
-          {
-            id: 6,
-            title: this.translate.instant("basic-information-road.tv_lcc11"),
-            no: null,
-          },
-          {
-            id: 7,
-            title: this.translate.instant("basic-information-road.tv_lcc12"),
             no: null,
           },
         ];
@@ -645,35 +481,6 @@ export class InputBasicInformationStressMethodService {
           },
         ]
         break;
-      // case 2: // 港湾
-      //   result = [
-      //     {
-      //       id: 0,
-      //       title: this.translate.instant("basic-information.u_shear_judge"),
-      //       no: null,
-      //     },
-      //     {
-      //       id: 1,
-      //       title: this.translate.instant("basic-information.pl_u"),
-      //       no: null,
-      //     },
-      //     {
-      //       id: 5,
-      //       title: this.translate.instant("basic-information.ul"),
-      //       no: null,
-      //     },
-      //     {
-      //       id: 6,
-      //       title: this.translate.instant("basic-information.us_earth"),
-      //       no: null,
-      //     },
-      //     {
-      //       id: 7,
-      //       title: this.translate.instant("basic-information.ul_earth"),
-      //       no: null,
-      //     },
-      //   ];
-      //   break;
       default:
       // まだ対応していない
       break;
@@ -930,25 +737,20 @@ export class InputBasicInformationStressMethodService {
       }
     }
     if(this.id===0){
-      
-    basic.specification2_list.forEach((data:any)=>{
-      if( data.id===7){
-        this.menuService.setStressMethod(data.selected);
-        data.selected? this.id=3 :this.id=0
-      }
-    })
-   }
+      basic.specification2_list.forEach((data:any)=>{
+        if( data.id===7){
+          this.menuService.setStressMethod(data.selected);
+          data.selected? this.id===3 : this.id===0
+        }
+      })
+    }
+    
     let sp1: number = this.get_specification1();
   
     //Then get specification_list 2;
     // this.specification2_list = basic.specification2_list;
-   
-    if(this.id=== 3){
-      sp1 = 3
-      this.specification2_list = this.default_specification2(0);
-     }else{
-      this.specification2_list = this.default_specification2(sp1);
-     }
+    this.specification2_list = this.default_specification2(sp1);
+    
     for (const sp2 of this.specification2_list) {
       const _sp2 = basic.specification2_list.find((v) => v.id === sp2.id);
       if (_sp2 != null) {
