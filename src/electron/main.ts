@@ -34,16 +34,12 @@ async function createWindow() {
   await mainWindow.loadFile('index.html');
 }
 
-
-//Temp code
-// const server = "https://hazel.scarvite.now.sh/"
-// const feed = `${server}/update/${process.platform}/${app.getVersion()}`
-// autoUpdater.setFeedURL(feed)
-
+//Check update available and download
 autoUpdater.on('update-available', () => {
     autoUpdater.downloadUpdate();
 });
 
+//when update downloaded, reboot to install
 autoUpdater.on('update-downloaded', function (e) {
   let langText = require(`../assets/i18n/${locale}.json`)
   let choice = dialog.showMessageBoxSync(this,
@@ -60,7 +56,6 @@ autoUpdater.on('update-downloaded', function (e) {
 );
 
 app.whenReady().then(async () => {
-
   await createWindow();
   if (!isDev) {
     // 起動時に1回だけ
