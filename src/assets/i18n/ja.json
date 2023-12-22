@@ -105,7 +105,9 @@
         "constant":"常時",
         "temporary":"一時",
         "seismic":"地震時",
-        "const-temp":"常時・一時"
+        "const-temp":"常時・一時",
+        "04_version": "平成16年度版",
+        "23_version": "令和５年度版"
     },
     "basic-information-road":{
         "bs_dcp_of_is": "耐久性 内部鋼材の防食[1]",
