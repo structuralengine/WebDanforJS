@@ -31,13 +31,17 @@ export class InputSectionForcesService {
     let pushIds = new Array();
     let pickup_moment = this.basic.pickup_moment;
 
-    if(this.menu.selectedRoad){
-      pushIds = [0, 2];
-      const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
-      pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
+    if(this.menu.selectedStressMethod){
+      pushIds = [0, 1, 2,];
+    }else{
+      if(this.menu.selectedRoad){
+        pushIds = [0, 2];
+        const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
+        pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
+      }
+      else
+        pushIds = [0, 2, 5, 6, 7, 8];
     }
-    else
-      pushIds = [0, 2, 5, 6, 7, 8];
     return this.createColumnHeaders(
       pickup_moment,
       pushIds,
@@ -47,12 +51,15 @@ export class InputSectionForcesService {
 
   public getColumnHeaders2(): any {
     let pushIds = new Array();
-    if(this.menu.selectedRoad){
-      pushIds = [0, 2];
+    if(this.menu.selectedStressMethod){
+      pushIds = [0, 1, 2,];
+    }else{
+      if(this.menu.selectedRoad){
+        pushIds = [0, 2];
+      }
+      else
+        pushIds = [0, 3, 5, 6, 7];
     }
-    else
-      pushIds = [0, 3, 5, 6, 7];
-
     return this.createColumnHeaders(
       this.basic.pickup_shear_force,
       pushIds,
@@ -62,12 +69,16 @@ export class InputSectionForcesService {
 
   public getColumnHeaders3(): any {
     let pushIds = new Array();
-    if(this.menu.selectedRoad){
-      pushIds = [0, 2];
-    }
-    else
-      pushIds = [0, 5, 6, 7];
 
+    if(this.menu.selectedStressMethod){
+      pushIds = [0, 1, 2,];
+    }else{
+      if(this.menu.selectedRoad){
+        pushIds = [0, 2];
+      }
+      else
+        pushIds = [0, 5, 6, 7];
+    }
     return this.createColumnHeaders(
       this.basic.pickup_torsional_moment,
       pushIds,
@@ -129,6 +140,18 @@ export class InputSectionForcesService {
     const result: object[] = [baseColumn];
     let currentHead: any = null;
 
+   if(this.menu.selectedStressMethod){
+    for (const data of dataArray) {
+      if (pushIds.includes(data.id)) {
+        if (currentHead) {
+          result.push(currentHead);
+        }
+        currentHead = this.createNewHeader(data.title);
+      }
+      const key = keyPrefix + data.id;
+      currentHead.colModel=this.createSubColumnNew( key, keyPrefix);
+    }
+   }else{
     if(this.menu.selectedRoad)
     {
       //Customer title table for Road
@@ -161,6 +184,8 @@ export class InputSectionForcesService {
         currentHead.colModel.push(this.createSubColumn(subTitle, key, keyPrefix));
       }
     }
+   }
+   
 
     if (currentHead) {
       result.push(currentHead);
@@ -289,7 +314,111 @@ export class InputSectionForcesService {
     }
     return baseConfig;
   }
+  private createSubColumnNew(
+    key: string,
+    keyPrefix: string
+  ): any {
+    let baseConfig;
 
+    switch (keyPrefix) {
+      case "Md":
+        baseConfig= [
+          {
+            title: "Md<br/>(kN・m)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Md",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          },
+          {
+            title: "Nd<br/>(kN)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Nd",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          }
+        ];
+        break;
+      case "Vd":
+        baseConfig= [
+          {
+            title: "Vd<br/>(kN)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Vd",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          },
+          {
+            title: "Md<br/>(kN・m)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Md",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          },
+          {
+            title: "Nd<br/>(kN)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Nd",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          }
+        ];
+        break;
+      case "Mt":
+        baseConfig= [
+          {
+            title: "Mt<br/>(kN・m)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Mt",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          },
+          {
+            title: "Md<br/>(kN・m)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Md",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          },
+          {
+            title: "Vd<br/>(kN)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Vd",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          },
+          {
+            title: "Nd<br/>(kN)",
+            dataType: "float",
+            format: "#.00",
+            dataIndx: key + "_Nd",
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          }
+        ];
+        break;
+      default:
+        break;
+    }
+    return baseConfig;
+  }
   // １行 のデフォルト値
   public default_column(index: number): any {
 
@@ -333,12 +462,14 @@ export class InputSectionForcesService {
       this.force.push(result);
     }
 
-    //
+    if(!this.menu.selectedStressMethod){
+      //
     const design_point = this.points.getTableColumn(index);
     const p_name: string = (design_point !== undefined) ? design_point.p_name : '';
     // const La: number = (design_point !== undefined) ? design_point.La: null;
 
     result['p_name'] = p_name;
+    }
     // result['La'] = La;
     return result;
 

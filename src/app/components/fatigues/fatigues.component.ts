@@ -7,6 +7,7 @@ import { AppComponent } from 'src/app/app.component';
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from '../members/members.service';
+import { MenuService } from '../menu/menu.service';
 
 @Component({
   selector: 'app-fatigues',
@@ -31,14 +32,18 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   // タブのヘッダ名
   public groupe_name: string[];
 
+  public selectedStressMethod:boolean=false
+
   constructor(
     private fatigues: InputFatiguesService,
     private save: SaveDataService,
     private translate: TranslateService,
     private members: InputMembersService,
+    private menu: MenuService,
     ) { this.members.checkGroupNo();}
 
   ngOnInit() {
+    this.selectedStressMethod= this.menu.selectedStressMethod
 
     const fatigues = this.fatigues.getSaveData();
 
@@ -134,115 +139,136 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // 共通する項目
-    this.columnHeaders.push(
-      {
-        title: this.translate.instant("fatigues.p_name"),
-        dataType: 'string', dataIndx: 'p_name', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
-      },
-      {
-        title: this.translate.instant("fatigues.bh"),
-        align: 'center', dataType: 'float', dataIndx: 'bh', editable: false, frozen: true, sortable: false, width: 85, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
-      },
-      {
-        title: this.translate.instant("fatigues.position"),
-        align: 'center', dataType: 'string', dataIndx: 'design_point_id', editable: false, frozen: true, sortable: false, width: 40, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
-      },
-      {
-        title: this.translate.instant("fatigues.for_b"),
-        align: 'center', colModel: [
-          { title: 'SA/SC', dataType: 'float', format: '#.000', dataIndx: 'M_SA', sortable: false, width: 70, nodrag: true, },
-          { title: 'SB/SC', dataType: 'float', format: '#.000', dataIndx: 'M_SB', sortable: false, width: 70, nodrag: true, },
-          {
-            title: 'k=0.06', align: 'center', colModel: [
-              { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'M_NA06', sortable: false, width: 70, nodrag: true, },
-              { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'M_NB06', sortable: false, width: 70, nodrag: true, }
-            ],
-            nodrag: true,
-          },
-          {
-            title: 'k=0.12', align: 'center', colModel: [
-              { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'M_NA12', sortable: false, width: 70, nodrag: true, },
-              { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'M_NB12', sortable: false, width: 70, nodrag: true, }
-            ],
-            nodrag: true,
-          },
-          {
-            title: this.translate.instant("fatigues.d_r2"),
-            align: 'center', colModel: [
-              { title: 'α', dataType: 'float', format: '#.000', dataIndx: 'M_A', sortable: false, width: 70, nodrag: true, },
-              { title: 'β', dataType: 'float', format: '#.000', dataIndx: 'M_B', sortable: false, width: 70, nodrag: true, }
-            ],
-            nodrag: true,
-          },
-          {
-            title: this.translate.instant("fatigues.b_r1"),
-            align: 'center', colModel: [
-              {
-                title: this.translate.instant("fatigues.ax_rein"),
-                dataType: 'float', format: '#.00', dataIndx: 'M_r1_1', sortable: false, width: 60, nodrag: true,
-              }
-            ],
-            nodrag: true,
-          },
-
-          // Hidden when finish WebDan の SRC構造の対応 #27
-          // 戻す場合は303行目以降も対応の事
-          // {
-          //   title: this.translate.instant("fatigues.s_grade"),
-          //   align: 'center', dataType: 'string', dataIndx: 'M_Class', sortable: false, width: 50, nodrag: true,
-          // },
-          // {
-          //   title: this.translate.instant("fatigues.weld"),
-          //   align: 'center', dataType: 'bool', dataIndx: 'M_weld', type: 'checkbox', sortable: false, width: 40, nodrag: true,
-          // },
-        ],
-        nodrag: true,
-      },
-      {
-        title: this.translate.instant("fatigues.for_s"),
-        align: 'center', colModel: [
-          { title: 'SA/SC', dataType: 'float', format: '#.000', dataIndx: 'V_SA', sortable: false, width: 70, nodrag: true, },
-          { title: 'SB/SC', dataType: 'float', format: '#.000', dataIndx: 'V_SB', sortable: false, width: 70, nodrag: true, },
-          {
-            title: 'k=0.06', align: 'center', colModel: [
-              { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'V_NA06', sortable: false, width: 70, nodrag: true, },
-              { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'V_NB06', sortable: false, width: 70, nodrag: true, }
-            ],
-            nodrag: true,
-          },
-          {
-            title: 'k=0.12', align: 'center', colModel: [
-              { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'V_NA12', sortable: false, width: 70, nodrag: true, },
-              { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'V_NB12', sortable: false, width: 70, nodrag: true, }
-            ],
-            nodrag: true,
-          },
-          {
-            title: this.translate.instant("fatigues.d_r2"),
-            align: 'center', colModel: [
-              { title: 'α', dataType: 'float', format: '#.000', dataIndx: 'V_A', sortable: false, width: 70, nodrag: true, },
-              { title: 'β', dataType: 'float', format: '#.000', dataIndx: 'V_B', sortable: false, width: 70, nodrag: true, }
-            ],
-            nodrag: true,
-          },
-          {
-            title: this.translate.instant("fatigues.b_r1"),
-            align: 'center', colModel: [
-              {
-                title: this.translate.instant("fatigues.hoop"),
-                dataType: 'float', format: '#.00', dataIndx: 'V_r1_2', sortable: false, width: 60, nodrag: true,
-              },
-              {
-                title: this.translate.instant("fatigues.fold"),
-                dataType: 'float', format: '#.00', dataIndx: 'V_r1_3', sortable: false, width: 60, nodrag: true,
-              }
-            ],
-            nodrag: true,
-          },
-        ],
-        nodrag: true,
-      }
-    );
+    if(this.menu.selectedStressMethod){
+      this.columnHeaders.push(
+        {
+          title: this.translate.instant("fatigues.p_name"),
+          dataType: 'string', dataIndx: 'p_name', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+        },
+        {
+          title: this.translate.instant("fatigues.bh"),
+          align: 'center', dataType: 'float', dataIndx: 'bh', editable: false, frozen: true, sortable: false, width: 85, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+        },
+        {
+          title: this.translate.instant("fatigues.position"),
+          align: 'center', dataType: 'string', dataIndx: 'design_point_id', editable: false, frozen: true, sortable: false, width: 40, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+        },
+        {
+          title: this.translate.instant("fatigues.components"),
+          align: 'center', dataType: 'bool', dataIndx: 'components', type: 'checkbox', frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }, cls:"col-check"
+        },
+      );
+    }else{
+      this.columnHeaders.push(
+        {
+          title: this.translate.instant("fatigues.p_name"),
+          dataType: 'string', dataIndx: 'p_name', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+        },
+        {
+          title: this.translate.instant("fatigues.bh"),
+          align: 'center', dataType: 'float', dataIndx: 'bh', editable: false, frozen: true, sortable: false, width: 85, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+        },
+        {
+          title: this.translate.instant("fatigues.position"),
+          align: 'center', dataType: 'string', dataIndx: 'design_point_id', editable: false, frozen: true, sortable: false, width: 40, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+        },
+        {
+          title: this.translate.instant("fatigues.for_b"),
+          align: 'center', colModel: [
+            { title: 'SA/SC', dataType: 'float', format: '#.000', dataIndx: 'M_SA', sortable: false, width: 70, nodrag: true, },
+            { title: 'SB/SC', dataType: 'float', format: '#.000', dataIndx: 'M_SB', sortable: false, width: 70, nodrag: true, },
+            {
+              title: 'k=0.06', align: 'center', colModel: [
+                { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'M_NA06', sortable: false, width: 70, nodrag: true, },
+                { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'M_NB06', sortable: false, width: 70, nodrag: true, }
+              ],
+              nodrag: true,
+            },
+            {
+              title: 'k=0.12', align: 'center', colModel: [
+                { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'M_NA12', sortable: false, width: 70, nodrag: true, },
+                { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'M_NB12', sortable: false, width: 70, nodrag: true, }
+              ],
+              nodrag: true,
+            },
+            {
+              title: this.translate.instant("fatigues.d_r2"),
+              align: 'center', colModel: [
+                { title: 'α', dataType: 'float', format: '#.000', dataIndx: 'M_A', sortable: false, width: 70, nodrag: true, },
+                { title: 'β', dataType: 'float', format: '#.000', dataIndx: 'M_B', sortable: false, width: 70, nodrag: true, }
+              ],
+              nodrag: true,
+            },
+            {
+              title: this.translate.instant("fatigues.b_r1"),
+              align: 'center', colModel: [
+                {
+                  title: this.translate.instant("fatigues.ax_rein"),
+                  dataType: 'float', format: '#.00', dataIndx: 'M_r1_1', sortable: false, width: 60, nodrag: true,
+                }
+              ],
+              nodrag: true,
+            },
+  
+            // Hidden when finish WebDan の SRC構造の対応 #27
+            // 戻す場合は303行目以降も対応の事
+            // {
+            //   title: this.translate.instant("fatigues.s_grade"),
+            //   align: 'center', dataType: 'string', dataIndx: 'M_Class', sortable: false, width: 50, nodrag: true,
+            // },
+            // {
+            //   title: this.translate.instant("fatigues.weld"),
+            //   align: 'center', dataType: 'bool', dataIndx: 'M_weld', type: 'checkbox', sortable: false, width: 40, nodrag: true,
+            // },
+          ],
+          nodrag: true,
+        },
+        {
+          title: this.translate.instant("fatigues.for_s"),
+          align: 'center', colModel: [
+            { title: 'SA/SC', dataType: 'float', format: '#.000', dataIndx: 'V_SA', sortable: false, width: 70, nodrag: true, },
+            { title: 'SB/SC', dataType: 'float', format: '#.000', dataIndx: 'V_SB', sortable: false, width: 70, nodrag: true, },
+            {
+              title: 'k=0.06', align: 'center', colModel: [
+                { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'V_NA06', sortable: false, width: 70, nodrag: true, },
+                { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'V_NB06', sortable: false, width: 70, nodrag: true, }
+              ],
+              nodrag: true,
+            },
+            {
+              title: 'k=0.12', align: 'center', colModel: [
+                { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'V_NA12', sortable: false, width: 70, nodrag: true, },
+                { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'V_NB12', sortable: false, width: 70, nodrag: true, }
+              ],
+              nodrag: true,
+            },
+            {
+              title: this.translate.instant("fatigues.d_r2"),
+              align: 'center', colModel: [
+                { title: 'α', dataType: 'float', format: '#.000', dataIndx: 'V_A', sortable: false, width: 70, nodrag: true, },
+                { title: 'β', dataType: 'float', format: '#.000', dataIndx: 'V_B', sortable: false, width: 70, nodrag: true, }
+              ],
+              nodrag: true,
+            },
+            {
+              title: this.translate.instant("fatigues.b_r1"),
+              align: 'center', colModel: [
+                {
+                  title: this.translate.instant("fatigues.hoop"),
+                  dataType: 'float', format: '#.00', dataIndx: 'V_r1_2', sortable: false, width: 60, nodrag: true,
+                },
+                {
+                  title: this.translate.instant("fatigues.fold"),
+                  dataType: 'float', format: '#.00', dataIndx: 'V_r1_3', sortable: false, width: 60, nodrag: true,
+                }
+              ],
+              nodrag: true,
+            },
+          ],
+          nodrag: true,
+        }
+      );
+    }
   }
 
   public getGroupeName(i: number): string {

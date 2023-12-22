@@ -255,7 +255,8 @@
         "weld":"溶接継手",
         "for_s":"せん断用",
         "hoop":"帯筋",
-        "fold":"折曲げ"
+        "fold":"折曲げ",
+        "components":"繰り返し応力を受ける部材"
     },
     "material-strength-verifiaction-condition":{
         "com_type":"部材種別",

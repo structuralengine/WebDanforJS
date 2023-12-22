@@ -27,7 +27,7 @@
       </li>
     </ul>
   </nav>
-  <div class="tabArea">
+  <div class="tabArea"  *ngIf="!selectedStressMethod">
     <ul class="tab-select-items">
       <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'for_b'}" (click)="setActiveTab('for_b')" translate>fatigues.for_b</li>
       <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'for_s'}" (click)="setActiveTab('for_s')" translate>fatigues.for_s</li>

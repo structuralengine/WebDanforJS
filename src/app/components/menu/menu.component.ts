@@ -415,7 +415,7 @@ export class MenuComponent implements OnInit {
   public setSpecification1(i: number): void {
     const basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
-
+    
     ///temporary set default spe_2.2: "partial coefficient method"
     if(i === 2)
     {

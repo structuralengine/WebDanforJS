@@ -40,6 +40,7 @@ export class InputFatiguesService {
       p_name: null,
       b: null,
       h: null,
+      components: false,
       //itle1: "上側",
       M1: this.default_fatigue_coefficient("Md"),
       V1: this.default_fatigue_coefficient("Vd"),
@@ -103,6 +104,7 @@ export class InputFatiguesService {
           column1["p_name"] = pos.p_name;
           column1["bh"] = member.B;
           column1["design_point_id"] = data.title1;
+          column1["components"] = data.components;
           for (const k of Object.keys(data.M1)) {
             column1["M_" + k] = data.M1[k];
           }
@@ -229,7 +231,6 @@ export class InputFatiguesService {
     this.train_A_count = fatigues.train_A_count;
     this.train_B_count = fatigues.train_B_count;
     this.service_life = fatigues.service_life;
-
     this.fatigue_list = new Array();
 
     const table_datas = fatigues.table_datas;
@@ -238,7 +239,8 @@ export class InputFatiguesService {
       const column2 = table_datas[i + 1];
 
       const f = this.default_fatigue(column1.index);
-
+      
+      f.components= column1.components
       //f.title1 = column1.design_point_id;
       f.M1.SA = column1.M_SA;
       f.M1.SB = column1.M_SB;

@@ -255,7 +255,8 @@
         "weld":"Welded joint",
         "for_s":"For shear",
         "hoop":"Hoop",
-        "fold":"folding"
+        "fold":"folding",
+        "components":"Components subjected to repetitive stress"
     },
     "material-strength-verifiaction-condition":{
         "com_type":"Component Type",
@@ -314,6 +315,8 @@
         "fck":"Design standard strength of concrete fck(N/mm2)",
         "max_ca":"Maximum dimensions of coarse aggregate (mm)",
         "b_safe":"Bending factor of safety",
+        "b_stress":"Bending-discount coefficient",
+        "r_bar":"Reinforcing bar arrangement",
         "s_safe":"Shear factor of safety",
         "t_safe":"Torsion factor of safety",
         "γi":"Coefficient γi",
