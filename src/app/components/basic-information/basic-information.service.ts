@@ -23,7 +23,6 @@ export class InputBasicInformationService {
   // 設計条件
   public conditions_list: any[];
 
-  public id:number=0
 
   constructor(
     private helper: DataHelperModule,
@@ -279,29 +278,6 @@ export class InputBasicInformationService {
         //     },
         //   ];
         break;
-        case 3: 
-        result=[
-          {
-            id: 0,
-            title: this.translate.instant(
-              "basic-information.constant"
-            ),
-            no: null,
-          },
-          {
-            id: 1,
-            title: this.translate.instant(
-              "basic-information.temporary"
-            ),
-            no: null,
-          },
-          {
-            id: 2,
-            title: this.translate.instant("basic-information.seismic"),
-            no: null,
-          },
-        ]
-        break;
       // case 2: // 港湾
       //   result = [
       //     {
@@ -455,24 +431,6 @@ export class InputBasicInformationService {
           },
         ];
         break;
-        case 3: 
-        result=[
-          {
-            id: 0,
-            title: this.translate.instant(
-              "basic-information.const-temp"
-            ),
-            no: null,
-          },
-          {
-            id: 1,
-            title: this.translate.instant(
-              "basic-information.seismic"
-            ),
-            no: null,
-          },
-        ]
-        break;
       // case 2: // 港湾
       //   result = [
       //     {
@@ -616,24 +574,6 @@ export class InputBasicInformationService {
             no: null,
           },
         ];
-        break;
-        case 3: 
-        result=[
-          {
-            id: 0,
-            title: this.translate.instant(
-              "basic-information.const-temp"
-            ),
-            no: null,
-          },
-          {
-            id: 1,
-            title: this.translate.instant(
-              "basic-information.seismic"
-            ),
-            no: null,
-          },
-        ]
         break;
       // case 2: // 港湾
       //   result = [
@@ -853,12 +793,9 @@ export class InputBasicInformationService {
     // const id: number = this.specification1_list.findIndex(
     //   (value) => value.id === index
     // );
-
-    if(id!==3){
       this.specification1_list.map(
         (obj) => (obj.selected = obj.id === id ? true : false)
       );
-    }
     this.set_default_pickup();
 
     return this.getSaveData();
@@ -886,14 +823,6 @@ export class InputBasicInformationService {
         sp1.selected = _sp1.selected;
       }
     }
-   if(this.id===0){
-    basic.specification2_list.forEach((data:any)=>{
-      if( data.id===7){
-        this.menuService.setStressMethod(data.selected);
-        data.selected? this.id=3 :this.id=0
-      }
-    })
-   }
     const sp1: number = this.get_specification1();
 
     //Then get specification_list 2;
