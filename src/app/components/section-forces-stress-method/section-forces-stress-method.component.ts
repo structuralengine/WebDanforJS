@@ -287,7 +287,6 @@ export class SectionForcesStressMethodComponent implements OnInit, AfterViewInit
       const column = this.forceStressMethod.getTable1Columns(i);
       this.table_datas.push(column);
     }
-    console.log("this.table_datas",this.table_datas)
   }
 
 

@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from '../menu/menu.service';
-import { InputBasicInformationStressMethodService } from '../basic-information-stress-method/basic-information-stress-method.service';
 
 @Injectable({
   providedIn: "root",
@@ -23,12 +22,10 @@ export class InputBasicInformationService {
   // 設計条件
   public conditions_list: any[];
 
-
   constructor(
     private helper: DataHelperModule,
     private translate: TranslateService,
     private menuService: MenuService,
-    private basicStressMethod: InputBasicInformationStressMethodService,
   ) {
     this.clear();
   }
@@ -80,7 +77,6 @@ export class InputBasicInformationService {
   private set_default_pickup(): void {
     const sp1 = this.get_specification1();
     const sp2 = this.get_specification2();
-
     // 曲げモーメントテーブル
     const keys_moment = this.default_pickup_moment(sp1, sp2);
     // 古い入力があれば no の入力を 保持
@@ -121,7 +117,6 @@ export class InputBasicInformationService {
     this.pickup_torsional_moment = tmp_torsional;
 
     this.specification2_list = this.default_specification2(sp1);
-
     this.conditions_list = this.default_conditions(sp1);
   }
 
