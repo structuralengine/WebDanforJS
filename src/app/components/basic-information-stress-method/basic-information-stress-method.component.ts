@@ -89,8 +89,7 @@ export class BasicInformationStressMethodComponent implements OnInit, OnDestroy 
     } );
   }
   onInitData(){
-    let basic : any = {};
-    basic = this.basicStressMethod.getSaveData();
+    const basic = this.basicStressMethod.getSaveData();
     // 適用
     this.specification1_list = basic.specification1_list;
     this.specification1_select_id = this.basicStressMethod.get_specification1();
