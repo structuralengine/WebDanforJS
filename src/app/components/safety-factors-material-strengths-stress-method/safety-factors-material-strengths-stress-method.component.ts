@@ -438,7 +438,7 @@ export class SafetyFactorsMaterialStrengthsStressMethodComponent
     {
       title: this.translate.instant("safety-factors-material-strengths.b_stress"),
       align: 'center', colModel: [
-        {  title: '', dataType: 'float', 'format': '#', dataIndx: 'M_rc', sortable: false, width: 200, nodrag: true, },
+        {  title: '', dataType: 'float', 'format': '#.00', dataIndx: 'M_rc', sortable: false, width: 200, nodrag: true, },
         // { title: 'γs', dataType: 'float', 'format': '#.00', dataIndx: 'M_rs', sortable: false, width: 70, nodrag: true, },
         // { title: 'γbs', dataType: 'float', 'format': '#.00', dataIndx: 'M_rbs', sortable: false, width: 70, nodrag: true, }
       ],
@@ -447,7 +447,7 @@ export class SafetyFactorsMaterialStrengthsStressMethodComponent
     {
       title: this.translate.instant("safety-factors-material-strengths.r_bar"),
       align: 'center', colModel: [
-        { title: '', dataType: 'float', 'format': '#', dataIndx: 'range', sortable: false, width: 200, nodrag: true, },
+        { title: '', dataType: 'float', 'format': '#.00', dataIndx: 'range', sortable: false, width: 200, nodrag: true, },
         // { title: 'γs', dataType: 'float', 'format': '#.00', dataIndx: 'V_rs', sortable: false, width: 70, nodrag: true, },
         // { title: 'γbc', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbc', sortable: false, width: 70, nodrag: true, },
         // { title: 'γbs', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbs', sortable: false, width: 70, nodrag: true, },
@@ -599,7 +599,7 @@ export class SafetyFactorsMaterialStrengthsStressMethodComponent
       const conc = this.table3_datas[i];
       material_concrete[id] = {
         fck: conc[0].value,
-        dmax: conc[1].value
+        // dmax: conc[1].value
       }
 
       // 杭の施工条件
