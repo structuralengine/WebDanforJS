@@ -166,10 +166,12 @@ export class SafetyFactorsMaterialStrengthsStressMethodComponent
       this.table3_datas.push([{
         title: this.translate.instant("safety-factors-material-strengths.fck"),
         value: concrete.fck
-      }, {
-        title: this.translate.instant("safety-factors-material-strengths.max_ca"),
-        value: concrete.dmax
-      }]);
+      }, 
+      // {
+      //   title: this.translate.instant("safety-factors-material-strengths.max_ca"),
+      //   value: concrete.dmax
+      // }
+    ]);
 
       // 杭の施工条件
       this.pile_factor_list.push(safety.pile_factor[id]);
