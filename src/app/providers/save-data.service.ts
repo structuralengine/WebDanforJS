@@ -17,6 +17,7 @@ import packageJson from '../../../package.json';
 import { InputMaterialStrengthVerificationConditionService } from "../components/material-strength-verification-conditions/material-strength-verification-conditions.service";
 import { InputBasicInformationStressMethodService } from "../components/basic-information-stress-method/basic-information-stress-method.service";
 import { InputSectionForcesStressMethodService } from "../components/section-forces-stress-method/section-forces-stress-method.service";
+import { InputSafetyFactorsMaterialStrengthsMethodService } from '../components/safety-factors-material-strengths-stress-method/safety-factors-material-strengths-stress-method.service';
 
 @Injectable({
   providedIn: "root",
@@ -55,6 +56,8 @@ export class SaveDataService {
     private fatiguesStressMethod: InputFatiguesStressMethodService,
     private members: InputMembersService,
     private safety: InputSafetyFactorsMaterialStrengthsService,
+    private safetyStressMethod: InputSafetyFactorsMaterialStrengthsMethodService,
+
     private material: InputMaterialStrengthVerificationConditionService,
     private force: InputSectionForcesService,
     private forceStressMethod: InputSectionForcesStressMethodService,
@@ -77,6 +80,7 @@ export class SaveDataService {
     this.fatigues.clear();
     this.fatiguesStressMethod.clear();
     this.safety.clear();
+    this.safetyStressMethod.clear();
     this.force.clear();
     this.forceStressMethod.clear();
     this.material.clear();
@@ -382,9 +386,11 @@ export class SaveDataService {
     // 安全係数情報
     if ("safety" in jsonData) {
       this.safety.setSaveData(jsonData.safety);
+      this.safetyStressMethod.setSaveData(jsonData.safety);
       this.material.setSaveData(jsonData.safety);
     } else {
       this.safety.clear();
+      this.safetyStressMethod.clear();
       this.material.clear();
     }
     // 断面力手入力情報

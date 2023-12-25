@@ -5,6 +5,7 @@ import { InputMembersService } from '../members/members.service';
 import { visitAll } from '@angular/compiler';
 import { TranslateService } from "@ngx-translate/core";
 import { InputSafetyFactorsMaterialStrengthsService } from '../safety-factors-material-strengths/safety-factors-material-strengths.service';
+import { InputSafetyFactorsMaterialStrengthsMethodService } from './safety-factors-material-strengths-stress-method.service';
 
 @Component({
   selector: 'app-safety-factors-material-strengths-stress-method',
@@ -62,7 +63,7 @@ export class SafetyFactorsMaterialStrengthsStressMethodComponent
     private groupe_list: any[];
     public groupe_name: string[];
   constructor(
-    private safety: InputSafetyFactorsMaterialStrengthsService,
+    private safety: InputSafetyFactorsMaterialStrengthsMethodService,
     private members: InputMembersService,
     private translate: TranslateService,
     private cdref: ChangeDetectorRef,
