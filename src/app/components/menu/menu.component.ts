@@ -486,7 +486,6 @@ export class MenuComponent implements OnInit {
           document.getElementById("0")?.classList.add("is-active");
         }
       });
-    this.saveData();
     this.specification2_select_id = id;
   }
 

@@ -247,6 +247,33 @@
           >
             basic-information.spec
           </p>
+          <ng-container *ngFor="let item of specification2_list; index as i">
+            <div
+              *ngIf="i === 5"
+              class="d-flex"
+              [ngClass]="{
+                'spec-rdo-active': specification2_select_id === item.id,
+                'spec-rdo': specification2_select_id !== item.id,
+                disabled: item.id === 5
+              }"
+            >
+              <input
+                type="radio"
+                name="specification2"
+                id="specification2{{ item.id }}"
+                [(ngModel)]="specification2_select_id"
+                [value]="item.id"
+                [checked]="item.selected"
+                (change)="setSpecification2(item.id, 'click')"
+                [disabled]="item.id === 5 ? true : false"
+              />
+              <label
+                class="form-check-label"
+                for="specification2{{ item.id }}"
+                >{{ item.title | translate }}</label
+              >
+            </div>
+          </ng-container>
           <p
             *ngIf="menuService.selectedRoad == false"
             class="specification"
@@ -292,7 +319,7 @@
           </p>
           <ng-container *ngFor="let item of specification2_list; index as i">
             <div
-              *ngIf="i === 3 || i === 4 || i === 5"
+              *ngIf="i === 3 || i === 4"
               class="d-flex"
               [ngClass]="{
                 'spec-rdo-active': specification2_select_id === item.id,
