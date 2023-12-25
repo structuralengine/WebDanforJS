@@ -386,9 +386,11 @@ export class SaveDataService {
     // 安全係数情報
     if ("safety" in jsonData) {
       this.safety.setSaveData(jsonData.safety);
+      this.safetyStressMethod.setSaveData(jsonData.safety);
       this.material.setSaveData(jsonData.safety);
     } else {
       this.safety.clear();
+      this.safetyStressMethod.clear();
       this.material.clear();
     }
     // 断面力手入力情報
