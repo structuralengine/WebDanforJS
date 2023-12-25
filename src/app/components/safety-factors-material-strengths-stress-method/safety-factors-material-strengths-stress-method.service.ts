@@ -8,7 +8,7 @@ import { InputMaterialStrengthVerificationConditionService } from '../material-s
 @Injectable({
   providedIn: 'root'
 })
-export class InputSafetyFactorsMaterialStrengthsService {
+export class InputSafetyFactorsMaterialStrengthsMethodService {
 
   private safety_factor: any;
   private material_bar: any;
