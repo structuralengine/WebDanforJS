@@ -49,8 +49,8 @@ export class InputSafetyFactorsMaterialStrengthsMethodService {
 
         result = [
           {
-            id: 0, 
-            title: this.translate.instant("safety-factors-material-strengths.d_u"),
+            id: 1, 
+            title: this.translate.instant("safety-factors-material-strengths.constant"),
             M_rc: 1.00, M_rs: 1.00, M_rbs: 1.00,
             V_rc: 1.00, V_rs: 1.00, V_rbc: 1.00, V_rbs: 1.00, V_rbv: null,
             T_rbt:1.00,
@@ -59,7 +59,7 @@ export class InputSafetyFactorsMaterialStrengthsMethodService {
           },
           {
             id: 2, 
-            title: this.translate.instant("safety-factors-material-strengths.safe_ff"),
+            title: this.translate.instant("safety-factors-material-strengths.temporary"),
             M_rc: 1.30, M_rs: 1.05, M_rbs: 1.00,
             V_rc: 1.30, V_rs: 1.05, V_rbc: 1.30, V_rbs: 1.0, V_rbv: null,
             T_rbt:1.00,
@@ -68,31 +68,31 @@ export class InputSafetyFactorsMaterialStrengthsMethodService {
           },
           {
             id: 5, 
-            title: this.translate.instant("safety-factors-material-strengths.safe_d"),
+            title: this.translate.instant("safety-factors-material-strengths.seismic"),
             M_rc: 1.30, M_rs: 1.0, M_rbs: 1.10,
             V_rc: 1.30, V_rs: 1.0, V_rbc: 1.30, V_rbs: 1.10, V_rbv: 1.20,
             T_rbt:1.30,
             ri: 1.20, range: 2,
             S_rs: 1.05, S_rb: 1.1
           },
-          {
-            id: 6, 
-            title:  (sp2 !== 3 && sp2 !== 4) ? this.translate.instant("safety-factors-material-strengths.r_ex") : this.translate.instant("safety-factors-material-strengths.u_damage"),
-            M_rc: 1.30, M_rs: 1.00, M_rbs: 1.0,
-            V_rc: 1.30, V_rs: 1.00, V_rbc: 1.30, V_rbs: 1.10, V_rbv: 1.20,
-            T_rbt:1.30,
-            ri: 1.20, range: 3,
-            S_rs: 1.05, S_rb: 1.1
-          },
-          {
-            id: 7, 
-            title: this.translate.instant("safety-factors-material-strengths.r_at"),
-            M_rc: 1.30, M_rs: 1.00, M_rbs: 1.00,
-            V_rc: 1.30, V_rs: 1.00, V_rbc: 1.30, V_rbs: 1.00, V_rbv: 1.20,
-            T_rbt:1.30,
-            ri: 1.00, range: 3,
-            S_rs: 1.05, S_rb: 1.1
-          },
+          // {
+          //   id: 6, 
+          //   title:  (sp2 !== 3 && sp2 !== 4) ? this.translate.instant("safety-factors-material-strengths.r_ex") : this.translate.instant("safety-factors-material-strengths.u_damage"),
+          //   M_rc: 1.30, M_rs: 1.00, M_rbs: 1.0,
+          //   V_rc: 1.30, V_rs: 1.00, V_rbc: 1.30, V_rbs: 1.10, V_rbv: 1.20,
+          //   T_rbt:1.30,
+          //   ri: 1.20, range: 3,
+          //   S_rs: 1.05, S_rb: 1.1
+          // },
+          // {
+          //   id: 7, 
+          //   title: this.translate.instant("safety-factors-material-strengths.r_at"),
+          //   M_rc: 1.30, M_rs: 1.00, M_rbs: 1.00,
+          //   V_rc: 1.30, V_rs: 1.00, V_rbc: 1.30, V_rbs: 1.00, V_rbv: 1.20,
+          //   T_rbt:1.30,
+          //   ri: 1.00, range: 3,
+          //   S_rs: 1.05, S_rb: 1.1
+          // },
           {
             id: 8, 
             title: this.translate.instant("safety-factors-material-strengths.min_rebar"),

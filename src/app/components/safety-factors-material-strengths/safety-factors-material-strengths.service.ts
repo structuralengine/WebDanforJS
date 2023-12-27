@@ -49,7 +49,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
 
         result = [
           {
-            id: 0, 
+            id: 1, 
             title: this.translate.instant("safety-factors-material-strengths.d_u"),
             M_rc: 1.00, M_rs: 1.00, M_rbs: 1.00,
             V_rc: 1.00, V_rs: 1.00, V_rbc: 1.00, V_rbs: 1.00, V_rbv: null,
