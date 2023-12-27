@@ -9,6 +9,7 @@ import { forEach } from 'jszip';
 
 import { MenuBehaviorSubject } from '../menu/menu-behavior-subject.service';
 import { InputBasicInformationStressMethodService } from './basic-information-stress-method.service';
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
 
 
 @Component({
@@ -45,6 +46,7 @@ export class BasicInformationStressMethodComponent implements OnInit, OnDestroy 
 
   constructor(
     private basicStressMethod: InputBasicInformationStressMethodService,
+    private basic: InputBasicInformationService,
     private save: SaveDataService,
     private translate: TranslateService,
     private menuBehaviorSubject: MenuBehaviorSubject,
@@ -288,7 +290,8 @@ export class BasicInformationStressMethodComponent implements OnInit, OnDestroy 
   }
 
   public saveData(): void {
-    this.basicStressMethod.setSaveData({
+    this.specification2_list= this.basic.specification2_list
+    this.basic.setSaveData({
       pickup_moment: this.table1_datas,
       pickup_shear_force: this.table2_datas,
       pickup_torsional_moment: this.table3_datas,

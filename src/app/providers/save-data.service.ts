@@ -332,10 +332,10 @@ export class SaveDataService {
     // 設計条件
     if ("basic" in jsonData) {
       this.basic.setSaveData(jsonData.basic);
-      this.basicStressMethod.setSaveData(jsonData.basic);     
+      // this.basicStressMethod.setSaveData(jsonData.basic);     
     } else {
       this.basic.clear();
-      this.basicStressMethod.clear()
+      // this.basicStressMethod.clear()
     }
     // 部材情報
     if ("members" in jsonData) {

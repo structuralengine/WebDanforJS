@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from '../menu/menu.service';
+import { InputBasicInformationStressMethodService } from '../basic-information-stress-method/basic-information-stress-method.service';
 
 @Injectable({
   providedIn: "root",
@@ -26,6 +27,7 @@ export class InputBasicInformationService {
     private helper: DataHelperModule,
     private translate: TranslateService,
     private menuService: MenuService,
+    private basicStressMethod:InputBasicInformationStressMethodService
   ) {
     this.clear();
   }
@@ -811,6 +813,7 @@ export class InputBasicInformationService {
   }
 
   public setSaveData(basic: any) {
+    this.basicStressMethod.setSaveData(basic);
     this.specification1_list = this.default_specification1();
     for (const sp1 of this.specification1_list) {
       const _sp1 = basic.specification1_list.find((v) => v.id === sp1.id);
@@ -819,17 +822,19 @@ export class InputBasicInformationService {
       }
     }
     const sp1: number = this.get_specification1();
-
+    console.log("basic",basic)
     //Then get specification_list 2;
     // this.specification2_list = basic.specification2_list;
     this.specification2_list = this.default_specification2(sp1);
+    console.log("this.specification2_list",this.specification2_list)
     for (const sp2 of this.specification2_list) {
       const _sp2 = basic.specification2_list.find((v) => v.id === sp2.id);
       if (_sp2 != null) {
         sp2.selected = _sp2.selected;
       }
     }
-    this.setDefault();
+    // this.setDefault();
+    console.log("this.specification2_list",this.specification2_list)
 
     const sp2: number = this.get_specification2();
 
