@@ -1,0 +1,131 @@
+.c-subNavArea {
+    padding-top: 10px;
+    background: var(--base-950);
+
+    &__nav {
+        display: flex;
+        column-gap: 8px;
+        margin: 0 0 0 16px;
+        padding: 0;
+        font-size: 0; /* タグ改行時の空白防止 */
+        font-size: 13px;
+    }
+
+    a.is-active {
+        background: var(--base-900);
+        color: var(--primary);
+    }
+
+    &__navItem {
+        display: inline-block;
+        font-size: 13px; /* ulでサイズ0にしたのを戻す */
+    }
+
+    &__navItemTitle {
+        transform: translateX(0);
+        display: block;
+        // border-bottom: 1px solid #000080;
+        padding: 10px 15px;
+        font-size: 13px;
+        cursor: pointer;
+        position: relative;
+        background: var(--base-700);
+        border-radius: 4px 4px 0px 0px;
+    }
+    .tobble-section {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      column-gap: 8px;
+      padding: 16px 16px 0;
+      background: var(--base-900);
+
+      .tobble {
+          width: 26px;
+          height: 14px;
+          background-color: #9fb6c1;
+          border-radius: 13px;
+          position: relative;
+          cursor: pointer;
+          transition: opacity 0.2s;
+      }
+
+      .tobble-icon {
+          position: absolute;
+          top: 1px;
+          left: 2px;
+          width: 12px;
+          height: 12px;
+          background-color: #fff;
+          border-radius: 50%;
+          transition: transform 0.2s;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          color: #fff;
+          text-align: center;
+          font-family: Helvetica;
+          font-size: 0.5rem;
+          line-height: 150%;
+          letter-spacing: 0.025rem;
+      }
+      .tobble-label {
+          font-size: 13px;
+          color: var(--text_main);
+          margin-left: 8px;
+      }
+
+      .tobble-container {
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          padding: 8px;
+          border-radius: 8px;
+          border: 1px solid var(--base-700);
+          background: var(--base-950);
+          margin-bottom: 5px;
+          &.active {
+              border: 1px solid var(--primary-800);
+              background: var(--checkbox_selected);
+
+              .tobble {
+                  background: var(--primary-500);
+              }
+
+              .tobble-icon {
+                  transform: translateX(11px);
+              }
+
+              .tobble-label {
+                  color: var(--primary);
+              }
+          }
+      }
+  }
+}
+
+.c-sheetArea {
+    padding-top: 10px;
+    padding-left: 16px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    background: var(--base-900);
+    height: 680px;
+    // height: 500px;
+}
+
+.s-border{
+    position: fixed;
+    width: 89.5%;
+}
+
+.disabled {
+    pointer-events: none;
+    color: var(--text_disabled);
+    a {
+        pointer-events: none;
+        color: var(--text_disabled);
+    }
+}

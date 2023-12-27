@@ -267,6 +267,7 @@ export class MenuComponent implements OnInit {
             //Read file
             this.save.readInputData(text);
             let basicFile = this.save.getBasicData();
+            console.log(basicFile)
             this.specification1_list_file = basicFile.specification1_list;
             this.basic.set_specification1_data_file(this.specification1_list_file);
             this.specification2_list_file = basicFile.specification2_list;
@@ -440,7 +441,7 @@ export class MenuComponent implements OnInit {
     this.menuService.selectApply(i);
     this.menuBehaviorSubject.setValue(i.toString());
     this.router.navigate(['./basic-information']);
-    for (let i = 0; i <= 12; i++) {
+    for (let i = 0; i <= 16; i++) {
       const data = document.getElementById(i + "");
       if (data != null) {
         if (data.classList.contains("is-active")) {
@@ -452,10 +453,36 @@ export class MenuComponent implements OnInit {
   }
 
   /// 仕様 変更時の処理
-  public setSpecification2(id: number): void {
+  public setSpecification2(id: number,type?:string): void {
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
+    if(id===7 && type ==="click"){
+      this.menuService.setStressMethod(true);
+      this.router.navigate(['./basic-information-stress-method']);
+      for (let i = 0; i <= 16; i++) {
+        const data = document.getElementById(i + "");
+        if (data != null) {
+          if (data.classList.contains("is-active")) {
+            data.classList.remove("is-active");
+          }
+        }
+      }  
+      document.getElementById("13")?.classList.add("is-active");
+    }
+    if(id!==7 && type ==="click"){
+      this.menuService.setStressMethod(false);
+      this.router.navigate(['./basic-information']);
+      for (let i = 0; i <= 16; i++) {
+        const data = document.getElementById(i + "");
+        if (data != null) {
+          if (data.classList.contains("is-active")) {
+            data.classList.remove("is-active");
+          }
+        }
+      }
+      document.getElementById("0")?.classList.add("is-active");
+    }
   }
 
   // 耐用年数, jA, jB

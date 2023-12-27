@@ -16,10 +16,16 @@ import { CalculationPrintComponent } from './components/calculation-print/calcul
 import { CrackSettingsComponent } from './components/crack/crack-settings.component';
 import { ShearComponent } from './components/shear/shear.component';
 import { MaterialStrengthVerificationConditionComponent } from './components/material-strength-verification-conditions/material-strength-verification-conditions.component';
+import { BasicInformationStressMethodComponent } from './components/basic-information-stress-method/basic-information-stress-method.component';
+import { FatiguesStressMethodComponent } from './components/fatigues-stress-method/fatigues-stress-method.component';
+import { SectionForcesStressMethodComponent } from './components/section-forces-stress-method/section-forces-stress-method.component';
+import { SafetyFactorsMaterialStrengthsStressMethodComponent } from './components/safety-factors-material-strengths-stress-method/safety-factors-material-strengths-stress-method.component';
 
 
 const routes: Routes = [
+    { path:"",  component: BlankPageComponent},
     { path: 'basic-information', component: BasicInformationComponent },
+    { path: 'basic-information-stress-method', component: BasicInformationStressMethodComponent },
     { path: 'members', component: MembersComponent },
     { path: 'design-points', component: DesignPointsComponent },
     { path: 'bars', component: BarsComponent },
@@ -27,8 +33,11 @@ const routes: Routes = [
     { path: 'shear', component: ShearComponent },
     { path: 'crack', component: CrackSettingsComponent },
     { path: 'fatigues', component: FatiguesComponent },
+    { path: 'fatigues-stress-method', component: FatiguesStressMethodComponent },
     { path: 'safety-factors-material-strengths', component: SafetyFactorsMaterialStrengthsComponent },
+    { path: 'safety-factors-material-strengths-stress-method', component: SafetyFactorsMaterialStrengthsStressMethodComponent},
     { path: 'section-forces', component: SectionForcesComponent },
+    { path: 'section-forces-stress-method', component: SectionForcesStressMethodComponent },
     { path: 'durability_data', component: DurabilityDataComponent },
     { path: 'calculation-print', component: CalculationPrintComponent },
 //    { path: 'result-viewer', component: ResultViewerComponent },

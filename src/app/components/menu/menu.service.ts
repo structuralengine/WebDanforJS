@@ -8,6 +8,7 @@ import { InputDesignPointsService } from "../design-points/design-points.service
 export class MenuService {
 
   public selectedRoad: boolean = false;
+  public selectedStressMethod: boolean = false;
 
   // 部材情報
   constructor() {
@@ -20,5 +21,8 @@ export class MenuService {
   reloadTranslate(selectedRoad:boolean){
     this.selectedRoad = !selectedRoad;
     this.selectedRoad = selectedRoad;
+  }
+  setStressMethod(check:boolean){
+    this.selectedStressMethod=check
   }
 }
