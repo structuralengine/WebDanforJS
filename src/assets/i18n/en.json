@@ -334,7 +334,10 @@
         "muddy_less":"Muddy water specific density 1.04 or less",
         "natural_less":"Natural muddy water, muddy water specific density 1.10 or less",
         "bentonite":"Bentonite muddy water",
-        "aerial":"Aerial construction"
+        "aerial":"Aerial construction",
+        "constant": "Constant",
+        "temporary" : "Temporary",
+        "seismic" :"Seismic"
     },
     "calculation-print":{
         "dc":"Design condition",
