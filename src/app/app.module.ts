@@ -72,6 +72,10 @@ import {MultiWindowConfig, MultiWindowModule, WindowSaveStrategy} from 'ngx-mult
 import { DurabilityDataComponent } from "./components/durability-data/durability-data.component";
 import { InputMaterialStrengthVerificationConditionService } from "./components/material-strength-verification-conditions/material-strength-verification-conditions.service";
 import { MaterialStrengthVerificationConditionComponent } from "./components/material-strength-verification-conditions/material-strength-verification-conditions.component";
+import { BasicInformationStressMethodComponent } from "./components/basic-information-stress-method/basic-information-stress-method.component";
+import { FatiguesStressMethodComponent } from "./components/fatigues-stress-method/fatigues-stress-method.component";
+import { SafetyFactorsMaterialStrengthsStressMethodComponent } from "./components/safety-factors-material-strengths-stress-method/safety-factors-material-strengths-stress-method.component";
+import { SectionForcesStressMethodComponent } from "./components/section-forces-stress-method/section-forces-stress-method.component";
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
   new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -87,15 +91,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         initOptions: {
             onLoad: 'check-sso',
         }
-    })
-    .catch((error) => {
-      const elVer = window?.process?.versions["electron"];
-      if (elVer) {
-        return;
-      } else {
-        window.alert("自動ログインに失敗しました。");
-      }
-    });
+    }).catch(error => window.alert("自動ログインに失敗しました。"));
 }
 
 @NgModule({
@@ -135,13 +131,17 @@ function initializeKeycloak(keycloak: KeycloakService) {
         WaitDialogComponent,
         AlertDialogComponent,
         BasicInformationComponent,
+        BasicInformationStressMethodComponent,
         MembersComponent,
         DesignPointsComponent,
         BarsComponent,
         FatiguesComponent,
+        FatiguesStressMethodComponent,
         SafetyFactorsMaterialStrengthsComponent,
+        SafetyFactorsMaterialStrengthsStressMethodComponent,
         MaterialStrengthVerificationConditionComponent,
         SectionForcesComponent,
+        SectionForcesStressMethodComponent,
         CalculationPrintComponent,
         BlankPageComponent,
         SheetComponent,

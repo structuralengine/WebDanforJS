@@ -5,6 +5,7 @@ import { InputDesignPointsService } from '../design-points/design-points.service
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from '../menu/menu.service';
 import { log } from 'console';
+import { InputSectionForcesStressMethodService } from '../section-forces-stress-method/section-forces-stress-method.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +19,15 @@ export class InputSectionForcesService {
     private basic: InputBasicInformationService,
     private points: InputDesignPointsService,
     private translate: TranslateService,
-    private menu: MenuService
+    private menu: MenuService,
+    private sectionForcesStressMethod:InputSectionForcesStressMethodService
   ) {
     this.clear();
   }
   public clear(): void {
     this.force = new Array();
     this.toggleStatus= {};
+    this.sectionForcesStressMethod.clear()
   }
 
   public getColumnHeaders1(): any {
@@ -362,6 +365,7 @@ export class InputSectionForcesService {
       if (flg === true) {
         this.force.push(new_colum);
       }
+      this.sectionForcesStressMethod.setSaveData(this.force)
       // ????
       // const position = this.points.getCalcData(new_colum.index);
       // position.p_name =  data.p_name;
@@ -374,6 +378,7 @@ export class InputSectionForcesService {
   }
 
   public setSaveData(force: any) {
+    this.sectionForcesStressMethod.setSaveData(force)
     this.force = force;
   }
 

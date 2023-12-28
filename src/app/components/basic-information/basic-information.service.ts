@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from '../menu/menu.service';
+import { InputBasicInformationStressMethodService } from '../basic-information-stress-method/basic-information-stress-method.service';
 
 @Injectable({
   providedIn: "root",
@@ -25,7 +26,8 @@ export class InputBasicInformationService {
   constructor(
     private helper: DataHelperModule,
     private translate: TranslateService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private basicStressMethod: InputBasicInformationStressMethodService
   ) {
     this.clear();
   }
@@ -40,6 +42,7 @@ export class InputBasicInformationService {
 
     this.specification1_list = this.default_specification1();
     this.set_default_pickup();
+    this.basicStressMethod.clear();
   }
 
   private default_specification1(): any {
@@ -816,6 +819,7 @@ export class InputBasicInformationService {
   }
 
   public setSaveData(basic: any) {
+    this.basicStressMethod.setSaveData(basic)
     this.specification1_list = this.default_specification1();
     for (const sp1 of this.specification1_list) {
       const _sp1 = basic.specification1_list.find((v) => v.id === sp1.id);

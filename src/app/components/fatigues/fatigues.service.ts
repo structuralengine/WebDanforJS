@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { InputBarsService } from "../bars/bars.service";
 import { InputDesignPointsService } from "../design-points/design-points.service";
+import { InputFatiguesStressMethodService } from "../fatigues-stress-method/fatigues-stress-method.service";
 
 @Injectable({
   providedIn: "root",
@@ -18,7 +19,8 @@ export class InputFatiguesService {
   constructor(
     private helper: DataHelperModule,
     private points: InputDesignPointsService,
-    private bars: InputBarsService
+    private bars: InputBarsService,
+    private fatiguesStressMethod: InputFatiguesStressMethodService,
   ) {
     this.clear();
   }
@@ -29,6 +31,7 @@ export class InputFatiguesService {
     this.reference_count = 2000000;
 
     this.fatigue_list = new Array();
+    this.fatiguesStressMethod.clear()
   }
 
   // 疲労情報
@@ -40,6 +43,7 @@ export class InputFatiguesService {
       p_name: null,
       b: null,
       h: null,
+      components: false,
       //itle1: "上側",
       M1: this.default_fatigue_coefficient("Md"),
       V1: this.default_fatigue_coefficient("Vd"),
@@ -103,6 +107,7 @@ export class InputFatiguesService {
           column1["p_name"] = pos.p_name;
           column1["bh"] = member.B;
           column1["design_point_id"] = data.title1;
+          column1["components"] = data.components;
           for (const k of Object.keys(data.M1)) {
             column1["M_" + k] = data.M1[k];
           }
@@ -238,7 +243,7 @@ export class InputFatiguesService {
       const column2 = table_datas[i + 1];
 
       const f = this.default_fatigue(column1.index);
-
+      f.components= column1.components
       //f.title1 = column1.design_point_id;
       f.M1.SA = column1.M_SA;
       f.M1.SB = column1.M_SB;
@@ -291,6 +296,12 @@ export class InputFatiguesService {
 
       this.fatigue_list.push(f);
     }
+    this.fatiguesStressMethod.setSaveData({
+      fatigue_list: this.fatigue_list,
+      train_A_count: this.train_A_count,
+      train_B_count: this.train_B_count,
+      service_life: this.service_life,
+    })
   }
 
   public setPickUpData() {}
@@ -305,6 +316,7 @@ export class InputFatiguesService {
   }
 
   public setSaveData(fatigues: any) {
+    this.fatiguesStressMethod.setSaveData(fatigues)
     this.fatigue_list = fatigues.fatigue_list;
     this.train_A_count = fatigues.train_A_count;
     this.train_B_count = fatigues.train_B_count;
