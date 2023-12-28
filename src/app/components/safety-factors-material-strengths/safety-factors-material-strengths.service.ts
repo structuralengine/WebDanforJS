@@ -4,6 +4,7 @@ import { InputBasicInformationService } from '../basic-information/basic-informa
 import { InputMembersService } from '../members/members.service';
 import { TranslateService } from "@ngx-translate/core";
 import { InputMaterialStrengthVerificationConditionService } from '../material-strength-verification-conditions/material-strength-verification-conditions.service';
+import { InputSafetyFactorsMaterialStrengthsMethodService } from '../safety-factors-material-strengths-stress-method/safety-factors-material-strengths-stress-method.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
     private members: InputMembersService,
     private helper: DataHelperModule,
     private translate: TranslateService,
-    private material: InputMaterialStrengthVerificationConditionService
+    private material: InputMaterialStrengthVerificationConditionService,
+    private safetyFactorsMaterialStress: InputSafetyFactorsMaterialStrengthsMethodService
     ) {
     this.clear();
   }
@@ -453,7 +455,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
     this.material_bar = safety.material_bar,
     //this.material_steel = safety.material_steel,
     this.material_concrete = safety.material_concrete,
-    this.pile_factor = safety.pile_factor
+    this.pile_factor = safety.pile_factor,
+    this.safetyFactorsMaterialStress.setSaveData(safety);
   }
 
   public getGroupeName(i: number): string {
