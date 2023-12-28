@@ -59,13 +59,13 @@ export class InputFatiguesStressMethodService {
       NB12: null,
       A: null,
       B: null,
-      components: false,
     };
     if (target === "Md") {
       result["r1_1"] = null;
       result["r1_3"] = null;
       result["Class"] = null;
       result["weld"] = null;
+      result["components"]=false
     } else {
       result["r1_2"] = null;
       result["r1_3"] = null;
@@ -264,7 +264,6 @@ export class InputFatiguesStressMethodService {
       f.V1.B = column1.V_B;
       f.V1.r1_2 = column1.V_r1_2;
       f.V1.r1_3 = column1.V_r1_3;
-      delete f.V1.components
 
       //f.title2 = column2.design_point_id;
       f.M2.SA = column2.M_SA;
@@ -291,7 +290,6 @@ export class InputFatiguesStressMethodService {
       f.V2.B = column2.V_B;
       f.V2.r1_2 = column2.V_r1_2;
       f.V2.r1_3 = column2.V_r1_3;
-      delete f.V2.components
 
       this.fatigue_list.push(f);
     }
