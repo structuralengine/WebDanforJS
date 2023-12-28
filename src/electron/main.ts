@@ -34,26 +34,7 @@ async function createWindow() {
   await mainWindow.loadFile('index.html');
 }
 
-//Check update available and download
-autoUpdater.on('update-available', () => {
-    autoUpdater.downloadUpdate();
-});
 
-//when update downloaded, reboot to install
-autoUpdater.on('update-downloaded', function (e) {
-  let langText = require(`../assets/i18n/${locale}.json`)
-  let choice = dialog.showMessageBoxSync(this,
-    {
-      type: 'question',
-      buttons: [langText.modal.reboot, langText.modal.cancel],
-      title: langText.modal.updateTitle,
-      message: langText.modal.updateMessage,
-    });
-  if (choice==0) {
-    autoUpdater.quitAndInstall(); 
-  }
-}
-);
 
 app.whenReady().then(async () => {
   await createWindow();
@@ -67,7 +48,26 @@ app.whenReady().then(async () => {
 
 // アップデート --------------------------------------------------
 autoUpdater.checkForUpdatesAndNotify();
+//Check update available and download
+autoUpdater.on('update-available', () => {
+  autoUpdater.downloadUpdate();
+});
 
+//when update downloaded, reboot to install
+autoUpdater.on('update-downloaded', function (e) {
+let langText = require(`../assets/i18n/${locale}.json`)
+let choice = dialog.showMessageBoxSync(this,
+  {
+    type: 'question',
+    buttons: [langText.modal.reboot, langText.modal.cancel],
+    title: langText.modal.updateTitle,
+    message: langText.modal.updateMessage,
+  });
+if (choice==0) {
+  autoUpdater.quitAndInstall(); 
+}
+}
+);
 // Angular -> Electron --------------------------------------------------
 ipcMain.on("newWindow", async() => await createWindow())
 // ファイルを開く
