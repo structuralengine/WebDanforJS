@@ -43,7 +43,6 @@ export class InputFatiguesService {
       p_name: null,
       b: null,
       h: null,
-      components: false,
       //itle1: "上側",
       M1: this.default_fatigue_coefficient("Md"),
       V1: this.default_fatigue_coefficient("Vd"),
@@ -63,6 +62,7 @@ export class InputFatiguesService {
       NB12: null,
       A: null,
       B: null,
+      components: false,
     };
     if (target === "Md") {
       result["r1_1"] = null;
@@ -107,7 +107,6 @@ export class InputFatiguesService {
           column1["p_name"] = pos.p_name;
           column1["bh"] = member.B;
           column1["design_point_id"] = data.title1;
-          column1["components"] = data.components;
           for (const k of Object.keys(data.M1)) {
             column1["M_" + k] = data.M1[k];
           }
@@ -243,7 +242,6 @@ export class InputFatiguesService {
       const column2 = table_datas[i + 1];
 
       const f = this.default_fatigue(column1.index);
-      f.components= column1.components
       //f.title1 = column1.design_point_id;
       f.M1.SA = column1.M_SA;
       f.M1.SB = column1.M_SB;
@@ -257,6 +255,7 @@ export class InputFatiguesService {
       f.M1.r1_3 = column1.M_r1_3;
       f.M1.Class = column1.M_Class;
       f.M1.weld = column1.M_weld;
+      f.M1.components = column1.M_components;
 
       f.V1.SA = column1.V_SA;
       f.V1.SB = column1.V_SB;
@@ -268,6 +267,7 @@ export class InputFatiguesService {
       f.V1.B = column1.V_B;
       f.V1.r1_2 = column1.V_r1_2;
       f.V1.r1_3 = column1.V_r1_3;
+      delete f.V1.components
 
       //f.title2 = column2.design_point_id;
       f.M2.SA = column2.M_SA;
@@ -282,6 +282,7 @@ export class InputFatiguesService {
       f.M2.r1_3 = column2.M_r1_3;
       f.M2.Class = column2.M_Class;
       f.M2.weld = column2.M_weld;
+      f.M2.components = column2.M_components;
 
       f.V2.SA = column2.V_SA;
       f.V2.SB = column2.V_SB;
@@ -293,6 +294,7 @@ export class InputFatiguesService {
       f.V2.B = column2.V_B;
       f.V2.r1_2 = column2.V_r1_2;
       f.V2.r1_3 = column2.V_r1_3;
+      delete f.V2.components
 
       this.fatigue_list.push(f);
     }

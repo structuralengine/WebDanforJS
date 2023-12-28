@@ -147,7 +147,7 @@ export class FatiguesStressMethodComponent implements OnInit, OnDestroy, AfterVi
       },
       {
         title: this.translate.instant("fatigues.components"),
-        align: 'center', dataType: 'bool', dataIndx: 'components', type: 'checkbox', frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }, cls:"col-check"
+        align: 'center', dataType: 'bool', dataIndx: 'M_components', type: 'checkbox', frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }, cls:"col-check"
       },
     );
 
