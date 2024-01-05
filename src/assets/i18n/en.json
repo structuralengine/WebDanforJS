@@ -9,6 +9,7 @@
         "openPick":"Open the pickup file",
         "language": "Language",
         "help": "Manual",
+        "memo": "Memo",
         "control": "Control",
         "logout":"Logout",
         "login":"Login",

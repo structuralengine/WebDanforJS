@@ -36,7 +36,7 @@ import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
-
+import { Notes } from "../sticky/sticky.model";
 @Component({
   selector: "app-menu",
   templateUrl: "./menu.component.html",
@@ -52,7 +52,7 @@ export class MenuComponent implements OnInit {
   public train_A_count: number;
   public train_B_count: number;
   public service_life: number;
-
+  notes: Notes[] = [];
 
   @ViewChild('grid1') grid1: SheetComponent;
   private table1_datas: any[] = [];
@@ -162,7 +162,26 @@ export class MenuComponent implements OnInit {
     this.train_B_count,
     this.service_life);
   }
-
+  addNote(note:Notes){
+    this.notes.push(note);
+ }
+ 
+ Delete(index:number){
+   this.notes.splice(index,1);
+ }
+ 
+ onDeleteNote(index:number){
+   this.notes.splice(index,1);
+ }
+ 
+ onAddNote(noteData:{title:string,description:string}){
+   // this.notes.push({
+   //     title:noteData.title,
+   //     description :noteData.description
+   // });
+ 
+   console.log(noteData.title,noteData.description);
+ }
 
   public setDefaultOpenControl() {
     const controlBtnElement = this.elementRef.nativeElement.querySelector(

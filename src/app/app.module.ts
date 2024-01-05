@@ -52,9 +52,15 @@ import { SteelsComponent } from "./components/steels/steels.component";
 import { CrackSettingsComponent } from "./components/crack/crack-settings.component";
 import { CalculationPrintComponent } from "./components/calculation-print/calculation-print.component";
 import { SheetComponent } from "./components/sheet/sheet.component";
+import { StickyComponent } from "./components/sticky/sticky.component";
 
 import { environment } from "src/environments/environment";
 
+import { AngularDraggableModule } from 'angular2-draggable';
+
+import { Ng2DragDropModule } from 'ng2-drag-drop';
+
+import { DragAndDropModule } from 'angular-draggable-droppable';
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { ElectronService } from "./providers/electron.service";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
@@ -107,6 +113,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         HttpClientModule,
         AppRoutingModule,
         DragDropModule,
+        AngularDraggableModule,
         BrowserAnimationsModule,
         NgbModule,
         NgxPrintModule,
@@ -152,6 +159,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         ShearComponent,
         ActivateSessionComponent,
         PreviewExcelComponent,
+        StickyComponent,
     ],
     providers: [
         MenuService,

@@ -1,0 +1,44 @@
+<div
+  class="note"
+  (endOffset)="dragEnd($event)"
+  (zIndexMoving)="set($event)"
+  ngDraggable
+>
+  <img
+    style="cursor: pointer"
+    src="https://cdn1.iconfinder.com/data/icons/graphical-user-interface-cursors-fill/80/z-33-512.png"
+    alt=""
+    class="drag"
+  />
+
+  <input
+    type="text"
+    id="textbox"
+    size="7px"
+    placeholder="--- Title ---"
+    maxlength="10"
+    [(ngModel)]="title"
+  />
+
+  <img
+    style="cursor: pointer"
+    src="https://cdn3.iconfinder.com/data/icons/streamline-icon-set-free-pack/48/Streamline-70-512.png"
+    class="delete"
+    (click)="onRemoveNote()"
+  />
+
+  <img
+    style="cursor: pointer"
+    src="https://image.flaticon.com/icons/png/512/657/657023.png"
+    class="add"
+    (click)="addNote()"
+  />
+
+  <textarea
+    type="text"
+    id="description"
+    placeholder="Write here..."
+    rows="4"
+    [(ngModel)]="description"
+  ></textarea>
+</div>
