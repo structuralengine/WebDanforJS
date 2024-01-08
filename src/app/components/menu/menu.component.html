@@ -158,7 +158,7 @@
       </li>
       <!-- sticky-area -->
       <li>
-        <div class="stikcy-area">
+        <div class="sticky-area">
           <div ngbDropdown class="dropdownmenu">
             <a
               class="icon file"
@@ -189,11 +189,23 @@
               >
               <div ngbDropdownMenu aria-labelledby="language1">
                 <ng-container>
-                  <button type="button" (click)="addNote($event)">
+                  <a
+                    ngbDropdownItem
+                    type="button"
+                    (click)="addNote($event)"
+                    class="menu-btn"
+                  >
                     New Memo
-                  </button>
+                  </a>
 
-                  <!-- <button type="button" (click)="Delete()">Delete Memo</button> -->
+                  <a
+                    ngbDropdownItem
+                    type="button"
+                    (click)="Delete($event)"
+                    class="menu-btn"
+                  >
+                    Delete Memo
+                  </a>
                 </ng-container>
               </div>
             </a>
