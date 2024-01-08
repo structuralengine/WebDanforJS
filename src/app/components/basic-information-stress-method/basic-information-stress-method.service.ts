@@ -559,13 +559,13 @@ export class InputBasicInformationStressMethodService {
             title: this.translate.instant("basic-information.trans5"),
             selected: false,
           },
-          {
-            id: 7,
-            title: this.translate.instant(
-              "basic-information.allowable_stress_method"
-            ),
-            selected: true,
-          },
+          // {
+          //   id: 7,
+          //   title: this.translate.instant(
+          //     "basic-information.allowable_stress_method"
+          //   ),
+          //   selected: true,
+          // },
           // { id: 5, title: 'ＪＲ東日本（既存構造物）', selected: false }
         ];
         break;
