@@ -177,6 +177,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
       // グリッドの設定
       this.option1_list.push({
+        editModel: { clicksToEdit: 1, pressToEdit: false},
         width: 1100,
         height: 280,
         showTop: false,
@@ -222,6 +223,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
       });
       this.option2_list.push({
+        editModel: { clicksToEdit: 1, pressToEdit: false},
         width: 550,
         height: 200,
         showTop: false,
@@ -267,6 +269,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
       });
       this.option3_list.push({
+        editModel: { clicksToEdit: 1, pressToEdit: false},
         width: 550,
         height: 105,
         showTop: false,
@@ -312,6 +315,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
       });
       this.option4_list.push({
+        editModel: { clicksToEdit: 1, pressToEdit: false},
         width: 410,
         height: 205,
         showTop: false,
@@ -357,6 +361,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
       });
       this.option5_list.push({
+        editModel: { clicksToEdit: 1, pressToEdit: false},
         width: 570,
         height: 140,
         showTop: false,

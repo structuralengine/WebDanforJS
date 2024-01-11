@@ -240,6 +240,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
     // グリッドの初期化 --------------------------------------
     this.options = {
+      editModel: { clicksToEdit: 1, pressToEdit: false},
       showTop: false,
       reactive: true,
       sortable: false,

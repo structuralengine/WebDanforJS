@@ -34,7 +34,6 @@ export class SheetComponent implements AfterViewInit, OnChanges {
       this.handleElementActivation(element, event);
     }
   }
-
   handleElementActivation(element: any, event: Event) {
     const elQAIcon = window.document.querySelector(element.iconId);
     const elTable = window.document.querySelector(element.tableId);
@@ -172,7 +171,8 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     //when pressed, entering end into cell will advance to the next row, locking events behind to not advance to the next cell
     this.options.editorKeyDown = (evt, ui) => {
       let mov = 1;
-      if (evt.keyCode === 13) {
+      if (evt.keyCode === 13) {   
+        let t = ui.$editor[0].innerText;
         this.grid.setSelection({
           rowIndx: ui.rowIndx + mov,
           colIndx: ui.colIndx,

@@ -84,6 +84,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
        }
        })
       const op = {
+        editModel: { clicksToEdit: 1, pressToEdit: false},
         showTop: false,
         reactive: true,
         sortable: false,

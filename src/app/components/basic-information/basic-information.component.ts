@@ -121,6 +121,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     }
 
     this.options1 = {
+      editModel: { clicksToEdit: 1, pressToEdit: false},
       height: 340,
       showTop: false,
       reactive: true,
@@ -165,6 +166,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     };
 
     this.options2 = {
+      editModel: { clicksToEdit: 1, pressToEdit: false},
       height: 340,
       showTop: false,
       reactive: true,
@@ -209,6 +211,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     };
 
     this.options3 = {
+      editModel: { clicksToEdit: 1, pressToEdit: false},
       height: 340,
       showTop: false,
       reactive: true,

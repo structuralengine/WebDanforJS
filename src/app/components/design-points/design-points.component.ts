@@ -45,6 +45,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
       const op = {
+        editModel: { clicksToEdit: 1, pressToEdit: false},
         showTop: false,
         reactive: true,
         sortable: false,
