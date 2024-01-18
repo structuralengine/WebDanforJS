@@ -4,7 +4,7 @@
       <li>
         <img width="26" height="25" src="./assets/icons/icon-64.png" />
       </li>
-      <li>
+      <li *ngIf="arg_wdj===null">
         <div ngbDropdown class="dropdownmenu">
           <a
             class="icon file"
@@ -26,7 +26,7 @@
             </svg>
             <div translate class="menu-item">menu.file</div>
           </a>
-          <div *ngIf="arg_wdj===null" ngbDropdownMenu aria-labelledby="dropdownBasic1">
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
             <button ngbDropdownItem (click)="renew()" translate>
               menu.newEntry
             </button>
