@@ -82,6 +82,9 @@ export class MenuComponent implements OnInit {
   public logs: string[] = [];
   public hideDCJ3_J5: boolean = false;
 
+  public arg_wdj: string = null;
+
+
   constructor(
     private modalService: NgbModal,
     public menuService: MenuService,
@@ -119,12 +122,18 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    this.arg_wdj = this.electronService.ipcRenderer.sendSync("get-isas-wdj");
+    if(this.arg_wdj !== null){
+      this.open_electron(); // isasの場合は、ファイルを開いた状態で起動
+    }
   }
 
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload($event: BeforeUnloadEvent) {
     if (!this.electronService.isElectron) {
       $event.returnValue = "Your work will be lost. Do you want to leave this site?";
+    } else if(this.arg_wdj !== null){
+      this.overWrite(); // isasの場合は、閉じる前に上書き保存
     }
   }
   @HostListener('window:unload')

@@ -7,84 +7,61 @@ import isDev from 'electron-is-dev';
 
 let mainWindow: BrowserWindow;
 let locale = 'ja';
+let arg_path: string = null;
 
 async function createWindow() {
   mainWindow = new BrowserWindow({
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: true, // レンダラープロセスが Node.js の機能を利用できるようにします
+      contextIsolation: false, // メインプロセスとレンダラープロセスの JavaScript コンテキストを分離します
     },
   });
-  mainWindow.maximize();
+  // mainWindow.maximize();
+  mainWindow.setMenuBarVisibility(false);
+  mainWindow.webContents.openDevTools();
 
-  // 通常版と違う箇所 -----
-  mainWindow.setMenuBarVisibility(true);
-  //mainWindow.webContents.openDevTools();
-  // --------------------
 
   mainWindow.on('close', function (e) {
-    let langText = require(`../assets/i18n/${locale}.json`)
-    let choice = dialog.showMessageBoxSync(this,
-      {
-        type: 'question',
-        buttons: ['Yes', 'No'],
-        title: langText.window.closeTitle,
-        message: langText.window.closeMessage,
-      });
-    if (choice==1) {
-      e.preventDefault();
-    }
+    // isasから呼ばれた場合は何もAlert出さずに閉じる
   });
+
+  // isasから呼ばれた場合は起動時にwdjファイルのpathが渡される
+  if(process.argv.length > 1){
+    arg_path = process.argv[1];
+  }else{
+    arg_path = null;
+  }
+
   await mainWindow.loadFile('index.html');
 }
 
 app.whenReady().then(async () => {
   await createWindow();
 
-  if (!isDev) {
-    // 起動時に1回だけ
-    log.info(`アップデートがあるか確認します。${app.name} ${app.getVersion()}`);
+  // isasはアップデートしない
+  // if (!isDev) {
+  //   // 起動時に1回だけ
+  //   log.info(`アップデートがあるか確認します。${app.name} ${app.getVersion()}`);
 
-    await autoUpdater.checkForUpdates();
-  }
+  //   await autoUpdater.checkForUpdates();
+  // }
 });
 
 // アップデート --------------------------------------------------
-autoUpdater.checkForUpdatesAndNotify();
+// autoUpdater.checkForUpdatesAndNotify();
 
 // Angular -> Electron --------------------------------------------------
 // ファイルを開く
 ipcMain.on('open', (event: Electron.IpcMainEvent) => {
-  // ファイルを選択
-  const paths = dialog.showOpenDialogSync(mainWindow, {
-    buttonLabel: 'open', // 確認ボタンのラベル
-    filters: [{ name: 'wdj', extensions: ['wdj'] }, { name: 'dsd', extensions: ['dsd'] }],
-    properties: [
-      'openFile', // ファイルの選択を許可
-      'createDirectory', // ディレクトリの作成を許可 (macOS)
-    ],
-  });
-
-  // キャンセルで閉じた場合
-  if (paths == null) {
-    event.returnValue = { status: undefined };
-    return;
-  }
-
+  
   // ファイルの内容を返却
+  dialog.showMessageBox({ message: arg_path });
   try {
-    const path = paths[0];
+    const path = arg_path; // isasの場合は、開くファイルが決まっている
     const buff = fs.readFileSync(path);
 
     // ファイルを読み込む
-    let text = null;
-    switch (path.split('.').pop()) {
-      case "dsd":
-        text = buff;
-        break;
-      default:
-        text = buff.toString();
-    }
+    let text = buff.toString();
 
     // リターン
     event.returnValue = {
@@ -114,29 +91,8 @@ ipcMain.on(
 ipcMain.on(
   'saveFile',
   async (event: Electron.IpcMainEvent, filename: string, data: string) => {
-    // 場所とファイル名を選択
-    const path = dialog.showSaveDialogSync(mainWindow, {
-      buttonLabel: 'save', // ボタンのラベル
-      filters: [{ name: 'wdj', extensions: ['wdj'] }],
-      defaultPath: filename,
-      properties: [
-        'createDirectory', // ディレクトリの作成を許可 (macOS)
-      ],
-    });
-
-    // キャンセルで閉じた場合
-    if (path == null) {
-      event.returnValue = '';
-    }
-
-    // ファイルの内容を返却
-    try {
-      fs.writeFileSync(path, data);
-      event.returnValue = path;
-    } catch (error) {
-      await dialog.showMessageBox({ message: 'error : ' + error });
-      event.returnValue = '';
-    }
+    // isasの場合は名前を付けて保存しない
+    event.returnValue = '';
   }
 );
 
@@ -153,4 +109,10 @@ ipcMain.on(
 ipcMain.on(
   'change-lang', (event, lang) => {
   locale = lang;
+})
+
+// isasのwdjファイルがあるかどうか確認する
+ipcMain.on(
+  'get-isas-wdj', (event: Electron.IpcMainEvent) => {
+    event.returnValue = arg_path;
 })
