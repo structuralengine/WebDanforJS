@@ -132,9 +132,7 @@ export class MenuComponent implements OnInit {
   onBeforeUnload($event: BeforeUnloadEvent) {
     if (!this.electronService.isElectron) {
       $event.returnValue = "Your work will be lost. Do you want to leave this site?";
-    } else if(this.arg_wdj !== null){
-      this.overWrite(); // isasの場合は、閉じる前に上書き保存
-    }
+    } 
   }
   @HostListener('window:unload')
   unloadHandler() {

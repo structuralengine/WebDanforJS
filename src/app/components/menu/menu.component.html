@@ -91,6 +91,17 @@
           </div>
         </div>
       </li>
+      <li *ngIf="arg_wdj!==null">
+        <!--isasの場合の上書き保存ボタン-->
+        <button
+        ngbDropdownItem
+        (click)="overWrite()"
+        translate
+        >
+          menu.overwrite
+        </button>
+      </li>  
+
       <li>
         <div class="language-area">
           <div ngbDropdown class="dropdownmenu">
