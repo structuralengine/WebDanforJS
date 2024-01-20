@@ -55,7 +55,6 @@ app.whenReady().then(async () => {
 ipcMain.on('open', (event: Electron.IpcMainEvent) => {
   
   // ファイルの内容を返却
-  dialog.showMessageBox({ message: arg_path });
   try {
     const path = arg_path; // isasの場合は、開くファイルが決まっている
     const buff = fs.readFileSync(path);
@@ -90,9 +89,16 @@ ipcMain.on(
 // 名前を付けて保存
 ipcMain.on(
   'saveFile',
-  async (event: Electron.IpcMainEvent, filename: string, data: string) => {
-    // isasの場合は名前を付けて保存しない
-    event.returnValue = '';
+  async (event: Electron.IpcMainEvent, path: string, data: string) => {
+    
+    // ファイルの内容を返却
+    try {
+      fs.writeFileSync(path, data);
+      event.returnValue = path;
+    } catch (error) {
+      await dialog.showMessageBox({ message: 'error : ' + error });
+      event.returnValue = '';
+    }
   }
 );
 
