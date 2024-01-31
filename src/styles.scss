@@ -209,3 +209,7 @@ body {
 .col-disabled{
     color: gray !important;
 }
+//three.js
+#screenArea div {
+    z-index: 1;
+  }

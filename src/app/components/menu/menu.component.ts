@@ -5,7 +5,7 @@ import { InputBasicInformationService } from '../basic-information/basic-informa
 import { InputFatiguesService } from '../fatigues/fatigues.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
-
+import { filter } from "rxjs/operators";
 import {
   Router,
   ActivatedRoute,
@@ -36,6 +36,7 @@ import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
+import { InputBarsService } from "../bars/bars.service";
 
 @Component({
   selector: "app-menu",
@@ -52,8 +53,7 @@ export class MenuComponent implements OnInit {
   public train_A_count: number;
   public train_B_count: number;
   public service_life: number;
-
-
+  public isReview: boolean;  
   @ViewChild('grid1') grid1: SheetComponent;
   private table1_datas: any[] = [];
   public options1: pq.gridT.options;
@@ -92,6 +92,7 @@ export class MenuComponent implements OnInit {
     private helper: DataHelperModule,
     private dsdData: DsdDataService,
     private router: Router,
+    private routerAct: ActivatedRoute,
     private config: ConfigService,
     public user: UserInfoService,
     private basic: InputBasicInformationService,
@@ -103,7 +104,8 @@ export class MenuComponent implements OnInit {
     private translate: TranslateService,
     private elementRef: ElementRef,
     private readonly keycloak: KeycloakService,
-    private multiWindowService: MultiWindowService
+    private multiWindowService: MultiWindowService,
+    private bars: InputBarsService
   ) {
     // this.auth = getAuth();
     this.fileName = "";
@@ -112,6 +114,7 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isReview = this.menuService.isReview;
     this.menuService.selectedRoad = false;
     this._renew();
     this.windows = this.multiWindowService.getKnownWindows();
@@ -119,8 +122,20 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    
+   
   }
-
+  ngAfterViewInit(){
+ 
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd))
+    .subscribe((event: NavigationEnd) => {  
+      console.log("event", event.url)    
+      if(event.url === '/bars'){
+        this.isReview = true;
+      }else this.isReview = false;
+    })
+ 
+  }
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload($event: BeforeUnloadEvent) {
     if (!this.electronService.isElectron) {
@@ -524,5 +539,9 @@ export class MenuComponent implements OnInit {
     }
     if (item.id === "JR-003" || item.id === "JR-005")
       this.members.setGTypeForMembers();
+  } 
+
+  public preview(): void{
+    this.bars.is_review = true;
   }
 }

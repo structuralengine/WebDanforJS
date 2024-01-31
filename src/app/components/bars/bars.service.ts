@@ -13,13 +13,13 @@ export class InputBarsService {
   private bar_list: any[];
   private jp_rebar_List: any[];
   private ph_rebar_List: any[];
-
+  public is_review: boolean
   constructor(
     private helper: DataHelperModule,
     private points: InputDesignPointsService,
     private basic: InputBasicInformationService,
     private translate: TranslateService) {
-
+      this.is_review = false
       this.jp_rebar_List = [
         { 'D': 10, 'As': 71.33 },
         { 'D': 13, 'As': 126.7 },
@@ -382,7 +382,17 @@ export class InputBarsService {
     return result;
   }
 
+  public getDataPreview(index: number){
+    let result = null;
 
+    const bar_list = JSON.parse(
+      JSON.stringify({
+        temp: this.bar_list,
+      })
+    ).temp;
+    result = bar_list.find(x => x.index === index)
+    return result;
+  }
   public setTableColumns(table_datas: any[]) {
 
     this.bar_list = new Array();

@@ -6,23 +6,11 @@
       </li>
       <li>
         <div ngbDropdown class="dropdownmenu">
-          <a
-            class="icon file"
-            id="dropdownBasic1"
-            ngbDropdownToggle
-            onfocus="this.blur();"
-          >
-            <svg
-              width="13"
-              height="16"
-              viewBox="0 0 13 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+          <a class="icon file" id="dropdownBasic1" ngbDropdownToggle onfocus="this.blur();">
+            <svg width="13" height="16" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M12.4245 3.39286C12.5825 3.55952 12.7179 3.78571 12.8307 4.07143C12.9436 4.35714 13 4.61905 13 4.85714V15.1429C13 15.381 12.921 15.5833 12.763 15.75C12.605 15.9167 12.4132 16 12.1875 16H0.8125C0.586804 16 0.394966 15.9167 0.236979 15.75C0.0789922 15.5833 0 15.381 0 15.1429V0.857143C0 0.619046 0.0789922 0.416668 0.236979 0.25C0.394966 0.0833324 0.586804 0 0.8125 0H8.39583C8.62153 0 8.86979 0.0595232 9.14062 0.178571C9.41146 0.29762 9.62587 0.440475 9.78385 0.607143L12.4245 3.39286ZM8.66667 1.21429V4.57143H11.849C11.7925 4.39881 11.7305 4.27679 11.6628 4.20536L9.01367 1.41071C8.94596 1.33929 8.8303 1.27381 8.66667 1.21429ZM11.9167 14.8571V5.71429H8.39583C8.17014 5.71429 7.9783 5.63095 7.82031 5.46429C7.66233 5.29762 7.58333 5.09524 7.58333 4.85714V1.14286H1.08333V14.8571H11.9167ZM3.25 7.14286C3.25 7.05952 3.27539 6.99107 3.32617 6.9375C3.37695 6.88393 3.44184 6.85714 3.52083 6.85714H9.47917C9.55816 6.85714 9.62305 6.88393 9.67383 6.9375C9.72461 6.99107 9.75 7.05952 9.75 7.14286V7.71429C9.75 7.79762 9.72461 7.86607 9.67383 7.91964C9.62305 7.97322 9.55816 8 9.47917 8H3.52083C3.44184 8 3.37695 7.97322 3.32617 7.91964C3.27539 7.86607 3.25 7.79762 3.25 7.71429V7.14286ZM9.47917 9.14286C9.55816 9.14286 9.62305 9.16964 9.67383 9.22321C9.72461 9.27679 9.75 9.34524 9.75 9.42857V10C9.75 10.0833 9.72461 10.1518 9.67383 10.2054C9.62305 10.2589 9.55816 10.2857 9.47917 10.2857H3.52083C3.44184 10.2857 3.37695 10.2589 3.32617 10.2054C3.27539 10.1518 3.25 10.0833 3.25 10V9.42857C3.25 9.34524 3.27539 9.27679 3.32617 9.22321C3.37695 9.16964 3.44184 9.14286 3.52083 9.14286H9.47917ZM9.47917 11.4286C9.55816 11.4286 9.62305 11.4554 9.67383 11.5089C9.72461 11.5625 9.75 11.631 9.75 11.7143V12.2857C9.75 12.369 9.72461 12.4375 9.67383 12.4911C9.62305 12.5446 9.55816 12.5714 9.47917 12.5714H3.52083C3.44184 12.5714 3.37695 12.5446 3.32617 12.4911C3.27539 12.4375 3.25 12.369 3.25 12.2857V11.7143C3.25 11.631 3.27539 11.5625 3.32617 11.5089C3.37695 11.4554 3.44184 11.4286 3.52083 11.4286H9.47917Z"
-                fill="white"
-              />
+                fill="white" />
             </svg>
             <div translate class="menu-item">menu.file</div>
           </a>
@@ -32,60 +20,28 @@
             </button>
             <ng-container *ngIf="!electronService.isElectron">
               <label style="width: 100%; margin: 0px">
-                <span ngbDropdownItem translate
-                  >menu.openFile
-                  <input
-                    type="file"
-                    accept="application/text"
-                    (change)="open($event)"
-                    style="display: none"
-                  />
+                <span ngbDropdownItem translate>menu.openFile
+                  <input type="file" accept="application/text" (change)="open($event)" style="display: none" />
                 </span>
               </label>
             </ng-container>
-            <button
-              *ngIf="electronService.isElectron"
-              ngbDropdownItem
-              (click)="open_electron()"
-              translate
-            >
+            <button *ngIf="electronService.isElectron" ngbDropdownItem (click)="open_electron()" translate>
               menu.openFile
             </button>
-            <button
-              class="save-file"
-              [class.active-save]="user.userProfile"
-              ngbDropdownItem
-              (click)="fileSave()"
-              translate
-            >
+            <button class="save-file" [class.active-save]="user.userProfile" ngbDropdownItem (click)="fileSave()"
+              translate>
               menu.saveFile
             </button>
-            <button
-              *ngIf="electronService.isElectron"
-              ngbDropdownItem
-              (click)="overWrite()"
-              translate
-            >
+            <button *ngIf="electronService.isElectron" ngbDropdownItem (click)="overWrite()" translate>
               menu.overwrite
             </button>
             <label style="width: 100%; margin: 0px">
-              <span ngbDropdownItem translate
-                >menu.openPick
-                <input
-                  type="file"
-                  accept="application/text"
-                  (change)="pickup($event)"
-                  style="display: none"
-                  accept=".pik, .csv"
-                />
+              <span ngbDropdownItem translate>menu.openPick
+                <input type="file" accept="application/text" (change)="pickup($event)" style="display: none"
+                  accept=".pik, .csv" />
               </span>
             </label>
-            <button
-              *ngIf="electronService.isElectron"
-              ngbDropdownItem
-              (click)="newWindow()"
-              translate
-            >
+            <button *ngIf="electronService.isElectron" ngbDropdownItem (click)="newWindow()" translate>
               menu.NewWindow
             </button>
           </div>
@@ -94,43 +50,17 @@
       <li>
         <div class="language-area">
           <div ngbDropdown class="dropdownmenu">
-            <a
-              class="icon file"
-              id="dropdownBasic1"
-              ngbDropdownToggle
-              onfocus="this.blur();"
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+            <a class="icon file" id="dropdownBasic1" ngbDropdownToggle onfocus="this.blur();">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M0 8C0 3.56764 3.56764 0 8 0C12.4324 0 16 3.56764 16 8C16 12.4324 12.4324 16 8 16C3.56764 16 0 12.4324 0 8ZM8.21218 1.26216L8 0.955684L7.78782 1.26216C7.07593 2.29046 6.52013 3.40105 6.16259 4.63258L6.06678 4.96259H9.93322L9.83741 4.63258C9.47987 3.40105 8.92407 2.29046 8.21218 1.26216ZM6.0923 1.88497L6.41866 1.30755L5.78787 1.51256C4.17309 2.03736 2.88318 3.12749 2.03909 4.5745L1.8127 4.96259H4.90422L4.95433 4.76929C5.22102 3.74063 5.60103 2.75413 6.0923 1.88497ZM10.2121 1.51256L9.58134 1.30755L9.9077 1.88497C10.399 2.75413 10.779 3.74063 11.0457 4.76929L11.0958 4.96259H14.1873L13.9609 4.5745C13.1168 3.12749 11.8269 2.03736 10.2121 1.51256ZM4.69192 6.07481H1.40825L1.35477 6.26198C1.19313 6.82773 1.11222 7.39437 1.11222 8C1.11222 8.60563 1.19313 9.17227 1.35477 9.73802L1.40825 9.92519H4.69192L4.64984 9.63063C4.57407 9.10023 4.53612 8.56965 4.53612 8C4.53612 7.43035 4.57407 6.89977 4.64984 6.36938L4.69192 6.07481ZM10.194 6.29638L10.1623 6.07481H5.83767L5.80602 6.29638C5.72671 6.85156 5.68711 7.40654 5.68711 8C5.68711 8.59346 5.72671 9.14844 5.80602 9.70362L5.83767 9.92519H10.1623L10.194 9.70362C10.2733 9.14844 10.3129 8.59346 10.3129 8C10.3129 7.40654 10.2733 6.85156 10.194 6.29638ZM14.5918 6.07481H11.3081L11.3502 6.36938C11.4259 6.89977 11.4639 7.43035 11.4639 8C11.4639 8.56965 11.4259 9.10023 11.3502 9.63063L11.3081 9.92519H14.5918L14.6452 9.73802C14.8069 9.17227 14.8878 8.60563 14.8878 8C14.8878 7.39437 14.8069 6.82773 14.6452 6.26198L14.5918 6.07481ZM4.90422 11.0374H1.8127L2.03909 11.4255C2.88318 12.8725 4.17309 13.9626 5.78787 14.4874L6.41866 14.6924L6.0923 14.115C5.60103 13.2459 5.22102 12.2594 4.95433 11.2307L4.90422 11.0374ZM9.83741 11.3674L9.93322 11.0374H6.06678L6.16259 11.3674C6.52013 12.5989 7.07593 13.7095 7.78782 14.7378L8 15.0443L8.21218 14.7378C8.92407 13.7095 9.47987 12.5989 9.83741 11.3674ZM14.1873 11.0374H11.0958L11.0457 11.2307C10.779 12.2594 10.399 13.2459 9.9077 14.115L9.58134 14.6924L10.2121 14.4874C11.8269 13.9626 13.1168 12.8725 13.9609 11.4255L14.1873 11.0374Z"
-                  fill="white"
-                />
+                  fill="white" />
               </svg>
-              <a
-                class="btn btn-outline-primary"
-                id="language1"
-                class="menu-btn lang menu-item"
-                translate
-                >menu.language</a
-              >
+              <a class="btn btn-outline-primary" id="language1" class="menu-btn lang menu-item"
+                translate>menu.language</a>
               <div ngbDropdownMenu aria-labelledby="language1">
-                <ng-container
-                  *ngFor="let index of language.languageIndex | keyvalue"
-                >
-                  <a
-                    ngbDropdownItem
-                    (click)="language.trans(index.key)"
-                    class="menu-btn"
-                    >{{ index.value }}</a
-                  >
+                <ng-container *ngFor="let index of language.languageIndex | keyvalue">
+                  <a ngbDropdownItem (click)="language.trans(index.key)" class="menu-btn">{{ index.value }}</a>
                 </ng-container>
               </div>
             </a>
@@ -139,21 +69,25 @@
       </li>
       <li>
         <a (click)="goToLink()">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
               d="M8.58055 9.88622L8.57354 9.91566V10.2106H7.42646V9.92656C7.42646 9.92689 7.4265 9.92679 7.42659 9.92621C7.42669 9.92554 7.42688 9.92422 7.42715 9.92219C7.42895 9.90902 7.43482 9.86609 7.45119 9.77731C7.46995 9.67554 7.49846 9.53355 7.53697 9.35038C7.59944 9.05332 7.80424 8.70803 8.19502 8.31516C8.28329 8.23938 8.37458 8.16058 8.46889 8.07874C8.56506 7.9953 8.66438 7.9087 8.76684 7.81895C9.0675 7.57014 9.31713 7.3406 9.51333 7.13062C9.73931 6.88877 9.86326 6.60491 9.86326 6.28643C9.86326 5.7776 9.67699 5.33705 9.31207 4.97916C8.94844 4.62254 8.50664 4.44065 8 4.44065C7.49336 4.44065 7.05155 4.62254 6.68793 4.97916C6.38619 5.27509 6.20659 5.62753 6.15345 6.02836H5.01889C5.07436 5.31755 5.36304 4.70276 5.89083 4.17435C6.48146 3.58303 7.18002 3.29161 8 3.29161C8.81998 3.29161 9.51854 3.58303 10.1092 4.17435C10.6998 4.76569 10.991 5.46521 10.991 6.28643C10.991 6.89177 10.8178 7.36543 10.4874 7.72985C10.1131 8.14267 9.77173 8.47112 9.46318 8.71825L9.22714 8.91518C9.15083 8.97885 9.08127 9.03582 9.0184 9.08618L9.00724 9.09511L8.99714 9.10523C8.81673 9.28584 8.67745 9.47874 8.62889 9.68291L8.58055 9.88622ZM0 7.99032C0 6.88858 0.212369 5.8524 0.636097 4.87918L0.636728 4.87772C1.04958 3.91327 1.61788 3.06956 2.34199 2.34461C3.0658 1.61995 3.91491 1.04437 4.89154 0.61798C5.86375 0.206378 6.89909 0 8 0C9.10091 0 10.1362 0.206376 11.1084 0.617973C12.0851 1.04436 12.9342 1.61994 13.658 2.34461C14.3821 3.06956 14.9504 3.91327 15.3633 4.87772L15.3639 4.87918C15.7876 5.8524 16 6.88858 16 7.99032C16 9.09205 15.7876 10.1282 15.3639 11.1015L15.3628 11.104C14.9498 12.0813 14.3816 12.931 13.658 13.6554C12.9345 14.3798 12.0858 14.9487 11.1097 15.3621L11.1072 15.3632C10.1352 15.7874 9.10032 16 8 16C6.89968 16 5.86482 15.7874 4.89283 15.3632L4.89026 15.3621C3.9142 14.9487 3.06554 14.3798 2.34199 13.6554C1.61843 12.931 1.05019 12.0813 0.637211 11.104L0.636097 11.1015C0.212369 10.1282 0 9.09205 0 7.99032ZM8.57354 11.5594V12.689H7.42646V11.5594H8.57354ZM5.32468 14.326C6.1582 14.6894 7.05089 14.8703 8 14.8703C8.94911 14.8703 9.8418 14.6894 10.6753 14.326C11.5035 13.965 12.2301 13.4725 12.8531 12.8487C13.4765 12.2246 13.9622 11.4967 14.31 10.6669C14.6725 9.8329 14.8529 8.93981 14.8529 7.99032C14.8529 7.05293 14.6722 6.16023 14.3103 5.31449C13.9624 4.48414 13.4763 3.75876 12.8521 3.14062C12.2292 2.52366 11.5029 2.03479 10.6753 1.67397C9.8418 1.31055 8.94911 1.12968 8 1.12968C7.05089 1.12968 6.1582 1.31055 5.32468 1.67397C4.49708 2.03479 3.77079 2.52366 3.14786 3.14062C2.52374 3.75875 2.03763 4.48413 1.68969 5.31447C1.3278 6.16022 1.14709 7.05293 1.14709 7.99032C1.14709 8.93981 1.3275 9.83289 1.68998 10.6668C2.03779 11.4967 2.52352 12.2246 3.14687 12.8487C3.7699 13.4725 4.4965 13.965 5.32468 14.326Z"
-              fill="white"
-            />
+              fill="white" />
           </svg>
           <div translate class="menu-item">menu.help</div>
+        </a>
+      </li>
+      <li *ngIf="isReview">
+        <a (click)="preview()">
+          <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" data-name="Layer 2" viewBox="0 0 35 35">
+            <path
+              d="M29.467,34.749H5.53A5.288,5.288,0,0,1,.25,29.467V5.532A5.286,5.286,0,0,1,5.53.252H29.467a5.286,5.286,0,0,1,5.28,5.28V29.467A5.288,5.288,0,0,1,29.467,34.749ZM5.53,2.752a2.783,2.783,0,0,0-2.78,2.78V29.467a2.784,2.784,0,0,0,2.78,2.782H29.467a2.784,2.784,0,0,0,2.78-2.782V5.532a2.783,2.783,0,0,0-2.78-2.78Z"
+              fill="#ffffff" class="color000 svgShape"></path>
+            <path
+              d="M11.86 17.226a4.468 4.468 0 1 1 4.468-4.468A4.473 4.473 0 0 1 11.86 17.226zm0-6.435a1.968 1.968 0 1 0 1.968 1.967A1.97 1.97 0 0 0 11.86 10.791zM2.664 31.92a1.25 1.25 0 0 1-.929-2.085l5.876-6.547a3.288 3.288 0 0 1 4.553-.341l2.525 2.084a.77.77 0 0 0 .6.178.794.794 0 0 0 .543-.3l6.644-8.584a3.277 3.277 0 0 1 2.6-1.279h.012A3.282 3.282 0 0 1 27.673 16.3l6.372 8.107a1.25 1.25 0 0 1-1.966 1.545l-6.372-8.107a.785.785 0 0 0-.627-.3.864.864 0 0 0-.631.309L17.8 26.434a3.3 3.3 0 0 1-4.707.525l-2.525-2.084a.794.794 0 0 0-1.1.083L3.6 31.5A1.245 1.245 0 0 1 2.664 31.92z"
+              fill="#ffffff" class="color000 svgShape"></path>
+          </svg>
+          <div translate class="menu-item">Review</div>
         </a>
       </li>
     </ul>
@@ -167,17 +101,10 @@
   </ng-template>
   <ng-template #file>
     <div class="file-layout">
-      <svg
-        width="13"
-        height="16"
-        viewBox="0 0 13 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg width="13" height="16" viewBox="0 0 13 16" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M12.4245 3.39286C12.5825 3.55952 12.7179 3.78571 12.8307 4.07143C12.9436 4.35714 13 4.61905 13 4.85714V15.1429C13 15.381 12.921 15.5833 12.763 15.75C12.605 15.9167 12.4132 16 12.1875 16H0.8125C0.586804 16 0.394966 15.9167 0.236979 15.75C0.0789922 15.5833 0 15.381 0 15.1429V0.857143C0 0.619046 0.0789922 0.416668 0.236979 0.25C0.394966 0.0833324 0.586804 0 0.8125 0H8.39583C8.62153 0 8.86979 0.0595232 9.14062 0.178571C9.41146 0.29762 9.62587 0.440475 9.78385 0.607143L12.4245 3.39286ZM8.66667 1.21429V4.57143H11.849C11.7925 4.39881 11.7305 4.27679 11.6628 4.20536L9.01367 1.41071C8.94596 1.33929 8.8303 1.27381 8.66667 1.21429ZM11.9167 14.8571V5.71429H8.39583C8.17014 5.71429 7.9783 5.63095 7.82031 5.46429C7.66233 5.29762 7.58333 5.09524 7.58333 4.85714V1.14286H1.08333V14.8571H11.9167ZM3.25 7.14286C3.25 7.05952 3.27539 6.99107 3.32617 6.9375C3.37695 6.88393 3.44184 6.85714 3.52083 6.85714H9.47917C9.55816 6.85714 9.62305 6.88393 9.67383 6.9375C9.72461 6.99107 9.75 7.05952 9.75 7.14286V7.71429C9.75 7.79762 9.72461 7.86607 9.67383 7.91964C9.62305 7.97322 9.55816 8 9.47917 8H3.52083C3.44184 8 3.37695 7.97322 3.32617 7.91964C3.27539 7.86607 3.25 7.79762 3.25 7.71429V7.14286ZM9.47917 9.14286C9.55816 9.14286 9.62305 9.16964 9.67383 9.22321C9.72461 9.27679 9.75 9.34524 9.75 9.42857V10C9.75 10.0833 9.72461 10.1518 9.67383 10.2054C9.62305 10.2589 9.55816 10.2857 9.47917 10.2857H3.52083C3.44184 10.2857 3.37695 10.2589 3.32617 10.2054C3.27539 10.1518 3.25 10.0833 3.25 10V9.42857C3.25 9.34524 3.27539 9.27679 3.32617 9.22321C3.37695 9.16964 3.44184 9.14286 3.52083 9.14286H9.47917ZM9.47917 11.4286C9.55816 11.4286 9.62305 11.4554 9.67383 11.5089C9.72461 11.5625 9.75 11.631 9.75 11.7143V12.2857C9.75 12.369 9.72461 12.4375 9.67383 12.4911C9.62305 12.5446 9.55816 12.5714 9.47917 12.5714H3.52083C3.44184 12.5714 3.37695 12.5446 3.32617 12.4911C3.27539 12.4375 3.25 12.369 3.25 12.2857V11.7143C3.25 11.631 3.27539 11.5625 3.32617 11.5089C3.37695 11.4554 3.44184 11.4286 3.52083 11.4286H9.47917Z"
-          fill="white"
-        />
+          fill="white" />
       </svg>
       <h1 class="title-filename">{{ shortenFilename(fileName) }}</h1>
     </div>
@@ -187,23 +114,12 @@
     <!-- 仕様・条件 セクション -->
     <section>
       <div class="mr-16">
-        <a
-          class="menu-btn control-btn"
-          (click)="showMenu = !showMenu; openShiyoJoken()"
-        >
+        <a class="menu-btn control-btn" (click)="showMenu = !showMenu; openShiyoJoken()">
           <div class="spec-layout">
-            <svg
-              width="18"
-              height="14"
-              viewBox="0 0 18 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                id="Vector"
+            <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path id="Vector"
                 d="M8.09368 10.4949V0.881406C8.09368 0.635431 8.1815 0.427038 8.35714 0.256223C8.53279 0.0854066 8.74707 0 9 0C9.25293 0 9.46721 0.0854066 9.64286 0.256223C9.8185 0.427038 9.90632 0.635431 9.90632 0.881406V10.4949H10.7916C11.0445 10.4949 11.2588 10.5803 11.4344 10.7511C11.6101 10.9219 11.6979 11.1303 11.6979 11.3763C11.6979 11.6086 11.6101 11.8102 11.4344 11.981C11.2588 12.1518 11.0445 12.2372 10.7916 12.2372H9.90632V13.1186C9.90632 13.3646 9.8185 13.573 9.64286 13.7438C9.46721 13.9146 9.25293 14 9 14C8.74707 14 8.53279 13.9146 8.35714 13.7438C8.1815 13.573 8.09368 13.3646 8.09368 13.1186V12.2372H7.20843C6.9555 12.2372 6.74122 12.1518 6.56557 11.981C6.38993 11.8102 6.30211 11.6086 6.30211 11.3763C6.30211 11.1303 6.38993 10.9219 6.56557 10.7511C6.74122 10.5803 6.9555 10.4949 7.20843 10.4949H8.09368ZM14.3958 1.74231V0.881406C14.3958 0.635431 14.4836 0.427038 14.6593 0.256223C14.8349 0.0854066 15.0492 0 15.3021 0C15.541 0 15.7482 0.0854066 15.9239 0.256223C16.0995 0.427038 16.1874 0.635431 16.1874 0.881406V1.74231H17.0937C17.3466 1.74231 17.5609 1.82772 17.7365 1.99854C17.9122 2.16935 18 2.37774 18 2.62372C18 2.86969 17.9122 3.07809 17.7365 3.2489C17.5609 3.41972 17.3466 3.50512 17.0937 3.50512H16.1874V13.1186C16.1874 13.3646 16.0995 13.573 15.9239 13.7438C15.7482 13.9146 15.541 14 15.3021 14C15.0492 14 14.8349 13.9146 14.6593 13.7438C14.4836 13.573 14.3958 13.3646 14.3958 13.1186V3.50512H13.4895C13.2506 3.50512 13.0433 3.41972 12.8677 3.2489C12.692 3.07809 12.6042 2.86969 12.6042 2.62372C12.6042 2.37774 12.692 2.16935 12.8677 1.99854C13.0433 1.82772 13.2506 1.74231 13.4895 1.74231H14.3958ZM3.60422 4.36603H4.51054C4.74942 4.36603 4.95667 4.45144 5.13232 4.62225C5.30796 4.79307 5.39578 5.00146 5.39578 5.24744C5.39578 5.49341 5.30796 5.70181 5.13232 5.87262C4.95667 6.04344 4.74942 6.12884 4.51054 6.12884H3.60422V13.1186C3.60422 13.3646 3.51639 13.573 3.34075 13.7438C3.1651 13.9146 2.95082 14 2.69789 14C2.45902 14 2.25176 13.9146 2.07611 13.7438C1.90047 13.573 1.81265 13.3646 1.81265 13.1186V6.12884H0.906323C0.653395 6.12884 0.439111 6.04344 0.263466 5.87262C0.0878211 5.70181 0 5.49341 0 5.24744C0 5.00146 0.0878211 4.79307 0.263466 4.62225C0.439111 4.45144 0.653395 4.36603 0.906323 4.36603H1.81265V0.881406C1.81265 0.635431 1.90047 0.427038 2.07611 0.256223C2.25176 0.0854066 2.45902 0 2.69789 0C2.95082 0 3.1651 0.0854066 3.34075 0.256223C3.51639 0.427038 3.60422 0.635431 3.60422 0.881406V4.36603Z"
-                fill="white"
-              />
+                fill="white" />
             </svg>
             <p class="menu-item pr-0" translate>menu.control</p>
             <span class="hr"></span>
@@ -215,60 +131,33 @@
           <!-- 適用 セクション -->
           <p class="topic" translate>basic-information.apply</p>
           <ng-container *ngFor="let item of specification1_list; index as i">
-            <div
-              class="d-flex"
-              [ngClass]="{
+            <div class="d-flex" [ngClass]="{
                 'spec-rdo-active': item.selected,
                 'spec-rdo': !item.selected
-              }"
-            >
-              <input
-                type="radio"
-                name="specification1"
-                id="specification1{{ item.id }}"
-                [(ngModel)]="specification1_select_id"
-                [value]="item.id"
-                [checked]="item.selected"
-                (change)="setSpecification1(item.id)"
-              />
-              <label
-                class="form-check-label"
-                for="specification1{{ item.id }}"
-                >{{ item.title | translate }}</label
-              >
+              }">
+              <input type="radio" name="specification1" id="specification1{{ item.id }}"
+                [(ngModel)]="specification1_select_id" [value]="item.id" [checked]="item.selected"
+                (change)="setSpecification1(item.id)" />
+              <label class="form-check-label" for="specification1{{ item.id }}">{{ item.title | translate }}</label>
             </div>
           </ng-container>
 
           <!-- 仕様 セクション -->
-          <p
-            *ngIf="specification2_list.length > 0"
-            class="specification"
-            translate
-          >
+          <p *ngIf="specification2_list.length > 0" class="specification" translate>
             basic-information.spec
           </p>
           <ng-container *ngFor="let item of specification2_list; index as i">
-            <div
-              class="d-flex"
-              [ngClass]="{
+            <div class="d-flex" [ngClass]="{
                 'spec-rdo-active': specification2_select_id === item.id,
                 'spec-rdo': specification2_select_id !== item.id,
                 'disabled' : item.id === 5 || item.id === 7
-              }"
-            >
-              <input
-                type="radio"
-                name="specification2"
-                id="specification2{{ item.id }}"
-                [(ngModel)]="specification2_select_id"
-                [value]="item.id"
-                [checked]="item.selected"
-                (change)="setSpecification2(item.id)" 
-                [disabled]="(item.id === 5 || item.id === 7) ? true : false"
-              />
+              }">
+              <input type="radio" name="specification2" id="specification2{{ item.id }}"
+                [(ngModel)]="specification2_select_id" [value]="item.id" [checked]="item.selected"
+                (change)="setSpecification2(item.id)" [disabled]="(item.id === 5 || item.id === 7) ? true : false" />
               <label class="form-check-label" for="specification2{{ item.id }}">{{
                 item.title | translate
-              }}</label>
+                }}</label>
             </div>
           </ng-container>
         </div>
@@ -278,28 +167,17 @@
           <p class="topic" translate>basic-information.dc</p>
           <ng-container *ngFor="let item of conditions_list; index as i">
             <!--  -->
-            <div
-              *ngIf="item.id != 'JR-001' && !(hideDCJ3_J5 && (i === 1 || i === 2))"
-              class="d-flex"
-              [ngClass]="{
+            <div *ngIf="item.id != 'JR-001' && !(hideDCJ3_J5 && (i === 1 || i === 2))" class="d-flex" [ngClass]="{
                 'cond-chk-active': item.selected,
                 'cond-chk': !item.selected
-              }"
-            >
+              }">
               <label class="checkbox-container" for="conditions{{ i }}">
-                <input
-                  type="checkbox"
-                  name="conditions{{ i }}"
-                  id="conditions{{ i }}"
-                  [(ngModel)]="item.selected"
-                  [value]="item.id"
-                  [checked]="item.selected"
-                  class="checkbox-input"
-                  (ngModelChange)="changeDesignCondition(item)"
-                />
+                <input type="checkbox" name="conditions{{ i }}" id="conditions{{ i }}" [(ngModel)]="item.selected"
+                  [value]="item.id" [checked]="item.selected" class="checkbox-input"
+                  (ngModelChange)="changeDesignCondition(item)" />
                 <span translate class="checkbox-parts title">{{
                   item.title | translate
-                }}</span>
+                  }}</span>
               </label>
             </div>
           </ng-container>
@@ -307,49 +185,21 @@
             <!-- 耐用年数 セクション -->
             <div class="d-flex service-life">
               <p translate>fatigues.durable</p>
-              <input
-                *ngIf="translate.currentLang=== 'en'"
-                placeholder="Example: 100"
-                id="T"
-                name="T"
-                type="text"
-                [(ngModel)]="service_life"
-                (change)="changeInput()"
-              />
-              <input
-                *ngIf="translate.currentLang=== 'ja'"
-                placeholder="例: 100"
-                id="T"
-                name="T"
-                type="text"
-                [(ngModel)]="service_life"
-                (change)="changeInput()"
-              />
+              <input *ngIf="translate.currentLang=== 'en'" placeholder="Example: 100" id="T" name="T" type="text"
+                [(ngModel)]="service_life" (change)="changeInput()" />
+              <input *ngIf="translate.currentLang=== 'ja'" placeholder="例: 100" id="T" name="T" type="text"
+                [(ngModel)]="service_life" (change)="changeInput()" />
             </div>
             <div class="d-flex jA-jB">
               <div class="d-flex service-life">
                 <p>jA</p>
-                <input
-                  title="input1"
-                  laceholder="input1"
-                  id="jA"
-                  name="jA"
-                  type="text"
-                  [(ngModel)]="train_A_count"
-                  (change)="changeInput()"
-                />
+                <input title="input1" laceholder="input1" id="jA" name="jA" type="text" [(ngModel)]="train_A_count"
+                  (change)="changeInput()" />
               </div>
               <div class="d-flex service-life">
                 <p>jB</p>
-                <input
-                  title="input3"
-                  laceholder="input2"
-                  id="jB"
-                  name="jB"
-                  type="text"
-                  [(ngModel)]="train_B_count"
-                  (change)="changeInput()"
-                />
+                <input title="input3" laceholder="input2" id="jB" name="jB" type="text" [(ngModel)]="train_B_count"
+                  (change)="changeInput()" />
               </div>
             </div>
           </ng-container>
@@ -360,19 +210,10 @@
     <div class="login-area">
       <div *ngIf="user.userProfile as user; else showLogin" class="userInfo">
         <div ngbDropdown>
-          <a
-            class="icon file"
-            id="dropdownBasic1"
-            class="menu-btn"
-            ngbDropdownToggle
-            onfocus="this.blur();"
-            ><i class="far fa-user-circle"></i
-            >{{ user.lastName + user.firstName }}</a
-          >
+          <a class="icon file" id="dropdownBasic1" class="menu-btn" ngbDropdownToggle onfocus="this.blur();"><i
+              class="far fa-user-circle"></i>{{ user.lastName + user.firstName }}</a>
           <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-            <a (click)="logOut()" class="menu-btn logOut" translate
-              >menu.logout</a
-            >
+            <a (click)="logOut()" class="menu-btn logOut" translate>menu.logout</a>
           </div>
         </div>
       </div>

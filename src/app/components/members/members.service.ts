@@ -121,7 +121,7 @@ export class InputMembersService {
     ).temp;
   }
 
-  private getData(m_no: number) {
+  public getData(m_no: number) {
     return this.member_list.find((item) => item.m_no === m_no);
   }
 

@@ -8,6 +8,8 @@ import { InputMembersService } from '../members/members.service';
 import { MenuService } from '../menu/menu.service';
 import { data } from 'jquery';
 import { log } from 'console';
+import { ThreeNodeService } from '../three/geometry/three-node.service';
+import { SceneService } from '../three/scene.service';
 
 @Component({
   selector: 'app-bars',
@@ -19,7 +21,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('grid') grid: SheetComponent;
   public options: pq.gridT.options;
   public activeTab: string = 'rebar_ax';
-
+  public click_review: boolean
+  public calPoint: any
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
   private beamHeaders: object[] = new Array();
@@ -60,11 +63,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private members: InputMembersService,
-    private bars: InputBarsService,
+    public bars: InputBarsService,
     private save: SaveDataService,
     private translate: TranslateService,
-    private menuService: MenuService
-  ) { 
+    private menuService: MenuService,
+    private threeNode: ThreeNodeService,
+    private scene: SceneService,
+    private member: InputMembersService
+  ) {     
     this.members.checkGroupNo();
   }
 
@@ -143,6 +149,24 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
           }
+        },
+        cellClick: (evt, ui) =>{
+          const m_no = ui.rowData.m_no;
+          if(m_no != null && m_no != undefined){
+            for(let i = 0; i < this.table_datas.length; i++){
+              this.bars.setTableColumns(this.table_datas[i])
+            }           
+            let data = this.bars.getDataPreview(ui.rowData.index);           
+            this.threeNode.memNo = m_no;
+            this.threeNode.dataNode = data;      
+            const member = this.member.getTableColumns(m_no);
+            this.calPoint = {
+              m_no: member.m_no,
+              shape: member.shape,
+              p_name: ui.rowData.p_name
+            }              
+          }
+            
         }
       };
       this.option_list.push(op);
@@ -465,6 +489,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.saveData();
+    this.bars.is_review = false;
+    this.threeNode.memNo = 0;
+    this.threeNode.dataNode = new Array();  
   }
   public saveData(): void {
     const a = [];
@@ -606,5 +633,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       newHeader = this.beamHeaders.filter((v, i) => !cols.includes(i - mode));
     }
     return newHeader
+  }
+  public closePreview(): void{
+    this.bars.is_review = false
+    while(this.scene.scene.children.length > 0){ 
+      this.scene.remove(this.scene.scene.children[0]); 
+  }
   }
 }

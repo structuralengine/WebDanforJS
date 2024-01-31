@@ -9,7 +9,7 @@ import { AlertDialogComponent } from "../components/alert-dialog/alert-dialog.co
   exports: [],
 })
 export class DataHelperModule {
-
+  public dimension: number
   constructor(
     public electronService: ElectronService,
     private modalService: NgbModal
