@@ -11,6 +11,7 @@ import { InputCalclationPrintService } from "../components/calculation-print/cal
 import { InputCrackSettingsService } from "../components/crack/crack-settings.service";
 import { InputSteelsService } from "../components/steels/steels.service";
 import { ShearStrengthService } from "../components/shear/shear-strength.service";
+import { StickyService } from "../components/sticky/sticky.service";
 
 import packageJson from '../../../package.json';
 import { InputMaterialStrengthVerificationConditionService } from "../components/material-strength-verification-conditions/material-strength-verification-conditions.service";
@@ -52,7 +53,8 @@ export class SaveDataService {
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private material: InputMaterialStrengthVerificationConditionService,
     private force: InputSectionForcesService,
-    private calc: InputCalclationPrintService
+    private calc: InputCalclationPrintService,
+    private notes: StickyService,
   ) {
     this.arrayAxis = this.safety.arrayAxis;
     this.clear();
@@ -71,6 +73,7 @@ export class SaveDataService {
     this.safety.clear();
     this.force.clear();
     this.material.clear();
+    this.notes.clear();
   }
 
   // 断面力て入力モードかどうか判定する
@@ -293,6 +296,8 @@ export class SaveDataService {
       force: this.force.getSaveData(),
       // 計算印刷設定
       calc: this.calc.getSaveData(),
+      //notes
+      notes: this.notes.getSaveData(),
       axis_max_min: this.safety.getAxisForceJson()
     };
   }
@@ -385,7 +390,11 @@ export class SaveDataService {
     } else {
       this.calc.clear();
     }
-
+    // if ("notes" in jsonData) {
+    //   this.notes.setSaveData(jsonData.notes);
+    // } else {
+    //   this.notes.clear();
+    // }
     this.updateOldData(jsonData);
   }
 

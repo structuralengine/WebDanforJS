@@ -18,6 +18,7 @@
     placeholder="--- Title ---"
     maxlength="10"
     [(ngModel)]="title"
+    (input)="addTitle()"
   />
 
   <img
@@ -40,5 +41,6 @@
     placeholder="Write here..."
     rows="4"
     [(ngModel)]="description"
+    (input)="addDes()"
   ></textarea>
 </div>

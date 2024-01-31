@@ -175,12 +175,14 @@ export class MenuComponent implements OnInit {
  }
  
  onAddNote(noteData:{title:string,description:string}){
-   // this.notes.push({
-   //     title:noteData.title,
-   //     description :noteData.description
-   // });
+   this.notes.push({
+     title: noteData.title,
+     description: noteData.description,
+     top: 0,
+     left: 0
+   });
  
-   console.log(noteData.title,noteData.description);
+  //  console.log(noteData.title,noteData.description,"value");
  }
 
   public setDefaultOpenControl() {
