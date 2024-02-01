@@ -151,6 +151,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         cellClick: (evt, ui) =>{
+          console.log(ui)
           const m_no = ui.rowData.m_no;
           if(m_no != null && m_no != undefined){
             for(let i = 0; i < this.table_datas.length; i++){
@@ -158,7 +159,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             }           
             let data = this.bars.getDataPreview(ui.rowData.index);           
             this.threeNode.memNo = m_no;
-            this.threeNode.dataNode = data;      
+            this.threeNode.dataNode = data;  
             const member = this.member.getTableColumns(m_no);
             this.calPoint = {
               m_no: member.m_no,
@@ -492,6 +493,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.bars.is_review = false;
     this.threeNode.memNo = 0;
     this.threeNode.dataNode = new Array();  
+    this.closePreview()
   }
   public saveData(): void {
     const a = [];
