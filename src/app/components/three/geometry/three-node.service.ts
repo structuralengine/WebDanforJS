@@ -162,7 +162,6 @@ export class ThreeNodeService {
   }
 
   public changeData(): object {
-    // 入力データを入手
     const jsonData = this.getJson();
     const jsonKeys = Object.keys(jsonData);
     let data: any = [];
@@ -176,7 +175,6 @@ export class ThreeNodeService {
     return data;
   }
   public changeDataSide(): object {
-    // 入力データを入手
     const jsonData = this.getJson();
     const jsonKeys = Object.keys(jsonData);
     let data: any = [];

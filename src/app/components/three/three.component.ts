@@ -77,6 +77,7 @@ export class ThreeComponent implements OnInit {
   }
   createDrawingLine() {       
     let jsonData: any = this.node.changeData() as [];
+   
     const material = new THREE.LineBasicMaterial({ color: 0x000000 });
     const points = [];
     
@@ -108,7 +109,8 @@ export class ThreeComponent implements OnInit {
       new THREE.BufferGeometry().setFromPoints(points),
       material
     );   
-    this.scene.add(line);     
+    this.scene.add(line);   
+    if(jsonData.length < 8) return;  
     for(let i=8; i<=jsonData.length;i++){    
        
       const mesh = new THREE.Mesh(this.geometry,
@@ -165,15 +167,16 @@ export class ThreeComponent implements OnInit {
       new THREE.BufferGeometry().setFromPoints(points),
       material
     );   
-    this.scene.addRebar(line);     
+    this.scene.addRebar(line);   
+    if(jsonData.length < 4) return  
     for(let i=4; i<=jsonData.length;i++){    
        
       const mesh = new THREE.Mesh(this.geometryRebar,
         new THREE.MeshBasicMaterial({ color: 0x000000 }));
       mesh.name = 'node' + i;
-      mesh.position.x = jsonData[i].x;
-      mesh.position.y = -jsonData[i].y;
-      mesh.position.z = jsonData[i].z;
+      mesh.position.x = jsonData[i].x === 0 ? 0 : jsonData[i].x;
+      mesh.position.y = -(jsonData[i].y === 0 ? 0 : jsonData[i].y);
+      mesh.position.z = jsonData[i].z === 0 ? 0 : jsonData[i].z;
       this.nodeListRebar.children.push(mesh);
     }  
     this.scene.renderRebar()
