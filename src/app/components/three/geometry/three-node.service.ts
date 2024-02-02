@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as THREE from 'three';
-import { SceneService } from '../scene.service';
 import { InputMembersService } from '../../members/members.service';
-import { CSS2DObject } from '../libs/CSS2DRenderer.js';
 @Injectable({
   providedIn: 'root'
 })
@@ -104,11 +101,12 @@ export class ThreeNodeService {
         while (rb2_line > 0 && r <= numrow) {
           const total_length = ((rb2_line - 1) * rebar2['rebar_ss']) / scale;
           let start_x = (b - total_length) / 2;
+          if(total_length <= 0) break;
           for (let i = 0; i < rb2_line; i++) {
             startNode++;
             jsonData[`${startNode}`] = {
               x: n + start_x + (rebar2['rebar_ss'] * (i)) / scale + x_start,
-              y: h - (rebar2['rebar_cover'] / scale) * r+ y_start,
+              y: h - ((rebar2['rebar_cover'] / scale) + (rebar2['rebar_space'] *(r-1))/scale )+ y_start,
               z: 0
             }
           }          
