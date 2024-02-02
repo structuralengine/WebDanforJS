@@ -131,7 +131,7 @@ export class ThreeNodeService {
             y: (sidebar1['side_cover'] / scale) + i * (sidebar1['side_ss'] / scale)+ y_start,
             z: 0
           }
-          jsonData[`${9 + i * 2 + rb_n1 + sb_n2}_s`] = {
+          jsonData[`${9 + i + rb_n1 + sb_n2}_s1`] = {
             x: (n + b - sb_cover_2)+ x_start,
             y: (sidebar1['side_cover'] / scale) + i * (sidebar1['side_ss'] / scale)+ y_start,
             z: 0
@@ -142,13 +142,13 @@ export class ThreeNodeService {
       let sidebar = this.dataNode['sidebar'];
       const sb_n2 = sidebar['side_n'];
       if (sb_n2 != null) {
-        for (let i = 0; i < sb_n2; i++) {
+        for (let i = 0; i <sb_n2; i++) {
           jsonData[`${9 + i + rb_n1 + sb_n2}_s`] = {
             x: n+ x_start,
             y: (sidebar['side_cover'] / scale) + i * (sidebar['side_ss'] / scale)+ y_start,
             z: 0
           }
-          jsonData[`${9 + i * 2 + rb_n1 + sb_n2}_s`] = {
+          jsonData[`${9 + i  + rb_n1 + sb_n2}_s1`] = {
             x: (n + b)+ x_start,
             y: (sidebar['side_cover'] / scale) + i * (sidebar['side_ss'] / scale)+ y_start,
             z: 0
