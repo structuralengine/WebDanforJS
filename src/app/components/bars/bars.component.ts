@@ -135,6 +135,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         },
         change: (evt, ui) => {
+          console.log("updateui", ui)
           for (const property of ui.updateList) {
             for (const key of Object.keys(property.newRow)) {
               const old = property.oldRow[key];
@@ -152,10 +153,16 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           }
         },
-        cellClick: (evt, ui) =>{
+        cellClick: (evt, ui) =>{               
           this.closePreview();
-          const m_no = ui.rowData.m_no;
+          let m_no = ui.rowData.m_no;
           const rowData = ui.rowData
+          let index = ui.rowData.index;
+          if(ui.rowIndx % 2 != 0){
+            const data_index = this.table_datas[0][ui.rowIndx - 1];
+            m_no = data_index.m_no;
+            index = data_index.index
+          }           
           this.threeNodeGuide.dataNode= rowData
           if(ui.colIndx ===6 ||ui.colIndx ===7||ui.colIndx ===8||ui.colIndx===9||ui.colIndx===10||ui.colIndx ===11){
             if(ui.rowIndxPage % 2 ===0){
@@ -171,7 +178,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             for(let i = 0; i < this.table_datas.length; i++){
               this.bars.setTableColumns(this.table_datas[i])
             }           
-            let data = this.bars.getDataPreview(ui.rowData.index);           
+            let data = this.bars.getDataPreview(index);           
             this.threeNode.memNo = m_no;
             this.threeNode.dataNode = data;
             const member = this.member.getTableColumns(m_no);
