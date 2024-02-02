@@ -26,7 +26,19 @@ export class InputMembersService {
       ["4", 'RC-小判']
     ];
 
+    private shape_names_new: any =
+    [
+      [],
+      ["1", 'RC-矩形'],
+      ["2", 'RC-T形'],
+      ["3", 'RC-円形'],
+      ["4", 'RC-円環'],
+      ["5", 'RC-縦小判形'],
+      ["6", 'RC-横小判形']
+    ];
+
   private lang_shape_names: any = {};
+  private lang_shape_names_new: any = {};
 
   constructor(private translate: TranslateService,
     private helper: DataHelperModule,
@@ -48,6 +60,24 @@ export class InputMembersService {
         this.lang_shape_names[lang].push(obj.members.t_shape.trim());
         this.lang_shape_names[lang].push(obj.members.r_shape.trim());
         this.lang_shape_names[lang].push(obj.members.oval.trim());
+
+
+        //new
+        this.shape_names_new[1].push(obj.members.rectangle.trim());
+        this.shape_names_new[2].push(obj.members.t_shape.trim());
+        this.shape_names_new[3].push(obj.members.c_circle.trim());
+        this.shape_names_new[4].push(obj.members.ring.trim());
+        this.shape_names_new[5].push(obj.members.v_oval.trim());
+        this.shape_names_new[6].push(obj.members.h_oval.trim());
+
+        this.lang_shape_names_new[lang] = [];
+        this.lang_shape_names_new[lang].push("");
+        this.lang_shape_names_new[lang].push(obj.members.rectangle.trim());
+        this.lang_shape_names_new[lang].push(obj.members.t_shape.trim());
+        this.lang_shape_names_new[lang].push(obj.members.c_circle.trim());
+        this.lang_shape_names_new[lang].push(obj.members.ring.trim());
+        this.lang_shape_names_new[lang].push(obj.members.h_oval.trim());
+        this.lang_shape_names_new[lang].push(obj.members.v_oval.trim());
       });
     }
   }
@@ -232,20 +262,56 @@ export class InputMembersService {
     return this.lang_shape_names[this.translate.currentLang][shape_id];
   }
 
+  //new version: New shapes are displayed but the data is still saved as before
+  public getShapeDispFromMember(member: any) {
+    //Base on old ShapeID to get new display shape
+    if (this.lang_shape_names_new.length <= member.shape)
+      return 0;
+    switch (member.shape) {
+      case 1:
+      case 2:
+        return this.lang_shape_names_new[this.translate.currentLang][member.shape];
+      case 3:
+        if(member.H != null && member.B != null)
+          return this.lang_shape_names_new[this.translate.currentLang][4];
+        else
+          return this.lang_shape_names_new[this.translate.currentLang][3];
+      case 4:
+        if (Number(member.B) > Number(member.H))
+          return this.lang_shape_names_new[this.translate.currentLang][5];
+        else
+          return this.lang_shape_names_new[this.translate.currentLang][6];
+      default:
+        return "";
+    };
+  }
+
   // 入力された文字列から形状IDを返す
   public getShapeIDFromUserInput(key: string): number {
-
     if (key === undefined || key === null)
       return 0;
     if (typeof key != 'string')
       key = String(key);
     let key_ = key.trim();
-
     for (let shape_id = 1; 4 >= shape_id; shape_id++) {
       if (-1 != this.shape_names[shape_id].indexOf(key_))
         return shape_id;
+      // const index =  this.shape_names[shape_id].indexOf(key_)
+      // if(index != -1)
+      // {
+      //   switch (shape_id) {
+      //     case 1:
+      //     case 2:
+      //       return shape_id;
+      //     case 3:
+      //     case 4:
+      //       return 3; //3: Round - Circle
+      //     case 5:
+      //     case 6:
+      //       return 4; //4: Oval
+      //   };
+      // }
     }
-
     return 0;
   }
 

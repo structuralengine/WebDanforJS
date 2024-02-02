@@ -140,7 +140,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
               let value = property.newRow[key];
               const row = property.rowIndx;
               if (value === null) { continue; }         // 初期値は対象にしない
-
               this.table_datas[row].shape
                 = this.members.getShapeDispFromShapeID(this.members.getShapeIDFromUserInput(value));
             }
