@@ -10,6 +10,7 @@ import { data } from 'jquery';
 import { log } from 'console';
 import { ThreeNodeService } from '../three/geometry/three-node.service';
 import { SceneService } from '../three/scene.service';
+import { ThreeNodeGuideService } from '../three/geometry/three-node-guide.service';
 
 @Component({
   selector: 'app-bars',
@@ -68,6 +69,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     private translate: TranslateService,
     private menuService: MenuService,
     private threeNode: ThreeNodeService,
+    private threeNodeGuide: ThreeNodeGuideService,
     private scene: SceneService,
     private member: InputMembersService
   ) {     
@@ -151,15 +153,27 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         cellClick: (evt, ui) =>{
-          console.log(ui)
+          this.closePreview();
           const m_no = ui.rowData.m_no;
+          const rowData = ui.rowData
+          this.threeNodeGuide.dataNode= rowData
+          if(ui.colIndx ===6 ||ui.colIndx ===7||ui.colIndx ===8||ui.colIndx===9||ui.colIndx===10||ui.colIndx ===11){
+            if(ui.rowIndxPage % 2 ===0){
+               this.threeNodeGuide.checkKey='up'
+            }else{
+              this.threeNodeGuide.checkKey='lower'
+            }
+          }
+          if(ui.colIndx ===12 ||ui.colIndx ===13||ui.colIndx ===14||ui.colIndx===15){
+          this.threeNodeGuide.checkKey='lateral'
+          }
           if(m_no != null && m_no != undefined){
             for(let i = 0; i < this.table_datas.length; i++){
               this.bars.setTableColumns(this.table_datas[i])
             }           
             let data = this.bars.getDataPreview(ui.rowData.index);           
             this.threeNode.memNo = m_no;
-            this.threeNode.dataNode = data;  
+            this.threeNode.dataNode = data;
             const member = this.member.getTableColumns(m_no);
             this.calPoint = {
               m_no: member.m_no,
@@ -550,16 +564,16 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           data.pq_cellprop=this.propShaded1
         }
        }
-       if(this.activeTab!=="rebar_ax"){
-        if(index % 2!==0){
-          data.pq_cellstyle=this.styleShaded2;
-          data.pq_cellprop= this.propShaded2
-        }
-         if(index % 2===0){
-          data.pq_cellstyle=this.styleShaded1;
-          data.pq_cellprop=this.propShaded1
-        }
-       }
+      //  if(this.activeTab!=="rebar_ax"){
+      //   if(index % 2!==0){
+      //     data.pq_cellstyle=this.styleShaded2;
+      //     data.pq_cellprop= this.propShaded2
+      //   }
+      //    if(index % 2===0){
+      //     data.pq_cellstyle=this.styleShaded1;
+      //     data.pq_cellprop=this.propShaded1
+      //   }
+      //  }
        })
       }
     let FIXED_CELLS_COUNT = this.save.isManual() ? 4 : 5;
@@ -641,5 +655,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     while(this.scene.scene.children.length > 0){ 
       this.scene.remove(this.scene.scene.children[0]); 
   }
+  while(this.scene.sceneRebar.children.length > 0){ 
+    this.scene.removeRebar(this.scene.sceneRebar.children[0]); 
+}
   }
 }
