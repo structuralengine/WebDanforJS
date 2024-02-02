@@ -59,7 +59,7 @@ export class ThreeComponent implements OnInit {
       this.canvasRebar,
       devicePixelRatio,
       350,
-      150
+      350
     );
    }
   }
@@ -179,6 +179,18 @@ export class ThreeComponent implements OnInit {
       mesh.position.x = jsonData[i].x === 0 ? 0 : jsonData[i].x;
       mesh.position.y = -(jsonData[i].y === 0 ? 0 : jsonData[i].y);
       mesh.position.z = jsonData[i].z === 0 ? 0 : jsonData[i].z;
+      this.nodeListRebar.children.push(mesh);
+    }  
+    const jsonSide = this.nodeGuide.changeDataSide() as [];
+    console.log(jsonSide)
+    for(let i=0; i<=jsonSide.length;i++){    
+       
+      const mesh = new THREE.Mesh(this.geometryRebar,
+        new THREE.MeshBasicMaterial({ color: 0xfafafa }));
+      mesh.name = 'nodeSide' + i;
+      mesh.position.x = jsonData[i].x;
+      mesh.position.y = -jsonData[i].y;
+      mesh.position.z = jsonData[i].z;
       this.nodeListRebar.children.push(mesh);
     }  
     this.scene.renderRebar()

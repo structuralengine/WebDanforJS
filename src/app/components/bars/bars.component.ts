@@ -173,6 +173,13 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           if(ui.colIndx ===12 ||ui.colIndx ===13||ui.colIndx ===14||ui.colIndx===15){
           this.threeNodeGuide.checkKey='lateral'
+          if(ui.rowIndx % 2 != 0){     
+            this.threeNodeGuide.dataUpper=this.table_datas[0][ui.rowIndx - 1];
+            this.threeNodeGuide.dataLower= this.table_datas[0][ui.rowIndx];
+          }else{
+            this.threeNodeGuide.dataUpper = this.table_datas[0][ui.rowIndx ];
+            this.threeNodeGuide.dataLower = this.table_datas[0][ui.rowIndx +1]
+          }
           }
           if(m_no != null && m_no != undefined){
             for(let i = 0; i < this.table_datas.length; i++){
