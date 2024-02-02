@@ -109,29 +109,32 @@ export class ThreeComponent implements OnInit {
       new THREE.BufferGeometry().setFromPoints(points),
       material
     );   
-    this.scene.add(line);   
-    if(jsonData.length < 8) return;  
-    for(let i=8; i<=jsonData.length;i++){    
-       
-      const mesh = new THREE.Mesh(this.geometry,
-        new THREE.MeshBasicMaterial({ color: 0x000000 }));
-      mesh.name = 'node' + i;
-      mesh.position.x = jsonData[i].x;
-      mesh.position.y = -jsonData[i].y;
-      mesh.position.z = jsonData[i].z;
-      this.nodeList.children.push(mesh);
+    this.scene.add(line);  
+    for(let i=8; i < jsonData.length;i++){    
+      try{
+        const mesh = new THREE.Mesh(this.geometry,
+          new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        mesh.name = 'node' + i;
+        mesh.position.x = jsonData[i]['x'];
+        mesh.position.y = -jsonData[i]['y'];
+        mesh.position.z = jsonData[i]['z'];
+        this.nodeList.children.push(mesh);
+      }catch{
+        console.log(jsonData)
+      }
+     
     }  
 
     const jsonSide = this.node.changeDataSide() as [];
-    for(let i=0; i<=jsonSide.length;i++){    
+    for(let i=0; i< jsonSide.length;i++){    
        
-      const mesh = new THREE.Mesh(this.geometry,
+      const mesh1 = new THREE.Mesh(this.geometry,
         new THREE.MeshBasicMaterial({ color: 0xfafafa }));
-      mesh.name = 'nodeSide' + i;
-      mesh.position.x = jsonData[i].x;
-      mesh.position.y = -jsonData[i].y;
-      mesh.position.z = jsonData[i].z;
-      this.nodeList.children.push(mesh);
+      mesh1.name = 'nodeSide' + i;
+      mesh1.position.x = jsonSide[i]['x'];
+      mesh1.position.y = -jsonSide[i]['y'];
+      mesh1.position.z = jsonSide[i]['z'];
+      this.nodeList.children.push(mesh1);
     }  
     this.scene.render() 
   }
@@ -167,9 +170,8 @@ export class ThreeComponent implements OnInit {
       new THREE.BufferGeometry().setFromPoints(points),
       material
     );   
-    this.scene.addRebar(line);   
-    if(jsonData.length < 4) return  
-    for(let i=4; i<=jsonData.length;i++){    
+    this.scene.addRebar(line);       
+    for(let i=4; i< jsonData.length;i++){    
        
       const mesh = new THREE.Mesh(this.geometryRebar,
         new THREE.MeshBasicMaterial({ color: 0x000000 }));
