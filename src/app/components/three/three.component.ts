@@ -173,25 +173,28 @@ export class ThreeComponent implements OnInit {
     this.scene.addRebar(line);       
     for(let i=4; i< jsonData.length;i++){    
        
-      const mesh = new THREE.Mesh(this.geometryRebar,
-        new THREE.MeshBasicMaterial({ color: 0x000000 }));
-      mesh.name = 'node' + i;
-      mesh.position.x = jsonData[i].x === 0 ? 0 : jsonData[i].x;
-      mesh.position.y = -(jsonData[i].y === 0 ? 0 : jsonData[i].y);
-      mesh.position.z = jsonData[i].z === 0 ? 0 : jsonData[i].z;
-      this.nodeListRebar.children.push(mesh);
+      try{
+        const mesh = new THREE.Mesh(this.geometryRebar,
+          new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        mesh.name = 'node' + i;
+        mesh.position.x = jsonData[i]['x'];
+        mesh.position.y = -jsonData[i]['y'];
+        mesh.position.z = jsonData[i]['z'];
+        this.nodeListRebar.children.push(mesh);
+      }catch{
+        console.log(jsonData)
+      }
     }  
     const jsonSide = this.nodeGuide.changeDataSide() as [];
-    console.log(jsonSide)
-    for(let i=0; i<=jsonSide.length;i++){    
+    for(let i=0; i< jsonSide.length;i++){    
        
-      const mesh = new THREE.Mesh(this.geometryRebar,
+      const mesh1 = new THREE.Mesh(this.geometryRebar,
         new THREE.MeshBasicMaterial({ color: 0xfafafa }));
-      mesh.name = 'nodeSide' + i;
-      mesh.position.x = jsonData[i].x;
-      mesh.position.y = -jsonData[i].y;
-      mesh.position.z = jsonData[i].z;
-      this.nodeListRebar.children.push(mesh);
+      mesh1.name = 'nodeSide' + i;
+      mesh1.position.x = jsonSide[i]['x'];
+      mesh1.position.y = -jsonSide[i]['y'];
+      mesh1.position.z = jsonSide[i]['z'];
+      this.nodeListRebar.children.push(mesh1);
     }  
     this.scene.renderRebar()
   }
