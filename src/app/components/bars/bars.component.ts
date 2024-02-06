@@ -1,3 +1,4 @@
+import { filter } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { InputBarsService } from './bars.service';
 import { SheetComponent } from '../sheet/sheet.component';
@@ -695,9 +696,23 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 }
   }
   public removeScene(){
-  //   while(this.scene.scene.children.length > 0){ 
-  //     this.scene.remove(this.scene.scene.children[0]); 
-  // }
+    let index =[]
+    if(this.scene.scene.children.length > 0){ 
+      for(let i =0;i< this.scene.scene.children.length;i++){
+        let name = this.scene.scene.children[i].name;
+        let type = this.scene.scene.children[i].type;
+        if((name==="panel-0" && type==="Mesh")|| (name==="panel-1" && type==="Mesh")|| type==="Line"){
+         index.push(i)
+        }
+      }
+      index.sort((a,b)=>b-a)
+     index.forEach(index=>{
+      if(index >=0 && index < this.scene.scene.children.length){
+        this.scene.scene.children.splice(index,1)
+      }
+     })
+    
+  }
   for (let i = this.threeNode.nodeList.children.length - 1; i >= 0; i--) {
    
   
