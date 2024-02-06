@@ -136,6 +136,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         change: (evt, ui) => {
           console.log("updateui", ui)
+         
           for (const property of ui.updateList) {
             for (const key of Object.keys(property.newRow)) {
               const old = property.oldRow[key];
@@ -151,10 +152,30 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
               }
             }
+            let m_no= ui.updateList[0].rowData.m_no
+            let index = ui.updateList[0].rowData.index;
+            let rowIndex =ui.updateList[0].rowIndx
+            if(rowIndex% 2 != 0){
+              const data_index = this.table_datas[0][rowIndex - 1];
+              m_no = data_index.m_no;
+              index = data_index.index
+            } 
+            if(m_no != null && m_no != undefined){
+              for(let i = 0; i < this.table_datas.length; i++){
+                this.bars.setTableColumns(this.table_datas[i])
+              }           
+              let data = this.bars.getDataPreview(index);           
+              this.threeNode.memNo = m_no;
+              this.threeNode.dataNode = data;    
+                   
+            }
+            // this.removeScene()
+
+            this.threeNode.createDrawingLine()
+            console.log(this.scene)
           }
         },
         cellClick: (evt, ui) =>{               
-          this.closePreview();
           let m_no = ui.rowData.m_no;
           const rowData = ui.rowData
           let index = ui.rowData.index;
@@ -672,5 +693,10 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   while(this.scene.sceneRebar.children.length > 0){ 
     this.scene.removeRebar(this.scene.sceneRebar.children[0]); 
 }
+  }
+  public removeScene(){
+    while(this.scene.scene.children.length > 0){ 
+      this.scene.remove(this.scene.scene.children[0]); 
+  }
   }
 }
