@@ -1,17 +1,24 @@
 import { Injectable } from '@angular/core';
 import { InputMembersService } from '../../members/members.service';
+import { SceneService } from '../scene.service';
+import * as THREE from 'three';
 @Injectable({
   providedIn: 'root'
 })
 export class ThreeNodeService { 
   public dataNode: any[];
-  public memNo: number
+  public memNo: number;
+  public geometry: THREE.SphereBufferGeometry;
+  public nodeList: THREE.Object3D;
   constructor(   
-    private memmber: InputMembersService
+    private memmber: InputMembersService,
+    private scene:SceneService
   ) {   
    
     this.memNo = 0;
     this.dataNode = new Array();
+
+
   }
   public getJson() {
     const scale = 50;
@@ -157,7 +164,7 @@ export class ThreeNodeService {
       }
 
     }
-    console.log(JSON.stringify(jsonData));
+    console.log(jsonData);
     return jsonData;
   }
 
@@ -187,4 +194,99 @@ export class ThreeNodeService {
     }
     return data;
   }
+
+
+
+  createDrawingLine() {       
+  
+    let jsonData: any = this.changeData() as [];
+   
+    const material = new THREE.LineBasicMaterial({ color: 0x000000 });
+    const points = [];
+    
+    const arrPanel = [
+      [1, 2, 7, 8],
+      [3, 4, 5, 6]
+    ]
+    arrPanel.forEach(item => {
+      const vertexlist = [];
+      item.forEach(i => {
+        const n = jsonData[i-1]
+        const x = n.x;
+        const y = n.y;
+        const z = n.z;
+        vertexlist.push([x, -y, z])
+      })
+      this.createPanel(vertexlist, arrPanel.indexOf(item));
+    })
+    let dem = 0;
+    jsonData.forEach(x => {
+      dem ++;
+      if(dem <= 8){
+        points.push(new THREE.Vector3(x['x'], -x['y'], x['z']));        
+      }       
+    })  
+    let x = jsonData[0];
+    points.push(new THREE.Vector3(x['x'], -x['y'], x['z']));
+    const line = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(points),
+      material
+    );   
+    this.scene.add(line);  
+    for(let i=8; i < jsonData.length;i++){    
+      try{
+        const mesh = new THREE.Mesh(this.geometry,
+          new THREE.MeshBasicMaterial({ color: 0x000000 }));
+        mesh.name = 'node' + i;
+        mesh.position.x = jsonData[i]['x'];
+        mesh.position.y = -jsonData[i]['y'];
+        mesh.position.z = jsonData[i]['z'];
+        this.nodeList.children.push(mesh);
+      }catch{
+        console.log(jsonData)
+      }
+     
+    }  
+
+    const jsonSide = this.changeDataSide() as [];
+    for(let i=0; i< jsonSide.length;i++){    
+       
+      const mesh1 = new THREE.Mesh(this.geometry,
+        new THREE.MeshBasicMaterial({ color: 0xfafafa }));
+      mesh1.name = 'nodeSide' + i;
+      mesh1.position.x = jsonSide[i]['x'];
+      mesh1.position.y = -jsonSide[i]['y'];
+      mesh1.position.z = jsonSide[i]['z'];
+      this.nodeList.children.push(mesh1);
+    }  
+    this.scene.render() 
+  }
+
+  private createPanel(vertexlist, row): void {
+
+    const points = []
+    const geometrys: THREE.BufferGeometry[] = [];
+    for(const p of vertexlist){
+      points.push(new THREE.Vector3(p[0], p[1], p[2]))
+    }
+    // 三角形を作る
+    geometrys.push(new THREE.BufferGeometry().setFromPoints([points[0],points[1],points[2]]));
+    // 四角形が作れる場合
+    if(points.length > 3)
+      geometrys.push(new THREE.BufferGeometry().setFromPoints([points[3],points[0],points[2]]));
+
+    const material = new THREE.MeshBasicMaterial({
+      transparent: true,
+      side: THREE.DoubleSide,
+      color: 0x7f8F9F,
+      opacity: 0.7,
+    });
+
+    for(const g of geometrys) {
+      const mesh = new THREE.Mesh(g, material);
+      mesh.name = 'panel-' + row.toString();      
+      this.scene.add(mesh);
+    }
+  }
+
 }
