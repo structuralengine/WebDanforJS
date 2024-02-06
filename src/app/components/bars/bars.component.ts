@@ -169,7 +169,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               this.threeNode.dataNode = data;    
                    
             }
-            // this.removeScene()
+            this.removeScene()
 
             this.threeNode.createDrawingLine()
             console.log(this.scene)
@@ -695,8 +695,19 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 }
   }
   public removeScene(){
-    while(this.scene.scene.children.length > 0){ 
-      this.scene.remove(this.scene.scene.children[0]); 
+  //   while(this.scene.scene.children.length > 0){ 
+  //     this.scene.remove(this.scene.scene.children[0]); 
+  // }
+  for (let i = this.threeNode.nodeList.children.length - 1; i >= 0; i--) {
+   
+  
+      const target = this.threeNode.nodeList.children[i];
+      while (target.children.length > 0) {
+        const object = target.children[0];
+        object.parent.remove(object);
+      }
+      this.threeNode.nodeList.children.splice(i, 1);
+    
   }
   }
 }
