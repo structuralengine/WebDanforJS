@@ -17,8 +17,6 @@ export class ThreeNodeService {
    
     this.memNo = 0;
     this.dataNode = new Array();
-
-
   }
   public getJson() {
     const scale = 50;
@@ -243,7 +241,9 @@ export class ThreeNodeService {
       new THREE.BufferGeometry().setFromPoints(points),
       material
     );   
-    this.scene.add(line);  
+    this.scene.add(line); 
+    const len = this.getLength(jsonData[0], jsonData[7]); 
+    this.drawLineDemension(x, len)
     for(let i=8; i < jsonData.length;i++){    
       try{
         const mesh = new THREE.Mesh(this.geometry,
@@ -299,5 +299,32 @@ export class ThreeNodeService {
       this.scene.add(mesh);
     }
   }
+  private drawLineDemension(pointStart: any, length: number ){
+    let points = [];
+    const point = pointStart as [];
+    const x = point['x'];
+    const y = Math.abs(point['y']);
+    const z = point['z'];
+    points.push(new THREE.Vector3(x , (y + 1), z));
+    points.push(new THREE.Vector3(x , (y + 8), z));
+    points.push(new THREE.Vector3(x + length, (y + 8), z));
+    points.push(new THREE.Vector3(x + length , (y + 1), z));
+   
+    const line = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(points),
+      new THREE.LineBasicMaterial({ color: 0x000000 })
+    );   
+    this.scene.add(line);  
+  }
+  private  getLength(iPos: any, jPos: any){
+    const xi: number = iPos['x'];
+    const yi: number = iPos['y'];
+    const zi: number = iPos['z'];
+    const xj: number = jPos['x'];
+    const yj: number = jPos['y'];
+    const zj: number = jPos['z'];
 
+    const result: number = Math.sqrt((xi - xj) ** 2 + (yi - yj) ** 2 + (zi - zj) ** 2);
+    return result;
+  }
 }
