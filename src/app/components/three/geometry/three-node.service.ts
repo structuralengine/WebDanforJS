@@ -17,8 +17,6 @@ export class ThreeNodeService {
    
     this.memNo = 0;
     this.dataNode = new Array();
-
-
   }
   public getJson() {
     const scale = 50;
@@ -80,19 +78,30 @@ export class ThreeNodeService {
     let startNode = 8;
     //drawing node rebar1
     let rebar1 = this.dataNode['rebar1'];
-    const rb_n1 = rebar1['rebar_n'];
+    let rb_n1 = rebar1['rebar_n'];
     if (rb_n1 != null) {
-      const tt_len_rb1 = ((rb_n1 - 1) * rebar1['rebar_ss']) / scale;
-      let st_rb1 = (bt - tt_len_rb1) / 2
-      if (rb_n1 != undefined && rb_n1 != null) {
-        for (let i = 0; i < rb_n1; i++) {
-          startNode++;
-          jsonData[`${startNode}`] = {
-            x: st_rb1 + (rebar1['rebar_ss'] * i) / scale + x_start,
-            y: rebar1['rebar_cover'] / scale+ y_start,
-            z: 0
+      let rb1_line = rebar1['rebar_lines'];
+      if (rb1_line == null) rb1_line = rb_n1;      
+      if (rb_n1 != undefined && rb_n1 != null) {       
+        let r = 1;
+        const numrow = Math.ceil(rb_n1/rb1_line) ;
+        while (rb1_line > 0 && r <= numrow) {
+          const tt_len_rb1 = ((rb1_line - 1) * rebar1['rebar_ss']) / scale;
+          let st_rb1 = (bt - tt_len_rb1) / 2;
+          if(tt_len_rb1 <= 0 && rb1_line > 1) break;
+          for (let i = 0; i < rb1_line; i++) {
+            startNode++;
+            jsonData[`${startNode}`] = {
+              x: st_rb1 + (rebar1['rebar_ss'] * i) / scale + x_start,
+              y: rebar1['rebar_cover'] / scale + y_start + (rebar1['rebar_space'] *(r-1))/scale,
+              z: 0
+            }
           }
+          rb_n1 = rb_n1 - rb1_line;
+          if(rb1_line > rb_n1)  rb1_line= rb_n1  
+          r++;
         }
+        
       }
     }
 
@@ -104,11 +113,11 @@ export class ThreeNodeService {
       if (rb2_line == null) rb2_line = rb_n2;
       if (rb_n2 != undefined && rb_n2 != null) {
         let r = 1;
-        const numrow = Math.round(rb_n2/rb2_line) ;
+        const numrow = Math.ceil(rb_n2/rb2_line) ;
         while (rb2_line > 0 && r <= numrow) {
           const total_length = ((rb2_line - 1) * rebar2['rebar_ss']) / scale;
           let start_x = (b - total_length) / 2;
-          if(total_length <= 0) break;
+          if(total_length <= 0 && rb2_line > 1) break;
           for (let i = 0; i < rb2_line; i++) {
             startNode++;
             jsonData[`${startNode}`] = {
@@ -232,7 +241,9 @@ export class ThreeNodeService {
       new THREE.BufferGeometry().setFromPoints(points),
       material
     );   
-    this.scene.add(line);  
+    this.scene.add(line); 
+    const len = this.getLength(jsonData[0], jsonData[7]); 
+    this.drawLineDemension(x, len)
     for(let i=8; i < jsonData.length;i++){    
       try{
         const mesh = new THREE.Mesh(this.geometry,
@@ -288,5 +299,32 @@ export class ThreeNodeService {
       this.scene.add(mesh);
     }
   }
+  private drawLineDemension(pointStart: any, length: number ){
+    let points = [];
+    const point = pointStart as [];
+    const x = point['x'];
+    const y = Math.abs(point['y']);
+    const z = point['z'];
+    points.push(new THREE.Vector3(x , (y + 1), z));
+    points.push(new THREE.Vector3(x , (y + 8), z));
+    points.push(new THREE.Vector3(x + length, (y + 8), z));
+    points.push(new THREE.Vector3(x + length , (y + 1), z));
+   
+    const line = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(points),
+      new THREE.LineBasicMaterial({ color: 0x000000 })
+    );   
+    this.scene.add(line);  
+  }
+  private  getLength(iPos: any, jPos: any){
+    const xi: number = iPos['x'];
+    const yi: number = iPos['y'];
+    const zi: number = iPos['z'];
+    const xj: number = jPos['x'];
+    const yj: number = jPos['y'];
+    const zj: number = jPos['z'];
 
+    const result: number = Math.sqrt((xi - xj) ** 2 + (yi - yj) ** 2 + (zi - zj) ** 2);
+    return result;
+  }
 }

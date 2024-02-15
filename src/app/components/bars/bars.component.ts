@@ -173,10 +173,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             this.removeScene()
 
             this.threeNode.createDrawingLine()
-            console.log(this.scene)
+            //console.log(this.scene)
           }
         },
-        cellClick: (evt, ui) =>{               
+        cellClick: (evt, ui) =>{         
+          
           let m_no = ui.rowData.m_no;
           const rowData = ui.rowData
           let index = ui.rowData.index;
@@ -210,11 +211,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             let data = this.bars.getDataPreview(index);           
             this.threeNode.memNo = m_no;
             this.threeNode.dataNode = data;
-            const member = this.member.getTableColumns(m_no);
+            const member = this.member.getTableColumns(m_no);           
             this.calPoint = {
               m_no: member.m_no,
               shape: member.shape,
-              p_name: ui.rowData.p_name
+              p_name: data.p_name
             }              
           }
             
