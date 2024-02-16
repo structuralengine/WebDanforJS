@@ -44,6 +44,7 @@ export class ThreeComponent implements OnInit {
     // this.createDrawingLineRebar()
    }
    console.log(this.scene)
+   this.node.onInit();
   }
   ngAfterViewInit(): void {
    if(this.typeView === 'preview'){
@@ -63,6 +64,9 @@ export class ThreeComponent implements OnInit {
     //   350
     // );
    }
+   const element = this.scene.labelRendererDomElement();
+   const div = document.getElementById("myCanvas"); // ボタンを置きたい場所の手前の要素を取得
+   div.parentNode.insertBefore(element, div.nextSibling); 
   }
   private getAspectRatio(): number {
     if (this.canvas.clientHeight === 0) {

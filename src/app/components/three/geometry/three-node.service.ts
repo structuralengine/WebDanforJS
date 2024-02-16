@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { InputMembersService } from '../../members/members.service';
 import { SceneService } from '../scene.service';
 import * as THREE from 'three';
+import { CSS2DObject } from "../libs/CSS2DRenderer.js";
 @Injectable({
   providedIn: 'root'
 })
@@ -10,6 +11,7 @@ export class ThreeNodeService {
   public memNo: number;
   public geometry: THREE.SphereBufferGeometry;
   public nodeList: THREE.Object3D;
+  public memberList: THREE.Object3D;
   constructor(   
     private memmber: InputMembersService,
     private scene:SceneService
@@ -17,13 +19,20 @@ export class ThreeNodeService {
    
     this.memNo = 0;
     this.dataNode = new Array();
+    this.memberList = new THREE.Object3D();
+    this.scene.add(this.memberList);    
+  }
+  public onInit(): void{
+    for (const mesh of this.nodeList.children) {
+      mesh.getObjectByName("font").visible = true;
+    }
+    this.scene.render();
   }
   public getJson() {
     const scale = 50;
     const memNo = this.memNo;
     if(memNo == 0) return;
-    let jsonData: object = {};
-    console.log(this.memmber.getData(memNo));
+    let jsonData: object = {};    
     var member = this.memmber.getData(memNo);
     const b = member['B'] / scale;
     const h = member['H'] / scale;
@@ -187,7 +196,7 @@ export class ThreeNodeService {
     for (const key of jsonKeys) {
       if(!key.includes("s"))
         data.push({ x: jsonData[key].x,  y: jsonData[key].y, z: jsonData[key].z })
-    }
+    }  
     return data;
   }
   public changeDataSide(): object {
@@ -201,6 +210,7 @@ export class ThreeNodeService {
       if(key.includes("s"))
         data.push({ x: jsonData[key].x,  y: jsonData[key].y, z: jsonData[key].z })
     }
+  
     return data;
   }
 
@@ -307,14 +317,44 @@ export class ThreeNodeService {
     const z = point['z'];
     points.push(new THREE.Vector3(x , (y + 1), z));
     points.push(new THREE.Vector3(x , (y + 8), z));
-    points.push(new THREE.Vector3(x + length, (y + 8), z));
+    points.push(new THREE.Vector3(x , (y + 4), z));
+    points.push(new THREE.Vector3(x + length , (y + 4), z));
     points.push(new THREE.Vector3(x + length , (y + 1), z));
-   
+    points.push(new THREE.Vector3(x + length , (y + 8), z));
     const line = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(points),
       new THREE.LineBasicMaterial({ color: 0x000000 })
     );   
-    this.scene.add(line);  
+    const vect = new THREE.Vector3(length, 0, 0);
+    const geometry = new THREE.CylinderBufferGeometry(1, 1, vect.length(), 12);
+
+    // 要素をシーンに追加
+    const mesh = new THREE.Mesh(
+      geometry,
+      new THREE.MeshBasicMaterial({ color: 0x000000 })
+    );
+    mesh.name = "member" + 1; 
+    mesh.rotation.z = Math.acos(0);
+    mesh.rotation.y = 0.5 * Math.PI + Math.atan2(length, 0);
+    mesh.position.set(x +length/2, y + 4, z);  
+
+    // 文字をシーンに追加
+    const div = document.createElement("div");
+    div.className = "label";
+    div.textContent = "1dssajfhdsjafhasjdghdjasghjdhgjashgajshd";
+    div.style.marginTop = "-1em";
+    // div.style.backgroundColor = '#FF0000';
+    div.style.color='#000000 '
+    const label = new CSS2DObject(div);
+
+    label.position.set(0, 0, 0);
+    label.name = "font";
+    label.visible = true;
+    mesh.add(label);
+    mesh.scale.set(0.2,1,0.2);
+    //this.scene.add(line);  
+    this.nodeList.children.push(mesh);
+    this.scene.render()
   }
   private  getLength(iPos: any, jPos: any){
     const xi: number = iPos['x'];
