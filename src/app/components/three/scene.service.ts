@@ -156,6 +156,9 @@ export class SceneService {
     this.labelRenderer.setSize(Width, Height);
     this.labelRenderer.domElement.style.position = "absolute";
   }
+  public labelRendererDomElement(): Node {
+    return this.labelRenderer.domElement;
+  }
   // レンダリングする
   public render() {
     if (this.renderer === null) return;

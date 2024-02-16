@@ -343,8 +343,8 @@ export class ThreeNodeService {
     div.className = "label";
     div.textContent = "1dssajfhdsjafhasjdghdjasghjdhgjashgajshd";
     div.style.marginTop = "-1em";
-    div.style.backgroundColor = '#FF0000';
-    div.style.color='#FF0000'
+    // div.style.backgroundColor = '#FF0000';
+    div.style.color='#000000 '
     const label = new CSS2DObject(div);
 
     label.position.set(0, 0, 0);
