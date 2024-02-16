@@ -44,6 +44,7 @@ export class ThreeComponent implements OnInit {
     // this.createDrawingLineRebar()
    }
    console.log(this.scene)
+   this.node.onInit();
   }
   ngAfterViewInit(): void {
    if(this.typeView === 'preview'){
