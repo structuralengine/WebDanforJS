@@ -175,9 +175,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             this.threeNode.createDrawingLine()
             //console.log(this.scene)
           }
-        },
+        }, 
         cellClick: (evt, ui) =>{         
-          
+          console.log("ui", ui)
           let m_no = ui.rowData.m_no;
           const rowData = ui.rowData
           let index = ui.rowData.index;
@@ -205,18 +205,34 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           }
           if(m_no != null && m_no != undefined){
-            for(let i = 0; i < this.table_datas.length; i++){
-              this.bars.setTableColumns(this.table_datas[i])
-            }           
+            // for(let i = 0; i < this.table_datas.length; i++){
+            //   this.bars.setTableColumns(this.table_datas[i])
+            // }  
             let data = this.bars.getDataPreview(index);           
-            this.threeNode.memNo = m_no;
-            this.threeNode.dataNode = data;
-            const member = this.member.getTableColumns(m_no);           
-            this.calPoint = {
-              m_no: member.m_no,
-              shape: member.shape,
-              p_name: data.p_name
-            }              
+              this.threeNode.memNo = m_no;
+              this.threeNode.dataNode = data;
+              const member = this.member.getTableColumns(m_no);           
+              this.calPoint = {
+                m_no: member.m_no,
+                shape: member.shape,
+                p_name: data.p_name
+              }   
+            // if(!this.save.isManual()) {
+              
+            // }else{
+            //   console.log("bars", this.bars.rebar_List)
+            //   let data = this.bars.getDataPreview(index);         
+            //   let data12 = this.bars.getTableColumn(index);     
+            //   this.threeNode.memNo = m_no;
+            //   this.threeNode.dataNode = data12;
+            //   const member = this.member.getTableColumns(m_no);           
+            //   this.calPoint = {
+            //     m_no: member.m_no,
+            //     shape: member.shape,
+            //     p_name: ui.rowData.p_name
+            //   }   
+            // }      
+                      
           }
             
         }
