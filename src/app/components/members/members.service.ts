@@ -264,7 +264,8 @@ export class InputMembersService {
 
   //new version: New shapes are displayed but the data is still saved as before
   public getShapeDispFromMember(member: any) {
-
+    console.log(this.lang_shape_names_new, "shape");
+    
     if (this.lang_shape_names_new.length <= member.shape)
       return 0;
     switch (Number(member.shape)) {
@@ -272,21 +273,21 @@ export class InputMembersService {
       case 2:
         return this.lang_shape_names_new[this.translate.currentLang][member.shape];
       case 3:
-        //(Shape of wdj is "3" and only one of B and H has a value.)
+        //(Shape of wdj is "3" and both B and H have values in them.) -  ring
         if(member.H != null && member.B != null) 
           return this.lang_shape_names_new[this.translate.currentLang][4];
         
-        //(Shape of wdj is "3" and both B and H have values in them.)
+        //(Shape of wdj is "3" and only one of B and H has a value.) - circle
         else
           return this.lang_shape_names_new[this.translate.currentLang][3];
       case 4:
-        //(Shape of wdj is “4“ and B > H.)
-        if (Number(member.B) > Number(member.H))
-          return this.lang_shape_names_new[this.translate.currentLang][5];
-
-        //(Shape of wdj is “4“ and H > B.)
-        else
+        //(Shape of wdj is “4“ and H > B.) - Vertical Oval
+        if (Number(member.H) > Number(member.B))
           return this.lang_shape_names_new[this.translate.currentLang][6];
+
+        //(Shape of wdj is “4“ and B > H.)
+        else
+          return this.lang_shape_names_new[this.translate.currentLang][5];
       default:
         return "";
     };
