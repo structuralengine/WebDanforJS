@@ -33,12 +33,16 @@ export class ThreeNodeService {
     var member = this.memmber.getData(memNo);
     const b = member['B'] / scale;
     const h = member['H'] / scale;
-    const bt = member['Bt'] / scale;
-    const t = member['t'] / scale;
+    let bt = member['Bt'] / scale;
+    let t = member['t'] / scale;
+    if(bt == 0 && t == 0){
+      bt = b;
+      t = h;
+    }
     const n = (bt - b) / 2;
     const x_start = -bt/2;
     const y_start = -h/2
-    if (b != null && h != null && bt != null && t != null) {
+    if (b != 0 && h != 0 && bt != 0 && t != 0) {
       jsonData["1"] = {
         x: x_start,
         y: y_start,
