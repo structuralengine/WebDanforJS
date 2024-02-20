@@ -8,7 +8,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from '../members/members.service';
 import { MenuService } from '../menu/menu.service';
 import { data } from 'jquery';
-import { log } from 'console';
+import { Console, log } from 'console';
 import { ThreeNodeService } from '../three/geometry/three-node.service';
 import { SceneService } from '../three/scene.service';
 import { ThreeNodeGuideService } from '../three/geometry/three-node-guide.service';
@@ -204,10 +204,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             this.threeNodeGuide.dataLower = this.table_datas[0][ui.rowIndx +1]
           }
           }
-          if(m_no != null && m_no != undefined){
-            // for(let i = 0; i < this.table_datas.length; i++){
-            //   this.bars.setTableColumns(this.table_datas[i])
-            // }  
+          if(m_no != null && m_no != undefined){          
             let data = this.bars.getDataPreview(index);           
               this.threeNode.memNo = m_no;
               this.threeNode.dataNode = data;
@@ -216,25 +213,13 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 m_no: member.m_no,
                 shape: member.shape,
                 p_name: data.p_name
-              }   
-            // if(!this.save.isManual()) {
-              
-            // }else{
-            //   console.log("bars", this.bars.rebar_List)
-            //   let data = this.bars.getDataPreview(index);         
-            //   let data12 = this.bars.getTableColumn(index);     
-            //   this.threeNode.memNo = m_no;
-            //   this.threeNode.dataNode = data12;
-            //   const member = this.member.getTableColumns(m_no);           
-            //   this.calPoint = {
-            //     m_no: member.m_no,
-            //     shape: member.shape,
-            //     p_name: ui.rowData.p_name
-            //   }   
-            // }      
+              }            
                       
           }
-            
+         if(this.bars.is_review){
+          this.removeScene()
+          this.threeNode.createDrawingLine()
+         }
         }
       };
       this.option_list.push(op);

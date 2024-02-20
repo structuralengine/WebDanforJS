@@ -121,7 +121,7 @@ export class ThreeNodeService {
     }
     if(checkNode < startNode){
       if(startNode - checkNode >=2)
-        this.drawLineDemension(jsonData[`${checkNode+1}`], this.getLength(jsonData[`${checkNode+1}`], jsonData[`${checkNode+2}`]), rebar1['rebar_ss'], true, [1, 5, 6], 5)
+        this.drawLineDemension(jsonData[`${checkNode+1}`], this.getLength(jsonData[`${checkNode+1}`], jsonData[`${checkNode+2}`]), rebar1['rebar_ss'], true, [1, 3, 4], 5)
       this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], {x: jsonData["1"]['x'], y: jsonData[`${checkNode+1}`]['y'], z: 0 }), rebar1['rebar_cover'], false, [1, 4, 5], 6)
       if(Math.ceil(rebar1['rebar_n']/rebar1['rebar_lines']) > 1)
         this.drawLineDemension({x: jsonData["1"]['x'], y: jsonData[`${checkNode+1}`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode+1}`], {x: jsonData[`${checkNode+1}`]['x'], y: jsonData[`${checkNode + rebar1['rebar_lines'] + 1}`]['y'], z: 0 }), rebar1['rebar_space'] , false, [1, 4, 5], 3)
@@ -414,8 +414,7 @@ export class ThreeNodeService {
         div.style.marginTop = "10.5px";        
         break;
       case 5:
-        div.style.marginTop = "-18.5px";  
-        div.style.marginLeft = "2px";      
+        div.style.marginTop = "-12.5px";             
         break;
       case 6:
         div.style.marginTop = "-1.5px";  
