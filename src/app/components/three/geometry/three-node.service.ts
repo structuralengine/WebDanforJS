@@ -87,7 +87,7 @@ export class ThreeNodeService {
     this.drawLineDemension(jsonData["1"], len, member['Bt'], true, [1, 6, 8])
     this.drawLineDemension(jsonData["4"], this.getLength(jsonData["4"], jsonData["5"]), member['B'], true, [1, 6, 8], 2)
     this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
-    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]), member['H'], false, [8, 11, 13])
+    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false, [8, 11, 13])
     //drawing node rebar1
     let rebar1 = this.dataNode['rebar1'];
     let rb_n1 = rebar1['rebar_n'];
@@ -158,6 +158,8 @@ export class ThreeNodeService {
       this.drawLineDemension(jsonData[`${checkNode+1}`], this.getLength(jsonData[`${checkNode+1}`], jsonData[`${checkNode+2}`]), rebar2['rebar_ss'], true, [1, 4, 5], 4)
       if(Math.ceil(rebar2['rebar_n']/rebar2['rebar_lines']) >=2)
         this.drawLineDemension({x: jsonData[`${checkNode+1}`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode+1}`], {x: jsonData[`${checkNode+1}`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}`]['y'], z: 0 }), rebar2['rebar_space'] , false, [1, 4, 5], 3)
+      this.drawLineDemension(jsonData[`${checkNode+1}`], this.getLength(jsonData["4"], jsonData[`${checkNode+1}`]) - 0.5, rebar2['rebar_cover'], false, [1, 4, 5], 3)
+      
       checkNode = startNode
     }
     //drawing sidebar 1
