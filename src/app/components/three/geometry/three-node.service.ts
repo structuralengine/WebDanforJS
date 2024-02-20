@@ -11,6 +11,7 @@ export class ThreeNodeService {
   public memNo: number;
   public geometry: THREE.SphereBufferGeometry;
   public nodeList: THREE.Object3D; 
+  public jsonData: any
   constructor(   
     private memmber: InputMembersService,
     private scene:SceneService
@@ -26,15 +27,19 @@ export class ThreeNodeService {
     this.scene.render();
   }
   public getJson() {
-    const scale = 50;
+    let scale = 50;    
     const memNo = this.memNo;
     if(memNo == 0) return;
     let jsonData: object = {};    
     var member = this.memmber.getData(memNo);
-    const b = member['B'] / scale;
-    const h = member['H'] / scale;
-    let bt = member['Bt'] / scale;
-    let t = member['t'] / scale;
+    let memH = member['H'];
+    let memBt = member['Bt'];
+    if(memH > 2500) memH = 2500
+    if(member['Bt'] > 2000) memBt = memBt * (memH/2500);
+    let b = member['B'] / scale;
+    let h = memH / scale;
+    let bt = memBt / scale;
+    let t = member['t'] / scale;   
     if(bt == 0 && t == 0){
       bt = b;
       t = h;
@@ -91,7 +96,7 @@ export class ThreeNodeService {
     this.drawLineDemension(jsonData["1"], len, member['Bt'], true, [1, 6, 8])
     this.drawLineDemension(jsonData["4"], this.getLength(jsonData["4"], jsonData["5"]), member['B'], true, [1, 6, 8], 2)
     this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
-    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false, [8, 11, 13])
+    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false, [8, 11, 13], 9)
     //drawing node rebar1
     let rebar1 = this.dataNode['rebar1'];
     let rb_n1 = rebar1['rebar_n'];
@@ -112,7 +117,7 @@ export class ThreeNodeService {
                 y: rebar1['rebar_cover'] / scale + y_start + (rebar1['rebar_space'] *(r-1))/scale,
                 z: 0
               }
-              if(tt_len_rb1 === 0)break;
+              //if(tt_len_rb1 === 0)break;
             }
            
           }
@@ -127,8 +132,12 @@ export class ThreeNodeService {
       if(startNode - checkNode >=2)
         this.drawLineDemension(jsonData[`${checkNode+1}`], this.getLength(jsonData[`${checkNode+1}`], jsonData[`${checkNode+2}`]), rebar1['rebar_ss'], true, [1, 3, 4], 5)
       this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], {x: jsonData["1"]['x'], y: jsonData[`${checkNode+1}`]['y'], z: 0 }), rebar1['rebar_cover'], false, [1, 4, 5], 6)
-      if(Math.ceil(rebar1['rebar_n']/rebar1['rebar_lines']) > 1)
-        this.drawLineDemension({x: jsonData["1"]['x'], y: jsonData[`${checkNode+1}`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode+1}`], {x: jsonData[`${checkNode+1}`]['x'], y: jsonData[`${checkNode + rebar1['rebar_lines'] + 1}`]['y'], z: 0 }), rebar1['rebar_space'] , false, [1, 4, 5], 3)
+      if(Math.ceil(rebar1['rebar_n']/rebar1['rebar_lines']) > 1){
+        this.drawLineDemension({x: jsonData["1"]['x'], y: jsonData[`${checkNode+1}`]['y'], z: 0 }, 
+                                this.getLength(jsonData[`${checkNode+1}`], {x: jsonData[`${checkNode+1}`]['x'], y: jsonData[`${checkNode + rebar1['rebar_lines'] + 1}`]['y'], z: 0 }), 
+                                rebar1['rebar_space'] , false, [1, 4, 5], 3)
+      }
+        
       checkNode = startNode
     }
     //drawing rebar 2
@@ -191,9 +200,9 @@ export class ThreeNodeService {
         }
       }
       if(checkNode < startNode){     
-        this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], {x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar1['side_cover'], false, [8,10, 12])
-        this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode+1}_s`], jsonData[`${checkNode+2}_s`]), rebar2['rebar_space'] , false, [1, 7, 8],7)
-        this.drawLineDemension({x: jsonData["3"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }, this.getLength(jsonData["3"], {y: jsonData["3"]['y'], x: jsonData[`${checkNode + 1}_s`]['x'], z: 0 }), sidebar2['side_cover'] , true, [1, 7, 8])
+        this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], {x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar1['side_cover'], false, [8,10, 12], 8)
+        this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode+1}_s`], jsonData[`${checkNode+2}_s`]), sidebar1['side_ss'] , false, [1, 7, 8],7)
+        this.drawLineDemension({x: jsonData["3"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }, this.getLength(jsonData["3"], {y: jsonData["3"]['y'], x: jsonData[`${checkNode + 1}_s`]['x'], z: 0 }), sidebar2['side_cover'] , true, [1, 4, 5])
       }
     } else {
       let sidebar = this.dataNode['sidebar'];
@@ -225,34 +234,34 @@ export class ThreeNodeService {
   }
 
   public changeData(): object {
-    const jsonData = this.getJson();
-    const jsonKeys = Object.keys(jsonData);
+   
+    const jsonKeys = Object.keys(this.jsonData);
     let data: any = [];
     if (jsonKeys.length <= 0) {
       return null;
     }
     for (const key of jsonKeys) {
       if(!key.includes("s"))
-        data.push({ x: jsonData[key].x,  y: jsonData[key].y, z: jsonData[key].z })
+        data.push({ x: this.jsonData[key].x,  y: this.jsonData[key].y, z: this.jsonData[key].z })
     }  
     return data;
   }
   public changeDataSide(): object {
-    const jsonData = this.getJson();
-    const jsonKeys = Object.keys(jsonData);
+   
+    const jsonKeys = Object.keys(this.jsonData);
     let data: any = [];
     if (jsonKeys.length <= 0) {
       return null;
     }
     for (const key of jsonKeys) {
       if(key.includes("s"))
-        data.push({ x: jsonData[key].x,  y: jsonData[key].y, z: jsonData[key].z })
+        data.push({ x: this.jsonData[key].x,  y: this.jsonData[key].y, z: this.jsonData[key].z })
     }
   
     return data;
   }
   createDrawingLine() {       
-  
+    this.jsonData = this.getJson();
     let jsonData: any = this.changeData() as [];
    
     const material = new THREE.LineBasicMaterial({ color: 0x000000 });
@@ -427,6 +436,14 @@ export class ThreeNodeService {
       case 7:
         div.style.marginTop = "-2.5px";  
         div.style.marginLeft = "-26px";       
+        break;
+      case 8:
+        div.style.textAlign = "center";
+        div.style.marginLeft = "-19px";       
+        break;
+      case 9:
+        div.style.textAlign = "center";
+        div.style.marginLeft = "19px";       
         break;
       default:
         div.style.marginTop = "-14.5px";
