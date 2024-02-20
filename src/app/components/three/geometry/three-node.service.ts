@@ -21,25 +21,30 @@ export class ThreeNodeService {
     
   }
   public onInit(): void{
-    // for (const mesh of this.nodeList.children) {
-    //   mesh.getObjectByName("font").visible = true;
-    // }
     this.scene.render();
   }
   public getJson() {
-    let scale = 50;    
+    let scale = 100;    
     const memNo = this.memNo;
     if(memNo == 0) return;
     let jsonData: object = {};    
     var member = this.memmber.getData(memNo);
     let memH = member['H'];
     let memBt = member['Bt'];
-    if(memH > 2500) memH = 2500
-    if(member['Bt'] > 2000) memBt = memBt * (memH/2500);
-    let b = member['B'] / scale;
+    let memB = member['B'];
+    let memt = member['t']
+    if(member['shape'] !== 1){
+      if(memH > 2500) memH = 2500
+      if(member['Bt'] > 2000) memBt = memBt * (memH/2500);
+      memB = memB * (memH/2500);
+      memt = memt * (memH/2500);
+      scale = 50;
+    }
+   
+    let b = memB / scale;
     let h = memH / scale;
     let bt = memBt / scale;
-    let t = member['t'] / scale;   
+    let t = memt / scale;   
     if(bt == 0 && t == 0){
       bt = b;
       t = h;
@@ -60,7 +65,7 @@ export class ThreeNodeService {
       }
       jsonData["3"] = {
         x: n + x_start,
-        y: t+ y_start,
+        y: t + y_start,
         z: 0
       }
       jsonData["4"] = {
@@ -96,7 +101,7 @@ export class ThreeNodeService {
     this.drawLineDemension(jsonData["1"], len, member['Bt'], true, [1, 6, 8])
     this.drawLineDemension(jsonData["4"], this.getLength(jsonData["4"], jsonData["5"]), member['B'], true, [1, 6, 8], 2)
     this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
-    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false, [8, 11, 13], 9)
+    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false,member['shape']==1?[1, 4, 6]: [8, 11, 13], 9)
     //drawing node rebar1
     let rebar1 = this.dataNode['rebar1'];
     let rb_n1 = rebar1['rebar_n'];
@@ -171,7 +176,7 @@ export class ThreeNodeService {
       this.drawLineDemension(jsonData[`${checkNode+1}`], this.getLength(jsonData[`${checkNode+1}`], jsonData[`${checkNode+2}`]), rebar2['rebar_ss'], true, [1, 4, 5], 4)
       if(Math.ceil(rebar2['rebar_n']/rebar2['rebar_lines']) >=2)
         this.drawLineDemension({x: jsonData[`${checkNode+1}`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode+1}`], {x: jsonData[`${checkNode+1}`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}`]['y'], z: 0 }), rebar2['rebar_space'] , false, [1, 4, 5], 3)
-      this.drawLineDemension(jsonData[`${checkNode+1}`], this.getLength(jsonData["4"], jsonData[`${checkNode+1}`]) - 0.5, rebar2['rebar_cover'], false, [1, 4, 5], 3)
+      this.drawLineDemension(jsonData[`${checkNode+1}`], this.getLength(jsonData["4"], {y: jsonData[`${checkNode+1}`]['y'], x: jsonData["4"]['x'], z : 0}), rebar2['rebar_cover'], false, [1, 4, 5], 3)
       
       checkNode = startNode
     }
@@ -202,7 +207,7 @@ export class ThreeNodeService {
       if(checkNode < startNode){     
         this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], {x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar1['side_cover'], false, [8,10, 12], 8)
         this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode+1}_s`], jsonData[`${checkNode+2}_s`]), sidebar1['side_ss'] , false, [1, 7, 8],7)
-        this.drawLineDemension({x: jsonData["3"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }, this.getLength(jsonData["3"], {y: jsonData["3"]['y'], x: jsonData[`${checkNode + 1}_s`]['x'], z: 0 }), sidebar2['side_cover'] , true, [1, 4, 5])
+        this.drawLineDemension({x: jsonData["3"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }, this.getLength(jsonData["3"], {y: jsonData["3"]['y'], x: jsonData[`${checkNode + 1}_s`]['x'], z: 0 }), sidebar2['side_cover'] , true, [1, 3, 4])
       }
     } else {
       let sidebar = this.dataNode['sidebar'];
