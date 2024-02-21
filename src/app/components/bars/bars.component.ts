@@ -180,7 +180,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           const rowData = ui.rowData
           let index = ui.rowData.index;
           if(ui.rowIndx % 2 != 0){
-            const data_index = this.table_datas[0][ui.rowIndx - 1];
+            const data_index = this.table_datas[i][ui.rowIndx - 1];
             m_no = data_index.m_no;
             index = data_index.index
           }           
