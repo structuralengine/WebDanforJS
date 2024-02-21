@@ -465,6 +465,79 @@ export class InputBarsService {
       this.bar_list.push(b);
     }
   }
+  public setTableColumnsRebar(table_datas: any[]) {
+
+    this.bar_list = new Array();
+
+    for (let i = 0; i < table_datas.length; i += 2) {
+      const column1 = table_datas[i];
+      const column2 = table_datas[i + 1];
+      let ratio = 1;
+      if(column2.bh > 2500) ratio = column2.bh/2500
+      const b = this.default_bars(column1.index);
+      b.g_name = column1.g_name;
+      b.position = column1.position;
+      b.m_no = column1.m_no;
+      b.p_name = column1.p_name;
+      b.b = column1.bh;
+      b.h = column2.bh;
+      b.haunch_M = column1.haunch_height;
+      b.haunch_V = column2.haunch_height;
+
+      b.rebar1.title = column1.design_point_id;
+      b.rebar1.rebar_dia = column1.rebar_dia;
+      b.rebar1.rebar_n = column1.rebar_n;
+      b.rebar1.rebar_cover = column1.rebar_cover * ratio;
+      b.rebar1.rebar_lines = column1.rebar_lines;
+      b.rebar1.rebar_space = column1.rebar_space * ratio;
+      b.rebar1.rebar_ss = column1.rebar_ss * ratio;
+      b.rebar1.cos = column1.cos;
+      b.rebar1.enable = column1.enable;
+
+      b.rebar2.title = column2.design_point_id;
+      b.rebar2.rebar_dia = column2.rebar_dia;
+      b.rebar2.rebar_n = column2.rebar_n;
+      b.rebar2.rebar_cover = column2.rebar_cover;
+      b.rebar2.rebar_lines = column2.rebar_lines * ratio;
+      b.rebar2.rebar_space = column2.rebar_space * ratio;
+      b.rebar2.rebar_ss = column2.rebar_ss * ratio;
+      b.rebar2.cos = column2.cos;
+      b.rebar2.enable = column2.enable;
+
+      b.sidebar1.side_dia = column1.side_dia;
+      b.sidebar1.side_n = column1.side_n;
+      b.sidebar1.side_cover = column1.side_cover * ratio;
+      b.sidebar1.side_ss = column1.side_ss * ratio;
+
+      b.sidebar2.side_cover = column2.side_cover * ratio;
+
+      b.stirrup.stirrup_dia = column1.stirrup_dia;
+      b.stirrup.stirrup_n = column1.stirrup_n;
+      b.stirrup.stirrup_ss = column1.stirrup_ss;
+
+      b.bend.bending_dia = column1.bending_dia;
+      b.bend.bending_n = column1.bending_n;
+      b.bend.bending_ss = column1.bending_ss;
+      b.bend.bending_angle = column1.bending_angle;
+
+      b.tan = column1.tan;
+
+      for (const key1 of Object.keys(b)) {
+        const value1 = b[key1];
+        if (['rebar1', 'rebar2', 'sidebar1', 'sidebar2', 'stirrup', 'bend'].includes(key1)) {
+          for (const key2 of Object.keys(value1)) {
+            const value2 = value1[key2];
+            if (value2 == null) {
+              value1[key2] = null;
+            }
+          }
+        } else if (value1 == null) {
+          b[key1] = null;
+        }
+      }
+      this.bar_list.push(b);
+    }
+  }
 
   public setPickUpData() {
 

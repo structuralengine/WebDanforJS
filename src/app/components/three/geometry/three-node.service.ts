@@ -33,11 +33,15 @@ export class ThreeNodeService {
     let memBt = member['Bt'];
     let memB = member['B'];
     let memt = member['t']
+    let ratio = 1;
     if(member['shape'] !== 1){
-      if(memH > 2500) memH = 2500
-      if(member['Bt'] > 2000) memBt = memBt * (memH/2500);
-      memB = memB * (memH/2500);
-      memt = memt * (memH/2500);
+      if(memH > 2500){
+        ratio = memH/2500;
+        memH = 2500;
+      } 
+      if(member['Bt'] > 2000) memBt = memBt / ratio;
+      memB = memB / ratio;
+      memt = memt / ratio;
       scale = 50;
     }
    
@@ -112,20 +116,19 @@ export class ThreeNodeService {
         let r = 1;
         const numrow = Math.ceil(rb_n1/rb1_line) ;
         while (rb1_line > 0 && r <= numrow) {
-          const tt_len_rb1 = ((rb1_line - 1) * rebar1['rebar_ss']) / scale;
+          const tt_len_rb1 = ((rb1_line - 1) * rebar1['rebar_ss'] / ratio) / scale;
           let st_rb1 = (bt - tt_len_rb1) / 2;
-          if(tt_len_rb1 >= 0 && rb1_line > 1){
-            for (let i = 0; i < rb1_line; i++) {
-              startNode++;
-              jsonData[`${startNode}`] = {
-                x: st_rb1 + (rebar1['rebar_ss'] * i) / scale + x_start,
-                y: rebar1['rebar_cover'] / scale + y_start + (rebar1['rebar_space'] *(r-1))/scale,
-                z: 0
-              }
-              //if(tt_len_rb1 === 0)break;
-            }
-           
-          }
+          if(tt_len_rb1 <= 0 && rb1_line > 1) break;
+          for (let i = 0; i < rb1_line; i++) {
+            startNode++;
+            console.log(st_rb1 + (rebar1['rebar_ss'] / ratio * i) / scale + x_start);
+            jsonData[`${startNode}`] = {
+              x: st_rb1 + (rebar1['rebar_ss'] / ratio * i) / scale + x_start,
+              y: (rebar1['rebar_cover']/ ratio) / scale + y_start + (rebar1['rebar_space']/ ratio *(r-1))/scale,
+              z: 0
+            }           
+          }          
+          
           rb_n1 = rb_n1 - rb1_line;
           if(rb1_line > rb_n1)  rb1_line= rb_n1  
           r++;
@@ -155,14 +158,14 @@ export class ThreeNodeService {
         let r = 1;
         const numrow = Math.ceil(rb_n2/rb2_line) ;
         while (rb2_line > 0 && r <= numrow) {
-          const total_length = ((rb2_line - 1) * rebar2['rebar_ss']) / scale;
+          const total_length = ((rb2_line - 1)/ ratio * rebar2['rebar_ss']) / scale;
           let start_x = (b - total_length) / 2;
           if(total_length <= 0 && rb2_line > 1) break;
           for (let i = 0; i < rb2_line; i++) {
             startNode++;
             jsonData[`${startNode}`] = {
-              x: n + start_x + (rebar2['rebar_ss'] * (i)) / scale + x_start,
-              y: h - ((rebar2['rebar_cover'] / scale) + (rebar2['rebar_space'] *(r-1))/scale )+ y_start,
+              x: n + start_x + (rebar2['rebar_ss'] / ratio * (i)) / scale + x_start,
+              y: h - (( rebar2['rebar_cover']/ratio / scale) + (rebar2['rebar_space']/ ratio *(r-1))/scale )+ y_start,
               z: 0
             }
           }          
@@ -184,7 +187,7 @@ export class ThreeNodeService {
     var objectKey = Object.keys(this.dataNode);
     if (!objectKey.includes("sidebar")) {
       let sidebar2 = this.dataNode['sidebar2'];
-      const sb_cover_2 = sidebar2['side_cover'] / scale;
+      const sb_cover_2 = sidebar2['side_cover']/ratio / scale;
       let kc = n + sb_cover_2;
       let sidebar1 = this.dataNode['sidebar1'];
       const sb_n2 = sidebar1['side_n'];
@@ -193,12 +196,12 @@ export class ThreeNodeService {
           startNode++;
           jsonData[`${startNode}_s`] = {
             x: kc+ x_start,
-            y: (sidebar1['side_cover'] / scale) + i * (sidebar1['side_ss'] / scale)+ y_start,
+            y: ( sidebar1['side_cover']/ratio / scale) + i * (sidebar1['side_ss']/ratio / scale)+ y_start,
             z: 0
           }
           jsonData[`${startNode}_s1`] = {
             x: (n + b - sb_cover_2)+ x_start,
-            y: (sidebar1['side_cover'] / scale) + i * (sidebar1['side_ss'] / scale)+ y_start,
+            y: (sidebar1['side_cover']/ratio / scale) + i * ( sidebar1['side_ss']/ratio / scale)+ y_start,
             z: 0
           }
          
@@ -217,12 +220,12 @@ export class ThreeNodeService {
           startNode++;
           jsonData[`${startNode}_s`] = {
             x: n+ x_start,
-            y: (sidebar['side_cover'] / scale) + i * (sidebar['side_ss'] / scale)+ y_start,
+            y: (sidebar['side_cover']/ratio / scale) + i * (sidebar['side_ss']/ratio / scale)+ y_start,
             z: 0
           }
           jsonData[`${startNode}_s1`] = {
             x: (n + b)+ x_start,
-            y: (sidebar['side_cover'] / scale) + i * (sidebar['side_ss'] / scale)+ y_start,
+            y: (sidebar['side_cover']/ratio / scale) + i * (sidebar['side_ss']/ratio/ scale)+ y_start,
             z: 0
           }
           

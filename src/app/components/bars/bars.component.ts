@@ -161,10 +161,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               m_no = data_index.m_no;
               index = data_index.index
             } 
-            if(m_no != null && m_no != undefined){
-              for(let i = 0; i < this.table_datas.length; i++){
-                this.bars.setTableColumns(this.table_datas[i])
-              }           
+            if(m_no != null && m_no != undefined){            
+              this.bars.setTableColumns(this.table_datas[i])       
               let data = this.bars.getDataPreview(index);           
               this.threeNode.memNo = m_no;
               this.threeNode.dataNode = data;    
@@ -204,7 +202,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             this.threeNodeGuide.dataLower = this.table_datas[0][ui.rowIndx +1]
           }
           }
-          if(m_no != null && m_no != undefined){          
+          if(m_no != null && m_no != undefined){     
+            this.bars.setTableColumns(this.table_datas[i])       
             let data = this.bars.getDataPreview(index);           
               this.threeNode.memNo = m_no;
               this.threeNode.dataNode = data;
@@ -216,10 +215,10 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }            
                       
           }
-         if(this.bars.is_review){
-          this.removeScene()
-          this.threeNode.createDrawingLine()
-         }
+        //  if(this.bars.is_review){
+        //   this.removeScene()
+        //   this.threeNode.createDrawingLine()
+        //  }
         }
       };
       this.option_list.push(op);
