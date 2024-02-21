@@ -157,7 +157,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             let index = ui.updateList[0].rowData.index;
             let rowIndex =ui.updateList[0].rowIndx
             if(rowIndex% 2 != 0){
-              const data_index = this.table_datas[0][rowIndex - 1];
+              const data_index = this.table_datas[i][rowIndex - 1];
               m_no = data_index.m_no;
               index = data_index.index
             } 
@@ -169,9 +169,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                    
             }
             this.removeScene()
-
             this.threeNode.createDrawingLine()
-            //console.log(this.scene)
+           
           }
         }, 
         cellClick: (evt, ui) =>{         
@@ -195,11 +194,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           if(ui.colIndx ===12 ||ui.colIndx ===13||ui.colIndx ===14||ui.colIndx===15){
           this.threeNodeGuide.checkKey='lateral'
           if(ui.rowIndx % 2 != 0){     
-            this.threeNodeGuide.dataUpper=this.table_datas[0][ui.rowIndx - 1];
-            this.threeNodeGuide.dataLower= this.table_datas[0][ui.rowIndx];
+            this.threeNodeGuide.dataUpper=this.table_datas[i][ui.rowIndx - 1];
+            this.threeNodeGuide.dataLower= this.table_datas[i][ui.rowIndx];
           }else{
-            this.threeNodeGuide.dataUpper = this.table_datas[0][ui.rowIndx ];
-            this.threeNodeGuide.dataLower = this.table_datas[0][ui.rowIndx +1]
+            this.threeNodeGuide.dataUpper = this.table_datas[i][ui.rowIndx ];
+            this.threeNodeGuide.dataLower = this.table_datas[i][ui.rowIndx +1]
           }
           }
           if(m_no != null && m_no != undefined){     

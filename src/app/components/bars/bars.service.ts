@@ -464,6 +464,7 @@ export class InputBarsService {
       }
       this.bar_list.push(b);
     }
+    console.log(this.bar_list)
   }
   public setTableColumnsRebar(table_datas: any[]) {
 
