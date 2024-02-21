@@ -215,10 +215,10 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }            
                       
           }
-        //  if(this.bars.is_review){
-        //   this.removeScene()
-        //   this.threeNode.createDrawingLine()
-        //  }
+         if(this.bars.is_review){
+          this.removeScene()
+          this.threeNode.createDrawingLine()
+         }
         }
       };
       this.option_list.push(op);
