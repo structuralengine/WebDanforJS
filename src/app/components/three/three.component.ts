@@ -28,8 +28,8 @@ export class ThreeComponent implements OnInit {
     private nodeGuide: ThreeNodeGuideService
   ) {
     THREE.Object3D.DefaultUp.set(0, 0, 1);
-    this.node.geometry = new THREE.SphereBufferGeometry(0.5);
-    this.node.geometry1 = new THREE.SphereBufferGeometry(1);
+    // this.node.geometry = new THREE.SphereBufferGeometry(0.5);
+    // this.node.geometry1 = new THREE.SphereBufferGeometry(1);
     // this.geometryRebar = new THREE.SphereBufferGeometry(1);
     this.node.nodeList = new THREE.Object3D();
     // this.nodeListRebar = new THREE.Object3D();
