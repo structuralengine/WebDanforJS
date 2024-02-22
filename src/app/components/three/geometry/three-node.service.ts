@@ -10,6 +10,7 @@ export class ThreeNodeService {
   public dataNode: any[];
   public memNo: number;
   public geometry: THREE.SphereBufferGeometry;
+  public geometry1: THREE.SphereBufferGeometry;
   public nodeList: THREE.Object3D; 
   public jsonData: any
   constructor(   
@@ -322,7 +323,7 @@ export class ThreeNodeService {
     const jsonSide = this.changeDataSide() as [];
     for(let i=0; i< jsonSide.length;i++){    
        
-      const mesh1 = new THREE.Mesh(this.geometry,
+      const mesh1 = new THREE.Mesh(this.geometry1,
         new THREE.MeshBasicMaterial({ color: 0xfafafa }));
       mesh1.name = 'nodeSide' + i;
       mesh1.position.x = jsonSide[i]['x'];
