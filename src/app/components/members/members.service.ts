@@ -17,16 +17,16 @@ export class InputMembersService {
   // 部材情報
   private member_list: any[];
   private langs: string[] = ["en", "ja"];
-  private shape_names: any =
-    [
-      [],
-      ["1", 'RC-矩形'],
-      ["2", 'RC-T形'],
-      ["3", 'RC-円形'],
-      ["4", 'RC-小判']
-    ];
+  // private shape_names: any =
+  //   [
+  //     [],
+  //     ["1", 'RC-矩形'],
+  //     ["2", 'RC-T形'],
+  //     ["3", 'RC-円形'],
+  //     ["4", 'RC-小判']
+  //   ];
 
-    private shape_names_new: any =
+  private shape_names_new: any =
     [
       [],
       ["1", 'RC-矩形'],
@@ -49,17 +49,17 @@ export class InputMembersService {
 
     for (const lang of this.langs) {
       this.translate.getTranslation(lang).subscribe((obj) => {
-        this.shape_names[1].push(obj.members.rectangle.trim());
-        this.shape_names[2].push(obj.members.t_shape.trim());
-        this.shape_names[3].push(obj.members.r_shape.trim());
-        this.shape_names[4].push(obj.members.oval.trim());
+        // this.shape_names[1].push(obj.members.rectangle.trim());
+        // this.shape_names[2].push(obj.members.t_shape.trim());
+        // this.shape_names[3].push(obj.members.r_shape.trim());
+        // this.shape_names[4].push(obj.members.oval.trim());
 
-        this.lang_shape_names[lang] = [];
-        this.lang_shape_names[lang].push("");
-        this.lang_shape_names[lang].push(obj.members.rectangle.trim());
-        this.lang_shape_names[lang].push(obj.members.t_shape.trim());
-        this.lang_shape_names[lang].push(obj.members.r_shape.trim());
-        this.lang_shape_names[lang].push(obj.members.oval.trim());
+        // this.lang_shape_names[lang] = [];
+        // this.lang_shape_names[lang].push("");
+        // this.lang_shape_names[lang].push(obj.members.rectangle.trim());
+        // this.lang_shape_names[lang].push(obj.members.t_shape.trim());
+        // this.lang_shape_names[lang].push(obj.members.r_shape.trim());
+        // this.lang_shape_names[lang].push(obj.members.oval.trim());
 
 
         //new
@@ -263,34 +263,53 @@ export class InputMembersService {
   }
 
   //new version: New shapes are displayed but the data is still saved as before
-  public getShapeDispFromMember(member: any) {
-    console.log(this.lang_shape_names_new, "shape");
-    
+  public getShapeDispFromMember(member: any, keyShapeId?: number) {
     if (this.lang_shape_names_new.length <= member.shape)
       return 0;
-    switch (Number(member.shape)) {
-      case 1:
-      case 2:
-        return this.lang_shape_names_new[this.translate.currentLang][member.shape];
-      case 3:
-        //(Shape of wdj is "3" and both B and H have values in them.) -  ring
-        if(member.H != null && member.B != null) 
-          return this.lang_shape_names_new[this.translate.currentLang][4];
-        
-        //(Shape of wdj is "3" and only one of B and H has a value.) - circle
-        else
-          return this.lang_shape_names_new[this.translate.currentLang][3];
-      case 4:
-        //(Shape of wdj is “4“ and H > B.) - Vertical Oval
-        if (Number(member.H) > Number(member.B))
-          return this.lang_shape_names_new[this.translate.currentLang][6];
 
-        //(Shape of wdj is “4“ and B > H.)
-        else
-          return this.lang_shape_names_new[this.translate.currentLang][5];
-      default:
-        return "";
-    };
+    //check if user enter new_shapeId : keyShapeId. If not, it will be read from the file
+    if(!keyShapeId)
+    {
+      switch (Number(member.shape)) {
+        case 1:
+        case 2:
+          return this.lang_shape_names_new[this.translate.currentLang][member.shape];
+        case 3:
+          //(Shape of wdj is "3" and both B and H have values in them.) -  ring
+          if (member.H != null && member.B != null)
+            return this.lang_shape_names_new[this.translate.currentLang][4];
+
+          //(Shape of wdj is "3" and only one of B and H has a value.) - circle
+          else
+            return this.lang_shape_names_new[this.translate.currentLang][3];
+        case 4:
+          //(Shape of wdj is “4“ and H > B.) - Vertical Oval
+          if (Number(member.H) > Number(member.B))
+            return this.lang_shape_names_new[this.translate.currentLang][6];
+
+          //(Shape of wdj is “4“ and B > H.)
+          else
+            return this.lang_shape_names_new[this.translate.currentLang][5];
+        default:
+          return "";
+      };
+    }
+    else
+      return this.lang_shape_names_new[this.translate.currentLang][keyShapeId];
+  }
+
+  // get new shapeId from input user
+  public shapeIdFromKey(key: string): number {
+    if (key === undefined || key === null)
+      return 0;
+    if (typeof key != 'string')
+      key = String(key);
+    let key_ = key.trim();
+    for (let shape_id = 1; 6 >= shape_id; shape_id++) {
+      if (-1 != this.shape_names_new[shape_id].indexOf(key_))
+       return shape_id;
+    }
+    return 0;
   }
 
   // 入力された文字列から形状IDを返す
@@ -300,26 +319,20 @@ export class InputMembersService {
     if (typeof key != 'string')
       key = String(key);
     let key_ = key.trim();
-    for (let shape_id = 1; 6 >= shape_id; shape_id++) {
-      //if (-1 != this.shape_names[shape_id].indexOf(key_))
-      //  return shape_id;
 
-      const index =  this.shape_names_new[shape_id].indexOf(key_);
-      if(index != -1)
-      {
-        switch (shape_id) {
-          case 1:
-          case 2:
-            return shape_id;
-          case 3:
-          case 4:
-            return 3; //3: Round - Circle
-          case 5:
-          case 6:
-            return 4; //4: Oval
-        };
-      }
-    }
+    //get new_shapeId and check to return old_shapeId
+    const shape_id = this.shapeIdFromKey(key_);
+    switch (shape_id) {
+      case 1:
+      case 2:
+        return shape_id;
+      case 3:
+      case 4:
+        return 3; //3: Round - Circle
+      case 5:
+      case 6:
+        return 4; //4: Oval
+    };
     return 0;
   }
 

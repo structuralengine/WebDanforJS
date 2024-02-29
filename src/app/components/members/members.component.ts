@@ -145,8 +145,15 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
               //   = this.members.getShapeDispFromShapeID(this.members.getShapeIDFromUserInput(value));
 
               let rowData = this.table_datas[row];
+
+              //Set old value shape to member
               rowData.shape = this.members.getShapeIDFromUserInput(value)
-              this.table_datas[row].shape = this.members.getShapeDispFromMember(rowData);
+
+              //get id new shape
+              const keyShapeIdNew = this.members.shapeIdFromKey(value);
+
+              //display new shape
+              this.table_datas[row].shape = this.members.getShapeDispFromMember(rowData, keyShapeIdNew);
             }
           }
         }
