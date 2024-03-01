@@ -3,6 +3,7 @@ import {Notes} from '../sticky/sticky.model';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { SaveDataService } from "src/app/providers/save-data.service";
 import { StickyService  } from './sticky.service';
+import { MenuService } from '../menu/menu.service';
 // import { NgForm } from '@angular/forms';
 
 @Component({
@@ -24,30 +25,30 @@ export class StickyComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private save: SaveDataService,
-    private stickynote: StickyService 
+    private stickynote: StickyService ,
+    private menuService: MenuService,
   ) { }
 
   ngOnInit() {
-    this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
-      this.saveData();
-      // this.onInitData();
-    });
     // this.onInitData();
+
+    if (this.menuService.saveSticky && this.menuService.saveSticky.length > 0) {
+      this.title = this.menuService.saveSticky[this.index].title;
+      this.description = this.menuService.saveSticky[this.index].description;
+    }
   }
   public saveData(): void {
-    // const a = [];
-    // console.log(this.note_datas, "note_datas");
-    // for (const g of this.note_datas) {
-    //   for (const e of g) {
-    //     a.push(e);
-    //   }
-    // }
-    // this.saveNotes.saveData(this.note_datas);
+    
   }
   onRemoveNote(){
     this.removeNote.emit(this.index);
   }
+  minimized:boolean = false;
 
+  //hiding info box
+  onMinimizeNote(){
+    this.minimized = !this.minimized;
+  }
   addNote(){
     // Generate a unique ID for the new note
     const id = this.generateUniqueId();
@@ -60,7 +61,6 @@ export class StickyComponent implements OnInit {
   }
 
   addTitle(){
-
   }
   addDes(){
     

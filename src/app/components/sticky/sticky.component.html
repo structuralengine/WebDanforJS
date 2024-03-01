@@ -3,44 +3,58 @@
   (endOffset)="dragEnd($event)"
   (zIndexMoving)="set($event)"
   ngDraggable
+  [ngClass]="{ note: !minimized, translucent: minimized }"
 >
-  <img
-    style="cursor: pointer"
-    src="https://cdn1.iconfinder.com/data/icons/graphical-user-interface-cursors-fill/80/z-33-512.png"
-    alt=""
-    class="drag"
-  />
+  <div *ngIf="!minimized; else circle">
+    <img
+      style="cursor: pointer"
+      src="https://cdn1.iconfinder.com/data/icons/graphical-user-interface-cursors-fill/80/z-33-512.png"
+      alt=""
+      class="drag"
+    />
 
-  <input
-    type="text"
-    id="textbox"
-    size="7px"
-    placeholder="--- Title ---"
-    maxlength="10"
-    [(ngModel)]="title"
-    (input)="addTitle()"
-  />
+    <input
+      type="text"
+      id="textbox"
+      size="7px"
+      placeholder="--- Title ---"
+      maxlength="10"
+      [(ngModel)]="title"
+      (input)="addTitle()"
+    />
+    <img
+      style="cursor: pointer"
+      src="https://cdn3.iconfinder.com/data/icons/feather-5/24/minus-512.png"
+      class="minimize"
+      (click)="onMinimizeNote()"
+    />
+    <img
+      style="cursor: pointer"
+      src="https://cdn3.iconfinder.com/data/icons/streamline-icon-set-free-pack/48/Streamline-70-512.png"
+      class="delete"
+      (click)="onRemoveNote()"
+    />
 
-  <img
-    style="cursor: pointer"
-    src="https://cdn3.iconfinder.com/data/icons/streamline-icon-set-free-pack/48/Streamline-70-512.png"
-    class="delete"
-    (click)="onRemoveNote()"
-  />
+    <img
+      style="cursor: pointer"
+      src="https://cdn3.iconfinder.com/data/icons/streamline-icon-set-free-pack/48/Streamline-22-512.png"
+      class="add"
+      (click)="addNote()"
+    />
 
-  <img
-    style="cursor: pointer"
-    src="https://cdn3.iconfinder.com/data/icons/streamline-icon-set-free-pack/48/Streamline-22-512.png"
-    class="add"
-    (click)="addNote()"
-  />
-
-  <textarea
-    type="text"
-    id="description"
-    placeholder="Write here..."
-    rows="4"
-    [(ngModel)]="description"
-    (input)="addDes()"
-  ></textarea>
+    <textarea
+      type="text"
+      id="description"
+      placeholder="Write here..."
+      rows="4"
+      [(ngModel)]="description"
+      (input)="addDes()"
+    ></textarea>
+  </div>
+  <ng-template #circle>
+    <div class="circle" (click)="onMinimizeNote()">
+      <div class="circle-border"></div>
+      <div class="triangle"></div>
+    </div>
+  </ng-template>
 </div>

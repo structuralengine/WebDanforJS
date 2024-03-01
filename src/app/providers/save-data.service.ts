@@ -390,11 +390,11 @@ export class SaveDataService {
     } else {
       this.calc.clear();
     }
-    // if ("notes" in jsonData) {
-    //   this.notes.setSaveData(jsonData.notes);
-    // } else {
-    //   this.notes.clear();
-    // }
+    if ("notes" in jsonData) {
+      this.notes.getData(jsonData.notes);
+    } else {
+      this.notes.clear();
+    }
     this.updateOldData(jsonData);
   }
 

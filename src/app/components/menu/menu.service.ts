@@ -6,13 +6,14 @@ import { InputDesignPointsService } from "../design-points/design-points.service
   providedIn: "root",
 })
 export class MenuService {
-
+  public saveSticky ; 
   public selectedRoad: boolean = false;
 
   // 部材情報
   constructor() {
 
   }
+  
   selectApply(i:number){
     this.selectedRoad = false;
     if(i === 2) this.selectedRoad = true;

@@ -37,6 +37,7 @@ import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
 import { Notes } from "../sticky/sticky.model";
+import { StickyService  } from '../sticky/sticky.service';
 @Component({
   selector: "app-menu",
   templateUrl: "./menu.component.html",
@@ -103,7 +104,8 @@ export class MenuComponent implements OnInit {
     private translate: TranslateService,
     private elementRef: ElementRef,
     private readonly keycloak: KeycloakService,
-    private multiWindowService: MultiWindowService
+    private multiWindowService: MultiWindowService,
+    private stickynote: StickyService 
   ) {
     // this.auth = getAuth();
     this.fileName = "";
@@ -119,6 +121,9 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    this.stickynote.dataEvent.subscribe((data) => {
+      this.onAddNote(data)
+    });
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -163,6 +168,7 @@ export class MenuComponent implements OnInit {
     this.service_life);
   }
   addNote(note:Notes){
+
     this.notes.push(note);
  }
  
@@ -174,17 +180,25 @@ export class MenuComponent implements OnInit {
    this.notes.splice(index,1);
  }
  
- onAddNote(noteData:{title:string,description:string}){
-   this.notes.push({
-     title: noteData.title,
-     description: noteData.description,
-     top: 0,
-     left: 0
-   });
- 
-  //  console.log(noteData.title,noteData.description,"value");
- }
-
+//  onAddNote(noteData:{title:string,description:string}){
+//    this.notes.push({
+//      title: noteData.title,
+//      description: noteData.description,
+//      top: 0,
+//      left: 0
+//    });
+//  }
+onAddNote(noteDataArray) {
+  noteDataArray.map(noteData => {
+      this.notes.push({
+          title: noteData.title,
+          description: noteData.description,
+          top: 0,
+          left: 0
+      });
+  });
+  this.menuService.saveSticky = this.notes
+}
   public setDefaultOpenControl() {
     const controlBtnElement = this.elementRef.nativeElement.querySelector(
       ".control-btn"
