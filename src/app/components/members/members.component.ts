@@ -141,10 +141,20 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
               const row = property.rowIndx;
               if (value === null) { continue; }         // 初期値は対象にしない
 
-              this.table_datas[row].shape
-                = this.members.getShapeDispFromShapeID(this.members.getShapeIDFromUserInput(value));
-            }
+              //this.table_datas[row].shape
+              //   = this.members.getShapeDispFromShapeID(this.members.getShapeIDFromUserInput(value));
 
+              let rowData = this.table_datas[row];
+
+              //Set old value shape to member
+              rowData.shape = this.members.getShapeIDFromUserInput(value)
+
+              //get id new shape
+              const keyShapeIdNew = this.members.shapeIdFromKey(value);
+
+              //display new shape
+              this.table_datas[row].shape = this.members.getShapeDispFromMember(rowData, keyShapeIdNew);
+            }
           }
         }
 
@@ -176,12 +186,15 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       // ピックアップファイルを使う場合
       this.table_datas = this.members.getSaveData();
-
       for (let row of this.table_datas)
-       if(typeof(row.shape) === 'number')
-        row.shape = this.members.getShapeDispFromShapeID(Number(row.shape)); 
-       else
-        row.shape = this.members.getShapeDispFromShapeID(this.members.getShapeIDFromUserInput(row.shape));
+      {
+        // if(typeof(row.shape) === 'number')
+        //   row.shape = this.members.getShapeDispFromShapeID(Number(row.shape)); 
+        // else
+        //   row.shape = this.members.getShapeDispFromShapeID(this.members.getShapeIDFromUserInput(row.shape));
+
+        row.shape = this.members.getShapeDispFromMember(row); 
+      }
     }
 
     // データを登録する
