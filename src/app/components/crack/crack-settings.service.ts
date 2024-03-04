@@ -10,7 +10,7 @@ export class InputCrackSettingsService {
 
   // 部材情報
   public crack_list: any[];
-
+  public wlimit: any;
   constructor(
     private helper: DataHelperModule,
     private points: InputDesignPointsService) {
@@ -18,6 +18,7 @@ export class InputCrackSettingsService {
   }
   public clear(): void {
     this.crack_list = new Array();
+    this.wlimit = null;
   }
 
   // ひび割れ情報
@@ -151,13 +152,22 @@ export class InputCrackSettingsService {
 
   }
 
-  public getSaveData(): any[] {
-    return this.crack_list;
+  public getSaveData(): any {
+    return {
+      wlimit: this.wlimit,
+      crack_list: this.crack_list      
+    };
   }
 
   public setSaveData(crack: any) {
     ////////// 情報追加による調整コード //////////
-    for (const value of crack) {
+    let crack_data = crack
+    const keys = Object.keys(crack);
+    if(keys.includes('wlimit')){
+      crack_data = crack['crack_list'];
+      this.wlimit = crack['wlimit']
+    }
+    for (const value of crack_data) {
       if (value.ecsd_u == null && value.ecsd_l == null) {
         if (value.ecsd !== null) {
           value['ecsd_u'] = value.ecsd;
@@ -182,11 +192,14 @@ export class InputCrackSettingsService {
       }
     }
     //////////          //////////
-    this.crack_list = crack;
+    this.crack_list = crack_data;
+    
   }
 
   public getGroupeName(i: number): string {
     return this.points.getGroupeName(i);
   }
-
+  public changeW(w: number){
+    this.wlimit = w;
+  }
 }

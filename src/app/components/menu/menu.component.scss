@@ -475,9 +475,17 @@ p {
     border: none;
     height: 28px;
     outline: none;
-    width: 60%;
+    width: 60%;     
+    
 }
-
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}    
+input[type=number] {
+    -moz-appearance: textfield;
+}
 .jA-jB {
     gap: 21px;
     font-weight: 700;

@@ -36,6 +36,7 @@ import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
+import { InputCrackSettingsService } from "../crack/crack-settings.service";
 
 @Component({
   selector: "app-menu",
@@ -52,7 +53,7 @@ export class MenuComponent implements OnInit {
   public train_A_count: number;
   public train_B_count: number;
   public service_life: number;
-
+  public wlimit: number;
 
   @ViewChild('grid1') grid1: SheetComponent;
   private table1_datas: any[] = [];
@@ -103,7 +104,8 @@ export class MenuComponent implements OnInit {
     private translate: TranslateService,
     private elementRef: ElementRef,
     private readonly keycloak: KeycloakService,
-    private multiWindowService: MultiWindowService
+    private multiWindowService: MultiWindowService,
+    private crack: InputCrackSettingsService
   ) {
     // this.auth = getAuth();
     this.fileName = "";
@@ -491,6 +493,8 @@ export class MenuComponent implements OnInit {
     this.train_A_count = fatigues.train_A_count;
     this.train_B_count = fatigues.train_B_count;
     this.service_life = fatigues.service_life;
+    
+    this.wlimit = this.crack.wlimit;   
   }
 
   ngOnDestroy() {
@@ -529,5 +533,8 @@ export class MenuComponent implements OnInit {
     const elementChat = document.getElementById("chatplusheader");
     console.log("elementChat",elementChat)
     elementChat.click()
+  }
+  changeW(){
+    this.crack.changeW(this.wlimit)
   }
 }
