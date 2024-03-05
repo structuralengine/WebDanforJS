@@ -53,7 +53,7 @@ export class MenuComponent implements OnInit {
   public train_A_count: number;
   public train_B_count: number;
   public service_life: number;
-  public wlimit: number;
+  public wlimit: number = 0.3;
 
   @ViewChild('grid1') grid1: SheetComponent;
   private table1_datas: any[] = [];

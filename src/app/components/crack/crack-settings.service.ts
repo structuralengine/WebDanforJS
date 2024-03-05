@@ -10,7 +10,7 @@ export class InputCrackSettingsService {
 
   // 部材情報
   public crack_list: any[];
-  public wlimit: any;
+  public wlimit: any = 0.3;
   constructor(
     private helper: DataHelperModule,
     private points: InputDesignPointsService) {
@@ -18,7 +18,7 @@ export class InputCrackSettingsService {
   }
   public clear(): void {
     this.crack_list = new Array();
-    this.wlimit = null;
+    this.wlimit = 0.3;
   }
 
   // ひび割れ情報

@@ -16,7 +16,8 @@
         "open":"Please open",
         "acceptedFile":"Please choose pik or csv file format",
         "NewWindow":"New window",
-        "contact":"Contact"
+        "contact":"Contact",
+        "crack_limit": "Exterior Crack Limit"
     },
     "login-dialog":{
         "createAccount":"Creat account",
