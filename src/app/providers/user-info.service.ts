@@ -3,7 +3,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { ElectronService } from './electron.service';
 import { nanoid } from 'nanoid';
 import axios from 'axios';
-// import { Firestore, collection, doc, getDocs, getFirestore, onSnapshot } from '@angular/fire/firestore';
+import { Firestore, collection, doc, getDocs, getFirestore, onSnapshot } from '@angular/fire/firestore';
 
 const APP = 'WebDan';
 const USER_PROFILE = 'userProfile';
@@ -31,9 +31,9 @@ export class UserInfoService {
   constructor(
     public electronService: ElectronService,
     private readonly keycloak: KeycloakService,
-    // private db: Firestore,
+    private db: Firestore,
   ) {
-    // this.db = getFirestore();
+    this.db = getFirestore();
     const clientId = window.sessionStorage.getItem(CLIENT_ID);
     if (clientId) {
       this.clientId = clientId;
@@ -74,9 +74,9 @@ export class UserInfoService {
     window.localStorage.setItem(USER_PROFILE, JSON.stringify(userProfile));
     if (this.userProfile) {
       this.setActiveSession();
-      // onSnapshot(doc(this.db, "sessions", this.userProfile.uid, "active_sessions", APP), (doc) => {
-      //   this.activeSession = doc.data().session_id;
-      // });
+      onSnapshot(doc(this.db, "sessions", this.userProfile.uid, "active_sessions", APP), (doc) => {
+        this.activeSession = doc.data().session_id;
+      });
     } else {
       this.activeSession = null;
     }
