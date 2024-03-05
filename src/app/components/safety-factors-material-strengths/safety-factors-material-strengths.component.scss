@@ -18,7 +18,8 @@ h5 {
 .tabContent {
   padding: 15px;
   background: var(--base-900);
-
+  overflow: auto;
+  height: 94%;
   .tab-inner {
     padding-top: 16px;
   }
