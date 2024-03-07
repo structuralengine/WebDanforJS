@@ -1,3 +1,5 @@
+import { forEach } from 'jszip';
+import { filter } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, ViewChild, OnChanges } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { InputCalclationPrintService } from './calculation-print.service';
@@ -270,6 +272,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     //  });
   }
   pdfSummary() {
+    
     const user = this.user.userProfile;
     if (!user) {
       this.helper.alert(this.translate.instant("calculation-print.p_login"));
@@ -284,6 +287,18 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
 
     this.saveData();
     var ui_data: any = this.save.getInputJson();
+    let barSelected : any[] = [];
+
+    ui_data["bar"].forEach((item : any) => {
+      for(const key of ['rebar1', 'rebar2']){
+        const d = item[key];
+          if(d["enable"] === true){
+            barSelected.push(item);
+            break;
+          }
+      }
+    });
+    ui_data["bar"] = barSelected;
     ui_data["lang"] = this.language.browserLang;
     ui_data["uid"] = user.uid;
 
