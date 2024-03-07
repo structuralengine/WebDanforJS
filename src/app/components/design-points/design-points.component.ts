@@ -94,15 +94,19 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
                 const target = this.table_datas[i][property.rowIndx];
                 if (key === "isMyCalc") {
                   target["isMzCalc"] = false;
+                  target["isVyCalc"] = false;
                 }
                 if (key === "isMzCalc") {
                   target["isMyCalc"] = false;
+                  target["isVzCalc"] = false;
                 }
                 if (key === "isVyCalc") {
                   target["isVzCalc"] = false;
+                  target["isMyCalc"] = false;
                 }
                 if (key === "isVzCalc") {
                   target["isVyCalc"] = false;
+                  target["isMzCalc"] = false;
                 }
               }
             }
