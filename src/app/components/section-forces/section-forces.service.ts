@@ -346,7 +346,8 @@ export class InputSectionForcesService {
 
   // ファイル
   public setTableColumns(table_datas: any[]) {
-    this.clear();
+    // this.clear();
+    this.force = new Array();
     for (const data of table_datas) {
       const new_colum = this.default_column(data.index);
       let flg = false;
@@ -380,5 +381,8 @@ export class InputSectionForcesService {
 
   public setCelCols(toggleStatus: any){
      this.toggleStatus = toggleStatus;
+  }
+  public getToggleStatus(){
+    return this.toggleStatus
   }
 }

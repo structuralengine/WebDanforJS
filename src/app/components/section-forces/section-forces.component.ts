@@ -90,7 +90,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       this.setKeyGroupsRoad()
     }
     this.initTable ();
-
+    
     // let currentLang = this.translate.currentLang;
     // switch (currentLang) {
     //   case "en": {
@@ -226,9 +226,15 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     {
       this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
     }
-    for (const group of this.bendingColGroupKeys) {
-      this.toggleStatus[group] = true;
+    const toggleStatusService:any = this.force.getToggleStatus();
+    if(Object.keys(toggleStatusService).length>0){
+      this.toggleStatus = toggleStatusService
+    }else{
+      for (const group of this.bendingColGroupKeys) {
+        this.toggleStatus[group] = true;
+      }
     }
+    
 
     // データを登録する
     this.ROWS_COUNT = this.rowsCount();
@@ -302,6 +308,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       rowIndx: 0,
       colIndx: 0,
     });
+    this.activePageChenge(0)
   }
 
   private setKeyGroupsRoad(){
@@ -450,6 +457,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         this.options.colModel = this.columnHeaders1;
       }
     }
+    this.saveDataCol();
     this.grid.refreshDataAndView();
     this.grid.setColsShow();
   }
@@ -492,7 +500,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
   public saveData(): void {
     this.force.setTableColumns(this.table_datas);
-
+    
   }
 
   public saveDataCol() {
