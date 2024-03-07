@@ -57,7 +57,7 @@ export class InputDesignPointsService {
         }
         if (key === "isMzCalc"&& tmp[key] === true) {
           tmp["isMyCalc"] = false;
-          tmp["isVzCalc"] = true;
+          tmp["isVzCalc"] = false;
         }
         if (key === "isVyCalc"&& tmp[key] === true) {
           tmp["isVzCalc"] = false;
