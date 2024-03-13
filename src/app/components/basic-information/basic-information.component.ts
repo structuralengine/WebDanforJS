@@ -207,7 +207,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
         ]
       },
     };
-
+    
     this.options3 = {
       height: 340,
       showTop: false,
@@ -217,7 +217,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       numberCell: { show: true }, // 行番号
       colModel: this.menuService.selectedRoad ? this.columnHeaderDisableds : this.columnHeaders,
       dataModel: { data: this.table3_datas },
-      editable:false,
+      editable:this.menuService.selectedRoad ? false : true,
       contextMenu: {
         on: true,
         items: [
