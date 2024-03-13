@@ -37,7 +37,7 @@ export class InputSectionForcesService {
       pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
     }
     else
-      pushIds = [0, 2, 5, 6, 7, 8];
+      pushIds = [0, 3, 5, 6, 7, 8];
     return this.createColumnHeaders(
       pickup_moment,
       pushIds,
@@ -150,15 +150,33 @@ export class InputSectionForcesService {
         //If it cannot be translated, it will still return itself
         // const [mainTitle, subTitle] = data.title.split(" ");
         const [mainTitle, subTitle] = this.translate.instant(data.title).split(" ");
+        let title:string=subTitle;
+        if(keyPrefix==="Md"){
+          switch(this.translate.instant(data.title)){
+            case"Durability and Usability For studying edge stress":
+            title="Studying edge stress"
+            break;
+            case"Durability and Usability Permanent action":
+            title="Permanent action"
+            break;
+            case"耐久性 使用性 縁応力度検討用":
+            title="縁応力度検討用"
+            break;
+            case"耐久性 使用性 永久作用":
+            title="永久作用"
+            break;
+            default:
+            break;
+          }
+        }
         if (pushIds.includes(data.id)) {
           if (currentHead) {
             result.push(currentHead);
           }
           currentHead = this.createNewHeader(mainTitle);
         }
-  
         const key = keyPrefix + data.id;
-        currentHead.colModel.push(this.createSubColumn(subTitle, key, keyPrefix));
+        currentHead.colModel.push(this.createSubColumn(title, key, keyPrefix));
       }
     }
 

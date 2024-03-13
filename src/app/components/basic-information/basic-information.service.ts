@@ -142,11 +142,11 @@ export class InputBasicInformationService {
             title: this.translate.instant("basic-information.pl_d"),
             no: null,
           },
-          {
-            id: 2,
-            title: this.translate.instant("basic-information.safe_limit"),
-            no: null,
-          },
+          // {
+          //   id: 2,
+          //   title: this.translate.instant("basic-information.safe_limit"),
+          //   no: null,
+          // },
           {
             id: 3,
             title: this.translate.instant("basic-information.safe_pa"),
