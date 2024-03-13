@@ -90,6 +90,129 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       this.setKeyGroupsRoad()
     }
     this.initTable ();
+    
+    // let currentLang = this.translate.currentLang;
+    // switch (currentLang) {
+    //   case "en": {
+    //     this.imgLink = "assets/img/basic-information/en.png";
+    //     break;
+    //   }
+    //   case "ja": {
+    //     this.imgLink = "assets/img/basic-information/jp.png";
+    //     break;
+    //   }
+    //   default: {
+    //   }
+    // }
+    // this.translate.onDefaultLangChange.subscribe((event: LangChangeEvent) => {
+    //   switch (event.lang) {
+    //     case "en": {
+    //       this.imgLink = "assets/img/basic-information/en.png";
+    //       break;
+    //     }
+    //     case "ja": {
+    //       this.imgLink = "assets/img/basic-information/jp.png";
+    //       break;
+    //     }
+    //     default: {
+    //     }
+    //   }
+    // });
+    // this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
+    //   switch (event.lang) {
+    //     case "en": {
+    //       this.imgLink = "assets/img/basic-information/en.png";
+    //       break;
+    //     }
+    //     case "ja": {
+    //       this.imgLink = "assets/img/basic-information/jp.png";
+    //       break;
+    //     }
+    //     default: {
+    //     }
+    //   }
+    // });
+    // //this.setColGroupsAndKeys(0);
+    // if (JSON.stringify(this.force.toggleStatus) != '{}') {
+    //   this.toggleStatus = this.force.toggleStatus;
+    //   this.currentColGroupKeys = Object.keys(this.force.toggleStatus);      
+    // } else {
+    //   this.currentColGroups = this.bendingColGroups;
+    //   this.currentColGroupKeys = Object.keys(this.currentColGroups);
+    //   for (const group of this.currentColGroupKeys) {
+    //     this.toggleStatus[group] = true;
+    //   }
+    // }
+
+    // this.setColGroupsAndKeys(0);
+    // this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
+    // for (const group of this.bendingColGroupKeys) {
+    //   this.toggleStatus[group] = true;
+    // }
+
+    // // データを登録する
+    // this.ROWS_COUNT = this.rowsCount();
+    // this.loadData(this.ROWS_COUNT);
+
+    // this.columnHeaders1 = this.force.getColumnHeaders1();
+    // this.columnHeaders2 = this.force.getColumnHeaders2();
+    // this.columnHeaders3 = this.force.getColumnHeaders3();
+
+    // // グリッドの初期化 --------------------------------------
+    // this.options = {
+    //   showTop: false,
+    //   reactive: true,
+    //   sortable: false,
+    //   locale: 'jp',
+    //   height: this.tableHeight().toString(),
+    //   numberCell: { show: true }, // 行番号
+    //   colModel: this.columnHeaders1,
+    //   dataModel: { data: this.table_datas },
+    //   freezeCols: 1,
+    //   contextMenu: {
+    //     on: true,
+    //     items: [
+    //       {
+    //         name: this.translate.instant("action_key.copy"),
+    //         shortcut: 'Ctrl + C',
+    //         action: function (evt, ui, item) {
+    //           this.copy();
+    //         }
+    //       },
+    //       {
+    //         name: this.translate.instant("action_key.paste"),
+    //         shortcut: 'Ctrl + V',
+    //         action: function (evt, ui, item) {
+    //           this.paste();
+    //         }
+    //       },
+    //       {
+    //         name: this.translate.instant("action_key.cut"),
+    //         shortcut: 'Ctrl + X',
+    //         action: function (evt, ui, item) {
+    //           this.cut();
+    //         }
+    //       },
+    //       {
+    //         name: this.translate.instant("action_key.undo"),
+    //         shortcut: 'Ctrl + Z',
+    //         action: function (evt, ui, item) {
+    //           this.History().undo();
+    //         }
+    //       }
+    //     ]
+    //   },
+    //   beforeTableView: (evt, ui) => {
+    //     const dataV = this.table_datas.length;
+    //     if (ui.initV == null) {
+    //       return;
+    //     }
+    //     if (ui.finalV >= dataV - 1) {
+    //       this.loadData(dataV + this.ROWS_COUNT);
+    //       this.grid.refreshDataAndView();
+    //     }
+    //   },
+    // };
   }
 
   initTable () {
@@ -103,9 +226,15 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     {
       this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
     }
-    for (const group of this.bendingColGroupKeys) {
-      this.toggleStatus[group] = true;
+    const toggleStatusService:any = this.force.getToggleStatus();
+    if(Object.keys(toggleStatusService).length>0){
+      this.toggleStatus = toggleStatusService
+    }else{
+      for (const group of this.bendingColGroupKeys) {
+        this.toggleStatus[group] = true;
+      }
     }
+    
 
     // データを登録する
     this.ROWS_COUNT = this.rowsCount();
@@ -179,6 +308,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       rowIndx: 0,
       colIndx: 0,
     });
+    this.activePageChenge(0)
   }
 
   private setKeyGroupsRoad(){
@@ -327,6 +457,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         this.options.colModel = this.columnHeaders1;
       }
     }
+    this.saveDataCol();
     this.grid.refreshDataAndView();
     this.grid.setColsShow();
   }
@@ -369,7 +500,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
   public saveData(): void {
     this.force.setTableColumns(this.table_datas);
-
+    
   }
 
   public saveDataCol() {

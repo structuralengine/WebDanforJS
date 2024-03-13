@@ -30,7 +30,8 @@
     </div>
   </div>
   <div class="tab-inner">
-    <div class="item-container" [ngClass]="{'hide': activeTab !== 'rsb_con'}">
+    {{activeTab}}
+    <div class="item-container" *ngIf="activeTab === 'rsb_con'" [ngClass]="{'hide': activeTab !== 'rsb_con'}">
       <div class="safety-factors">
         <h5 translate>safety-factors-material-strengths.safe</h5>
         <div class="table-container">
@@ -50,7 +51,7 @@
       </div>
     </div>
 
-    <div class="item-container" [ngClass]="{'hide': activeTab !== 'steel'}">
+    <div class="item-container" *ngIf="activeTab === 'steel'" [ngClass]="{'hide': activeTab !== 'steel'}">
       <div class="safety-factors">
         <h5 translate>safety-factors-material-strengths.safe</h5>
         <div class="table-container">
@@ -66,7 +67,7 @@
       </div>
     </div>
 
-    <div class="item-container" [ngClass]="{'hide': activeTab !== 'pile'}">
+    <div class="item-container" *ngIf="activeTab === 'pile'"  [ngClass]="{'hide': activeTab !== 'pile'}">
       <div class="pile-factors">
         <h5 translate>safety-factors-material-strengths.pile</h5>
         <table>

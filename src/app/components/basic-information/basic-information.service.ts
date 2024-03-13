@@ -883,16 +883,7 @@ export class InputBasicInformationService {
 
     // this.conditions_list = basic.conditions_list;
     const conditions = basic.conditions_list;
-
-    //find jr001 and set true
-    conditions.map((item) => {
-      if (item.id.toUpperCase() === "JR-001") {
-        item.selected = true
-      }
-    });
-
-    //find jr-005 add or update
-    let jr005 = conditions.find((item) => item.id.toUpperCase() === "JR-005");
+    let jr005 = conditions.find((item) => item.id === "JR-005");
     if(jr005 !== null && jr005 !== undefined){
       this.updateTitleCondition(conditions);
     }

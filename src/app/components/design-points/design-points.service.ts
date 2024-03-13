@@ -51,6 +51,22 @@ export class InputDesignPointsService {
         if (key in data) {
           tmp[key] = data[key];
         }
+        if (key === "isMyCalc" && tmp[key] === true) {
+          tmp["isMzCalc"] = false;
+          tmp["isVyCalc"] = false;
+        }
+        if (key === "isMzCalc"&& tmp[key] === true) {
+          tmp["isMyCalc"] = false;
+          tmp["isVzCalc"] = false;
+        }
+        if (key === "isVyCalc"&& tmp[key] === true) {
+          tmp["isVzCalc"] = false;
+          tmp["isMyCalc"] = false;
+        }
+        if (key === "isVzCalc"&& tmp[key] === true) {
+          tmp["isVyCalc"] = false;
+          tmp["isMzCalc"] = false;
+        }
       }
       this.position_list.push(tmp);
     }

@@ -147,7 +147,11 @@
         "g_name":"Part name",
         "section":"Cross section (mm)",
         "part_n":"Number of parts",
-        "group": "Group No. in \"Member/Cross Section\" is blank"
+        "group": "Group No. in \"Member/Cross Section\" is blank",
+        "c_circle": "Circle",
+        "ring": "Ring",
+        "v_oval": "Vertical oval",
+        "h_oval": "Horizontal oval"
     },
     "section-forces":{
         "b_check":"Bending check",
@@ -567,7 +571,8 @@
     "modal": {
         "close": "Close",
         "cancel": "Cancel",
-        "ok": "OK"
+        "ok": "OK",       
+        "updateMessage": "Update is available.\nDo you want to reboot to perform the update?\nIf you choose to cancel, the application will be automatically updated after it is closed."
     },
     "window": {
         "closeTitle": "Confirm",
