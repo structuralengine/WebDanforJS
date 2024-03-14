@@ -75,6 +75,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   public groupActive: any[];
   public toggleStatusPick: { [key: string]: boolean } = {};
   public toggleStatusShear: { [key: string]: boolean } = {};
+  public idTagPage:number=0;
 
   ngOnInit() {
     this.selectedRoad = this.menu.selectedRoad;
@@ -440,6 +441,9 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.grid.grid.getColModel().forEach((column, index) => {
       if (index >= start && index <= end) {
         column.hidden = !this.toggleStatus[group];
+        if((index===5 || index===6)&& this.idTagPage===0){
+          column.hidden =true
+        }
       }
     });
     if(this.selectedRoad)
@@ -527,7 +531,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       this.groupActive = [];
     }
     this.setColGroupsAndKeys(id);
-
+    this.idTagPage=id
     if (id === 0) {
       this.options.colModel = this.columnHeaders1;
     } else if (id === 1) {
@@ -544,6 +548,9 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       )) {
         if (index >= start && index <= end) {
           column.hidden = !this.toggleStatus[group];
+        }
+        if((index===5 || index===6)&& id===0){
+          column.hidden =true
         }
       }
     });

@@ -151,6 +151,7 @@ export class InputSectionForcesService {
         // const [mainTitle, subTitle] = data.title.split(" ");
         const [mainTitle, subTitle] = this.translate.instant(data.title).split(" ");
         let title:string=subTitle;
+        let checkHidden= false;
         if(keyPrefix==="Md"){
           switch(this.translate.instant(data.title)){
             case"Durability and Usability For studying edge stress":
@@ -168,6 +169,9 @@ export class InputSectionForcesService {
             default:
             break;
           }
+          if(data.id===2 && this.translate.instant(data.title)==="Safety (fatigue fracture) Fatigue limit"){
+            checkHidden= true
+          }
         }
         if (pushIds.includes(data.id)) {
           if (currentHead) {
@@ -176,7 +180,7 @@ export class InputSectionForcesService {
           currentHead = this.createNewHeader(mainTitle);
         }
         const key = keyPrefix + data.id;
-        currentHead.colModel.push(this.createSubColumn(title, key, keyPrefix));
+        currentHead.colModel.push(this.createSubColumn(title, key, keyPrefix,checkHidden));
       }
     }
 
@@ -199,13 +203,15 @@ export class InputSectionForcesService {
   private createSubColumn(
     subTitle: string,
     key: string,
-    keyPrefix: string
+    keyPrefix: string,
+    checkHidden?:boolean
   ): object {
     const baseConfig = {
       title: subTitle,
       align: "center",
       colModel: [],
       nodrag: true,
+      hidden:checkHidden
     };
 
     switch (keyPrefix) {
