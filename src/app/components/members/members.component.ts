@@ -23,6 +23,9 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   // このページで表示するデータ
   private ROWS_COUNT = 0;
   private table_datas: any[] = new Array();
+  public style ={"pointer-events":"none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size":"0" }
+  public prop={edit: false, show:false}
+
 
   constructor(
     private members: InputMembersService,
@@ -199,6 +202,65 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // データを登録する
     this.options['dataModel'] = { data: this.table_datas };
+    console.log(this.table_datas, "aaaaaaaa");
+    
+    let tbData = this.table_datas;
+    for(let i = 0; i < tbData.length; i++)
+    {
+      let temp = tbData[i];
+
+      //get id new shape
+      const keyShapeIdNew = this.members.shapeIdFromKey(temp.shape);
+      const a =  this.getShape(keyShapeIdNew);
+    }
+  }
+
+ 
+
+  private getShape(keyShapeIdNew : number) {
+    const shadeBt = {
+      style: {
+        Bt: { ...this.style },
+      },
+      prop : {
+        Bt : { ...this.prop},
+      }
+    };
+
+    const shadeT = {
+      style: {
+        t: { ...this.style },
+      },
+      prop : {
+        t : { ...this.prop},
+      }
+    };
+    let obj : any = {
+      shadeBt : shadeBt,
+      shadeT : shadeT,
+    };
+    switch(keyShapeIdNew) {
+      case 1:
+      case 3:
+      case 4:
+      case 5:
+      case 6:
+        if(keyShapeIdNew == 3){
+          const shadeH = {
+            style: {
+              H: { ...this.style },
+            },
+            prop : {
+              H: { ...this.prop},
+            }
+          };
+          obj.shadeH = shadeH;
+        }
+        break;
+      default:
+        return null;
+    }
+    return obj;
   }
 
   private setTitle(isManual: boolean): void {
