@@ -44,6 +44,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   // 設計条件
   public conditions_list: any[];
 
+  public removeData:any
   constructor(
     private basic: InputBasicInformationService,
     private save: SaveDataService,
@@ -118,6 +119,14 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       this.table3_datas.forEach(el => {
         el.no = null
       });
+    }
+
+    if(this.basic.get_specification1()===0 || this.basic.get_specification1()===1){
+      let index = this.table1_datas.findIndex((data)=>data.id===2)
+      this.removeData= this.table1_datas[index]
+      if(index>-1){
+        this.table1_datas.splice(index,1)
+      }
     }
 
     this.options1 = {
@@ -290,6 +299,9 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   }
 
   public saveData(): void {
+    if(this.removeData){
+      this.table1_datas.push(this.removeData)
+    }
     this.basic.setSaveData({
       pickup_moment: this.table1_datas,
       pickup_shear_force: this.table2_datas,
