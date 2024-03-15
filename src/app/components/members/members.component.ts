@@ -158,6 +158,17 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
               //display new shape
               this.table_datas[row].shape = this.members.getShapeDispFromMember(rowData, keyShapeIdNew);
+
+              //check shade when change
+              const shade = this.getShade(keyShapeIdNew);
+              if (shade != null) {
+                tbData[i].pq_cellstyle = shade.style;
+                tbData[i].pq_cellprop = shade.prop;
+              }
+              else{
+                tbData[i].pq_cellstyle = null;
+                tbData[i].pq_cellprop = null;
+              }
             }
           }
         }
@@ -209,9 +220,9 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       //get id new shape
       const keyShapeIdNew = this.members.shapeIdFromKey(temp.shape);
       const shade =  this.getShade(keyShapeIdNew);
-      if(!shade){
-        // tbData[i].pq_cellstyle= shade;
-        // tbData[i].pq_cellprop= shade
+      if(shade != null){
+        tbData[i].pq_cellstyle= shade.style;
+        tbData[i].pq_cellprop= shade.prop;
       }
     }
 
@@ -220,27 +231,17 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getShade(keyShapeIdNew : number) {
-    const shadeBt = {
+    const shade = {
       style: {
         Bt: { ...this.style },
+        t: { ...this.style }
       },
       prop : {
         Bt : { ...this.prop},
-      }
-    };
-
-    const shadeT = {
-      style: {
-        t: { ...this.style },
-      },
-      prop : {
         t : { ...this.prop},
       }
     };
-    let obj : any = {
-      shadeBt : shadeBt,
-      shadeT : shadeT,
-    };
+
     switch(keyShapeIdNew) {
       case 1:
       case 3:
@@ -248,21 +249,22 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       case 5:
       case 6:
         if(keyShapeIdNew == 3){
-          const shadeH = {
+          return  {
             style: {
+              Bt: { ...this.style },
+              t: { ...this.style },
               H: { ...this.style },
             },
             prop : {
-              H: { ...this.prop},
+              Bt : { ...this.prop},
+              t : { ...this.prop},
+              H: { ...this.style },
             }
           };
-          obj.shadeH = shadeH;
         }
-        break;
-      default:
-        return null;
+        return shade
     }
-    return obj;
+    return null;
   }
 
   private setTitle(isManual: boolean): void {
