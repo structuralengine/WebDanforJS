@@ -6,6 +6,7 @@ import { SaveDataService } from 'src/app/providers/save-data.service';
 import pq from 'pqgrid';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { TranslateService } from "@ngx-translate/core";
+import { log } from 'console';
 
 @Component({
   selector: 'app-members',
@@ -200,10 +201,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
-    // データを登録する
-    this.options['dataModel'] = { data: this.table_datas };
-    console.log(this.table_datas, "aaaaaaaa");
-    
     let tbData = this.table_datas;
     for(let i = 0; i < tbData.length; i++)
     {
@@ -211,13 +208,18 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
       //get id new shape
       const keyShapeIdNew = this.members.shapeIdFromKey(temp.shape);
-      const a =  this.getShape(keyShapeIdNew);
+      const shade =  this.getShade(keyShapeIdNew);
+      if(!shade){
+        // tbData[i].pq_cellstyle= shade;
+        // tbData[i].pq_cellprop= shade
+      }
     }
+
+    // データを登録する
+    this.options['dataModel'] = { data: this.table_datas };
   }
 
- 
-
-  private getShape(keyShapeIdNew : number) {
+  private getShade(keyShapeIdNew : number) {
     const shadeBt = {
       style: {
         Bt: { ...this.style },
