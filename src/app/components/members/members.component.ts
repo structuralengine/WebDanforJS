@@ -230,6 +230,8 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.options['dataModel'] = { data: this.table_datas };
   }
 
+
+  // get pro and style for cell ignore
   private getShade(keyShapeIdNew : number) {
     const shade = {
       style: {
