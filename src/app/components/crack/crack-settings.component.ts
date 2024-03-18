@@ -195,7 +195,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
       // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
       this.columnHeaders.push({
         title: this.translate.instant("crack-settings.JRTT05"),
-        align: 'center', dataType: 'bool', dataIndx: 'JRTT05', type: 'checkbox', sortable: false, width: 100, nodrag: true,
+        align: 'center', dataType: 'bool', dataIndx: 'JRTT05', type: 'checkbox', sortable: false, width: 100, nodrag: true,hidden:true,
       });
     }
   }
