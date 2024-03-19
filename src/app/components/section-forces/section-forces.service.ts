@@ -153,23 +153,13 @@ export class InputSectionForcesService {
         let title:string=subTitle;
         let checkHidden= false;
         if(keyPrefix==="Md"){
-          switch(this.translate.instant(data.title)){
-            case"Durability and Usability For studying edge stress":
-            title="Studying edge stress"
-            break;
-            case"Durability and Usability Permanent action":
-            title="Permanent action"
-            break;
-            case"耐久性 使用性 縁応力度検討用":
-            title="縁応力度検討用"
-            break;
-            case"耐久性 使用性 永久作用":
-            title="永久作用"
-            break;
-            default:
-            break;
+          if(this.translate.instant(data.title)==="Durability and Usability For studying edge stress"|| this.translate.instant(data.title)==="耐久性 使用性 縁応力度検討用" ){
+            title=this.translate.instant("basic-information.study_edge_str")
           }
-          if(data.id===2 && this.translate.instant(data.title)==="Safety (fatigue fracture) Fatigue limit"){
+          if(this.translate.instant(data.title)==="Durability and Usability Permanent action"|| this.translate.instant(data.title)==="耐久性 使用性 永久作用" ){
+            title=this.translate.instant("basic-information.per_act")
+          }
+          if(data.id===2 && (this.translate.instant(data.title)==="Safety (fatigue fracture) Fatigue limit" || this.translate.instant(data.title)==="安全性（疲労破壊） 疲労限")){
             checkHidden= true
           }
         }
