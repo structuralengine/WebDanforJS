@@ -6,7 +6,6 @@ import { SaveDataService } from 'src/app/providers/save-data.service';
 import pq from 'pqgrid';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { TranslateService } from "@ngx-translate/core";
-import { log } from 'console';
 
 @Component({
   selector: 'app-members',
@@ -232,6 +231,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   // get pro and style for cell ignore
+  // shape id new following 1:rectangle, 2: t-shape, 3 circle, 4: Ring, 5: horizontal oval, 6: vertical oval
   private getShade(keyShapeIdNew : number) {
     const shade = {
       style: {
