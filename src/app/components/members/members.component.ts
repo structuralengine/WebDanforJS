@@ -26,7 +26,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   public style ={"pointer-events":"none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size":"0" }
   public prop={edit: false, show:false};
   public show:boolean = false
-
+  public element: any;
 
   constructor(
     private members: InputMembersService,
@@ -37,16 +37,17 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   @HostListener("document:click", ["$event"])
-  public mouseClick(event: MouseEvent){
-    const element = { iconId: '#member-question'};
-    this.handleClick(element, event);
+  public mouseClick(event: Event){
+    this.element = { iconId: '#member-dev-question'};
+    this.handleClick(this.element, event);
   }
   handleClick(element: any, event: any){
     const member_dev = window.document.querySelector(element.iconId);
     const grandEl = member_dev?.parentElement?.parentElement;   
 
     if (grandEl?.contains(event.target as Node)) {
-      this.show = !this.show
+      this.show = !this.show     
+      member_dev.classList.add('activeQ'); 
     }; 
   }
   ngOnInit() {
@@ -400,5 +401,10 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   private rowsCount(): number {
     const containerHeight = this.tableHeight();
     return Math.round(containerHeight / 30);
+  }
+  public closePreview(){
+    this.show = false;
+    const member_dev = window.document.querySelector(this.element.iconId);
+    member_dev.classList.remove("activeQ")
   }
 }

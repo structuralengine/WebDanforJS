@@ -20,3 +20,61 @@
 .w-100 {
   width: 100%;
 }
+#body-container-id{
+  background: white;
+  width: 300px;
+  height: 400px;
+  border-radius: 7px;
+  border: 1px solid black;
+  position: absolute;
+  z-index: 9999;
+  top: 223px;
+  .headBar {
+    position: sticky;
+    top: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    border-radius: 7px 7px 0 0;
+    justify-content: end;
+    align-items: center;
+    height: 29px;
+    padding: 0 8px;
+    background-color: white;
+    color: black;
+
+    h2 {
+        font-size: 11px;
+    }
+
+    a {
+        padding: 0;
+        border: none;
+        font-size: 13px;
+        cursor: pointer;;
+    }
+  }
+  .bodyBar{
+    display: flex;
+    flex-direction: row;
+   
+    .three-container{  
+      margin: 30px;   
+      display: block;
+      width: 350px;
+      height: 300px;
+    }
+    .shape{
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      .calculation-point{
+        height: 150px;
+      }
+      .item-guide{
+        // background-color: white;
+        height: 200px;
+      }
+    }
+  }
+}
