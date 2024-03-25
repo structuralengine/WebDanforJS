@@ -106,21 +106,4 @@
   </div>
 </div>
 
-<div *ngIf="show" cdkDrag id="body-container-id">
-  <div class="headBar">
-    <a (click)="closePreview()">×</a>
-  </div>
-  <div class="bodyBar">
-    <div class="three-container">   
-      <!-- <app-three [typeView]="'preview'"></app-three> -->
-    </div>
-    <div class="shape">     
-      <div class="item-guide">  
-        <!-- <app-three [typeView]="'noPreview'"></app-three> -->
-      </div>
-    </div>
-  </div>
-  <div class="footer-bar">
-    
-  </div>
-</div>
+<app-modal-preview [show]="show" [element]="element" (closeModal)="handleClose($event)"></app-modal-preview>

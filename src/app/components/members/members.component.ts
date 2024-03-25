@@ -45,10 +45,14 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     const member_dev = window.document.querySelector(element.iconId);
     const grandEl = member_dev?.parentElement?.parentElement;   
 
-    if (grandEl?.contains(event.target as Node)) {
-      this.show = !this.show     
-      member_dev.classList.add('activeQ'); 
-    }; 
+    if(!this.show){
+      if (grandEl?.contains(event.target as Node)) {
+        this.show = true     
+        member_dev.classList.add('activeQ'); 
+      }; 
+     }else{
+      return 
+     }
   }
   ngOnInit() {
 
@@ -402,9 +406,10 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     const containerHeight = this.tableHeight();
     return Math.round(containerHeight / 30);
   }
-  public closePreview(){
-    this.show = false;
-    const member_dev = window.document.querySelector(this.element.iconId);
-    member_dev.classList.remove("activeQ")
+  handleClose(event:any){
+    if(event){
+      this.element = {}
+      this.show=false
+    }
   }
 }
