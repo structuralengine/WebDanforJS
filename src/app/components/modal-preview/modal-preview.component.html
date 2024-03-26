@@ -1,0 +1,26 @@
+<div *ngIf="show" cdkDrag id="body-container-id">
+  <div class="headBar">
+    <a (click)="closePreview()">×</a>
+  </div>
+  <div class="bodyBar">
+    <div class="three-container">   
+      <app-three></app-three> 
+    </div>     
+  </div>
+  <div class="footer-bar ">         
+      <div (click)="showDropDown()">
+        <button id="button-show"  >
+        <div class="text">
+          <span id="text-b" translate>{{select}}</span>
+          <div id="icon-b" [ngClass]="{active:checkShowDropDown}">
+          </div>
+        </div>
+      </button>
+      </div>
+      <div *ngIf="checkShowDropDown" class="dropdown-modal" >
+        <div *ngFor="let data of dataDropDown" class="item">
+          <p translate (click)="handleSelectItem(data)">{{data.title}}</p>
+        </div>
+      </div>
+  </div>
+</div>

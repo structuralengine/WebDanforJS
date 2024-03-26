@@ -586,5 +586,14 @@
         "paste": "貼り付け",
         "undo": "元に戻す",
         "cut": "切り取り"
+    },
+    "modal_preview":{
+        "Rectangle": "矩形",
+        "TShape": "T形",
+        "Circle": "円形形状",
+        "Ring": "円環形状",
+        "HorizontalOval": "横小判形状",
+        "VerticalOval": "縦小判形状",
+        "CircleRing": "円形・円環"
     }
 }
