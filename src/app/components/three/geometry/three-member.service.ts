@@ -219,24 +219,15 @@ export class ThreeMemberService {
     this.scene.add(line);
     const radiuses = this.getRadius(this.scale)
     this.geometry = new THREE.SphereBufferGeometry(radiuses[0])
+
+    this.scene.render();
   }
   public getJsoṇRetangle(){
     let scale = this.scale;
-    let jsonData: object = {};
-    var member = this.dataNode;
-    let memH = member['H'];
-    let memB = member['B'];
+    let jsonData: object = {};    
+    let memH = 3000;
+    let memB = 3000;
 
-    let ratio = 1;
-    if (member['shape'] !== 1) {
-      if (memH > 2500) {
-        ratio = memH / 2500;
-        memH = 2500;
-      }     
-      memB = memB / ratio;    
-      scale = 50;
-      this.scale = scale;
-    }
     let b = memB / scale;
     let h = memH / scale;
     const x_start = -b / 2;

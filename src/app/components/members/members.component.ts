@@ -60,8 +60,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
      }
   }
   ngOnInit() {
-
-
+   
     this.isManual = this.save.isManual();
     this.setTitle(this.isManual);
 
@@ -250,6 +249,8 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // データを登録する
     this.options['dataModel'] = { data: this.table_datas };
+
+    this.scene.render();
   }
 
 
