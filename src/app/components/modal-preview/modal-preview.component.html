@@ -4,15 +4,29 @@
     </div>
     <div class="bodyBar">
       <div class="three-container">   
-        <!-- <app-three [typeView]="'preview'"></app-three> -->
-      </div>
-      <div class="shape">     
-        <div class="item-guide">  
-          <!-- <app-three [typeView]="'noPreview'"></app-three> -->
-        </div>
-      </div>
+        <app-three></app-three> 
+      </div>     
     </div>
-    <div class="footer-bar">
-      
+    <div class="footer-bar ">         
+        <select >  
+            <option ngbDropdownItem (click)="node.drawingRetangle()" translate>
+              modal_preview.Rectangle
+            </option>
+            <option ngbDropdownItem (click)="node.drawingRetangle()" translate>
+              modal_preview.TShape
+            </option>
+            <option ngbDropdownItem (click)="node.drawingRetangle()" translate>
+              modal_preview.Circle
+            </option>
+            <option ngbDropdownItem (click)="node.drawingRetangle()" translate>
+              modal_preview.Ring
+            </option>
+            <option ngbDropdownItem (click)="node.drawingRetangle()" translate>
+              modal_preview.HorizontalOval
+            </option>
+            <option ngbDropdownItem (click)="node.drawingRetangle()" translate>
+              modal_preview.VerticalOval
+            </option>  
+        </select>    
     </div>
   </div>

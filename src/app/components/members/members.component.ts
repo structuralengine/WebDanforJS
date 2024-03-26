@@ -6,6 +6,8 @@ import { SaveDataService } from 'src/app/providers/save-data.service';
 import pq from 'pqgrid';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { TranslateService } from "@ngx-translate/core";
+import { SceneService } from '../three/scene.service';
+import { ThreeMemberService } from '../three/geometry/three-member.service';
 
 @Component({
   selector: 'app-members',
@@ -33,7 +35,9 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     private points: InputDesignPointsService,
     private save: SaveDataService,
     private app: AppComponent,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private scene: SceneService,
+    private node: ThreeMemberService,
   ) { }
 
   @HostListener("document:click", ["$event"])
@@ -48,7 +52,8 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     if(!this.show){
       if (grandEl?.contains(event.target as Node)) {
         this.show = true     
-        member_dev.classList.add('activeQ'); 
+        member_dev.classList.add('activeQ');    
+        this.node.dataNode = this.table_datas[0];   
       }; 
      }else{
       return 
@@ -410,6 +415,9 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     if(event){
       this.element = {}
       this.show=false
+      while(this.scene.scene.children.length > 0){ 
+        this.scene.remove(this.scene.scene.children[0]); 
     }
   }
+}
 }

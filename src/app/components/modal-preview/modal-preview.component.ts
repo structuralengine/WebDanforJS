@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output, } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, } from '@angular/core';
+import { ThreeMemberService } from '../three/geometry/three-member.service';
 
 @Component({
   selector: 'app-modal-preview',
@@ -6,12 +7,18 @@ import { Component, EventEmitter, Input, OnInit, Output, } from '@angular/core';
   styleUrls: ['./modal-preview.component.scss']
 })
 export class ModalPreview implements OnInit {
-  constructor() { }
+  constructor(
+    private node: ThreeMemberService
+  ) { }
   @Input() show: boolean = false;
   @Input() element: any ;
   @Output() closeModal = new EventEmitter<any>()
   ngOnInit() {
-
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+      if('show' in changes && changes["show"].currentValue){
+        this.node.drawingRetangle();
+      }
   }
   closePreview(){
     this.show = false;
