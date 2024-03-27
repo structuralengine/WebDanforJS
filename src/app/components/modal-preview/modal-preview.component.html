@@ -1,10 +1,10 @@
-<div *ngIf="show" cdkDrag id="body-container-id">
+<div cdkDrag id="body-container-id">
   <div class="headBar">
     <a (click)="closePreview()">×</a>
   </div>
   <div class="bodyBar">
-    <div class="three-container">   
-      <app-three></app-three> 
+    <div class="three-container"> 
+      <img [src]="imgLink">
     </div>     
   </div>
   <div class="footer-bar ">         
