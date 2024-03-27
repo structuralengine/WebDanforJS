@@ -16,7 +16,7 @@ export class ModalPreview implements OnInit {
     },
     {
       title:"modal_preview.TShape",
-      image:"Tshape"
+      image:"TShape"
     },
     {
       title:"modal_preview.Circle",
@@ -69,7 +69,7 @@ export class ModalPreview implements OnInit {
               },
               {
                 title:"modal_preview.TShape",
-                image:"Tshape"
+                image:"TShape"
               },
               {
                 title:"modal_preview.CircleRing",
@@ -95,7 +95,7 @@ export class ModalPreview implements OnInit {
               },
               {
                 title:"modal_preview.TShape",
-                image:"Tshape"
+                image:"TShape"
               },                      
               {
                 title:"modal_preview.HorizontalOval",
