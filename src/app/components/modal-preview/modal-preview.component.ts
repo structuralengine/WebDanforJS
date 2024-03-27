@@ -38,6 +38,7 @@ export class ModalPreview implements OnInit {
   public select:string = "modal_preview.Rectangle";
   public checkShowDropDown:boolean= false
   public imgLink: string;
+  public nameImage: string ;
   public currentLang: string;
   public folder: string = "member-guide"
   constructor(
@@ -45,7 +46,10 @@ export class ModalPreview implements OnInit {
     private translate: TranslateService,
   ) { 
     this.translate.onLangChange.subscribe(() => {
-      this.getLink("Rectangle");
+      // console.log("select",this.select)
+      // console.log("name",this.nameImage)
+      this.getSelect(this.dataDropDown);
+      // this.getLink(this.nameImage);
     });
   }
   @HostListener("document:click", ["$event"])
@@ -58,7 +62,10 @@ export class ModalPreview implements OnInit {
     this.getLink("Rectangle");
   }
   ngOnChanges(changes: SimpleChanges): void {
-      if('element' in changes){
+      if('element' in changes && changes["element"]?.currentValue !== changes["element"]?.previousValue){
+        let modal = document.getElementById("body-container-id")
+        modal.style.top="179px"
+        modal.style.left="492px"
         switch(changes['element'].currentValue.iconId){
           case "#member-dev-question-ax":{
             this.folder = "reinforcing-bar/axial-bar";
@@ -84,6 +91,8 @@ export class ModalPreview implements OnInit {
                 image:"VerticalOval"
               },
             ]
+            modal.style.top="250px"
+            modal.style.left="850px"
             break;
           }
           case "#member-dev-question-la":{
@@ -106,6 +115,8 @@ export class ModalPreview implements OnInit {
                 image:"VerticalOval"
               },
             ]
+            modal.style.top="250px"
+            modal.style.left="850px"
             break;
           }
           default:{
@@ -113,6 +124,8 @@ export class ModalPreview implements OnInit {
             break;
           }
         }
+        // if(){}
+        this.getLink(this.nameImage);
       }
   }
   closePreview(){
@@ -129,7 +142,12 @@ export class ModalPreview implements OnInit {
     this.checkShowDropDown=!this.checkShowDropDown
   }
   getLink(name: string){
+    this.nameImage=name
     this.currentLang = this.translate.currentLang;
     this.imgLink = `assets/img/${this.folder}/${this.currentLang}/${name}.svg`;
+  }
+  getSelect(dataDrop: any []){
+     let index = dataDrop.findIndex(data => data.image === this.nameImage);
+     this.select = this.translate.instant(dataDrop[index].title);
   }
 }
