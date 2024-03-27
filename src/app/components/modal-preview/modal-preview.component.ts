@@ -38,7 +38,7 @@ export class ModalPreview implements OnInit {
   public select:string = "modal_preview.Rectangle";
   public checkShowDropDown:boolean= false
   public imgLink: string;
-  public nameImage: string ;
+  public nameImage: string ="Rectangle";
   public currentLang: string;
   public folder: string = "member-guide"
   constructor(
@@ -59,10 +59,12 @@ export class ModalPreview implements OnInit {
     }
   }
   ngOnInit() {
-    this.getLink("Rectangle");
+    this.getLink(this.nameImage);
+    document.getElementById("text-b").innerHTML = this.translate.instant(this.select);
   }
   ngOnChanges(changes: SimpleChanges): void {
-      if('element' in changes && changes["element"]?.currentValue !== changes["element"]?.previousValue){
+      if('element' in changes && changes["element"]?.currentValue?.iconId !== changes["element"]?.previousValue?.iconId){
+        console.log("run")
         let modal = document.getElementById("body-container-id")
         modal.style.top="179px"
         modal.style.left="492px"
@@ -124,8 +126,9 @@ export class ModalPreview implements OnInit {
             break;
           }
         }
-        // if(){}
-        this.getLink(this.nameImage);
+        this.nameImage="Rectangle"
+        this.getSelect(this.dataDropDown);
+        this.getLink(this.nameImage)
       }
   }
   closePreview(){
@@ -135,19 +138,21 @@ export class ModalPreview implements OnInit {
   }
   handleSelectItem(data:any){
     this.select=this.translate.instant(data.title);
+    document.getElementById("text-b").innerHTML = this.select;
     this.checkShowDropDown=false;
     this.getLink(data.image);
+    this.nameImage=data.image
   }
   showDropDown(){
     this.checkShowDropDown=!this.checkShowDropDown
   }
   getLink(name: string){
-    this.nameImage=name
     this.currentLang = this.translate.currentLang;
     this.imgLink = `assets/img/${this.folder}/${this.currentLang}/${name}.svg`;
   }
   getSelect(dataDrop: any []){
      let index = dataDrop.findIndex(data => data.image === this.nameImage);
      this.select = this.translate.instant(dataDrop[index].title);
+     document.getElementById("text-b").innerHTML = this.select;
   }
 }

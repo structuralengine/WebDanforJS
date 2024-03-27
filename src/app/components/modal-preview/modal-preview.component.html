@@ -11,14 +11,14 @@
       <div (click)="showDropDown()">
         <button id="button-show"  >
         <div class="text">
-          <span id="text-b" translate>{{select}}</span>
+          <span id="text-b" translate></span>
           <div id="icon-b" [ngClass]="{active:checkShowDropDown}">
           </div>
         </div>
       </button>
       </div>
       <div *ngIf="checkShowDropDown" class="dropdown-modal" >
-        <div *ngFor="let data of dataDropDown" class="item">
+        <div *ngFor="let data of dataDropDown" class="item" [ngClass]="{active:data.image===nameImage}" >
           <p translate (click)="handleSelectItem(data)">{{data.title}}</p>
         </div>
       </div>
