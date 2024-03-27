@@ -103,12 +103,11 @@
     }
     .dropdown-modal {
     position: absolute;
-    background: white;
-    color: #00c95f;
+    background: black;
+    color: white;
     top: 28px;
-    width: 252px;
+    width: 170px;
     padding: 6px;
-    border: 1px solid black;
     border-radius: 4px;
   }
   .item{
@@ -121,12 +120,10 @@
     padding: 0;
   }
   .item:hover{
-    background:#00c95f;
-    color: white;
+    color:#00c95f;
   }
   .active{
-    background:#00c95f;
-    color: white;
+    color:#00c95f;
   }
   }
   

@@ -46,10 +46,7 @@ export class ModalPreview implements OnInit {
     private translate: TranslateService,
   ) { 
     this.translate.onLangChange.subscribe(() => {
-      // console.log("select",this.select)
-      // console.log("name",this.nameImage)
       this.getSelect(this.dataDropDown);
-      // this.getLink(this.nameImage);
     });
   }
   @HostListener("document:click", ["$event"])
@@ -64,7 +61,6 @@ export class ModalPreview implements OnInit {
   }
   ngOnChanges(changes: SimpleChanges): void {
       if('element' in changes && changes["element"]?.currentValue?.iconId !== changes["element"]?.previousValue?.iconId){
-        console.log("run")
         let modal = document.getElementById("body-container-id")
         modal.style.top="179px"
         modal.style.left="492px"
