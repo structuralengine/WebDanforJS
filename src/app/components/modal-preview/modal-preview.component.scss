@@ -85,16 +85,17 @@
         }
         #icon-b{
           transform: translateY(40%) rotate(0);
-          background-image: url("./../../../assets/icons/icon-arrow.svg");
+          background-image: url("./../../../assets/icons/icon.svg");
           background-size: contain;
           background-repeat: no-repeat;
-          width: 8px;
-          height: 8px;
+          width: 11px;
+          height: 5px;
           position: absolute;
-          right: 8px;
+          right: 16px;
+          top: 5px;
         }
         .active{
-          transform: translateY(-12%) rotate(180deg) !important;
+          transform: translateY(40%) rotate(180deg) !important;
         }
       }
     }
