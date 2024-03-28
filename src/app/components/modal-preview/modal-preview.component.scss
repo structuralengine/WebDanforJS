@@ -16,8 +16,8 @@
     border-radius: 7px 7px 0 0;
     justify-content: end;
     align-items: center;
-    height: 29px;
-    padding: 0 8px;
+    height: 30px;
+    padding: 0 10px;
     background-color: white;
     color: black;
 
@@ -28,7 +28,6 @@
     a {
       padding: 0;
       border: none;
-      font-size: 13px;
       cursor: pointer;
       ;
     }
@@ -64,7 +63,7 @@
     display: flex;
     justify-content: center;
     position: relative;
-    margin: 20px 30px 24px 30px;
+    margin: 20px 24px 24px 24px;
     #button-show{
       width: 252px;
       border-radius: 4px;
@@ -79,8 +78,10 @@
         align-items: center;
         justify-content: center;
         position: relative;
+        font-weight: 700;
         #text-b{
           width: 100%;
+          font-size: 12px;
         }
         #icon-b{
           transform: translateY(40%) rotate(0);
@@ -102,18 +103,23 @@
       outline: none;
     }
     .dropdown-modal {
-    position: absolute;
-    background: black;
-    color: white;
-    top: 28px;
-    width: 170px;
-    padding: 6px;
-    border-radius: 4px;
+      position: absolute;
+      background: black;
+      color: white;
+      top: 28px;
+      padding: 15px 11px 15px 16px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      left: 112px;
+      min-width: 99px;
   }
   .item{
-    text-align: center;
     cursor: pointer;
     border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
   }
   .item p{
     margin: 0;
