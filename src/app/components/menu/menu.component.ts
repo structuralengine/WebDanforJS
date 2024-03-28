@@ -527,7 +527,6 @@ export class MenuComponent implements OnInit {
   }
   handelClickChat(){
     const elementChat = document.getElementById("chatplusheader");
-    console.log("elementChat",elementChat)
     elementChat.click()
   }
 }

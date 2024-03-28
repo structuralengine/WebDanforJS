@@ -23,6 +23,9 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   // このページで表示するデータ
   private ROWS_COUNT = 0;
   private table_datas: any[] = new Array();
+  public style ={"pointer-events":"none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size":"0" }
+  public prop={edit: false, show:false}
+
 
   constructor(
     private members: InputMembersService,
@@ -154,6 +157,17 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
               //display new shape
               this.table_datas[row].shape = this.members.getShapeDispFromMember(rowData, keyShapeIdNew);
+
+              //check shade when change
+              const shade = this.getShade(keyShapeIdNew);
+              if (shade != null) {
+                tbData[i].pq_cellstyle = shade.style;
+                tbData[i].pq_cellprop = shade.prop;
+              }
+              else{
+                tbData[i].pq_cellstyle = null;
+                tbData[i].pq_cellprop = null;
+              }
             }
           }
         }
@@ -197,8 +211,62 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
+    let tbData = this.table_datas;
+    for(let i = 0; i < tbData.length; i++)
+    {
+      let temp = tbData[i];
+
+      //get id new shape
+      const keyShapeIdNew = this.members.shapeIdFromKey(temp.shape);
+      const shade =  this.getShade(keyShapeIdNew);
+      if(shade != null){
+        tbData[i].pq_cellstyle= shade.style;
+        tbData[i].pq_cellprop= shade.prop;
+      }
+    }
+
     // データを登録する
     this.options['dataModel'] = { data: this.table_datas };
+  }
+
+
+  // get pro and style for cell ignore
+  // shape id new following 1:rectangle, 2: t-shape, 3 circle, 4: Ring, 5: horizontal oval, 6: vertical oval
+  private getShade(keyShapeIdNew : number) {
+    const shade = {
+      style: {
+        Bt: { ...this.style },
+        t: { ...this.style }
+      },
+      prop : {
+        Bt : { ...this.prop},
+        t : { ...this.prop},
+      }
+    };
+
+    switch(keyShapeIdNew) {
+      case 1:
+      case 3:
+      case 4:
+      case 5:
+      case 6:
+        if(keyShapeIdNew == 3){
+          return  {
+            style: {
+              Bt: { ...this.style },
+              t: { ...this.style },
+              H: { ...this.style },
+            },
+            prop : {
+              Bt : { ...this.prop},
+              t : { ...this.prop},
+              H: { ...this.style },
+            }
+          };
+        }
+        return shade
+    }
+    return null;
   }
 
   private setTitle(isManual: boolean): void {
