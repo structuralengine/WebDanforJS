@@ -105,4 +105,7 @@ export class AppComponent {
       this.isDesignPointEnable = flg;
     }
   }
+  public onClickHeader(){
+    console.log("test")
+  }
 }

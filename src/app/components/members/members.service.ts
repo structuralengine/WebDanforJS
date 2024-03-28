@@ -155,6 +155,9 @@ export class InputMembersService {
   private getData(m_no: number) {
     return this.member_list.find((item) => item.m_no === m_no);
   }
+  public getDataMem(m_no: number) {
+    return this.member_list.find((item) => item.m_no === m_no);
+  }
 
   // 同じグループの部材リストを取得する
   public getSameGroupeMembers(m_no: number): any {

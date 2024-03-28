@@ -586,5 +586,13 @@
         "paste": "Paste",
         "undo": "Undo",
         "cut": "Cut"
+    },
+    "modal_preview":{
+        "Rectangle": "Rectangle",
+        "TShape": "T shape",
+        "Circle": "Circle",
+        "Ring": "Ring",
+        "HorizontalOval": "Horizontal Oval",
+        "VerticalOval": "Vertical Oval"
     }
 }
