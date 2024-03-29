@@ -424,14 +424,20 @@ export class MenuComponent implements OnInit {
     const basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
 
-    ///temporary set default spe_2.2: "partial coefficient method"
+    ///Set selected for specification2_list 
+    //Case Road: temporary set default spe_2.2: "partial coefficient method"
     if(i === 2)
     {
       basic.specification2_list.map(obj => 
         obj.selected = (obj.id === 6) ? true : false);
         this.specification2_select_id = 6;
     }
-
+    else
+    {
+      const selectedObject = basic.specification2_list.find(obj => obj.selected === true);
+      this.specification2_select_id = selectedObject ? selectedObject.id : 0;
+    }
+    
     this.specification2_list = basic.specification2_list; // 仕様
     this.conditions_list = basic.conditions_list;         //  設計条件
 

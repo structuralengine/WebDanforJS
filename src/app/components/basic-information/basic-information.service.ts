@@ -776,8 +776,7 @@ export class InputBasicInformationService {
     const sp = this.specification2_list.find(
       (value) => value.selected === true
     );
-    const id = sp !== undefined ? sp.id : -1;
-    return id;
+    return sp !== undefined ? sp.id : -1;
   }
   // public set_specification1(index: number): any {
   public set_specification1(id: number): any {
@@ -963,7 +962,9 @@ export class InputBasicInformationService {
       specs.forEach(item => {
         switch(item.id) {
           case 0:
-            item.title = this.translate.instant("basic-information.jr_com");
+            // item.title = this.translate.instant("basic-information.jr_com");
+            //sync old title to new title
+            item.title = this.translate.instant("basic-information.jr_standard");
             break;
           case 1:
             item.title = this.translate.instant("basic-information.trans");
