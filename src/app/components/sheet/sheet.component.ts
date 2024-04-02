@@ -63,9 +63,9 @@ export class SheetComponent implements AfterViewInit, OnChanges {
         if(this.save.isManual()){
           manual = 310;
         }
-        let leftStyle = `${event.x - manual}`;      
+        let leftStyle = `${event.x - manual}`;    
         if(this.save.isManual()){
-          if(+leftStyle > 290) leftStyle = "220";
+          if (+leftStyle > 220 || +leftStyle < 156) leftStyle = "220";
         }else{
           if(+leftStyle < 285)
             leftStyle = "285"
