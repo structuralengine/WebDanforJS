@@ -268,10 +268,7 @@ export class MenuComponent implements OnInit {
             let basicFile = this.save.getBasicData();
             this.specification1_list_file = basicFile.specification1_list;
             this.basic.set_specification1_data_file(this.specification1_list_file);
-            this.specification2_list_file = basicFile.specification2_list;
-            this.specification2_list_file.forEach(el => {
-              this.setSpecification2(el.id);
-            })
+            this.specification2_list = basicFile.specification2_list
             this.open_done(modalRef);
           })
           .catch((err) => {
@@ -421,19 +418,26 @@ export class MenuComponent implements OnInit {
 
   public setSpecification1(i: number): void {
 
-    const basic = this.basic.set_specification1(i);
+    let basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
 
     ///Set selected for specification2_list 
-    //Case Road: temporary set default spe_2.2: "partial coefficient method"
     if(i === 2)
     {
+      //Case Road: temporary set default spe_2.2: "partial coefficient method"
       basic.specification2_list.map(obj => 
         obj.selected = (obj.id === 6) ? true : false);
         this.specification2_select_id = 6;
+      this.basic.setPreSpecification2(this.specification1_select_id, basic.specification2_list)
     }
     else
     {
+      const prev = this.basic.prevSpecification2[i];
+      if(prev != undefined)
+      {
+        this.basic.specification2_list = prev;
+        basic.specification2_list = this.basic.specification2_list;
+      }
       const selectedObject = basic.specification2_list.find(obj => obj.selected === true);
       this.specification2_select_id = selectedObject ? selectedObject.id : 0;
     }
@@ -471,6 +475,7 @@ export class MenuComponent implements OnInit {
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
+    this.basic.setPreSpecification2(this.specification1_select_id, this.specification2_list);
   }
 
   // 耐用年数, jA, jB

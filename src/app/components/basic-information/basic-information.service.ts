@@ -18,6 +18,7 @@ export class InputBasicInformationService {
 
   // 仕様 に関する変数
   public specification2_list: any[];
+  public prevSpecification2: Object;
 
   // 設計条件
   public conditions_list: any[];
@@ -36,6 +37,7 @@ export class InputBasicInformationService {
 
     this.specification1_list = new Array();
     this.specification2_list = new Array();
+    this.prevSpecification2 = new Object();
     this.conditions_list = new Array();
 
     this.specification1_list = this.default_specification1();
@@ -122,6 +124,9 @@ export class InputBasicInformationService {
     this.conditions_list = this.default_conditions(sp1);
   }
 
+  public setPreSpecification2(id: number, data: any) {
+    this.prevSpecification2[id] = data;
+  }
   // 曲げモーメントテーブルの初期値
   private default_pickup_moment(
     specification1: number,
@@ -829,6 +834,7 @@ export class InputBasicInformationService {
     this.setDefault();
 
     const sp2: number = this.get_specification2();
+    this.setPreSpecification2(sp1, this.specification2_list)
 
     this.pickup_moment = this.default_pickup_moment(sp1, sp2);
     for (let i = 0; i < basic.pickup_moment.length; i++) {
