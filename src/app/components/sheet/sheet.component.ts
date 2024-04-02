@@ -6,6 +6,8 @@ import pq from 'pqgrid';
 import 'pqgrid/localize/pq-localize-en.js';
 import 'pqgrid/localize/pq-localize-ja.js';
 
+import { SaveDataService } from 'src/app/providers/save-data.service';
+
 @Component({
   selector: 'app-sheet',
   templateUrl: './sheet.component.html',
@@ -16,7 +18,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   @ViewChild('pqgrid') div: ElementRef;
   @Input() options: any;
   grid: pq.gridT.instance = null;
-
+  
   isMemberQuestionActive = false;
   isCrackQuestionActive = false;
   isSafetyQuestionActive = false;
@@ -24,6 +26,9 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   isCtrlShiftPressed = false; // Flag to track Ctrl + Shift key combination
   checkShow:boolean=false;
   tableTag:any
+  constructor(public save: SaveDataService){
+  
+  }
   @HostListener('document:mouseover', ['$event'])
   toggleActive(event: Event) {
     const elements = [
@@ -49,30 +54,23 @@ export class SheetComponent implements AfterViewInit, OnChanges {
       if(this.checkShow){
         return
       }
-      this.tableTag = document.getElementById(element.id);
-      console.log("tableTag 1", this.tableTag)
+      this.tableTag = document.getElementById(element.id); 
       if (this[element.activeProp]){
-        this.checkShow=true;
-        console.log("tableTag", this.tableTag)
-        console.log("element", element)
-        console.log("event", event.target)
-       switch(element.id){
-        case "member-table":
-          this.tableTag.style.left = `${event.x -357}px`
-          this.tableTag.style.top = `${event.y-118}px`
-        break;
-        case "crack-table":
-          this.tableTag.style.left = `${event.x -438}px`
-          this.tableTag.style.top = `${event.y -90}px`
-        break;
-         case "safety-table":
-          this.tableTag.style.left = `${event.x -347}px`
-          this.tableTag.style.top = `${event.y -224}px`
-        break;
-        default:
-          this.tableTag.style.left = `${event.x}px`
-          this.tableTag.style.top = `${event.y}px`
-        break;
+        this.checkShow=true;      
+        
+       if(element.id === "crack-table"){     
+        let manual = !this.save.isManual()? 420 : 310;
+        if(this.save.isManual()){
+          manual = 310;
+        }
+        let leftStyle = `${event.x - manual}`;      
+        if(this.save.isManual()){
+          if(+leftStyle > 290) leftStyle = "220";
+        }else{
+          if(+leftStyle < 285)
+            leftStyle = "285"
+        }                         
+        this.tableTag.style.left = `${leftStyle}px`                   
        }
       }else{
         this.checkShow=false
