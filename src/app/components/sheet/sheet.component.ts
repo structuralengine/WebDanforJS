@@ -22,13 +22,14 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   isSafetyQuestionActive = false;
   public colsShow: any[] = new Array();
   isCtrlShiftPressed = false; // Flag to track Ctrl + Shift key combination
-
+  checkShow:boolean=false;
+  tableTag:any
   @HostListener('document:mouseover', ['$event'])
   toggleActive(event: Event) {
     const elements = [
-      { iconId: '#member-question', tableId: '#member-table', activeProp: 'isMemberQuestionActive' },
-      { iconId: '#crack-question', tableId: '#crack-table', activeProp: 'isCrackQuestionActive' },
-      { iconId: '#safety-question', tableId: '#safety-table', activeProp: 'isSafetyQuestionActive' }
+      { iconId: '#member-question', id:"member-table",tableId: '#member-table', activeProp: 'isMemberQuestionActive' },
+      { iconId: '#crack-question', id:"crack-table",tableId: '#crack-table', activeProp: 'isCrackQuestionActive' },
+      { iconId: '#safety-question', id:"safety-table",tableId: '#safety-table', activeProp: 'isSafetyQuestionActive' }
     ];
 
     for (let element of elements) {
@@ -36,7 +37,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  handleElementActivation(element: any, event: Event) {
+  handleElementActivation(element: any, event: any) {
     const elQAIcon = window.document.querySelector(element.iconId);
     const elTable = window.document.querySelector(element.tableId);
     const grandEl = elQAIcon?.parentElement?.parentElement;
@@ -45,9 +46,46 @@ export class SheetComponent implements AfterViewInit, OnChanges {
 
     if (grandEl?.contains(event.target as Node)) {
       grandEl.classList.add('active');
+      if(this.checkShow){
+        return
+      }
+      this.tableTag = document.getElementById(element.id);
+      console.log("tableTag 1", this.tableTag)
+      if (this[element.activeProp]){
+        this.checkShow=true;
+        console.log("tableTag", this.tableTag)
+        console.log("element", element)
+        console.log("event", event.target)
+       switch(element.id){
+        case "member-table":
+          this.tableTag.style.left = `${event.x -357}px`
+          this.tableTag.style.top = `${event.y-118}px`
+        break;
+        case "crack-table":
+          this.tableTag.style.left = `${event.x -438}px`
+          this.tableTag.style.top = `${event.y -90}px`
+        break;
+         case "safety-table":
+          this.tableTag.style.left = `${event.x -347}px`
+          this.tableTag.style.top = `${event.y -224}px`
+        break;
+        default:
+          this.tableTag.style.left = `${event.x}px`
+          this.tableTag.style.top = `${event.y}px`
+        break;
+       }
+      }else{
+        this.checkShow=false
+      }
+      
     } else if (elTable.contains(event.target as Node) && this[element.activeProp]) {
     } else {
       grandEl?.classList.remove('active');
+      if (this.tableTag?.style?.display === "block") {
+        this.checkShow = true;
+      } else {
+        this.checkShow = false
+      }
     }
   }
 
