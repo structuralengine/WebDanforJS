@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { InputMembersService } from '../members/members.service';
 import { forEach } from 'jszip';
+import { group } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -88,13 +89,23 @@ export class InputCalclationPrintService {
 
     //get group again to update;
     const groups = this.getColumnData();
+    this.print_selected.member_group_selection = [];
+
     for (var i = 0; groups.length > i; i++) {
       const idx = oldData.findIndex( el => el.GroupName === groups[i].g_name)
-      if(idx === -1)
+      if(idx === -1) //Add new
         this.print_selected.member_group_selection.push({
           GroupName: groups[i].g_name,
           Checked: groups[i].checked
         });
+      else
+      {
+        //Update checked
+        this.print_selected.member_group_selection.push({
+          GroupName: oldData[idx].GroupName,
+          Checked: oldData[idx].Checked
+        });
+      }
     }
   }
 }
