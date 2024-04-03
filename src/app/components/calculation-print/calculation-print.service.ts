@@ -57,6 +57,7 @@ export class InputCalclationPrintService {
   }
 
   public getSaveData(): any {
+    this.updateMemberGroupSelection(); //refresh member_group_selection
     return this.print_selected
   }
 
@@ -79,6 +80,21 @@ export class InputCalclationPrintService {
         GroupName: groups[i].g_name,
         Checked: groups[i].checked
       });
+    }
+  }
+
+  public updateMemberGroupSelection() {
+    const oldData = this.print_selected.member_group_selection;
+
+    //get group again to update;
+    const groups = this.getColumnData();
+    for (var i = 0; groups.length > i; i++) {
+      const idx = oldData.findIndex( el => el.GroupName === groups[i].g_name)
+      if(idx === -1)
+        this.print_selected.member_group_selection.push({
+          GroupName: groups[i].g_name,
+          Checked: groups[i].checked
+        });
     }
   }
 }
