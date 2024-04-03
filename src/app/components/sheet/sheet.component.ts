@@ -42,7 +42,6 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     const grandEl = elQAIcon?.parentElement?.parentElement;
 
     this[element.activeProp] = grandEl?.classList.contains('active') || false;
-
     if (grandEl?.contains(event.target as Node)) {
       grandEl.classList.add('active');
     } else if (elTable.contains(event.target as Node) && this[element.activeProp]) {
