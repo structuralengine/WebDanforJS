@@ -1,4 +1,3 @@
-import { forEach } from 'jszip';
 import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from "@ngx-translate/core";
@@ -31,17 +30,17 @@ export class InputBasicInformationService {
     this.clear();
   }
   public clear(): void {
-    this.pickup_moment = new Array();
-    this.pickup_shear_force = new Array();
-    this.pickup_torsional_moment = new Array();
+    this.pickup_moment = [];
+    this.pickup_shear_force = [];
+    this.pickup_torsional_moment = [];
 
-    this.specification1_list = new Array();
-    this.specification2_list = new Array();
-    this.prevSpecification2 = new Object();
+    // this.specification1_list = new Array();
+    //this.specification2_list = new Array();
+    this.prevSpecification2 = {};
     this.conditions_list = new Array();
 
-    this.specification1_list = this.default_specification1();
-    this.set_default_pickup();
+    this.specification1_list = this.default_specification1(); //set value specification1_list
+    this.set_default_pickup(); //have set value specification2_list
   }
 
   private default_specification1(): any {
@@ -778,6 +777,7 @@ export class InputBasicInformationService {
   }
 
   public get_specification2(): number {
+    if(!this.specification2_list || this.specification2_list.length === 0) return -1;
     const sp = this.specification2_list.find(
       (value) => value.selected === true
     );
