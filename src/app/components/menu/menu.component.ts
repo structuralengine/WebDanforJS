@@ -36,6 +36,7 @@ import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
+import { InputCrackSettingsService } from "../crack/crack-settings.service";
 
 @Component({
   selector: "app-menu",
@@ -97,6 +98,7 @@ export class MenuComponent implements OnInit {
     private basic: InputBasicInformationService,
     private fatigues: InputFatiguesService,
     private menuBehaviorSubject: MenuBehaviorSubject,
+    private crack: InputCrackSettingsService,
     // public auth: Auth,
     public language: LanguagesService,
     public electronService: ElectronService,
@@ -156,11 +158,11 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  changeInput(){
+  changeInput() {
     this.fatigues.setInputData(
-    this.train_A_count,
-    this.train_B_count,
-    this.service_life);
+      this.train_A_count,
+      this.train_B_count,
+      this.service_life);
   }
 
 
@@ -286,7 +288,7 @@ export class MenuComponent implements OnInit {
   public shortenFilename(filename, maxLength = 30) {
     let tempName = filename;
     tempName = this.getFileNameFromUrl(tempName);
-    return tempName.length <= maxLength ? tempName : '...'+ tempName.slice(tempName.length - maxLength);
+    return tempName.length <= maxLength ? tempName : '...' + tempName.slice(tempName.length - maxLength);
   }
 
   private open_done(modalRef, error = null) {
@@ -422,26 +424,23 @@ export class MenuComponent implements OnInit {
     this.specification1_list = basic.specification1_list; // 適用
 
     ///Set selected for specification2_list 
-    if(i === 2)
-    {
+    if (i === 2) {
       //Case Road: temporary set default spe_2.2: "partial coefficient method"
-      basic.specification2_list.map(obj => 
+      basic.specification2_list.map(obj =>
         obj.selected = (obj.id === 6) ? true : false);
-        this.specification2_select_id = 6;
+      this.specification2_select_id = 6;
       this.basic.setPreSpecification2(this.specification1_select_id, basic.specification2_list)
     }
-    else
-    {
+    else {
       const prev = this.basic.prevSpecification2[i];
-      if(prev != undefined)
-      {
+      if (prev != undefined) {
         this.basic.specification2_list = prev;
         basic.specification2_list = this.basic.specification2_list;
       }
       const selectedObject = basic.specification2_list.find(obj => obj.selected === true);
       this.specification2_select_id = selectedObject ? selectedObject.id : 0;
     }
-    
+
     this.specification2_list = basic.specification2_list; // 仕様
     this.conditions_list = basic.conditions_list;         //  設計条件
 
@@ -475,6 +474,7 @@ export class MenuComponent implements OnInit {
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
+    this.crack.refreshTitle$.next({})
     this.basic.setPreSpecification2(this.specification1_select_id, this.specification2_list);
   }
 
@@ -536,7 +536,7 @@ export class MenuComponent implements OnInit {
     if (item.id === "JR-003" || item.id === "JR-005")
       this.members.setGTypeForMembers();
   }
-  handelClickChat(){
+  handelClickChat() {
     const elementChat = document.getElementById("chatplusheader");
     elementChat.click()
   }
