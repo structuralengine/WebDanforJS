@@ -71,6 +71,7 @@ export class SaveDataService {
     this.safety.clear();
     this.force.clear();
     this.material.clear();
+    this.calc.clear();
   }
 
   // 断面力て入力モードかどうか判定する
