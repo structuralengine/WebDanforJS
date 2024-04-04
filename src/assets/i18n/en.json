@@ -231,7 +231,11 @@
         "crack":"Crack εcsd\n(x10^-6)",
         "shear_kr":"Shear kr",
         "exterior":"Exterior",
-        "JRTT05": "Don't omit"
+        "JRTT05": "Don't omit",
+        "dry":"Dry",
+        "dry_wet_cyc":"Dry wet cycle",
+        "wet":"Wet",
+        "water":"Water exposure"
     },
     "shear-strength":{
         "m_no":"Member\nNo",

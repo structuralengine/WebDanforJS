@@ -5,6 +5,7 @@ import pq from 'pqgrid';
 //import few localization files for this demo.
 import 'pqgrid/localize/pq-localize-en.js';
 import 'pqgrid/localize/pq-localize-ja.js';
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
 
 @Component({
   selector: 'app-sheet',
@@ -23,6 +24,10 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   public colsShow: any[] = new Array();
   isCtrlShiftPressed = false; // Flag to track Ctrl + Shift key combination
 
+  constructor(
+    public basic: InputBasicInformationService,
+  ) {
+  }
   @HostListener('document:mouseover', ['$event'])
   toggleActive(event: Event) {
     const elements = [
@@ -310,6 +315,14 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     if (this.grid === null) {
       return;
     }
+    this.grid.refresh();
+  }
+
+  refreshCM() {
+    if (this.grid === null) {
+      return;
+    }
+    this.grid.refreshCM()
     this.grid.refresh();
   }
 

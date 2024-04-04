@@ -36,6 +36,7 @@ import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
+import { InputCrackSettingsService } from "../crack/crack-settings.service";
 
 @Component({
   selector: "app-menu",
@@ -97,6 +98,7 @@ export class MenuComponent implements OnInit {
     private basic: InputBasicInformationService,
     private fatigues: InputFatiguesService,
     private menuBehaviorSubject: MenuBehaviorSubject,
+    private crack: InputCrackSettingsService,
     // public auth: Auth,
     public language: LanguagesService,
     public electronService: ElectronService,
@@ -465,6 +467,7 @@ export class MenuComponent implements OnInit {
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
+    this.crack.refreshTitle$.next({})
   }
 
   // 耐用年数, jA, jB
