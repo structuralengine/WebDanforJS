@@ -75,6 +75,8 @@ import {MultiWindowConfig, MultiWindowModule, WindowSaveStrategy} from 'ngx-mult
 import { DurabilityDataComponent } from "./components/durability-data/durability-data.component";
 import { InputMaterialStrengthVerificationConditionService } from "./components/material-strength-verification-conditions/material-strength-verification-conditions.service";
 import { MaterialStrengthVerificationConditionComponent } from "./components/material-strength-verification-conditions/material-strength-verification-conditions.component";
+import { ModalPreview } from "./components/modal-preview/modal-preview.component";
+import { ThreeComponent } from "./components/three/three.component";
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
   new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -155,6 +157,8 @@ function initializeKeycloak(keycloak: KeycloakService) {
         ShearComponent,
         ActivateSessionComponent,
         PreviewExcelComponent,
+        ModalPreview,
+        ThreeComponent,
     ],
     providers: [
         MenuService,

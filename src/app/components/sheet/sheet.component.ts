@@ -5,6 +5,7 @@ import pq from 'pqgrid';
 //import few localization files for this demo.
 import 'pqgrid/localize/pq-localize-en.js';
 import 'pqgrid/localize/pq-localize-ja.js';
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
 
 import { SaveDataService } from 'src/app/providers/save-data.service';
 
@@ -26,8 +27,8 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   isCtrlShiftPressed = false; // Flag to track Ctrl + Shift key combination
   checkShow:boolean=false;
   tableTag:any
-  constructor(public save: SaveDataService){
-  
+  constructor(public save: SaveDataService){  
+
   }
   @HostListener('document:mouseover', ['$event'])
   toggleActive(event: Event) {
@@ -48,7 +49,6 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     const grandEl = elQAIcon?.parentElement?.parentElement;
 
     this[element.activeProp] = grandEl?.classList.contains('active') || false;
-
     if (grandEl?.contains(event.target as Node)) {
       grandEl.classList.add('active');
       if(this.checkShow){
@@ -347,6 +347,14 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     if (this.grid === null) {
       return;
     }
+    this.grid.refresh();
+  }
+
+  refreshCM() {
+    if (this.grid === null) {
+      return;
+    }
+    this.grid.refreshCM()
     this.grid.refresh();
   }
 
