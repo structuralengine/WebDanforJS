@@ -3,11 +3,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { LanguagesService } from 'src/app/providers/languages.service';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
-import { forEach } from 'jszip';
-import { parse } from 'path';
-import { toDouble } from 'igniteui-angular-core';
-import { publicDecrypt } from 'crypto';
-import { log } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -523,9 +518,11 @@ export class InputMembersService {
 
   //Set for g_type in member
   public setGTypeForMembers() {
-    this.member_list.forEach(m => {
-      this.setGType(m);
-    })
+    if (this.member_list && this.member_list.length > 0) {
+      this.member_list.forEach((m) => {
+        this.setGType(m);
+      });
+    }
   }
 
   //Set for g_type in member

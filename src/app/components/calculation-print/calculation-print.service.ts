@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { InputMembersService } from '../members/members.service';
-import { forEach } from 'jszip';
-import { group } from 'console';
 
 @Injectable({
   providedIn: 'root'
