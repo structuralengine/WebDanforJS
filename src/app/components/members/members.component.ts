@@ -6,8 +6,6 @@ import { SaveDataService } from 'src/app/providers/save-data.service';
 import pq from 'pqgrid';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { TranslateService } from "@ngx-translate/core";
-import { SceneService } from '../three/scene.service';
-import { ThreeMemberService } from '../three/geometry/three-member.service';
 
 @Component({
   selector: 'app-members',
@@ -26,7 +24,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   private ROWS_COUNT = 0;
   private table_datas: any[] = new Array();
   public style ={"pointer-events":"none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size":"0" }
-  public prop={edit: false, show:false};
+  public prop={edit: false, show:false}
   public show:boolean = false
   public element: any;
 
@@ -35,9 +33,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     private points: InputDesignPointsService,
     private save: SaveDataService,
     private app: AppComponent,
-    private translate: TranslateService,
-    private scene: SceneService,
-    private node: ThreeMemberService,
+    private translate: TranslateService   
   ) { }
 
   @HostListener("document:click", ["$event"])
@@ -52,8 +48,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     if(!this.show){
       if (grandEl?.contains(event.target as Node)) {
         this.show = true     
-        member_dev.classList.add('activeQ');    
-        this.node.dataNode = this.table_datas[0];   
+        member_dev.classList.add('activeQ'); 
       }; 
      }else{
       return 
@@ -249,8 +244,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // データを登録する
     this.options['dataModel'] = { data: this.table_datas };
-
-    this.scene.render();
   }
 
 
@@ -412,13 +405,10 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     const containerHeight = this.tableHeight();
     return Math.round(containerHeight / 30);
   }
-  handleClose(event:any){
+  public handleClose(event:any){
     if(event){
       this.element = {}
-      this.show=false
-      while(this.scene.scene.children.length > 0){ 
-        this.scene.remove(this.scene.scene.children[0]); 
+      this.show=false     
     }
   }
-}
 }

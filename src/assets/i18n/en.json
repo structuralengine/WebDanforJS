@@ -597,6 +597,7 @@
         "Circle": "Circle",
         "Ring": "Ring",
         "HorizontalOval": "Horizontal Oval",
-        "VerticalOval": "Vertical Oval"
-    }
+        "VerticalOval": "Vertical Oval",
+        "CircleRing": "Circle・Ring"
+    }    
 }
