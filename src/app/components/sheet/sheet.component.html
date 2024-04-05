@@ -61,7 +61,7 @@
   >
     <div class="container">
       <table>
-        <tbody>
+        <tbody *ngIf="basic.get_specification2()!==3 && basic.get_specification2()!==4  else JR2023">
           <tr>
             <th width="30">1</th>
             <td translate>crack-settings.normal</td>
@@ -75,6 +75,20 @@
             <td translate>crack-settings.es_cor</td>
           </tr>
         </tbody>
+        <ng-template #JR2023>
+          <tr>
+            <th width="30">1</th>
+            <td translate>crack-settings.dry</td>
+          </tr>
+          <tr>
+            <th>2</th>
+            <td translate>crack-settings.dry_wet_cyc</td>
+          </tr>
+          <tr>
+            <th>3</th>
+            <td translate>crack-settings.wet</td>
+          </tr>
+        </ng-template>
       </table>
     </div>
   </div>

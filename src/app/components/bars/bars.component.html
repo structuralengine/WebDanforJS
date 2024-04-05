@@ -19,4 +19,5 @@
 <div class="c-sheetArea">
   <app-sheet #grid [options]="options"></app-sheet>
 </div>
+<app-modal-preview *ngIf="show" [element]="element" (closeModal)="handleClose($event)"></app-modal-preview>
 

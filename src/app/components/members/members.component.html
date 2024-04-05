@@ -105,3 +105,5 @@
     </div>
   </div>
 </div>
+
+<app-modal-preview *ngIf="show" [element]="element" (closeModal)="handleClose($event)"></app-modal-preview>
