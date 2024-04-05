@@ -27,8 +27,10 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   isCtrlShiftPressed = false; // Flag to track Ctrl + Shift key combination
   checkShow:boolean=false;
   tableTag:any
-  constructor(public save: SaveDataService){  
-
+  constructor(
+    public save: SaveDataService,
+    public basic: InputBasicInformationService
+    ){   
   }
   @HostListener('document:mouseover', ['$event'])
   toggleActive(event: Event) {

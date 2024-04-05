@@ -6,8 +6,6 @@ import { SaveDataService } from 'src/app/providers/save-data.service';
 import pq from 'pqgrid';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { TranslateService } from "@ngx-translate/core";
-import { SceneService } from '../three/scene.service';
-import { ThreeMemberService } from '../three/geometry/three-member.service';
 
 @Component({
   selector: 'app-members',
@@ -35,9 +33,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     private points: InputDesignPointsService,
     private save: SaveDataService,
     private app: AppComponent,
-    private translate: TranslateService,
-    private scene: SceneService,
-    private node: ThreeMemberService,
+    private translate: TranslateService   
   ) { }
 
   @HostListener("document:click", ["$event"])
@@ -248,8 +244,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // データを登録する
     this.options['dataModel'] = { data: this.table_datas };
-
-    this.scene.render();
   }
 
 
