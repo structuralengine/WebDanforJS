@@ -6,6 +6,8 @@ import { SaveDataService } from 'src/app/providers/save-data.service';
 import pq from 'pqgrid';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { TranslateService } from "@ngx-translate/core";
+import { SceneService } from '../three/scene.service';
+import { ThreeMemberService } from '../three/geometry/three-member.service';
 
 @Component({
   selector: 'app-members',
@@ -33,7 +35,9 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     private points: InputDesignPointsService,
     private save: SaveDataService,
     private app: AppComponent,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private scene: SceneService,
+    private node: ThreeMemberService,
   ) { }
 
   @HostListener("document:click", ["$event"])
@@ -55,8 +59,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
      }
   }
   ngOnInit() {
-
-
+   
     this.isManual = this.save.isManual();
     this.setTitle(this.isManual);
 
@@ -196,7 +199,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // save data when change
         this.saveData();
-      }
+      },     
     };
 
     // データを読み込む
@@ -245,6 +248,8 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // データを登録する
     this.options['dataModel'] = { data: this.table_datas };
+
+    this.scene.render();
   }
 
 
@@ -351,7 +356,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
             title: 't',
             dataType: 'float', dataIndx: 't', width: 70, nodrag: true,
           }
-        ], nodrag: true,
+        ], nodrag: true
       },
       {
         title: this.translate.instant("members.part_n"),
@@ -359,8 +364,12 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     );
   }
-
-
+  public preview(){
+    console.log("preview")
+  }
+  public onClickHeader(){
+    console.log("test")
+  }
   // 指定行row 以降のデータを読み取る
   private loadData(row: number): void {
     for (let i = this.table_datas.length + 1; i <= row; i++) {

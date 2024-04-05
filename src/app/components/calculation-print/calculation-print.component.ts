@@ -65,6 +65,8 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     private menuService: MenuService,
   ) {
     // this.auth = getAuth();
+    
+    this.calc.updateMemberGroupSelection(); //refresh member_group_selection in Cal
   }
 
   ngOnInit() {

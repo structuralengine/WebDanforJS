@@ -231,7 +231,11 @@
         "crack":"ひび割 εcsd\n(x10^-6)",
         "shear_kr":"せん断\nkr",
         "exterior":"外観",
-        "JRTT05": "省略しない"
+        "JRTT05": "省略しない",
+        "dry": "常時乾燥",
+        "dry_wet_cyc": "乾湿繰り返し",
+        "wet": "常時湿潤",
+        "water": "水掛かりの程度"
     },
     "shear-strength":{
         "m_no":"部材\n番号",
