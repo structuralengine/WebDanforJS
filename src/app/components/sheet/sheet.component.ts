@@ -8,6 +8,7 @@ import 'pqgrid/localize/pq-localize-ja.js';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
 
 import { SaveDataService } from 'src/app/providers/save-data.service';
+import { LanguagesService } from 'src/app/providers/languages.service';
 
 @Component({
   selector: 'app-sheet',
@@ -29,7 +30,8 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   tableTag:any
   constructor(
     public save: SaveDataService,
-    public basic: InputBasicInformationService
+    public basic: InputBasicInformationService,
+    public language: LanguagesService
     ){   
   }
   @HostListener('document:mouseover', ['$event'])
@@ -61,16 +63,15 @@ export class SheetComponent implements AfterViewInit, OnChanges {
         this.checkShow=true;      
         
        if(element.id === "crack-table"){     
-        let manual = !this.save.isManual()? 420 : 310;
-        if(this.save.isManual()){
-          manual = 310;
-        }
-        let leftStyle = `${event.x - manual}`;    
+        let manual = !this.save.isManual()? 420 : 310;       
+        let leftStyle = `${event.x - manual}`;          
         if(this.save.isManual()){
           if (+leftStyle > 220 || +leftStyle < 156) leftStyle = "220";
         }else{
-          if(+leftStyle < 285)
-            leftStyle = "285"
+          if(this.language.browserLang == 'en')        
+            leftStyle = +leftStyle < 285 ? "285" : leftStyle
+          else
+            leftStyle = +leftStyle < 320 ? "324" : leftStyle
         }                         
         this.tableTag.style.left = `${leftStyle}px`                   
        }
