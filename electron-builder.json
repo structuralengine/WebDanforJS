@@ -32,7 +32,8 @@
     "icon": "dist/assets/icons",
     "publisherName": "MALME INC.",
     "target": "nsis",
-    "asar": false
+    "asar": false,
+    "verifyUpdateCodeSignature": false 
   },
   "mac": {
     "icon": "dist",
