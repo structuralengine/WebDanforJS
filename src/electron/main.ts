@@ -9,6 +9,7 @@ import path from 'path'
 let mainWindow: BrowserWindow;
 let locale = 'ja';
 let check = -1;
+autoUpdater.autoDownload = false
 async function createWindow() {
   check = -1;
   log.info("check install k", check);
