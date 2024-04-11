@@ -61,6 +61,24 @@ export class SafetyFactorsMaterialStrengthsComponent
   private current_index: number;
   private groupe_list: any[];
   public groupe_name: string[];
+  public options ={
+    0: { text: this.translate.instant("safety-factors-material-strengths.av") },
+    1: { text: "SD295" },
+    2: { text: "SD345" },
+    3: { text: "SD390" },
+    4: { text: "SD490" }
+  }
+  public optionsArray = [
+    { id: "0", text: this.translate.instant("safety-factors-material-strengths.av") },
+    { id: "1", text: "SD295" },
+    { id: "2", text: "SD345" },
+    { id: "3", text: "SD390" },
+    { id: "4", text: "SD490" }
+  ];
+  public styleEdit = { "color": "#FFFFFF" }
+  public styleNoEdit = { "pointer-events": "none", "color": "#999C9F" }
+  public propEdit = { edit: true, }
+  public propNoEdit = { edit: false, }
 
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
@@ -135,7 +153,8 @@ export class SafetyFactorsMaterialStrengthsComponent
         table2.push(target);
       }
       this.table2_datas.push(table2);
-
+      
+      this.handleSetSelect(this.table2_datas[i])
 
       // 鉄骨材料
       const s1 = safety.material_steel[id][0]; // t16以下
@@ -222,7 +241,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
       });
       this.option2_list.push({
-        width: 550,
+        width: 772,
         height: 200,
         showTop: false,
         reactive: true,
@@ -265,6 +284,18 @@ export class SafetyFactorsMaterialStrengthsComponent
             }
           ]
         },
+        change: (evt, ui) => {
+          let key = Object.keys(ui.updateList[0].newRow)
+          if (key.length > 0 && (key[0] === "options2" || key[0] === "options1")){
+            if (key[0] === "options1"  ){
+              let newData = ui.updateList[0].rowData
+              this.handleSelect(newData,1,ui)
+           }else{
+              let newData = ui.updateList[0].rowData
+              this.handleSelect(newData,2, ui)
+           }
+          }
+        }
       });
       this.option3_list.push({
         width: 550,
@@ -478,6 +509,41 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.columnHeaders2 = [
       { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' } },
       {
+        title: this.translate.instant("safety-factors-material-strengths.rbmt"),
+        align: 'center', colModel: [
+          {
+            title: this.translate.instant("safety-factors-material-strengths.d25"),
+            dataIndx: 'options1', sortable: false, width: 120 ,nodrag: true,
+            cls: 'pq-drop-icon pq-side-icon',
+            editor:{
+              type: 'select',
+              options:this.optionsArray,
+              labelIndx: 'text',
+              valueIndx: 'id',
+            },
+            render: (ui) => {
+              return (this.options[ui.cellData] || {}).text;
+            }
+          },
+          
+          {
+            title: this.translate.instant("safety-factors-material-strengths.d29"),
+            dataIndx: 'options2', sortable: false, width: 120, nodrag: true,
+            cls: 'pq-drop-icon pq-side-icon',
+            editor: {
+              type: 'select',
+              options: this.optionsArray,
+              labelIndx: 'text',
+              valueIndx: 'id',
+            }, 
+            render: (ui) => {
+              return (this.options[ui.cellData] || {}).text;
+            }
+          }
+        ],
+        nodrag: true,
+      },
+      {
         title: this.translate.instant("safety-factors-material-strengths.ys"),
         align: 'center', colModel: [
           {
@@ -565,14 +631,14 @@ export class SafetyFactorsMaterialStrengthsComponent
       // 鉄筋材料
       const bar = this.table2_datas[i];
       material_bar[id] = [{
-        tensionBar: { fsy: bar[0].fsy1, fsu: bar[0].fsu1 },
-        sidebar: { fsy: bar[1].fsy1, fsu: bar[1].fsu1 },
-        stirrup: { fsy: bar[2].fsy1, fsu: bar[2].fsu1 }
+        tensionBar: { id:+bar[0].options1, fsy: bar[0].fsy1, fsu: bar[0].fsu1 },
+        sidebar: { id: +bar[1].options1, fsy: bar[1].fsy1, fsu: bar[1].fsu1 },
+        stirrup: { id: +bar[2].options1, fsy: bar[2].fsy1, fsu: bar[2].fsu1 }
       },
       {
-        tensionBar: { fsy: bar[0].fsy2, fsu: bar[0].fsu2 },
-        sidebar: { fsy: bar[1].fsy2, fsu: bar[1].fsu2 },
-        stirrup: { fsy: bar[2].fsy2, fsu: bar[2].fsu2 }
+        tensionBar: { id: +bar[0].options2, fsy: bar[0].fsy2, fsu: bar[0].fsu2 },
+        sidebar: { id: +bar[1].options2, fsy: bar[1].fsy2, fsu: bar[1].fsu2 },
+        stirrup: { id: +bar[2].options2, fsy: bar[2].fsy2, fsu: bar[2].fsu2 }
       }];
 
       // 鉄骨材料
@@ -646,6 +712,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.grid1.refreshDataAndView();
 
     this.options2 = this.option2_list[id];
+    this.handleCheckInputNull(this.options2.dataModel.data)
     this.grid2.options = this.options2;
     this.grid2.refreshDataAndView();
 
@@ -690,5 +757,147 @@ export class SafetyFactorsMaterialStrengthsComponent
       }
     })
     this.safety.arrayAxis = this.arrayAxis;
+  }
+  handleCheckInputNull(dataTable:any){
+    dataTable.forEach((data:any)=>{
+      if (+data.options1===0){
+        if (data.fsy1 ===null){
+          data.fsy1=0
+        }
+        if (data.fsu1 ===null){
+          data.fsu1 = 0
+        }
+      }
+      if (+data.options2 === 0) {
+        if (data.fsy2 === null) {
+          data.fsy2 = 0
+        }
+        if (data.fsu2 === null) {
+          data.fsu2 = 0
+        }
+      }
+    });
+    this.handleSetSelect(dataTable)
+  }
+  handleSetSelect(dataTable:any){
+    dataTable.forEach((data: any) => {
+      data["options1"] = 0;
+      data["options2"] = 0;
+      this.setEdit(data, true)
+      if (data.fsy1 === null && data.fsu1 === null) {
+        data["options1"] = "2"
+        data.fsy1 = 345
+        data.fsu1 = 490
+      }
+      if (data.fsy2 === null && data.fsu2 === null) {
+        data["options2"] = "2"
+        data.fsy2 = 345
+        data.fsu2 = 490
+      }
+      if (data.fsy1 === 295 && data.fsu1 === 440 || data.fsy1 === 295 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 440) {
+        data["options1"] = "1"
+        this.setEdit(data, false, 1)
+      }
+      if (data.fsy2 === 295 && data.fsu2 === 440 || data.fsy2 === 295 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 440) {
+        data["options2"] = "1"
+        this.setEdit(data, false, 2)
+      }
+      if (data.fsy1 === 345 && data.fsu1 === 490 || data.fsy1 === 345 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 490) {
+        data["options1"] = "2"
+        this.setEdit(data, false, 1)
+      }
+      if (data.fsy2 === 345 && data.fsu2 === 490 || data.fsy2 === 345 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 490) {
+        data["options2"] = "2"
+        this.setEdit(data, false, 2)
+      }
+      if (data.fsy1 === 390 && data.fsu1 === 560 || data.fsy1 === 390 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 560) {
+        data["options1"] = "3"
+        this.setEdit(data, false, 1)
+      }
+      if (data.fsy2 === 390 && data.fsu2 === 560 || data.fsy2 === 390 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 560) {
+        data["options2"] = "3"
+        this.setEdit(data, false, 2)
+      }
+      if (data.fsy1 === 490 && data.fsu1 === 620 || data.fsy1 === 490 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 620) {
+        data["options1"] = "4"
+        this.setEdit(data, false, 1)
+      }
+      if (data.fsy2 === 490 && data.fsu2 === 620 || data.fsy2 === 490 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 620) {
+        data["options2"] = "4"
+        this.setEdit(data, false, 2)
+      }
+    })
+  }
+  setEdit(data:any, checkEdit:boolean, numberCell?:any){
+    if (checkEdit){
+      data.pq_cellstyle = {
+        fsy1: { ...this.styleEdit },
+        fsy2: { ...this.styleEdit },
+        fsu1: { ...this.styleEdit },
+        fsu2: { ...this.styleEdit }
+      }
+      data.pq_cellprop = {
+        fsy1: { ...this.propEdit },
+        fsy2: { ...this.propEdit },
+        fsu1: { ...this.propEdit },
+        fsu2: { ...this.propEdit }
+      }
+    }else{
+      let fsy = numberCell === 1 ? "fsy1" : "fsy2"
+      let fsu = numberCell === 1 ? "fsu1" : "fsu2"
+      data.pq_cellstyle = {
+        ...data.pq_cellstyle,
+        [fsy]: { ...this.styleNoEdit },
+        [fsu]: { ...this.styleNoEdit },
+      }
+      data.pq_cellprop = {
+        ...data.pq_cellprop,
+        [fsy]: { ...this.propNoEdit },
+        [fsu]: { ...this.propNoEdit },
+      }
+    }
+  }
+  handleSelect(newData: any, numberCell:any,ui:any){
+    let fsy = numberCell === 1 ? "fsy1" : "fsy2"
+    let fsu = numberCell === 1 ? "fsu1" : "fsu2"
+    if (+ui.updateList[0].newRow[`options${numberCell}`] === 0) {
+      newData.pq_cellstyle = {
+        ...newData.pq_cellstyle,
+        [fsy]: { ...this.styleEdit },
+        [fsu]: { ...this.styleEdit },
+      }
+      newData.pq_cellprop = {
+        ...newData.pq_cellprop,
+        [fsy]: { ...this.propEdit },
+        [fsu]: { ...this.propEdit },
+      }
+    } else {
+      newData.pq_cellstyle = {
+        ...newData.pq_cellstyle,
+        [fsy]: { ...this.styleNoEdit },
+        [fsu]: { ...this.styleNoEdit },
+      }
+      newData.pq_cellprop = {
+        ...newData.pq_cellprop,
+        [fsy]: { ...this.propNoEdit },
+        [fsu]: { ...this.propNoEdit },
+      }
+      if (+ui.updateList[0].newRow[`options${numberCell}`] === 1) {
+        newData[fsy] = 295
+        newData[fsu] = 440
+      }
+      if (+ui.updateList[0].newRow[`options${numberCell}`] === 2) {
+        newData[fsy] = 345
+        newData[fsu] = 490
+      }
+      if (+ui.updateList[0].newRow[`options${numberCell}`] === 3) {
+        newData[fsy] = 390
+        newData[fsu] = 560
+      }
+      if (+ui.updateList[0].newRow[`options${numberCell}`] === 4) {
+        newData[fsy] = 490
+        newData[fsu] = 620
+      }
+    }
   }
 }

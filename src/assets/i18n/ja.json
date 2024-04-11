@@ -341,7 +341,9 @@
         "muddy_less":"泥水比重1.04以下",
         "natural_less":"自然泥水, 泥水比重1.10以下",
         "bentonite":"ベントナイト泥水",
-        "aerial":"気中施工"
+        "aerial":"気中施工",
+        "rbmt": "鉄筋材種",
+        "av":"任意値"
     },
     "calculation-print":{
         "dc":"設計条件",
