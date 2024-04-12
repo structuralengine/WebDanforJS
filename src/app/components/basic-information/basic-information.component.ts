@@ -298,9 +298,8 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   }
 
   public  saveData(): void {
-    let tableTemp
+    let tableTemp = JSON.parse(JSON.stringify(this.table1_datas)); 
     if (this.basic.get_specification1() === 0 || this.basic.get_specification1() === 1) {
-      tableTemp = JSON.parse(JSON.stringify(this.table1_datas)) ;
       let index = tableTemp.findIndex((data) => data.id === 2)
       if (this.removeData && index===-1){
         tableTemp.splice(2, 0, this.removeData);
