@@ -298,16 +298,16 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   }
 
   public  saveData(): void {
-    let tableTheme
+    let tableTemp
     if (this.basic.get_specification1() === 0 || this.basic.get_specification1() === 1) {
-      tableTheme = JSON.parse(JSON.stringify(this.table1_datas)) ;
-      let index = tableTheme.findIndex((data) => data.id === 2)
+      tableTemp = JSON.parse(JSON.stringify(this.table1_datas)) ;
+      let index = tableTemp.findIndex((data) => data.id === 2)
       if (this.removeData && index===-1){
-        tableTheme.splice(2, 0, this.removeData);
+        tableTemp.splice(2, 0, this.removeData);
     }
   }
     this.basic.setSaveData({
-      pickup_moment: tableTheme,
+      pickup_moment: tableTemp,
       pickup_shear_force: this.table2_datas,
       pickup_torsional_moment: this.table3_datas,
 
