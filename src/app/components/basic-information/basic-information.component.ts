@@ -120,12 +120,11 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
         el.no = null
       });
     }
-
     if(this.basic.get_specification1()===0 || this.basic.get_specification1()===1){
-      let index = this.table1_datas.findIndex((data)=>data.id===2)
-      this.removeData= this.table1_datas[index]
-      if(index>-1){
-        this.table1_datas.splice(index,1)
+      let index = this.table1_datas.findIndex((data) => data.id === 2)
+      if (index > -1) {
+        this.removeData = this.table1_datas[index]
+        this.table1_datas.splice(index, 1)
       }
     }
 
@@ -298,12 +297,17 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     this.saveData();
   }
 
-  public saveData(): void {
-    if(this.removeData){
-      this.table1_datas.push(this.removeData)
+  public  saveData(): void {
+    let tableTheme
+    if (this.basic.get_specification1() === 0 || this.basic.get_specification1() === 1) {
+      tableTheme = JSON.parse(JSON.stringify(this.table1_datas)) ;
+      let index = tableTheme.findIndex((data) => data.id === 2)
+      if (this.removeData && index===-1){
+        tableTheme.splice(2, 0, this.removeData);
     }
+  }
     this.basic.setSaveData({
-      pickup_moment: this.table1_datas,
+      pickup_moment: tableTheme,
       pickup_shear_force: this.table2_datas,
       pickup_torsional_moment: this.table3_datas,
 
@@ -311,7 +315,6 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       specification2_list: this.specification2_list, // 仕様
       conditions_list: this.conditions_list         // 設計条件
     });
-
   }
 
   /// <summary>
