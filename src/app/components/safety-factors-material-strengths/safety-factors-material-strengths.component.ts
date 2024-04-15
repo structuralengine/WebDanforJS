@@ -241,7 +241,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
       });
       this.option2_list.push({
-        width: 772,
+        width: 756,
         height: 200,
         showTop: false,
         reactive: true,
@@ -513,7 +513,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         align: 'center', colModel: [
           {
             title: this.translate.instant("safety-factors-material-strengths.d25"),
-            dataIndx: 'options1', sortable: false, width: 120 ,nodrag: true,
+            dataIndx: 'options1', sortable: false, width: 112 ,nodrag: true,
             cls: 'pq-drop-icon pq-side-icon',
             editor:{
               type: 'select',
@@ -528,7 +528,7 @@ export class SafetyFactorsMaterialStrengthsComponent
           
           {
             title: this.translate.instant("safety-factors-material-strengths.d29"),
-            dataIndx: 'options2', sortable: false, width: 120, nodrag: true,
+            dataIndx: 'options2', sortable: false, width: 112, nodrag: true,
             cls: 'pq-drop-icon pq-side-icon',
             editor: {
               type: 'select',
