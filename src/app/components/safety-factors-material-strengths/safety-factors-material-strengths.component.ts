@@ -797,34 +797,50 @@ export class SafetyFactorsMaterialStrengthsComponent
       if (data.fsy1 === 295 && data.fsu1 === 440 || data.fsy1 === 295 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 440) {
         data["options1"] = "1"
         this.setEdit(data, false, 1)
+        data.fsy1 = 295
+        data.fsu1 = 440
       }
       if (data.fsy2 === 295 && data.fsu2 === 440 || data.fsy2 === 295 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 440) {
         data["options2"] = "1"
         this.setEdit(data, false, 2)
+        data.fsy2 = 295
+        data.fsu2 = 440
       }
       if (data.fsy1 === 345 && data.fsu1 === 490 || data.fsy1 === 345 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 490) {
         data["options1"] = "2"
         this.setEdit(data, false, 1)
+        data.fsy1 = 345
+        data.fsu1 = 490
       }
       if (data.fsy2 === 345 && data.fsu2 === 490 || data.fsy2 === 345 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 490) {
         data["options2"] = "2"
         this.setEdit(data, false, 2)
+        data.fsy2 = 345
+        data.fsu2 = 490
       }
       if (data.fsy1 === 390 && data.fsu1 === 560 || data.fsy1 === 390 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 560) {
         data["options1"] = "3"
         this.setEdit(data, false, 1)
+        data.fsy1 = 390
+        data.fsu1 = 560
       }
       if (data.fsy2 === 390 && data.fsu2 === 560 || data.fsy2 === 390 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 560) {
         data["options2"] = "3"
         this.setEdit(data, false, 2)
+        data.fsy2 = 390
+        data.fsu2 = 560
       }
       if (data.fsy1 === 490 && data.fsu1 === 620 || data.fsy1 === 490 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 620) {
         data["options1"] = "4"
         this.setEdit(data, false, 1)
+        data.fsy1 = 490
+        data.fsu1 = 620
       }
       if (data.fsy2 === 490 && data.fsu2 === 620 || data.fsy2 === 490 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 620) {
         data["options2"] = "4"
         this.setEdit(data, false, 2)
+        data.fsy2 = 490
+        data.fsu2 = 620
       }
     })
   }
