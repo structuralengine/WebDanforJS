@@ -22,6 +22,7 @@ export class InputBasicInformationService {
   // 設計条件
   public conditions_list: any[];
 
+  public removeData:any;
   constructor(
     private helper: DataHelperModule,
     private translate: TranslateService,
@@ -33,7 +34,7 @@ export class InputBasicInformationService {
     this.pickup_moment = [];
     this.pickup_shear_force = [];
     this.pickup_torsional_moment = [];
-
+    
     // this.specification1_list = new Array();
     //this.specification2_list = new Array();
     this.prevSpecification2 = {};
@@ -78,7 +79,12 @@ export class InputBasicInformationService {
   private set_default_pickup(): void {
     const sp1 = this.get_specification1();
     const sp2 = this.get_specification2();
-
+    if (this.removeData && sp1===2){
+      let index = this.pickup_moment.findIndex((data) => data.id === 2)
+      if ( index === -1) {
+        this.pickup_moment.splice(2, 0, this.removeData);
+      }
+    }
     // 曲げモーメントテーブル
     const keys_moment = this.default_pickup_moment(sp1, sp2);
     // 古い入力があれば no の入力を 保持
