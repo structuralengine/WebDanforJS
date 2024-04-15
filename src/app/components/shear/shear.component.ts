@@ -181,7 +181,15 @@ export class ShearComponent implements OnInit {
             ui.updateList[0].rowData.pq_cellprop= propShaded2;
 
           }
-          
+          let keyChange = Object.keys(ui.updateList[0].newRow)
+          if (keyChange[0]=="La"){
+            let newData = ui.updateList[0].newRow.La
+            if (newData<0){
+              console.log("newData <0");
+              ui.updateList[0].newRow.La = null
+              ui.updateList[0].rowData.La = null
+            }
+          }
         },
       };
       this.option_list.push(op);
@@ -275,7 +283,7 @@ export class ShearComponent implements OnInit {
       // 令和5年 RC標準
       const speci1 = this.basic.get_specification1();
       const speci2 = this.basic.get_specification2();
-      if (speci1 === 0 && (speci2 === 3 || speci2 === 4)) {
+      if (speci1 === 0 && (speci2 === 3 || speci2 === 4 || speci2 == 0|| speci2 == 1 )) {
         this.columnHeaders.push(
           {
             title: this.translate.instant("shear-strength.fixed_end"),
@@ -287,15 +295,19 @@ export class ShearComponent implements OnInit {
             width: 100,
             nodrag: true,
           },
-          {
-            title: this.translate.instant("shear-strength.m_len"),
-            dataType: "float",
-            dataIndx: "L",
-            frozen: true,
-            width: 150,
-            nodrag: true,
-          }
         );
+        if (speci2 === 3 || speci2 === 4){
+          this.columnHeaders.push(
+            {
+              title: this.translate.instant("shear-strength.m_len"),
+              dataType: "float",
+              dataIndx: "L",
+              frozen: true,
+              width: 150,
+              nodrag: true,
+            }
+          )
+        }
       }
     } else {
       if (isManual) {
