@@ -251,6 +251,9 @@ export class SafetyFactorsMaterialStrengthsComponent
         colModel: this.columnHeaders2,
         dataModel: { data: this.table2_datas[i] },
         freezeCols: 1,
+        editModel: {
+          clicksToEdit: 1
+        },
         contextMenu: {
           on: true,
           items: [
@@ -513,7 +516,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         align: 'center', colModel: [
           {
             title: this.translate.instant("safety-factors-material-strengths.d25"),
-            dataIndx: 'options1', sortable: false, width: 112 ,nodrag: true,
+            dataIndx: 'options1', sortable: false, width: 112, nodrag: true, paste: false, 
             cls: 'pq-drop-icon pq-side-icon',
             editor:{
               type: 'select',
@@ -523,12 +526,12 @@ export class SafetyFactorsMaterialStrengthsComponent
             },
             render: (ui) => {
               return (this.options[ui.cellData] || {}).text;
-            }
+            }, 
           },
           
           {
             title: this.translate.instant("safety-factors-material-strengths.d29"),
-            dataIndx: 'options2', sortable: false, width: 112, nodrag: true,
+            dataIndx: 'options2', sortable: false, width: 112, nodrag: true, paste: false, 
             cls: 'pq-drop-icon pq-side-icon',
             editor: {
               type: 'select',
@@ -538,7 +541,7 @@ export class SafetyFactorsMaterialStrengthsComponent
             }, 
             render: (ui) => {
               return (this.options[ui.cellData] || {}).text;
-            }
+            },
           }
         ],
         nodrag: true,
