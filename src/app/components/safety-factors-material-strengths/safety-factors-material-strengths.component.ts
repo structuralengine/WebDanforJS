@@ -60,7 +60,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   // タブのヘッダ名
   private current_index: number;
   private groupe_list: any[];
-  public groupe_name: string[];
+  public groupe_name: any[];
   public options ={
     0: { text: this.translate.instant("safety-factors-material-strengths.av") },
     1: { text: "SD295" },
@@ -107,7 +107,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       const groupe = safety.groupe_list[i];
       const first = groupe[0];
       const id = first.g_id;
-      this.groupe_name.push(this.members.getGroupeName(i));
+      this.groupe_name.push({ name: this.members.getGroupeName(i) ,id});
       
       // 安全係数
       const bar = [], steel = [];
@@ -147,14 +147,14 @@ export class SafetyFactorsMaterialStrengthsComponent
           const cur = current[k];
           const k1 = "fsy" + (i + 1);
           const k2 = "fsu" + (i + 1);
-          target[k1] = cur.fsy;
-          target[k2] = cur.fsu;
+          target[k1] = cur.fsy === undefined ? null : cur.fsy;
+          target[k2] = cur.fsu === undefined ? null : cur.fsu;
         }
         table2.push(target);
       }
       this.table2_datas.push(table2);
       
-      this.handleSetSelect(this.table2_datas[i])
+      this.handleSetSelect(this.table2_datas[i], id)
 
       // 鉄骨材料
       const s1 = safety.material_steel[id][0]; // t16以下
@@ -289,14 +289,10 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
         change: (evt, ui) => {
           let key = Object.keys(ui.updateList[0].newRow)
-          if (key.length > 0 && (key[0] === "options2" || key[0] === "options1")){
-            if (key[0] === "options1"  ){
-              let newData = ui.updateList[0].rowData
-              this.handleSelect(newData,1,ui)
-           }else{
-              let newData = ui.updateList[0].rowData
-              this.handleSelect(newData,2, ui)
-           }
+          if (key.length > 0 && key[0].includes("options")){
+            let number = key[0].split("options")[1];
+            let newData = ui.updateList[0].rowData
+            this.handleSelect(newData, +number, ui)
           }
         }
       });
@@ -437,8 +433,9 @@ export class SafetyFactorsMaterialStrengthsComponent
       });
     }
     this.groupe_name.map((data: any) => {     
-      if(this.arrayAxis.length < this.groupe_name.length)    
-        this.arrayAxis.push({id: data, consider_moment_checked: false})
+      if(this.arrayAxis.length < this.groupe_name.length) 
+        console.log("data",data)   
+        this.arrayAxis.push({id: data.name, consider_moment_checked: false})
     })  
     this.groupMem = this.arrayAxis[0].id;
     this.current_index = 0;
@@ -702,11 +699,11 @@ export class SafetyFactorsMaterialStrengthsComponent
   }
 
   public activePageChenge(id: number, group: any): void {
-    this.groupMem=group;
+    this.groupMem=group.name;
     this.activeButtons(id);
     this.current_index = id;    
     this.arrayAxis.map((data: any)=>{
-      if(data.id === group){
+      if(data.id === group.name){
         this.consider_moment_checked = data.consider_moment_checked
       }
     })
@@ -715,7 +712,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.grid1.refreshDataAndView();
 
     this.options2 = this.option2_list[id];
-    this.handleCheckInputNull(this.options2.dataModel.data)
+    this.handleCheckInputNull(this.options2.dataModel.data, group.id)
     this.grid2.options = this.options2;
     this.grid2.refreshDataAndView();
 
@@ -761,7 +758,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     })
     this.safety.arrayAxis = this.arrayAxis;
   }
-  handleCheckInputNull(dataTable:any){
+  handleCheckInputNull(dataTable:any,id:any){
     dataTable.forEach((data:any)=>{
       if (+data.options1===0){
         if (data.fsy1 ===null){
@@ -780,74 +777,51 @@ export class SafetyFactorsMaterialStrengthsComponent
         }
       }
     });
-    this.handleSetSelect(dataTable)
+    this.handleSetSelect(dataTable,id)
   }
-  handleSetSelect(dataTable:any){
+  handleSetSelect(dataTable:any,id:any){
+    const safety = this.safety.getTableColumns();
+    const fx = safety.material_bar[id];
     dataTable.forEach((data: any) => {
-      data["options1"] = 0;
-      data["options2"] = 0;
       this.setEdit(data, true)
-      if (data.fsy1 === null && data.fsu1 === null) {
-        data["options1"] = "2"
-        data.fsy1 = 345
-        data.fsu1 = 490
+      for (let i = 0; i < fx.length; i++) {
+        const k1 = "fsy" + (i + 1);
+        const k2 = "fsu" + (i + 1);
+        data[`options${i + 1}`] = 0;
+        if (data[k1] === null && data[k2] === null) {
+          data[`options${i + 1}`] = "2"
+          data[k1] = 345
+          data[k2] = 490
+        }
+        if (data[k1] === 295 && data[k2] === 440 || data[k1] === 295 && data[k2] === null || data[k1] === null && data[k2] === 440) {
+          data[`options${i + 1}`] = "1"
+          this.setEdit(data, false, k1,k2)
+          data[k1] = 295
+          data[k2] = 440
+        }
+        if (data[k1] === 345 && data[k2] === 490 || data[k1] === 345 && data[k2] === null || data[k1] === null && data[k2] === 490) {
+          data[`options${i + 1}`] = "2"
+          this.setEdit(data, false, k1,k2)
+          data[k1] = 345
+          data[k2] = 490
+        }
+        if (data[k1] === 390 && data[k2] === 560 || data[k1] === 390 && data[k2] === null || data[k1] === null && data[k2] === 560) {
+          data[`options${i + 1}`] = "3"
+          this.setEdit(data, false, k1,k2)
+          data[k1] = 390
+          data[k2] = 560
+        }
+        if (data[k1] === 490 && data[k2] === 620 || data[k1] === 490 && data[k2] === null || data[k1] === null && data[k2] === 620) {
+          data[`options${i + 1}`] = "4"
+          this.setEdit(data, false, k1,k2)
+          data[k1] = 490
+          data[k2] = 620
+        }
       }
-      if (data.fsy2 === null && data.fsu2 === null) {
-        data["options2"] = "2"
-        data.fsy2 = 345
-        data.fsu2 = 490
-      }
-      if (data.fsy1 === 295 && data.fsu1 === 440 || data.fsy1 === 295 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 440) {
-        data["options1"] = "1"
-        this.setEdit(data, false, 1)
-        data.fsy1 = 295
-        data.fsu1 = 440
-      }
-      if (data.fsy2 === 295 && data.fsu2 === 440 || data.fsy2 === 295 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 440) {
-        data["options2"] = "1"
-        this.setEdit(data, false, 2)
-        data.fsy2 = 295
-        data.fsu2 = 440
-      }
-      if (data.fsy1 === 345 && data.fsu1 === 490 || data.fsy1 === 345 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 490) {
-        data["options1"] = "2"
-        this.setEdit(data, false, 1)
-        data.fsy1 = 345
-        data.fsu1 = 490
-      }
-      if (data.fsy2 === 345 && data.fsu2 === 490 || data.fsy2 === 345 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 490) {
-        data["options2"] = "2"
-        this.setEdit(data, false, 2)
-        data.fsy2 = 345
-        data.fsu2 = 490
-      }
-      if (data.fsy1 === 390 && data.fsu1 === 560 || data.fsy1 === 390 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 560) {
-        data["options1"] = "3"
-        this.setEdit(data, false, 1)
-        data.fsy1 = 390
-        data.fsu1 = 560
-      }
-      if (data.fsy2 === 390 && data.fsu2 === 560 || data.fsy2 === 390 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 560) {
-        data["options2"] = "3"
-        this.setEdit(data, false, 2)
-        data.fsy2 = 390
-        data.fsu2 = 560
-      }
-      if (data.fsy1 === 490 && data.fsu1 === 620 || data.fsy1 === 490 && data.fsu1 === null || data.fsy1 === null && data.fsu1 === 620) {
-        data["options1"] = "4"
-        this.setEdit(data, false, 1)
-        data.fsy1 = 490
-        data.fsu1 = 620
-      }
-      if (data.fsy2 === 490 && data.fsu2 === 620 || data.fsy2 === 490 && data.fsu2 === null || data.fsy2 === null && data.fsu2 === 620) {
-        data["options2"] = "4"
-        this.setEdit(data, false, 2)
-        data.fsy2 = 490
-        data.fsu2 = 620
-      }
-    })
+    }) 
+       
   }
-  setEdit(data:any, checkEdit:boolean, numberCell?:any){
+  setEdit(data:any, checkEdit:boolean, k1?:any,k2?:any){
     if (checkEdit){
       data.pq_cellstyle = {
         fsy1: { ...this.styleEdit },
@@ -861,24 +835,22 @@ export class SafetyFactorsMaterialStrengthsComponent
         fsu1: { ...this.propEdit },
         fsu2: { ...this.propEdit }
       }
-    }else{
-      let fsy = numberCell === 1 ? "fsy1" : "fsy2"
-      let fsu = numberCell === 1 ? "fsu1" : "fsu2"
+    }else{ 
       data.pq_cellstyle = {
         ...data.pq_cellstyle,
-        [fsy]: { ...this.styleNoEdit },
-        [fsu]: { ...this.styleNoEdit },
+        [k1]: { ...this.styleNoEdit },
+        [k2]: { ...this.styleNoEdit },
       }
       data.pq_cellprop = {
         ...data.pq_cellprop,
-        [fsy]: { ...this.propNoEdit },
-        [fsu]: { ...this.propNoEdit },
+        [k1]: { ...this.propNoEdit },
+        [k2]: { ...this.propNoEdit },
       }
     }
   }
   handleSelect(newData: any, numberCell:any,ui:any){
-    let fsy = numberCell === 1 ? "fsy1" : "fsy2"
-    let fsu = numberCell === 1 ? "fsu1" : "fsu2"
+    let fsy = "fsy" + numberCell
+    let fsu = "fsu" + numberCell
     if (+ui.updateList[0].newRow[`options${numberCell}`] === 0) {
       newData.pq_cellstyle = {
         ...newData.pq_cellstyle,
