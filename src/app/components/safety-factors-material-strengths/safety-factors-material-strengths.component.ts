@@ -434,7 +434,6 @@ export class SafetyFactorsMaterialStrengthsComponent
     }
     this.groupe_name.map((data: any) => {     
       if(this.arrayAxis.length < this.groupe_name.length) 
-        console.log("data",data)   
         this.arrayAxis.push({id: data.name, consider_moment_checked: false})
     })  
     this.groupMem = this.arrayAxis[0].id;
@@ -712,7 +711,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.grid1.refreshDataAndView();
 
     this.options2 = this.option2_list[id];
-    this.handleCheckInputNull(this.options2.dataModel.data, group.id)
+    this.handleSetSelect(this.options2.dataModel.data, group.id)
     this.grid2.options = this.options2;
     this.grid2.refreshDataAndView();
 
@@ -758,27 +757,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     })
     this.safety.arrayAxis = this.arrayAxis;
   }
-  handleCheckInputNull(dataTable:any,id:any){
-    dataTable.forEach((data:any)=>{
-      if (+data.options1===0){
-        if (data.fsy1 ===null){
-          data.fsy1=0
-        }
-        if (data.fsu1 ===null){
-          data.fsu1 = 0
-        }
-      }
-      if (+data.options2 === 0) {
-        if (data.fsy2 === null) {
-          data.fsy2 = 0
-        }
-        if (data.fsu2 === null) {
-          data.fsu2 = 0
-        }
-      }
-    });
-    this.handleSetSelect(dataTable,id)
-  }
+ 
   handleSetSelect(dataTable:any,id:any){
     const safety = this.safety.getTableColumns();
     const fx = safety.material_bar[id];
@@ -816,6 +795,14 @@ export class SafetyFactorsMaterialStrengthsComponent
           this.setEdit(data, false, k1,k2)
           data[k1] = 490
           data[k2] = 620
+        }
+        if (+data[`options${i + 1}`] === 0) {
+          if (data[k1] === null) {
+            data[k1] = 0
+          }
+          if (data[k2] === null) {
+            data[k2] = 0
+          }
         }
       }
     }) 
