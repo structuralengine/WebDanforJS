@@ -132,14 +132,14 @@ export class InputSafetyFactorsMaterialStrengthsService {
         tensionBar: { fsy: 345, fsu: 490 },
         sidebar: { fsy: 345, fsu: 490 },
         stirrup: { fsy: 345, fsu: 490 },
-        bend: { fsy: 345, fsu: 490 }
+        // bend: { fsy: 345, fsu: 490 }
       },
       {
         separate: 29,
         tensionBar: { fsy: 390, fsu: 560 },
         sidebar: { fsy: 390, fsu: 560 },
         stirrup: { fsy: 390, fsu: 560 },
-        bend: { fsy: 390, fsu: 560 }
+        // bend: { fsy: 390, fsu: 560 }
       }
     ]
     if( sp1===1 ){
@@ -148,7 +148,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
           tensionBar: { fsy: 415, fsu: 550 },
           sidebar: { fsy: 415, fsu: 550 },
           stirrup: { fsy: 415, fsu: 550 },
-          bend: { fsy: 415, fsu: 550 }
+          // bend: { fsy: 415, fsu: 550 }
         }
       ]
     }
