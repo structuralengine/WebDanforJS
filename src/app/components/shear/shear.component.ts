@@ -11,6 +11,7 @@ import { InputMembersService } from "../members/members.service";
 import { InputSafetyFactorsMaterialStrengthsService } from "../safety-factors-material-strengths/safety-factors-material-strengths.service";
 import { MenuService } from "../menu/menu.service";
 import { InputMaterialStrengthVerificationConditionService } from "../material-strength-verification-conditions/material-strength-verification-conditions.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-shear",
@@ -47,6 +48,7 @@ export class ShearComponent implements OnInit {
     L : { ...this.propTrue},
   }
   public groupe_name: string[];
+  public refreshSubscription: Subscription;
 
   // public isSubstructure: boolean = false;
   // public isRoad: boolean = false;
@@ -101,6 +103,19 @@ export class ShearComponent implements OnInit {
           data.pq_cellstyle = this.styleShead;
           data.pq_cellprop=this.propShaded1
         }
+        if(data.La===undefined){
+          data.La=null
+        }
+        if (data.La!==null && data.La<0){
+          const speci2 = this.basic.get_specification2();
+          const speci1 = this.basic.get_specification1();
+          data.La = Math.abs(data.La)
+          if ((speci1 === 0 || speci1 === 1) && (speci2 === 0 || speci2 === 1)) {
+            let fixed_end = data.fixed_end
+            if (fixed_end === null || !fixed_end)
+              data.fixed_end = true
+          }
+        }
       });
 
       const op = {
@@ -146,7 +161,7 @@ export class ShearComponent implements OnInit {
             },
           ],
         },
-        change(evt, ui) {
+        change:(evt, ui)=> {
           const style = {
             "pointer-events": "none",
             background:
@@ -184,10 +199,16 @@ export class ShearComponent implements OnInit {
           let keyChange = Object.keys(ui.updateList[0].newRow)
           if (keyChange[0]=="La"){
             let newData = ui.updateList[0].newRow.La
-            if (newData<0){
-              console.log("newData <0");
-              ui.updateList[0].newRow.La = null
-              ui.updateList[0].rowData.La = null
+            if (newData!==null && newData<0){
+              const speci2 = this.basic.get_specification2();
+              const speci1 = this.basic.get_specification1();
+              ui.updateList[0].newRow.La = Math.abs(ui.updateList[0].newRow.La)
+              ui.updateList[0].rowData.La = Math.abs(ui.updateList[0].rowData.La)
+              if ((speci1 === 0 || speci1 === 1 ) && (speci2 === 0 || speci2 === 1)) {
+                let fixed_end = ui.updateList[0].rowData.fixed_end
+                if (fixed_end ===null || !fixed_end)
+                  ui.updateList[0].rowData.fixed_end= true
+              }
             }
           }
         },
@@ -204,6 +225,10 @@ export class ShearComponent implements OnInit {
   }
   ngAfterViewInit() {
     this.activeButtons(0);
+    this.refreshSubscription=  this.shear.refreshTable$.subscribe(()=>{
+      this.saveData();
+      this.onInitData();
+    })
   }
 
   private setTitle(isManual: boolean): void {
@@ -421,6 +446,7 @@ export class ShearComponent implements OnInit {
 
   ngOnDestroy() {
     this.saveData();
+    this.refreshSubscription?.unsubscribe()
   }
 
   //Set show following component type is "Substructure"
