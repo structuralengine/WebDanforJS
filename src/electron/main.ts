@@ -213,7 +213,18 @@ ipcMain.on(
     event.returnValue = '';
   }
 );
-
+ipcMain.on(
+  'alertConfirm',
+  async (event: Electron.IpcMainEvent, message: string) => {
+    let choice = dialog.showMessageBoxSync(mainWindow,
+      {
+        type: 'question',
+        buttons: ["Ok", "Cancel"],
+        message: message,
+      });
+    event.returnValue = choice;
+  }
+);
 ipcMain.on(
   'change-lang', (event, lang) => {
   locale = lang;
