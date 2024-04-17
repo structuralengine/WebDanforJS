@@ -21,7 +21,7 @@ import { SaveDataService } from "../../providers/save-data.service";
 import { ConfigService } from "../../providers/config.service";
 import { DsdDataService } from "src/app/providers/dsd-data.service";
 
-import { DataHelperModule } from "src/app/providers/data-helper.module";
+import {DataHelperModule} from "src/app/providers/data-helper.module";
 import { InputMembersService } from "../members/members.service";
 import { InputDesignPointsService } from "../design-points/design-points.service";
 // import { Auth, getAuth } from "@angular/fire/auth";
