@@ -212,6 +212,16 @@ export class ShearComponent implements OnInit {
             }
           }
         },
+        editorKeyPress: (evt, ui) => {
+          if (evt.key === "-") {
+            return false;
+          }
+        },
+        cellKeyDown: (evt, ui)=>{
+          if (evt.key === "-") {
+            return false;
+          }
+        },
       };
       this.option_list.push(op);
     }
