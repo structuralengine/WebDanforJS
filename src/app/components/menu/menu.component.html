@@ -61,6 +61,8 @@
               menu.saveFile
             </button>
             <button
+              class="save-file"
+              [class.active-save]="user.userProfile"
               *ngIf="electronService.isElectron"
               ngbDropdownItem
               (click)="overWrite()"
