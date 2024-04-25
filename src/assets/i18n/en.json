@@ -361,7 +361,8 @@
         "preparing":"Printing...",
         "download":"Summary download",
         "downloading": "Downloading",
-        "p_login":"Please login"
+        "p_login":"Please login",
+        "judgement": "Judgement value list"
     },
     "section-force-list":{
         "m_no":"Member\nNo",

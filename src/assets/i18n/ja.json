@@ -361,7 +361,8 @@
         "preparing":"印刷中...",
         "p_login":"ログインしてください。",
         "download":"総括表ダウンロード",
-        "downloading":"ダウンロード中"
+        "downloading":"ダウンロード中",
+        "judgement": "検討結果一覧表"
     },
     "section-force-list":{
         "m_no":"部材\n番号",
