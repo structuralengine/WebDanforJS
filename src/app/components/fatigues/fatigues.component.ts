@@ -30,7 +30,56 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   public table_datas: any[];
   // タブのヘッダ名
   public groupe_name: string[];
-
+  public textStyle = {"color": "gray"};
+  public textStyle2 = {"color": "white"};
+  public rowStyle = {
+    M_A: { ...this.textStyle },
+    M_B: { ...this.textStyle },
+    M_Class:{...this.textStyle },
+    M_NA06: { ...this.textStyle },
+    M_NB06: { ...this.textStyle },
+    M_NA12: { ...this.textStyle },
+    M_NB12: { ...this.textStyle },
+    M_SA: { ...this.textStyle },
+    M_SB: { ...this.textStyle },
+    M_r1_1: { ...this.textStyle },
+    M_r1_3: { ...this.textStyle },
+    M_weld: { ...this.textStyle },
+    V_A: { ...this.textStyle },
+    V_B: { ...this.textStyle },
+    V_NA06: { ...this.textStyle },
+    V_NA12: { ...this.textStyle },
+    V_NB06: { ...this.textStyle },
+    V_NB12: { ...this.textStyle },
+    V_SA: { ...this.textStyle },
+    V_SB:{...this.textStyle },
+    V_r1_2:{...this.textStyle},
+    V_r1_3:{...this.textStyle},
+  };
+  public rowStyle2 = {
+    M_A: { ...this.textStyle2 },
+    M_B: { ...this.textStyle2 },
+    M_Class:{...this.textStyle2 },
+    M_NA06: { ...this.textStyle2 },
+    M_NB06: { ...this.textStyle2 },
+    M_NA12: { ...this.textStyle2 },
+    M_NB12: { ...this.textStyle2 },
+    M_SA: { ...this.textStyle2 },
+    M_SB: { ...this.textStyle2 },
+    M_r1_1: { ...this.textStyle2 },
+    M_r1_3: { ...this.textStyle2 },
+    M_weld: { ...this.textStyle2 },
+    V_A: { ...this.textStyle2 },
+    V_B: { ...this.textStyle2 },
+    V_NA06: { ...this.textStyle2 },
+    V_NA12: { ...this.textStyle2 },
+    V_NB06: { ...this.textStyle2 },
+    V_NB12: { ...this.textStyle2 },
+    V_SA: { ...this.textStyle2 },
+    V_SB:{...this.textStyle2 },
+    V_r1_2:{...this.textStyle2},
+    V_r1_3:{...this.textStyle2},
+  };
   constructor(
     private fatigues: InputFatiguesService,
     private save: SaveDataService,
@@ -53,6 +102,9 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッドの設定
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
+      this.table_datas[i].forEach((data:any,index:any) => {
+        data.pq_cellstyle=this.rowStyle;
+       })
       const op = {
         showTop: false,
         reactive: true,
@@ -96,6 +148,12 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           ]
         },
+        change :(event,ui)=>{
+              if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
+                  ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
+                  this.grid.refreshDataAndView();
+              }
+        }
       };
       this.option_list.push(op);
     }

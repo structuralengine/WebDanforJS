@@ -30,6 +30,23 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   // タブのヘッダ名
   public groupe_name: string[];
   public style ={"pointer-events":"none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size":"0" }
+  public textStyle = {"color": "gray"};
+  public textStyle2 = {"color": "white"};
+  public rowStyle = {
+    rebar_dia :{...this.textStyle},
+    rebar_cover:{...this.textStyle},
+    rebar_lines:{...this.textStyle},
+    rebar_n:{...this.textStyle},
+    rebar_space:{...this.textStyle},
+    rebar_ss:{...this.textStyle},
+    side_cover:{...this.textStyle},
+    side_dia:{...this.textStyle},
+    side_n:{...this.textStyle},
+    side_ss:{...this.textStyle},
+    stirrup_dia:{...this.textStyle},
+    stirrup_n:{...this.textStyle},
+    stirrup_ss:{...this.textStyle},
+  };
   public styleShaded1:any =   { 
     haunch_height : { ...this.style},
   }
@@ -94,17 +111,19 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setTitle(this.save.isManual());
     this.table_datas = this.bars.getTableColumns();
 
+
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
       this.table_datas[i].forEach((data:any,index:any)=>{
+        data.pq_cellstyle=this.rowStyle;
        if(this.activeTab==="rebar_ax"){
         if(index % 2!==0){
           data.pq_cellstyle=this.styleShaded1;
           data.pq_cellprop=this.propShaded1
         }
        }
-       })
+      })
       const op = {
         showTop: false,
         reactive: true,

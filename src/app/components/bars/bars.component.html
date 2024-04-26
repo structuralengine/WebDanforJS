@@ -1,17 +1,38 @@
 <div class="c-subNavArea">
   <nav>
     <ul class="c-subNavArea__nav">
-      <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i" >
-        <a (click)="activePageChenge(i)" id="bar{{i}}" class="c-subNavArea__navItemTitle">
-          <span>{{getGroupeName(i)}}</span>
+      <li
+        class="c-subNavArea__navItem"
+        *ngFor="let groupe of table_datas; index as i"
+      >
+        <a
+          (click)="activePageChenge(i)"
+          id="bar{{ i }}"
+          class="c-subNavArea__navItemTitle"
+        >
+          <span>{{ getGroupeName(i) }}</span>
         </a>
       </li>
     </ul>
   </nav>
   <div class="tabArea">
     <ul class="tab-select-items">
-      <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_ax'}" (click)="setActiveTab('rebar_ax')" translate>bars.rebar_ax</li>
-      <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_sh'}" (click)="setActiveTab('rebar_sh')" translate>bars.rebar_sh</li>
+      <li
+        class="tab-select-item"
+        [ngClass]="{ 'is-active': activeTab === 'rebar_ax' }"
+        (click)="setActiveTab('rebar_ax')"
+        translate
+      >
+        bars.rebar_ax
+      </li>
+      <li
+        class="tab-select-item"
+        [ngClass]="{ 'is-active': activeTab === 'rebar_sh' }"
+        (click)="setActiveTab('rebar_sh')"
+        translate
+      >
+        bars.rebar_sh
+      </li>
     </ul>
   </div>
 </div>
@@ -19,5 +40,8 @@
 <div class="c-sheetArea">
   <app-sheet #grid [options]="options"></app-sheet>
 </div>
-<app-modal-preview *ngIf="show" [element]="element" (closeModal)="handleClose($event)"></app-modal-preview>
-
+<app-modal-preview
+  *ngIf="show"
+  [element]="element"
+  (closeModal)="handleClose($event)"
+></app-modal-preview>

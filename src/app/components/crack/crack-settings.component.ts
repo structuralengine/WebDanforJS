@@ -27,6 +27,23 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
   // タブのヘッダ名
   public groupe_name: string[];
   public refreshSubscription:Subscription;
+  public textStyle = {"color": "gray"};
+  public textStyle2 = {"color": "white"};
+
+  public rowStyle = {
+    con_s: { ...this.textStyle },
+    con_l: { ...this.textStyle },
+    con_u: { ...this.textStyle },
+    ecsd_l: { ...this.textStyle },
+    ecsd_u: { ...this.textStyle }
+  };
+  public rowStyle2 = {
+    con_s: { ...this.textStyle2 },
+    con_l: { ...this.textStyle2 },
+    con_u: { ...this.textStyle2 },
+    ecsd_l: { ...this.textStyle2 },
+    ecsd_u: { ...this.textStyle2 }
+  };
   constructor(
     private crack: InputCrackSettingsService,
     private save: SaveDataService,
@@ -34,7 +51,9 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     private translate: TranslateService,
     private basic: InputBasicInformationService,
     private members: InputMembersService,
-  ) { this.members.checkGroupNo();}
+  ) { 
+    this.members.checkGroupNo();
+  }
 
   ngOnInit() {
 
@@ -45,6 +64,9 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     // グリッドの設定
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
+      this.table_datas[i].forEach((data:any,index:any) => {
+       data.pq_cellstyle=this.rowStyle;
+      })
       const op = {
         showTop: false,
         reactive: true,
@@ -88,6 +110,14 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
             }
           ]
         },
+        
+          change :(event,ui)=>{
+                if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
+                    ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
+                    this.grid.refreshDataAndView();
+                }
+          }
+        
       };
       this.option_list.push(op);
     }
@@ -107,7 +137,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
       this.changeTitle()
     })
   }
-
+  
   private setTitle(isManual: boolean): void {
     if (isManual) {
       // 断面力手入力モードの場合
