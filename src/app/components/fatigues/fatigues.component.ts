@@ -108,11 +108,26 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       const rowData = this.table_datas[i];
       for (let j = 0; j < rowData.length - 1; j++) {
         const rowData = this.table_datas[i];
+        console.log("checkk_____",rowData);
         for (let j = 0; j < rowData.length; j++) {
             const currentCell = rowData[j];
             if (j < rowData.length - 1) {
                 const nextCell = rowData[j + 1];
-                if (JSON.stringify(currentCell.M_SA) === JSON.stringify(nextCell.M_SA)) {
+                if (JSON.stringify(currentCell.M_SA) === JSON.stringify(nextCell.M_SA)&&
+                JSON.stringify(currentCell.M_NA06) === JSON.stringify(nextCell.M_NA06)&&
+                JSON.stringify(currentCell.M_NA12) === JSON.stringify(nextCell.M_NA12)&&
+                JSON.stringify(currentCell.M_NB06) === JSON.stringify(nextCell.M_NB06)&&
+                JSON.stringify(currentCell.M_NB12) === JSON.stringify(nextCell.M_NB12)&& 
+                JSON.stringify(currentCell.M_SB) === JSON.stringify(nextCell.M_SB)&&
+                JSON.stringify(currentCell.V_A) === JSON.stringify(nextCell.V_A)&&
+                JSON.stringify(currentCell.V_B) === JSON.stringify(nextCell.V_B)&&
+                JSON.stringify(currentCell.V_NA06) === JSON.stringify(nextCell.V_NA06)&&
+                JSON.stringify(currentCell.V_NA12) === JSON.stringify(nextCell.V_NA12)&&
+                JSON.stringify(currentCell.V_NB06) === JSON.stringify(nextCell.V_NB06)&&
+                JSON.stringify(currentCell.V_NB12) === JSON.stringify(nextCell.V_NB12)&&
+                JSON.stringify(currentCell.V_SA) === JSON.stringify(nextCell.V_SA)&&
+                JSON.stringify(currentCell.V_SB) === JSON.stringify(nextCell.V_SB)
+              ) {
                     currentCell.pq_cellstyle = this.rowStyle;
                 } else {
                     currentCell.pq_cellstyle = this.rowStyle2;

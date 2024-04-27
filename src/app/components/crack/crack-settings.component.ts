@@ -80,7 +80,11 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
             const currentCell = rowData[j];
             if (j < rowData.length - 1) {
                 const nextCell = rowData[j + 1];
-                if (JSON.stringify(currentCell.con_u) === JSON.stringify(nextCell.con_u)) {
+                if (JSON.stringify(currentCell.con_u) === JSON.stringify(nextCell.con_u)&& 
+                JSON.stringify(currentCell.ecsd_u) === JSON.stringify(nextCell.ecsd_u)&& 
+                JSON.stringify(currentCell.con_l) === JSON.stringify(nextCell.con_l)&& 
+                JSON.stringify(currentCell.ecsd_l) === JSON.stringify(nextCell.ecsd_l)&& 
+                JSON.stringify(currentCell.con_s) === JSON.stringify(nextCell.con_s)) {
                     currentCell.pq_cellstyle = this.rowStyle;
                 } else {
                     currentCell.pq_cellstyle = this.rowStyle2;
