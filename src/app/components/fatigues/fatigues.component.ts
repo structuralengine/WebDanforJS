@@ -242,27 +242,27 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       {
         title: this.translate.instant("fatigues.for_b"),
         align: 'center', colModel: [
-          { title: 'SA/SC', dataType: 'float', format: '#.000', dataIndx: 'M_SA', sortable: false, width: 70, nodrag: true, },
-          { title: 'SB/SC', dataType: 'float', format: '#.000', dataIndx: 'M_SB', sortable: false, width: 70, nodrag: true, },
+          { title: this.translate.instant("fatigues.SA/SC"), dataType: 'float', format: '#.000', dataIndx: 'M_SA', sortable: false, width: 70, nodrag: true, },
+          { title: this.translate.instant("fatigues.SB/SC"), dataType: 'float', format: '#.000', dataIndx: 'M_SB', sortable: false, width: 70, nodrag: true, },
           {
-            title: 'k=0.06', align: 'center', colModel: [
-              { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'M_NA06', sortable: false, width: 70, nodrag: true, },
-              { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'M_NB06', sortable: false, width: 70, nodrag: true, }
+            title: this.translate.instant("fatigues.k1"), align: 'center', colModel: [
+              { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.00', dataIndx: 'M_NA06', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.NB"), dataType: 'float', format: '#.00', dataIndx: 'M_NB06', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },
           {
-            title: 'k=0.12', align: 'center', colModel: [
-              { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'M_NA12', sortable: false, width: 70, nodrag: true, },
-              { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'M_NB12', sortable: false, width: 70, nodrag: true, }
+            title: this.translate.instant("fatigues.k2"), align: 'center', colModel: [
+              { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.00', dataIndx: 'M_NA12', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.NB"), dataType: 'float', format: '#.00', dataIndx: 'M_NB12', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },
           {
             title: this.translate.instant("fatigues.d_r2"),
             align: 'center', colModel: [
-              { title: 'α', dataType: 'float', format: '#.000', dataIndx: 'M_A', sortable: false, width: 70, nodrag: true, },
-              { title: 'β', dataType: 'float', format: '#.000', dataIndx: 'M_B', sortable: false, width: 70, nodrag: true, }
+              { title: this.translate.instant("fatigues.alpha"), dataType: 'float', format: '#.000', dataIndx: 'M_A', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.beta"), dataType: 'float', format: '#.000', dataIndx: 'M_B', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },
@@ -293,27 +293,27 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       {
         title: this.translate.instant("fatigues.for_s"),
         align: 'center', colModel: [
-          { title: 'SA/SC', dataType: 'float', format: '#.000', dataIndx: 'V_SA', sortable: false, width: 70, nodrag: true, },
-          { title: 'SB/SC', dataType: 'float', format: '#.000', dataIndx: 'V_SB', sortable: false, width: 70, nodrag: true, },
+          { title: this.translate.instant("fatigues.SA/SC"), dataType: 'float', format: '#.000', dataIndx: 'V_SA', sortable: false, width: 70, nodrag: true, },
+          { title: this.translate.instant("fatigues.SB/SC"), dataType: 'float', format: '#.000', dataIndx: 'V_SB', sortable: false, width: 70, nodrag: true, },
           {
-            title: 'k=0.06', align: 'center', colModel: [
-              { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'V_NA06', sortable: false, width: 70, nodrag: true, },
-              { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'V_NB06', sortable: false, width: 70, nodrag: true, }
+            title:  this.translate.instant("fatigues.k1"), align: 'center', colModel: [
+              { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.00', dataIndx: 'V_NA06', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.NB"), dataType: 'float', format: '#.00', dataIndx: 'V_NB06', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },
           {
-            title: 'k=0.12', align: 'center', colModel: [
-              { title: 'NA', dataType: 'float', format: '#.00', dataIndx: 'V_NA12', sortable: false, width: 70, nodrag: true, },
-              { title: 'NB', dataType: 'float', format: '#.00', dataIndx: 'V_NB12', sortable: false, width: 70, nodrag: true, }
+            title: this.translate.instant("fatigues.k2"), align: 'center', colModel: [
+              { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.00', dataIndx: 'V_NA12', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.NB"), dataType: 'float', format: '#.00', dataIndx: 'V_NB12', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },
           {
             title: this.translate.instant("fatigues.d_r2"),
             align: 'center', colModel: [
-              { title: 'α', dataType: 'float', format: '#.000', dataIndx: 'V_A', sortable: false, width: 70, nodrag: true, },
-              { title: 'β', dataType: 'float', format: '#.000', dataIndx: 'V_B', sortable: false, width: 70, nodrag: true, }
+              { title: this.translate.instant("fatigues.alpha"), dataType: 'float', format: '#.000', dataIndx: 'V_A', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.beta"), dataType: 'float', format: '#.000', dataIndx: 'V_B', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },

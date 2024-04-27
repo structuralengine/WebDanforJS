@@ -232,7 +232,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         dataType: 'float', format: '#.0', dataIndx: 'kr', sortable: false, width: 70, nodrag: true,
       },
       {
-        title: 'k4', align: 'center', dataType: 'float', format: '#.00', dataIndx: 'k4', sortable: false, width: 70, nodrag: true,
+        title: this.translate.instant("crack-settings.k4"), align: 'center', dataType: 'float', format: '#.00', dataIndx: 'k4', sortable: false, width: 70, nodrag: true,
       },
       {
         title: this.translate.instant("crack-settings.exterior"),

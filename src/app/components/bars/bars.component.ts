@@ -478,7 +478,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         title: 'tanγ+tanβ', dataType: 'float', dataIndx: 'tan', sortable: false, width: 85, nodrag: true,
       },
       {
-        title: this.translate.instant("bars.rebar_sh"),
+        title: this.translate.instant("bars.stirrup"),
         align: 'center', colModel: [
           {
             title: this.translate.instant("bars.dia"),
