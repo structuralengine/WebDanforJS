@@ -98,13 +98,30 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setTitle(this.save.isManual());
 
     this.table_datas = this.fatigues.getTableColumns();
-
     // グリッドの設定
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
-      this.table_datas[i].forEach((data:any,index:any) => {
-        data.pq_cellstyle=this.rowStyle;
-       })
+      // this.table_datas[i].forEach((data:any,index:any) => {
+        // console.log("fatigues",data)
+      //   data.pq_cellstyle=this.rowStyle;
+      //  })
+      const rowData = this.table_datas[i];
+      for (let j = 0; j < rowData.length - 1; j++) {
+        const rowData = this.table_datas[i];
+        for (let j = 0; j < rowData.length; j++) {
+            const currentCell = rowData[j];
+            if (j < rowData.length - 1) {
+                const nextCell = rowData[j + 1];
+                if (JSON.stringify(currentCell.M_SA) === JSON.stringify(nextCell.M_SA)) {
+                    currentCell.pq_cellstyle = this.rowStyle;
+                } else {
+                    currentCell.pq_cellstyle = this.rowStyle2;
+                }
+            } else {
+                currentCell.pq_cellstyle = this.rowStyle; // Xử lý trường hợp cuối cùng
+            }
+        }
+      }
       const op = {
         showTop: false,
         reactive: true,
@@ -151,7 +168,9 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         change :(event,ui)=>{
               if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
                   ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
+                  ui.updateList[i].rowData.userChanged = true;
                   this.grid.refreshDataAndView();
+                  this.saveData();
               }
         }
       };

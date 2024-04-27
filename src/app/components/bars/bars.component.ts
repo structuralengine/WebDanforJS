@@ -47,6 +47,21 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     stirrup_n:{...this.textStyle},
     stirrup_ss:{...this.textStyle},
   };
+  public rowStyle2 = {
+    rebar_dia :{...this.textStyle2},
+    rebar_cover:{...this.textStyle2},
+    rebar_lines:{...this.textStyle2},
+    rebar_n:{...this.textStyle2},
+    rebar_space:{...this.textStyle2},
+    rebar_ss:{...this.textStyle2},
+    side_cover:{...this.textStyle2},
+    side_dia:{...this.textStyle2},
+    side_n:{...this.textStyle2},
+    side_ss:{...this.textStyle2},
+    stirrup_dia:{...this.textStyle2},
+    stirrup_n:{...this.textStyle2},
+    stirrup_ss:{...this.textStyle2},
+  };
   public styleShaded1:any =   { 
     haunch_height : { ...this.style},
   }
@@ -168,6 +183,10 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         },
         change: (evt, ui) => {
+          if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
+            ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
+            this.grid.refreshDataAndView();
+          }
           for (const property of ui.updateList) {
             for (const key of Object.keys(property.newRow)) {
               const old = property.oldRow[key];

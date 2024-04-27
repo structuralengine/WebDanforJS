@@ -64,9 +64,32 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     // グリッドの設定
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
-      this.table_datas[i].forEach((data:any,index:any) => {
-       data.pq_cellstyle=this.rowStyle;
-      })
+      // this.table_datas[i].forEach((data:any[],index:any) => {
+      // //  data[i].pq_cellstyle=this.rowStyle;
+      // for(let i = 0; i < data.length - 1; i++){
+      //   if(JSON.stringify(data[i]) === JSON.stringify(data[i+1])){
+      //     data[i].pq_cellstyle=this.rowStyle;
+      //   }else{
+      //     data[i].pq_cellstyle=this.rowStyle2;
+      //   }
+      // }})
+      const rowData = this.table_datas[i];
+      for (let j = 0; j < rowData.length - 1; j++) {
+        const rowData = this.table_datas[i];
+        for (let j = 0; j < rowData.length; j++) {
+            const currentCell = rowData[j];
+            if (j < rowData.length - 1) {
+                const nextCell = rowData[j + 1];
+                if (JSON.stringify(currentCell.con_u) === JSON.stringify(nextCell.con_u)) {
+                    currentCell.pq_cellstyle = this.rowStyle;
+                } else {
+                    currentCell.pq_cellstyle = this.rowStyle2;
+                }
+            } else {
+                currentCell.pq_cellstyle = this.rowStyle; // Xử lý trường hợp cuối cùng
+            }
+        }
+      }
       const op = {
         showTop: false,
         reactive: true,
@@ -114,7 +137,9 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
           change :(event,ui)=>{
                 if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
                     ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
+                    ui.updateList[i].rowData.userChanged = true;
                     this.grid.refreshDataAndView();
+                    this.saveData();
                 }
           }
         
@@ -237,6 +262,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
   public getGroupeName(i: number): string {
     return this.groupe_name[i];
   }
+
 
   ngOnDestroy() {
     this.saveData();
