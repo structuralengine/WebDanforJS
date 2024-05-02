@@ -90,7 +90,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
                     currentCell.pq_cellstyle = this.rowStyle2;
                 }
             } else {
-                currentCell.pq_cellstyle = this.rowStyle; // Xử lý trường hợp cuối cùng
+                currentCell.pq_cellstyle = this.rowStyle; 
             }
         }
       }
