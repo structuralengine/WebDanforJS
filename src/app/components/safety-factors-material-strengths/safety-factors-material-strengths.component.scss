@@ -44,7 +44,14 @@ h5 {
       margin: 0;
     }
   }
-
+  .download-item-content{
+    display: flex;
+    min-width: 800px;
+    height: 100%;
+  }
+  .checkbox-condition{
+    padding-left:50px;
+  }
 }
 
 .safety-factors,

@@ -82,7 +82,8 @@ export class MenuComponent implements OnInit {
   public windows: KnownAppWindow[] = [];
   public logs: string[] = [];
   public hideDCJ3_J5: boolean = false;
-
+  public firstCondition: any;
+  
   constructor(
     private modalService: NgbModal,
     public menuService: MenuService,
@@ -121,6 +122,9 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    if (this.conditions_list.length > 0) {
+      this.firstCondition = this.conditions_list[0];
+    }    
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -443,7 +447,6 @@ export class MenuComponent implements OnInit {
 
     this.specification2_list = basic.specification2_list; // 仕様
     this.conditions_list = basic.conditions_list;         //  設計条件
-
     this.table1_datas = basic.pickup_moment;
     this.table2_datas = basic.pickup_shear_force;
     this.table3_datas = basic.pickup_torsional_moment;

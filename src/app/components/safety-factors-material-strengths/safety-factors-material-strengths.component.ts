@@ -79,7 +79,8 @@ export class SafetyFactorsMaterialStrengthsComponent
   public styleNoEdit = { "pointer-events": "none", "color": "#999C9F" }
   public propEdit = { edit: true, }
   public propNoEdit = { edit: false, }
-
+  public considerMomentChecked: boolean =true;
+  public showOption: boolean = false;
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private members: InputMembersService,
@@ -750,6 +751,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.activeTab = tab;
   }
   changeButton(el: any) {
+    this.showOption= true;
     this.arrayAxis.forEach((data)=>{
       if(data.id === this.groupMem){
         data.consider_moment_checked = el.target.checked
