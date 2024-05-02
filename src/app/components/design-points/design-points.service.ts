@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
-import { SaveDataService } from 'src/app/providers/save-data.service';
+import { SaveDataService } from 'src/app/providers/save-data.service'; 
 import { InputMembersService } from '../members/members.service';
 
 @Injectable({
@@ -51,6 +51,9 @@ export class InputDesignPointsService {
         if (key in data) {
           tmp[key] = data[key];
         }
+        if (key === "axis_type") {
+          tmp["axis_type"] = 2;
+        }
         if (key === "isMyCalc" && tmp[key] === true) {
           tmp["isMzCalc"] = false;
           tmp["isVyCalc"] = false;
@@ -72,7 +75,7 @@ export class InputDesignPointsService {
     }
   }
 
-  public setTableColumns(points: any): void {
+  public setTableColumns(points: any, is3DPickUp?: any, isManual?:any): void {
 
     for (const data of points) {
       const tmp = this.default_position(data.index);
@@ -88,6 +91,12 @@ export class InputDesignPointsService {
       for (const key of Object.keys(tmp)) {
         if (key in data) {
           tmp[key] = data[key];
+        }
+        if (key === "axis_type") {
+          tmp[key] = +data[key];
+        }
+        if (key === "isMtCalc" && !is3DPickUp && !isManual ){
+          tmp[key]= false;
         }
       }
       if (i >= 0) {
@@ -204,6 +213,7 @@ export class InputDesignPointsService {
       position: null,
       p_name: null,
       p_id: null,
+      axis_type: 1,
       isMyCalc: false,
       isVyCalc: false,
       isMzCalc: false,

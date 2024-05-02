@@ -174,7 +174,8 @@
         "y_around":"y軸周り",
         "z_around":"z軸周り",
         "y_direction":"y軸方向",
-        "z_direction":"z軸方向"
+        "z_direction":"z軸方向",
+        "check_target":"計算対象"
     },
     "bars":{
         "m_no":"部材\n番号",
