@@ -474,6 +474,7 @@ export class MenuComponent implements OnInit {
 
   /// 仕様 変更時の処理
   public setSpecification2(id: number): void {
+    this.menuService.setCheckedRadio(id);
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
@@ -539,6 +540,7 @@ export class MenuComponent implements OnInit {
     if (item.id === "JR-003" || item.id === "JR-005")
       this.members.setGTypeForMembers();
   }
+
   handelClickChat() {
     const elementChat = document.getElementById("chatplusheader");
     elementChat.click()

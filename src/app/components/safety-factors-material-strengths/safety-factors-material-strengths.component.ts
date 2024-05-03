@@ -4,7 +4,9 @@ import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
 import { InputMembersService } from '../members/members.service';
 import { visitAll } from '@angular/compiler';
+import { SaveDataService } from "../../providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
+import { MenuService } from '../menu/menu.service';
 
 @Component({
   selector: 'app-safety-factors-material-strengths',
@@ -79,18 +81,25 @@ export class SafetyFactorsMaterialStrengthsComponent
   public styleNoEdit = { "pointer-events": "none", "color": "#999C9F" }
   public propEdit = { edit: true, }
   public propNoEdit = { edit: false, }
-  public considerMomentChecked: boolean =true;
+  public considerMomentChecked: boolean ;
   public showOption: boolean = false;
+  checkedRadioValue: number;
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private members: InputMembersService,
     private translate: TranslateService,
     private cdref: ChangeDetectorRef,
-  ) { this.members.checkGroupNo();}
-
+    private save: SaveDataService,
+    private menuService: MenuService
+  ) { 
+    this.members.checkGroupNo();
+    this.checkedRadioValue = this.menuService.getCheckedRadio()
+  }
+  public isManual(): boolean {
+    return this.save.isManual();
+  }
   ngOnInit() {
     this.setTitle();
-
     const safety = this.safety.getTableColumns();
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
     this.groupe_list = safety.groupe_list;
@@ -462,6 +471,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     })
     this.cdref.detectChanges();
  }
+ 
   private setTitle(): void {
     this.columnHeaders1 = [
       { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' } },
@@ -752,6 +762,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   }
   changeButton(el: any) {
     this.showOption= true;
+    this.considerMomentChecked =false;
     this.arrayAxis.forEach((data)=>{
       if(data.id === this.groupMem){
         data.consider_moment_checked = el.target.checked
@@ -759,7 +770,9 @@ export class SafetyFactorsMaterialStrengthsComponent
     })
     this.safety.arrayAxis = this.arrayAxis;
   }
- 
+  notConsider(e:any){
+    this.considerMomentChecked =true;
+  }
   handleSetSelect(dataTable:any,id:any){
     const safety = this.safety.getTableColumns();
     const fx = safety.material_bar[id];
