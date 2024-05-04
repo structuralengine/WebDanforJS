@@ -130,15 +130,45 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
+      const rowData = this.table_datas[i];
+      for (let j = 0; j < rowData.length - 1; j++) {
+        const rowData = this.table_datas[i];
+        for (let j = 0; j < rowData.length; j++) {
+            const currentCell = rowData[j];
+            if (j < rowData.length - 1) {
+                const nextCell = rowData[j + 1];
+                if (JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia)&&
+                JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover)&&
+                JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines)&&
+                JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_space)&&
+                JSON.stringify(currentCell. rebar_ss) === JSON.stringify(nextCell. rebar_ss)&& 
+                JSON.stringify(currentCell.side_cover) === JSON.stringify(nextCell.side_cover)&&
+                JSON.stringify(currentCell.side_dia) === JSON.stringify(nextCell.side_dia)&&
+                JSON.stringify(currentCell.side_n) === JSON.stringify(nextCell.side_n)&&
+                JSON.stringify(currentCell.side_ss) === JSON.stringify(nextCell.side_ss)&&
+                JSON.stringify(currentCell.stirrup_dia) === JSON.stringify(nextCell.stirrup_dia)&&
+                JSON.stringify(currentCell.stirrup_n) === JSON.stringify(nextCell.stirrup_n)&&
+                JSON.stringify(currentCell.stirrup_ss) === JSON.stringify(nextCell.stirrup_ss)
+              ) {
+                    currentCell.pq_cellstyle = {...this.rowStyle};
+                } else {
+                    currentCell.pq_cellstyle =  {...this.rowStyle2};
+                    console.log(currentCell.pq_cellstyle)
+                }
+            } else {
+                currentCell.pq_cellstyle = {...this.rowStyle};
+            }
+        }}
       this.table_datas[i].forEach((data:any,index:any)=>{
-        data.pq_cellstyle=this.rowStyle;
+        // data.pq_cellstyle=this.rowStyle;
        if(this.activeTab==="rebar_ax"){
         if(index % 2!==0){
-          data.pq_cellstyle=this.styleShaded1;
-          data.pq_cellprop=this.propShaded1
+          data.pq_cellstyle={...data.pq_cellstyle,...this.styleShaded1};
+          data.pq_cellprop={...data.pq_cellprop,...this.propShaded1}
         }
        }
       })
+      console.log(this.table_datas[i])
       const op = {
         showTop: false,
         reactive: true,
@@ -184,8 +214,10 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         change: (evt, ui) => {
           if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
-            ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
+            ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.rowStyle2}
+            ui.updateList[i].rowData.userChanged = true;
             this.grid.refreshDataAndView();
+            this.saveData();
           }
           for (const property of ui.updateList) {
             for (const key of Object.keys(property.newRow)) {
@@ -578,22 +610,50 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public setActiveTab(tab: string) {
     this.activeTab = tab;
     for (let i = 0; i < this.table_datas.length; i++) {
+      const rowData = this.table_datas[i];
+      for (let j = 0; j < rowData.length - 1; j++) {
+        const rowData = this.table_datas[i];
+        for (let j = 0; j < rowData.length; j++) {
+            const currentCell = rowData[j];
+            if (j < rowData.length - 1) {
+                const nextCell = rowData[j + 1];
+                if (JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia)&&
+                JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover)&&
+                JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines)&&
+                JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_space)&&
+                JSON.stringify(currentCell. rebar_ss) === JSON.stringify(nextCell. rebar_ss)&& 
+                JSON.stringify(currentCell.side_cover) === JSON.stringify(nextCell.side_cover)&&
+                JSON.stringify(currentCell.side_dia) === JSON.stringify(nextCell.side_dia)&&
+                JSON.stringify(currentCell.side_n) === JSON.stringify(nextCell.side_n)&&
+                JSON.stringify(currentCell.side_ss) === JSON.stringify(nextCell.side_ss)&&
+                JSON.stringify(currentCell.stirrup_dia) === JSON.stringify(nextCell.stirrup_dia)&&
+                JSON.stringify(currentCell.stirrup_n) === JSON.stringify(nextCell.stirrup_n)&&
+                JSON.stringify(currentCell.stirrup_ss) === JSON.stringify(nextCell.stirrup_ss)
+              ) {
+                    currentCell.pq_cellstyle = {...this.rowStyle};
+                } else {
+                    currentCell.pq_cellstyle =  {...this.rowStyle2};
+                }
+            } else {
+                currentCell.pq_cellstyle = this.rowStyle; // Xử lý trường hợp cuối cùng
+            }
+        }}
       this.table_datas[i].forEach((data:any,index:any)=>{
-        data.pq_cellstyle={};
-        data.pq_cellprop={}
+        data.pq_cellstyle={...this.rowStyle};
+        data.pq_cellprop={};
        if(this.activeTab==="rebar_ax"){
         if(index % 2!==0){
-          data.pq_cellstyle=this.styleShaded1;
+          data.pq_cellstyle={...data.pq_cellstyle,...this.styleShaded1}
           data.pq_cellprop=this.propShaded1
         }
        }
        if(this.activeTab!=="rebar_ax"){
         if(index % 2!==0){
-          data.pq_cellstyle=this.styleShaded2;
+          data.pq_cellstyle={...data.pq_cellstyle,...this.styleShaded2};
           data.pq_cellprop= this.propShaded2
         }
          if(index % 2===0){
-          data.pq_cellstyle=this.styleShaded1;
+          data.pq_cellstyle={...data.pq_cellstyle,...this.styleShaded1};
           data.pq_cellprop=this.propShaded1
         }
        }
