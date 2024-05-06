@@ -237,7 +237,8 @@
         "dry":"Dry",
         "dry_wet_cyc":"Dry wet cycle",
         "wet":"Wet",
-        "water":"Water exposure"
+        "water":"Water exposure",
+        "extend":"Exterior Crack Limit (mm)"
     },
     "shear-strength":{
         "m_no":"Member\nNo",

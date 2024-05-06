@@ -137,30 +137,27 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             const currentCell = rowData[j];
             if (j < rowData.length - 1) {
                 const nextCell = rowData[j + 1];
-                if (JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia)&&
-                JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover)&&
-                JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines)&&
-                JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_space)&&
-                JSON.stringify(currentCell. rebar_ss) === JSON.stringify(nextCell. rebar_ss)&& 
-                JSON.stringify(currentCell.side_cover) === JSON.stringify(nextCell.side_cover)&&
-                JSON.stringify(currentCell.side_dia) === JSON.stringify(nextCell.side_dia)&&
-                JSON.stringify(currentCell.side_n) === JSON.stringify(nextCell.side_n)&&
-                JSON.stringify(currentCell.side_ss) === JSON.stringify(nextCell.side_ss)&&
-                JSON.stringify(currentCell.stirrup_dia) === JSON.stringify(nextCell.stirrup_dia)&&
-                JSON.stringify(currentCell.stirrup_n) === JSON.stringify(nextCell.stirrup_n)&&
-                JSON.stringify(currentCell.stirrup_ss) === JSON.stringify(nextCell.stirrup_ss)
+                if (
+                  JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia) &&
+                  JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover) &&
+                  JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines) &&
+                  JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_n) &&
+                  JSON.stringify(currentCell.rebar_space) === JSON.stringify(nextCell.rebar_space) &&
+                  JSON.stringify(currentCell.rebar_ss) === JSON.stringify(nextCell.rebar_ss) 
               ) {
-                    currentCell.pq_cellstyle = {...this.rowStyle};
+                currentCell.pq_cellstyle = { ...this.rowStyle };
+                // currentCell.pq_cellprop={};
                 } else {
-                    currentCell.pq_cellstyle =  {...this.rowStyle2};
-                    console.log(currentCell.pq_cellstyle)
+                  currentCell.pq_cellstyle = { ...this.rowStyle2 };
+                  // currentCell.pq_cellprop={};
                 }
             } else {
-                currentCell.pq_cellstyle = {...this.rowStyle};
+              currentCell.pq_cellstyle = { ...this.rowStyle };
+              // currentCell.pq_cellprop={};
             }
-        }}
+        }
+      }
       this.table_datas[i].forEach((data:any,index:any)=>{
-        // data.pq_cellstyle=this.rowStyle;
        if(this.activeTab==="rebar_ax"){
         if(index % 2!==0){
           data.pq_cellstyle={...data.pq_cellstyle,...this.styleShaded1};
@@ -168,7 +165,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         }
        }
       })
-      console.log(this.table_datas[i])
       const op = {
         showTop: false,
         reactive: true,
@@ -617,30 +613,29 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             const currentCell = rowData[j];
             if (j < rowData.length - 1) {
                 const nextCell = rowData[j + 1];
-                if (JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia)&&
-                JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover)&&
-                JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines)&&
-                JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_space)&&
-                JSON.stringify(currentCell. rebar_ss) === JSON.stringify(nextCell. rebar_ss)&& 
-                JSON.stringify(currentCell.side_cover) === JSON.stringify(nextCell.side_cover)&&
-                JSON.stringify(currentCell.side_dia) === JSON.stringify(nextCell.side_dia)&&
-                JSON.stringify(currentCell.side_n) === JSON.stringify(nextCell.side_n)&&
-                JSON.stringify(currentCell.side_ss) === JSON.stringify(nextCell.side_ss)&&
-                JSON.stringify(currentCell.stirrup_dia) === JSON.stringify(nextCell.stirrup_dia)&&
-                JSON.stringify(currentCell.stirrup_n) === JSON.stringify(nextCell.stirrup_n)&&
-                JSON.stringify(currentCell.stirrup_ss) === JSON.stringify(nextCell.stirrup_ss)
+                if (
+                  JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia) &&
+                  JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover) &&
+                  JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines) &&
+                  JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_n) &&
+                  JSON.stringify(currentCell.rebar_space) === JSON.stringify(nextCell.rebar_space) &&
+                  JSON.stringify(currentCell.rebar_ss) === JSON.stringify(nextCell.rebar_ss) 
               ) {
-                    currentCell.pq_cellstyle = {...this.rowStyle};
+                currentCell.pq_cellstyle = { ...this.rowStyle };
+                // currentCell.pq_cellprop={};
                 } else {
-                    currentCell.pq_cellstyle =  {...this.rowStyle2};
+                  currentCell.pq_cellstyle = { ...this.rowStyle2 };
+                  // currentCell.pq_cellprop={};
                 }
             } else {
-                currentCell.pq_cellstyle = this.rowStyle; // Xử lý trường hợp cuối cùng
+              currentCell.pq_cellstyle = { ...this.rowStyle };
+              // currentCell.pq_cellprop={};
             }
-        }}
+        }
+      }
       this.table_datas[i].forEach((data:any,index:any)=>{
-        data.pq_cellstyle={...this.rowStyle};
-        data.pq_cellprop={};
+        // data.pq_cellstyle={...this.rowStyle};
+        // data.pq_cellprop={};
        if(this.activeTab==="rebar_ax"){
         if(index % 2!==0){
           data.pq_cellstyle={...data.pq_cellstyle,...this.styleShaded1}

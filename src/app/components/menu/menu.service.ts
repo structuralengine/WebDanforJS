@@ -8,10 +8,17 @@ import { InputDesignPointsService } from "../design-points/design-points.service
 export class MenuService {
 
   public selectedRoad: boolean = false;
-
+  checkedRadio: any;
   // 部材情報
   constructor() {
 
+  }
+  setCheckedRadio(value: number) {
+    this.checkedRadio = value;
+  }
+
+  getCheckedRadio(): number {
+    return this.checkedRadio;
   }
   selectApply(i:number){
     this.selectedRoad = false;

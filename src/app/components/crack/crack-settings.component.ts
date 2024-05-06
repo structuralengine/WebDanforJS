@@ -8,6 +8,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
 import { InputMembersService } from '../members/members.service';
 import { Subscription } from 'rxjs';
+import { MenuService } from '../menu/menu.service';
 
 @Component({
   selector: 'app-crack-settings',
@@ -44,6 +45,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     ecsd_l: { ...this.textStyle2 },
     ecsd_u: { ...this.textStyle2 }
   };
+  checkedRadioValue: number;
   constructor(
     private crack: InputCrackSettingsService,
     private save: SaveDataService,
@@ -51,28 +53,20 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     private translate: TranslateService,
     private basic: InputBasicInformationService,
     private members: InputMembersService,
+    private menuService: MenuService
   ) { 
     this.members.checkGroupNo();
+    this.checkedRadioValue = this.menuService.getCheckedRadio()
   }
 
   ngOnInit() {
-
     this.setTitle(this.save.isManual());
 
     this.table_datas = this.crack.getTableColumns();
-
     // グリッドの設定
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
-      // this.table_datas[i].forEach((data:any[],index:any) => {
-      // //  data[i].pq_cellstyle=this.rowStyle;
-      // for(let i = 0; i < data.length - 1; i++){
-      //   if(JSON.stringify(data[i]) === JSON.stringify(data[i+1])){
-      //     data[i].pq_cellstyle=this.rowStyle;
-      //   }else{
-      //     data[i].pq_cellstyle=this.rowStyle2;
-      //   }
-      // }})
+   
       const rowData = this.table_datas[i];
       for (let j = 0; j < rowData.length - 1; j++) {
         const rowData = this.table_datas[i];
@@ -185,7 +179,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         },
       ];
     }
-
+    
     // 共通する項目
     this.columnHeaders.push(
       {
@@ -248,6 +242,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         ],
         nodrag: true,
       },
+      
     );
 
     // 鉄道運輸機構の場合
@@ -261,6 +256,18 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         align: 'center', dataType: 'bool', dataIndx: 'JRTT05', type: 'checkbox', sortable: false, width: 100, nodrag: true,hidden:true,
       });
     }
+    if (this.checkedRadioValue === 0 || this.checkedRadioValue === 3 || this.checkedRadioValue === undefined) {
+      this.columnHeaders.push({
+          title: this.translate.instant("crack-settings.extend"),
+          align: 'center',
+          dataType: 'float',
+          dataIndx: 'extend',
+          format: '#.00',
+          sortable: false,
+          width: 70,
+          nodrag: true,
+      });
+  }
   }
 
   public getGroupeName(i: number): string {

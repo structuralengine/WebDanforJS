@@ -39,6 +39,7 @@ export class InputCrackSettingsService {
       kr: null,
       k4: null,
       JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
+      extend: 0.3
     };
   }
 
@@ -110,7 +111,7 @@ export class InputCrackSettingsService {
       }
       // 当該入力行より上の行
       let endFlg = true;
-      const check_list = ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'k4', 'JRTT05'];
+      const check_list = ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'k4', 'JRTT05','extend'];
       for (const key of check_list){
         if (result[key] == null && key in data) {
           result[key] = this.helper.toNumber(data[key]);

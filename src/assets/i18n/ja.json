@@ -237,7 +237,8 @@
         "dry": "常時乾燥",
         "dry_wet_cyc": "乾湿繰り返し",
         "wet": "常時湿潤",
-        "water": "水掛かりの程度"
+        "water": "水掛かりの程度",
+        "extend":"外観ひび割れ制限値 (mm)"
     },
     "shear-strength":{
         "m_no":"部材\n番号",

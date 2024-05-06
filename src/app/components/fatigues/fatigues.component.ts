@@ -101,10 +101,6 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッドの設定
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
-      // this.table_datas[i].forEach((data:any,index:any) => {
-        // console.log("fatigues",data)
-      //   data.pq_cellstyle=this.rowStyle;
-      //  })
       const rowData = this.table_datas[i];
       for (let j = 0; j < rowData.length - 1; j++) {
         const rowData = this.table_datas[i];
