@@ -337,7 +337,7 @@ export class SaveDataService {
     }
     // 着目点情報
     if ("points" in jsonData) {
-      this.points.setSaveData(jsonData.points);
+      this.points.setSaveData(jsonData.points,this.is3DPickUp());
     } else {
       this.points.clear();
     }

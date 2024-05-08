@@ -42,7 +42,7 @@ export class InputDesignPointsService {
     return this.position_list;
   }
 
-  public setSaveData(points: any): void {
+  public setSaveData(points: any, is3DPickUp?: any): void {
 
     this.clear();
     for (const data of points) {
@@ -52,7 +52,11 @@ export class InputDesignPointsService {
           tmp[key] = data[key];
         }
         if (key === "axis_type") {
-          tmp["axis_type"] = 2;
+          if (is3DPickUp){
+           tmp["axis_type"] = 1;
+         }else{
+           tmp["axis_type"] = 2;
+         }
         }
         if (key === "isMyCalc" && tmp[key] === true) {
           tmp["isMzCalc"] = false;
@@ -75,7 +79,7 @@ export class InputDesignPointsService {
     }
   }
 
-  public setTableColumns(points: any, is3DPickUp?: any, isManual?:any): void {
+  public setTableColumns(points: any, is3DPickUp?: any, ): void {
 
     for (const data of points) {
       const tmp = this.default_position(data.index);
@@ -95,7 +99,7 @@ export class InputDesignPointsService {
         if (key === "axis_type") {
           tmp[key] = +data[key];
         }
-        if (key === "isMtCalc" && !is3DPickUp && !isManual ){
+        if (key === "isMtCalc" && !is3DPickUp ){
           tmp[key]= false;
         }
       }

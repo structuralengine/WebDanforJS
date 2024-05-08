@@ -55,13 +55,13 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let i = 0; i < this.table_datas.length; i++) {
       if(this.save.is3DPickUp()){
         this.table_datas[i].forEach((data:any)=>{
-          data["axis_type"] = 1,
           data["isMCalc"] = data["isMyCalc"]
           data["isVCalc"] = data["isVzCalc"]
+          data["isMzCalc"] = false;
+          data["isVyCalc"] = false;
         })
       } else {
         this.table_datas[i].forEach((data: any) => {
-          data["axis_type"] = 2
           data["isMCalc"] = data["isMzCalc"]
           data["isVCalc"] = data["isVyCalc"]
           data["isMyCalc"] = false;
@@ -139,28 +139,19 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
                   property.rowData["isVzCalc"] = false
                 }
               }else{
-                if (property.newRow[key] === true) {
-                  if (key === "isMCalc" ) {
-                    if (+property.rowData["axis_type"] === 1){
-                      property.rowData["isMyCalc"] = true;
-                      property.rowData["isVyCalc"] = false;
-                      property.rowData["isMzCalc"] = false;
-                    }else{
-                      property.rowData["isMyCalc"] = false;
-                      property.rowData["isMzCalc"] = true;
-                      property.rowData["isVzCalc"] = false;
-                    }
+                const check = property.newRow[key]
+                if (key === "isMCalc") {
+                  if (+property.rowData["axis_type"] === 1) {
+                    property.rowData["isMyCalc"] = check;
+                  } else {
+                    property.rowData["isMzCalc"] = check;
                   }
-                  if (key === "isVCalc") {
-                    if (+property.rowData["axis_type"] === 1) {
-                      property.rowData["isVyCalc"] = false;
-                      property.rowData["isMzCalc"] = false;
-                      property.rowData["isVzCalc"] = true;
-                    } else {
-                      property.rowData["isMyCalc"] = false;
-                      property.rowData["isVyCalc"] = true;
-                      property.rowData["isVzCalc"] = false;
-                    }
+                }
+                if (key === "isVCalc") {
+                  if (+property.rowData["axis_type"] === 1) {
+                    property.rowData["isVzCalc"] = check;
+                  } else {
+                    property.rowData["isVyCalc"] = check;
                   }
                 }
               }
@@ -359,9 +350,9 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }
     if (this.save.isManual()) {
-      this.points.setSaveData(a);
+      this.points.setSaveData(a,false);
     } else {
-      this.points.setTableColumns(a,this.save.is3DPickUp(),this.save.isManual());
+      this.points.setTableColumns(a,this.save.is3DPickUp());
     }
   }
 
