@@ -4,7 +4,7 @@
   column-gap: 8px;
   padding: 16px 16px 0;
   background: var(--base-900);
-  
+
   .tab-select {
     &-items {
       display: flex;
@@ -13,14 +13,14 @@
       padding: 0;
       margin: 0;
     }
-  
+
     &-item {
       color: var(--text_main);
       font-size: 12px;
       padding: 8px 16px;
       background: var(--base-700);
       cursor: pointer;
-  
+
       &:first-child {
         border-radius: 4px 0 0 4px;
       }
@@ -36,13 +36,13 @@
 }
 #body-container-id{
   background: var(--base-900);
-  width: 800px;
-  height: 590px;
+  width: 1000px;
+  height: 860px;
   border-radius: 7px;
   border: 1px solid black;
   position: absolute;
   z-index: 9999;
-  top: 223px;
+  top: 100px;
   .headBar {
     position: sticky;
     top: 0;
@@ -58,22 +58,22 @@
     color: white;
 
     h2 {
-        font-size: 11px;
+      font-size: 11px;
     }
 
     a {
-        padding: 0;
-        border: none;
-        font-size: 13px;
-        cursor: pointer;;
+      padding: 0;
+      border: none;
+      font-size: 13px;
+      cursor: pointer;;
     }
   }
   .bodyBar{
     display: flex;
     flex-direction: row;
-   
-    .three-container{  
-      margin: 30px;   
+
+    .three-container{
+      margin: 30px;
       display: block;
       width: 350px;
       height: 300px;
@@ -92,4 +92,4 @@
     }
   }
 }
- 
+

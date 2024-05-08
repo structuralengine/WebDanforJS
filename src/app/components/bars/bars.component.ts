@@ -136,8 +136,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         },
         change: (evt, ui) => {
-          console.log("updateui", ui)
-         
           for (const property of ui.updateList) {
             for (const key of Object.keys(property.newRow)) {
               const old = property.oldRow[key];
@@ -170,11 +168,21 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             this.removeScene()
             this.threeNode.createDrawingLine()
-           
+            // this.threeNode.createDemoOval()
+            // this.threeNode.createDemoCircleRing()
           }
         }, 
         cellClick: (evt, ui) =>{         
-          console.log("ui", ui)
+          // if (ui.rowIndx % 2 ===0){
+          //   this.threeNode.type = "Vertical"
+          // }else{
+          //   this.threeNode.type = "Horizontal"
+          // } 
+          // if (ui.rowIndx % 2 === 0) {
+          //   this.threeNode.type = "Circle"
+          // } else {
+          //   this.threeNode.type = "Ring"
+          // } 
           let m_no = ui.rowData.m_no;
           const rowData = ui.rowData
           let index = ui.rowData.index;
@@ -217,6 +225,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
          if(this.bars.is_review){
           this.removeScene()
           this.threeNode.createDrawingLine()
+          // this.threeNode.createDemoOval()
+          // this.threeNode.createDemoCircleRing()
          }
         }
       };

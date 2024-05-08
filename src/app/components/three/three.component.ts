@@ -39,35 +39,37 @@ export class ThreeComponent implements OnInit {
   }
 
   ngOnInit() {
-   if(this.typeView=== 'preview'){
-    this.node.createDrawingLine(); 
-   } else{
-    // this.createDrawingLineRebar()
-   }
-   console.log(this.scene)
-   this.node.onInit();
+    if(this.typeView=== 'preview'){
+      this.node.createDrawingLine(); 
+      // this.node.createDemoOval()
+      // this.node.createDemoCircleRing()
+    } else{
+      // this.createDrawingLineRebar()
+    }
+    console.log(this.scene)
+    this.node.onInit();
   }
   ngAfterViewInit(): void {
-   if(this.typeView === 'preview'){
-    this.scene.OnInit(
-      this.getAspectRatio(),
-      this.canvas,
-      devicePixelRatio,
-      350,
-      350
-    );
-   }else{
-    // this.scene.OnInitRebar(
-    //   this.getAspectRatioRebar(),
-    //   this.canvasRebar,
-    //   devicePixelRatio,
-    //   350,
-    //   350
-    // );
-   }
-   const element = this.scene.labelRendererDomElement();
-   const div = document.getElementById("myCanvas"); // ボタンを置きたい場所の手前の要素を取得
-   div.parentNode.insertBefore(element, div.nextSibling); 
+    if(this.typeView === 'preview'){
+      this.scene.OnInit(
+        this.getAspectRatio(),
+        this.canvas,
+        devicePixelRatio,
+        700,
+        700
+      );
+    }else{
+      // this.scene.OnInitRebar(
+      //   this.getAspectRatioRebar(),
+      //   this.canvasRebar,
+      //   devicePixelRatio,
+      //   350,
+      //   350
+      // );
+    }
+    const element = this.scene.labelRendererDomElement();
+    const div = document.getElementById("myCanvas"); // ボタンを置きたい場所の手前の要素を取得
+    div.parentNode.insertBefore(element, div.nextSibling);
   }
   private getAspectRatio(): number {
     if (this.canvas.clientHeight === 0) {
@@ -83,10 +85,10 @@ export class ThreeComponent implements OnInit {
   // }
   // createDrawingLine() {       
   //   let jsonData: any = this.node.changeData() as [];
-   
+
   //   const material = new THREE.LineBasicMaterial({ color: 0x000000 });
   //   const points = [];
-    
+
   //   const arrPanel = [
   //     [1, 2, 7, 8],
   //     [3, 4, 5, 6]
@@ -128,12 +130,12 @@ export class ThreeComponent implements OnInit {
   //     }catch{
   //       console.log(jsonData)
   //     }
-     
+
   //   }  
 
   //   const jsonSide = this.node.changeDataSide() as [];
   //   for(let i=0; i< jsonSide.length;i++){    
-       
+
   //     const mesh1 = new THREE.Mesh(this.geometry,
   //       new THREE.MeshBasicMaterial({ color: 0xfafafa }));
   //     mesh1.name = 'nodeSide' + i;
@@ -148,7 +150,7 @@ export class ThreeComponent implements OnInit {
   //   let jsonData: any = this.nodeGuide.changeData() as [];
   //   const material = new THREE.LineBasicMaterial({ color: 0x000000 });
   //   const points = [];
-    
+
   //   const arrPanel = [
   //     [1, 2, 3, 4],
   //   ]
@@ -178,7 +180,7 @@ export class ThreeComponent implements OnInit {
   //   );   
   //   this.scene.addRebar(line);       
   //   for(let i=4; i< jsonData.length;i++){    
-       
+
   //     try{
   //       const mesh = new THREE.Mesh(this.geometryRebar,
   //         new THREE.MeshBasicMaterial({ color: 0x000000 }));
@@ -193,7 +195,7 @@ export class ThreeComponent implements OnInit {
   //   }  
   //   const jsonSide = this.nodeGuide.changeDataSide() as [];
   //   for(let i=0; i< jsonSide.length;i++){    
-       
+
   //     const mesh1 = new THREE.Mesh(this.geometryRebar,
   //       new THREE.MeshBasicMaterial({ color: 0xfafafa }));
   //     mesh1.name = 'nodeSide' + i;
