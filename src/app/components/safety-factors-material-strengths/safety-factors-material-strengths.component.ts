@@ -7,6 +7,7 @@ import { visitAll } from '@angular/compiler';
 import { SaveDataService } from "../../providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from '../menu/menu.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-safety-factors-material-strengths',
@@ -82,8 +83,9 @@ export class SafetyFactorsMaterialStrengthsComponent
   public propEdit = { edit: true, }
   public propNoEdit = { edit: false, }
   public considerMomentChecked: boolean ;
-  public showOption: boolean = false;
+  public showOption: boolean = true;
   checkedRadioValue: number;
+  private checkedRadioSubscription: Subscription;
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private members: InputMembersService,
@@ -93,7 +95,9 @@ export class SafetyFactorsMaterialStrengthsComponent
     private menuService: MenuService
   ) { 
     this.members.checkGroupNo();
-    this.checkedRadioValue = this.menuService.getCheckedRadio()
+    this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(value => {
+      this.checkedRadioValue = value;
+    });
   }
   public isManual(): boolean {
     return this.save.isManual();
@@ -608,6 +612,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
   ngOnDestroy(): void {
     this.saveData();
+    this.checkedRadioSubscription.unsubscribe();
   }
   public saveData(): void {
     const safety_factor = {};

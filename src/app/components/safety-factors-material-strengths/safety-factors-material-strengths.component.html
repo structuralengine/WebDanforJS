@@ -52,7 +52,7 @@
             [(ngModel)]="consider_moment_checked"
             [checked]="consider_moment_checked"
           />
-          <span translate class="checkbox-parts"
+          <span translate class="checkbox-parts" style="width: 180px"
             >calculation-print.consider</span
           >
         </label>
@@ -69,7 +69,7 @@
         </label>
       </div>
       <div *ngIf="showOption" class="checkbox-condition">
-        <label class="checkbox-container" *ngIf="isManual()">
+        <label class="checkbox-container" *ngIf="!isManual()">
           <input
             type="checkbox"
             name="calculate_moment"
@@ -106,7 +106,7 @@
             class="checkbox-input"
             [disabled]="considerMomentChecked"
           />
-          <span translate class="checkbox-parts"
+          <span translate class="checkbox-parts" style="width: 575px"
             >calculation-print.option3</span
           >
         </label>
