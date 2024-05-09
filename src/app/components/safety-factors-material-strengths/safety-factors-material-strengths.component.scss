@@ -54,6 +54,10 @@ h5 {
   .checkbox-condition{
     padding-left:15px;
   }
+  .checkbox-input:disabled + .checkbox-parts{
+    background: var(--disabled);
+    opacity: 0.7;
+  }
 }
 
 .safety-factors,

@@ -9,7 +9,7 @@ export class MenuService {
   private checkedRadioSubject = new Subject<number>();
   public checkedRadio$ = this.checkedRadioSubject.asObservable();
   public selectedRoad: boolean = false;
-  checkedRadio: any;
+  checkedRadio: number ;
 
   // 部材情報
   constructor() {

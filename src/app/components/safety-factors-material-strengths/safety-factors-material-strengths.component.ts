@@ -84,7 +84,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   public propNoEdit = { edit: false, }
   public considerMomentChecked: boolean ;
   public showOption: boolean = true;
-  checkedRadioValue: number;
+  checkedRadioValue: number    ;
   private checkedRadioSubscription: Subscription;
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
@@ -96,7 +96,11 @@ export class SafetyFactorsMaterialStrengthsComponent
   ) { 
     this.members.checkGroupNo();
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(value => {
-      this.checkedRadioValue = value;
+       // Kiểm tra nếu giá trị mới khác với giá trị hiện tại
+        console.log("radiovalue",value)
+        this.checkedRadioValue = value;
+        // Thực hiện các hành động cần thiết sau khi nhận giá trị mới
+      
     });
   }
   public isManual(): boolean {
@@ -105,6 +109,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   ngOnInit() {
     this.setTitle();
     const safety = this.safety.getTableColumns();
+    this.checkedRadioValue =  this.menuService.getCheckedRadio()
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
     this.groupe_list = safety.groupe_list;
     this.groupe_name = new Array();
