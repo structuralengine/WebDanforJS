@@ -55,17 +55,18 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let i = 0; i < this.table_datas.length; i++) {
       if(this.save.is3DPickUp()){
         this.table_datas[i].forEach((data:any)=>{
-          data["isMCalc"] = data["isMyCalc"]
-          data["isVCalc"] = data["isVzCalc"]
-          data["isMzCalc"] = false;
-          data["isVyCalc"] = false;
+          if (data["axis_type"]===1){
+            data["isMCalc"] = data["isMyCalc"]
+            data["isVCalc"] = data["isVzCalc"]
+          }else{
+            data["isMCalc"] = data["isMzCalc"]
+            data["isVCalc"] = data["isVyCalc"]
+          }
         })
       } else {
         this.table_datas[i].forEach((data: any) => {
           data["isMCalc"] = data["isMzCalc"]
           data["isVCalc"] = data["isVyCalc"]
-          data["isMyCalc"] = false;
-          data["isVzCalc"] = false;
           data.pq_cellstyl={
             ...data.pq_cellstyle,
             axis_type:{...this.styleNoEdit}
@@ -128,15 +129,19 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
             for (const key of Object.keys(property.newRow)) {
               if (key ==="axis_type") {
                 if (+property.newRow[key] === 1) {
-                  property.rowData["isMCalc"] = property.rowData["isMyCalc"]
-                  property.rowData["isVCalc"] = property.rowData["isVzCalc"]
-                  property.rowData["isMzCalc"] = false;
-                  property.rowData["isVyCalc"] = false
+                  property.rowData["isMyCalc"] = property.rowData["isMCalc"]
+                  property.rowData["isVzCalc"] = property.rowData["isVCalc"]
+                  if (property.rowData["isMCalc"] || property.rowData["isVCalc"] ){
+                    property.rowData["isMzCalc"] = false;
+                    property.rowData["isVyCalc"] = false;
+                  }
                 }else{
-                  property.rowData["isMCalc"] = property.rowData["isMzCalc"]
-                  property.rowData["isVCalc"] = property.rowData["isVyCalc"]
-                  property.rowData["isMyCalc"] = false;
-                  property.rowData["isVzCalc"] = false
+                  property.rowData["isMzCalc"] = property.rowData["isMCalc"]
+                  property.rowData["isVyCalc"] = property.rowData["isVCalc"]
+                  if (property.rowData["isMCalc"] || property.rowData["isVCalc"]) {
+                    property.rowData["isMyCalc"] = false;
+                    property.rowData["isVzCalc"] = false
+                  }
                 }
               }else{
                 const check = property.newRow[key]

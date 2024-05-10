@@ -51,29 +51,46 @@ export class InputDesignPointsService {
         if (key in data) {
           tmp[key] = data[key];
         }
-        if (key === "axis_type") {
-          if (is3DPickUp){
-           tmp["axis_type"] = 1;
-         }else{
-           tmp["axis_type"] = 2;
-         }
-        }
-        if (key === "isMyCalc" && tmp[key] === true) {
-          tmp["isMzCalc"] = false;
-          tmp["isVyCalc"] = false;
-        }
-        if (key === "isMzCalc"&& tmp[key] === true) {
+        if(is3DPickUp){
+          if (tmp["isMyCalc"] === true || tmp['isVzCalc'] === true) {
+            tmp["isMzCalc"] = false;
+            tmp["isVyCalc"] = false;
+            tmp["axis_type"] = 1;
+          }else{
+            if (tmp["isMzCalc"] === true ||tmp["isVyCalc"] === true) {
+              tmp["isMyCalc"] = false;
+              tmp["isVzCalc"] = false;
+              tmp["axis_type"] = 2;
+            }else{
+              if (tmp["isMyCalc"] === false &&
+                tmp["isVzCalc"] === false &&
+                tmp["isMzCalc"] === false &&
+                tmp["isVyCalc"] === false) {
+                tmp["axis_type"] = 1;
+              }
+            }
+          }          
+        }else{
+          tmp["axis_type"] = 2;
           tmp["isMyCalc"] = false;
           tmp["isVzCalc"] = false;
         }
-        if (key === "isVyCalc"&& tmp[key] === true) {
-          tmp["isVzCalc"] = false;
-          tmp["isMyCalc"] = false;
-        }
-        if (key === "isVzCalc"&& tmp[key] === true) {
-          tmp["isVyCalc"] = false;
-          tmp["isMzCalc"] = false;
-        }
+        // if (key === "isMyCalc" && tmp[key] === true) {
+        //   tmp["isMzCalc"] = false;
+        //   tmp["isVyCalc"] = false;
+        // }
+        // if (key === "isMzCalc" && tmp[key] === true) {
+        //   tmp["isMyCalc"] = false;
+        //   tmp["isVzCalc"] = false;
+        // }
+        // if (key === "isVyCalc" && tmp[key] === true) {
+        //   tmp["isVzCalc"] = false;
+        //   tmp["isMyCalc"] = false;
+        // }
+        // if (key === "isVzCalc" && tmp[key] === true) {
+        //   tmp["isVyCalc"] = false;
+        //   tmp["isMzCalc"] = false;
+        // }
       }
       this.position_list.push(tmp);
     }
@@ -217,7 +234,7 @@ export class InputDesignPointsService {
       position: null,
       p_name: null,
       p_id: null,
-      axis_type: 1,
+      axis_type: 2,
       isMyCalc: false,
       isVyCalc: false,
       isMzCalc: false,
