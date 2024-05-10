@@ -3,7 +3,7 @@
     <ul class="c-subNavArea__nav">
       <li class="c-subNavArea__navItem" *ngFor="let groupe of groupe_name; index as i">
         <a (click)="activePageChenge(i, groupe)" id="saf{{i}}" class="c-subNavArea__navItemTitle">
-          <span>{{groupe}}</span>
+          <span>{{groupe.name}}</span>
         </a>
       </li>
     </ul>

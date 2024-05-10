@@ -314,7 +314,7 @@
         "cs":"Compressive strength",
         "as":"Adhesion strength",
         "young":"Young's modulus",
-        "rebar_ax":"Axial rebar",
+        "rebar_ax":"Axial rebar (including bent reinforcement)",
         "rebar_la":"Lateral rebar",
         "stirrup":"Stirrup",
         "tys":"Tensile yield strength",
@@ -329,7 +329,7 @@
         "ys":"Yield strength\n(N/mm2)",
         "d25":"D25 or less",
         "d29":"D29 and above",
-        "dts":"Design tensile strength\n(N/mm2)",
+        "dts":"Tensile strength\n(N/mm2)",
         "d_u":"Durability, usability",
         "safe_ff":"Safety (fatigue fracture)",
         "safe_d":"Safety (destruction)",
@@ -341,7 +341,9 @@
         "muddy_less":"Muddy water specific density 1.04 or less",
         "natural_less":"Natural muddy water, muddy water specific density 1.10 or less",
         "bentonite":"Bentonite muddy water",
-        "aerial":"Aerial construction"
+        "aerial":"Aerial construction",
+        "rbmt":"Reinforcing bar material type",
+        "av":"Arbitrary value"
     },
     "calculation-print":{
         "dc":"Design condition",
