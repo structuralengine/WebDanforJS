@@ -51,14 +51,14 @@ export class InputFatiguesService {
 
   private default_fatigue_coefficient(target: string): any {
     const result = {
-      SA: null,
-      SB: null,
-      NA06: null,
-      NB06: null,
-      NA12: null,
-      NB12: null,
-      A: null,
-      B: null,
+      SA: 1.0,
+      SB: 1.0,
+      NA06: 0,
+      NB06: 0,
+      NA12: 0,
+      NB12: 0,
+      A: 1.0,
+      B: 1.0,
     };
     if (target === "Md") {
       result["r1_1"] = null;
@@ -66,8 +66,8 @@ export class InputFatiguesService {
       result["Class"] = null;
       result["weld"] = null;
     } else {
-      result["r1_2"] = null;
-      result["r1_3"] = null;
+      result["r1_2"] = 0.65;
+      result["r1_3"] = 1.0;
     }
     return result;
   }
@@ -134,6 +134,12 @@ export class InputFatiguesService {
     const bar = this.bars.getTableColumn(index);
     if (result == null) {
       result = this.default_fatigue(index);
+       // Fill in default values for any null properties
+       for (const key in result) {
+        if (result.hasOwnProperty(key) && result[key] === null) {
+            result[key] = this.default_fatigue(index)[key];
+        }
+    }
       result.titgle1 = bar.title1;
       this.fatigue_list.push(result);
     }

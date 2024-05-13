@@ -29,13 +29,13 @@ export class InputCrackSettingsService {
       m_no: null,
       g_name: null,
       p_name: null,
-      con_u: null,
-      con_l: null,
-      con_s: null,
-      vis_u: false,
-      vis_l: false,
-      ecsd_u: null,
-      ecsd_l: null,
+      con_u: 1,
+      con_l: 1,
+      con_s: 1,
+      vis_u: 450,
+      vis_l: 450,
+      ecsd_u: 0.85,
+      ecsd_l: 0.5,
       kr: null,
       k4: null,
       JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
@@ -69,7 +69,7 @@ export class InputCrackSettingsService {
           data.g_name = pos.g_name;
           data.p_name = pos.p_name;
           data.g_id = member.g_id;
-
+          data.extend = 0.3;
           table_groupe.push(data);
           count++;
         }
@@ -83,6 +83,11 @@ export class InputCrackSettingsService {
     let result = this.crack_list.find((value) => value.index === index);
     if (result == null) {
       result = this.default_crack(index);
+      for (const key in result) {
+        if (result.hasOwnProperty(key) && result[key] === null) {
+            result[key] = this.default_crack(index)[key];
+        }
+    }
       this.crack_list.push(result);
     }
     return result;
@@ -145,6 +150,7 @@ export class InputCrackSettingsService {
       b.kr =     column.kr;
       b.k4 =     column.k4;
       b.JRTT05 = column.JRTT05;
+      b.extend = 0.3;
       this.crack_list.push(b);
     }
 
@@ -173,7 +179,7 @@ export class InputCrackSettingsService {
       }
       if (value.k4 == undefined) {
         let flag: boolean = true;
-        for (const key of ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'JRTT05']) {
+        for (const key of ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'JRTT05', 'extend']) {
           if (value[key] === null || value[key] == null) {
             flag = false;
             break;

@@ -199,7 +199,7 @@
         "rebar_ob":"主鉄筋の斜率",
         "rebar_fo":"折曲げ鉄筋",
         "angle":"角度\n(°)",
-        "process":"処理",
+        "process":"引張側",
         "tp":"上端位置\n(mm)",
         "tp_side":"上端位置\n/側芯かぶり"
     },
@@ -274,8 +274,8 @@
         "s_grade":"強度等級",
         "weld":"溶接継手",
         "for_s":"せん断用",
-        "hoop":"帯筋",
-        "fold":"折曲げ"
+        "hoop":"スターラップ",
+        "fold":"折曲げ鉄筋"
     },
     "material-strength-verifiaction-condition":{
         "com_type":"部材種別",

@@ -199,7 +199,7 @@
         "rebar_ob":"Oblique ratio of main reinforcing bar",
         "rebar_fo":"Folded rebar",
         "angle":"Angle\n(°)",
-        "process":"Process",
+        "process":"Check target",
         "tp":"Top position\n(mm)",
         "tp_side":"Top position side cover"
     },
@@ -274,8 +274,8 @@
         "s_grade":"Strength grade",
         "weld":"Welded joint",
         "for_s":"For shear",
-        "hoop":"Hoop",
-        "fold":"folding"
+        "hoop":"Stirrup",
+        "fold":"Bent reinforcement bar"
     },
     "material-strength-verifiaction-condition":{
         "com_type":"Component Type",

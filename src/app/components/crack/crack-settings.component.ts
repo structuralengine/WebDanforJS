@@ -10,6 +10,7 @@ import { InputMembersService } from '../members/members.service';
 import { Subscription } from 'rxjs';
 import { MenuService } from '../menu/menu.service';
 
+
 @Component({
   selector: 'app-crack-settings',
   templateUrl: './crack-settings.component.html',
@@ -46,6 +47,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     ecsd_u: { ...this.textStyle2 }
   };
   checkedRadioValue: number;
+  private checkedRadioSubscription: Subscription;
   constructor(
     private crack: InputCrackSettingsService,
     private save: SaveDataService,
@@ -56,13 +58,16 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     private menuService: MenuService
   ) { 
     this.members.checkGroupNo();
-    this.checkedRadioValue = this.menuService.getCheckedRadio()
+    this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(value => {
+      this.checkedRadioValue = value;
+      // Thực hiện các hành động cần thiết sau khi nhận giá trị mới
+    });
   }
 
   ngOnInit() {
     this.setTitle(this.save.isManual());
-
     this.table_datas = this.crack.getTableColumns();
+    this.checkedRadioValue =  this.menuService.getCheckedRadio()
     // グリッドの設定
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
@@ -151,7 +156,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     for (let i = 0; i < this.table_datas.length; i++) {
       this.groupe_name.push(this.crack.getGroupeName(i));
     }
-
+    
   }
 
   ngAfterViewInit() {
@@ -256,13 +261,15 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         align: 'center', dataType: 'bool', dataIndx: 'JRTT05', type: 'checkbox', sortable: false, width: 100, nodrag: true,hidden:true,
       });
     }
-    if (this.checkedRadioValue === 0 || this.checkedRadioValue === 3 || this.checkedRadioValue === undefined) {
+    if (this.checkedRadioValue === 0 || 
+      this.checkedRadioValue === 3 || 
+      this.checkedRadioValue === undefined) {
       this.columnHeaders.push({
           title: this.translate.instant("crack-settings.extend"),
           align: 'center',
           dataType: 'float',
           dataIndx: 'extend',
-          format: '#.00',
+          format: '#.0',
           sortable: false,
           width: 70,
           nodrag: true,
@@ -278,6 +285,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
   ngOnDestroy() {
     this.saveData();
     this.refreshSubscription?.unsubscribe()
+    this.checkedRadioSubscription.unsubscribe();
   }
 
   public saveData(): void {
