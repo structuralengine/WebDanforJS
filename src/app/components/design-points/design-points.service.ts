@@ -239,12 +239,12 @@ export class InputDesignPointsService {
       position: null,
       p_name: null,
       p_id: null,
-      axis_type: 1,
+      axis_type: 2,
       isMyCalc: false,
       isVyCalc: false,
       isMzCalc: false,
       isVzCalc: false,
-      isMtCalc: false
+      isMtCalc: true
       // La: null
     };
   }
@@ -312,7 +312,6 @@ export class InputDesignPointsService {
     const data = [];
     for (const g of this.getTableColumns(true)) {
       for (const p of g) {
-        p.axis_type = 2;
         p.isMzCalc = true;
         p.isVyCalc = true;
         p.isMtCalc = true;
