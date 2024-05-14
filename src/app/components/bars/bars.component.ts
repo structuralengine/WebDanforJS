@@ -126,7 +126,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setTitle(this.save.isManual());
     this.table_datas = this.bars.getTableColumns();
 
-
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
@@ -607,6 +606,29 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.activeTab = tab;
     for (let i = 0; i < this.table_datas.length; i++) {
       const rowData = this.table_datas[i];
+      const nonNullValues = {};
+      // 
+      for (let j = 0; j < rowData.length; j++) {
+        const currentCell = rowData[j];
+        Object.keys(currentCell).forEach(key => {
+          if (currentCell[key] !== null) {
+            if (!nonNullValues[key]) {
+              nonNullValues[key] = [];
+            }
+            nonNullValues[key].push(currentCell[key]);
+          }
+        });
+      }
+
+      // 
+      for (let j = 0; j < rowData.length; j++) {
+        const currentCell = rowData[j];
+        Object.keys(currentCell).forEach(key => {
+          if (currentCell[key] === null && nonNullValues[key] && nonNullValues[key].length > 0) {
+            currentCell[key] = nonNullValues[key][0];
+          }
+        });
+      }
       for (let j = 0; j < rowData.length - 1; j++) {
         const rowData = this.table_datas[i];
         for (let j = 0; j < rowData.length; j++) {

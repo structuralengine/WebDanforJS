@@ -36,8 +36,8 @@ export class InputCrackSettingsService {
       vis_l: 450,
       ecsd_u: 0.85,
       ecsd_l: 0.5,
-      kr: null,
-      k4: null,
+      kr: 0.85,
+      k4: 0.5,
       JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
       extend: 0.3
     };

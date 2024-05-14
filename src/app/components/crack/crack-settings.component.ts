@@ -37,14 +37,20 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     con_l: { ...this.textStyle },
     con_u: { ...this.textStyle },
     ecsd_l: { ...this.textStyle },
-    ecsd_u: { ...this.textStyle }
+    ecsd_u: { ...this.textStyle },
+    kr:{...this.textStyle },
+    k4: { ...this.textStyle },
+    extend: { ...this.textStyle },
   };
   public rowStyle2 = {
     con_s: { ...this.textStyle2 },
     con_l: { ...this.textStyle2 },
     con_u: { ...this.textStyle2 },
     ecsd_l: { ...this.textStyle2 },
-    ecsd_u: { ...this.textStyle2 }
+    ecsd_u: { ...this.textStyle2 },
+    kr:{...this.textStyle },
+    k4: { ...this.textStyle },
+    extend: { ...this.textStyle },
   };
   checkedRadioValue: number;
   private checkedRadioSubscription: Subscription;
@@ -73,6 +79,31 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     for (let i = 0; i < this.table_datas.length; i++) {
    
       const rowData = this.table_datas[i];
+      // 
+      const nonNullValues = {};
+
+      // 
+      for (let j = 0; j < rowData.length; j++) {
+        const currentCell = rowData[j];
+        Object.keys(currentCell).forEach(key => {
+          if (currentCell[key] !== null) {
+            if (!nonNullValues[key]) {
+              nonNullValues[key] = [];
+            }
+            nonNullValues[key].push(currentCell[key]);
+          }
+        });
+      }
+
+      //
+      for (let j = 0; j < rowData.length; j++) {
+        const currentCell = rowData[j];
+        Object.keys(currentCell).forEach(key => {
+          if (currentCell[key] === null && nonNullValues[key] && nonNullValues[key].length > 0) {
+            currentCell[key] = nonNullValues[key][0];
+          }
+        });
+      }
       for (let j = 0; j < rowData.length - 1; j++) {
         const rowData = this.table_datas[i];
         for (let j = 0; j < rowData.length; j++) {

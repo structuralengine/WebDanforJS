@@ -104,7 +104,31 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       const rowData = this.table_datas[i];
       for (let j = 0; j < rowData.length - 1; j++) {
         const rowData = this.table_datas[i];
-        console.log("checkk_____",rowData);
+        // 
+        const nonNullValues = {};
+
+        // 
+        for (let j = 0; j < rowData.length; j++) {
+          const currentCell = rowData[j];
+          Object.keys(currentCell).forEach(key => {
+            if (currentCell[key] !== null) {
+              if (!nonNullValues[key]) {
+                nonNullValues[key] = [];
+              }
+              nonNullValues[key].push(currentCell[key]);
+            }
+          });
+        }
+
+        //
+        for (let j = 0; j < rowData.length; j++) {
+          const currentCell = rowData[j];
+          Object.keys(currentCell).forEach(key => {
+            if (currentCell[key] === null && nonNullValues[key] && nonNullValues[key].length > 0) {
+              currentCell[key] = nonNullValues[key][0];
+            }
+          });
+        }
         for (let j = 0; j < rowData.length; j++) {
             const currentCell = rowData[j];
             if (j < rowData.length - 1) {
@@ -238,8 +262,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       {
         title: this.translate.instant("fatigues.for_b"),
         align: 'center', colModel: [
-          { title: this.translate.instant("fatigues.SA/SC"), dataType: 'float', format: '#.000', dataIndx: 'M_SA', sortable: false, width: 70, nodrag: true, },
-          { title: this.translate.instant("fatigues.SB/SC"), dataType: 'float', format: '#.000', dataIndx: 'M_SB', sortable: false, width: 70, nodrag: true, },
+          { title: this.translate.instant("fatigues.SA/SC"), dataType: 'float', format: '#.0', dataIndx: 'M_SA', sortable: false, width: 70, nodrag: true, },
+          { title: this.translate.instant("fatigues.SB/SC"), dataType: 'float', format: '#.0', dataIndx: 'M_SB', sortable: false, width: 70, nodrag: true, },
           {
             title: this.translate.instant("fatigues.k1"), align: 'center', colModel: [
               { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.00', dataIndx: 'M_NA06', sortable: false, width: 70, nodrag: true, },
@@ -257,8 +281,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           {
             title: this.translate.instant("fatigues.d_r2"),
             align: 'center', colModel: [
-              { title: this.translate.instant("fatigues.alpha"), dataType: 'float', format: '#.000', dataIndx: 'M_A', sortable: false, width: 70, nodrag: true, },
-              { title: this.translate.instant("fatigues.beta"), dataType: 'float', format: '#.000', dataIndx: 'M_B', sortable: false, width: 70, nodrag: true, }
+              { title: this.translate.instant("fatigues.alpha"), dataType: 'float', format: '#.0', dataIndx: 'M_A', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.beta"), dataType: 'float', format: '#.0', dataIndx: 'M_B', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },
@@ -289,8 +313,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       {
         title: this.translate.instant("fatigues.for_s"),
         align: 'center', colModel: [
-          { title: this.translate.instant("fatigues.SA/SC"), dataType: 'float', format: '#.000', dataIndx: 'V_SA', sortable: false, width: 70, nodrag: true, },
-          { title: this.translate.instant("fatigues.SB/SC"), dataType: 'float', format: '#.000', dataIndx: 'V_SB', sortable: false, width: 70, nodrag: true, },
+          { title: this.translate.instant("fatigues.SA/SC"), dataType: 'float', format: '#.0', dataIndx: 'V_SA', sortable: false, width: 70, nodrag: true, },
+          { title: this.translate.instant("fatigues.SB/SC"), dataType: 'float', format: '#.0', dataIndx: 'V_SB', sortable: false, width: 70, nodrag: true, },
           {
             title:  this.translate.instant("fatigues.k1"), align: 'center', colModel: [
               { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.00', dataIndx: 'V_NA06', sortable: false, width: 70, nodrag: true, },
@@ -308,8 +332,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           {
             title: this.translate.instant("fatigues.d_r2"),
             align: 'center', colModel: [
-              { title: this.translate.instant("fatigues.alpha"), dataType: 'float', format: '#.000', dataIndx: 'V_A', sortable: false, width: 70, nodrag: true, },
-              { title: this.translate.instant("fatigues.beta"), dataType: 'float', format: '#.000', dataIndx: 'V_B', sortable: false, width: 70, nodrag: true, }
+              { title: this.translate.instant("fatigues.alpha"), dataType: 'float', format: '#.0', dataIndx: 'V_A', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.beta"), dataType: 'float', format: '#.0', dataIndx: 'V_B', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },

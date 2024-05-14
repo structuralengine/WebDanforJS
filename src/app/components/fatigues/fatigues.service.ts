@@ -61,7 +61,7 @@ export class InputFatiguesService {
       B: 1.0,
     };
     if (target === "Md") {
-      result["r1_1"] = null;
+      result["r1_1"] = 1;
       result["r1_3"] = null;
       result["Class"] = null;
       result["weld"] = null;
