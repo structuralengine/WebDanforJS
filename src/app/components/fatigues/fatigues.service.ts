@@ -62,9 +62,9 @@ export class InputFatiguesService {
     };
     if (target === "Md") {
       result["r1_1"] = 1;
-      result["r1_3"] = null;
-      result["Class"] = null;
-      result["weld"] = null;
+      result["r1_3"] = 1;
+      result["Class"] = 1;
+      result["weld"] = 1;
     } else {
       result["r1_2"] = 0.65;
       result["r1_3"] = 1.0;

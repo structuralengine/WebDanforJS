@@ -291,7 +291,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
             align: 'center', colModel: [
               {
                 title: this.translate.instant("fatigues.ax_rein"),
-                dataType: 'float', format: '#.00', dataIndx: 'M_r1_1', sortable: false, width: 60, nodrag: true,
+                dataType: 'float', format: '#.0', dataIndx: 'M_r1_1', sortable: false, width: 60, nodrag: true,
               }
             ],
             nodrag: true,
@@ -317,15 +317,15 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           { title: this.translate.instant("fatigues.SB/SC"), dataType: 'float', format: '#.0', dataIndx: 'V_SB', sortable: false, width: 70, nodrag: true, },
           {
             title:  this.translate.instant("fatigues.k1"), align: 'center', colModel: [
-              { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.00', dataIndx: 'V_NA06', sortable: false, width: 70, nodrag: true, },
-              { title: this.translate.instant("fatigues.NB"), dataType: 'float', format: '#.00', dataIndx: 'V_NB06', sortable: false, width: 70, nodrag: true, }
+              { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.0', dataIndx: 'V_NA06', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.NB"), dataType: 'float', format: '#.0', dataIndx: 'V_NB06', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },
           {
             title: this.translate.instant("fatigues.k2"), align: 'center', colModel: [
-              { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.00', dataIndx: 'V_NA12', sortable: false, width: 70, nodrag: true, },
-              { title: this.translate.instant("fatigues.NB"), dataType: 'float', format: '#.00', dataIndx: 'V_NB12', sortable: false, width: 70, nodrag: true, }
+              { title: this.translate.instant("fatigues.NA"), dataType: 'float', format: '#.0', dataIndx: 'V_NA12', sortable: false, width: 70, nodrag: true, },
+              { title: this.translate.instant("fatigues.NB"), dataType: 'float', format: '#.0', dataIndx: 'V_NB12', sortable: false, width: 70, nodrag: true, }
             ],
             nodrag: true,
           },
@@ -342,11 +342,11 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
             align: 'center', colModel: [
               {
                 title: this.translate.instant("fatigues.hoop"),
-                dataType: 'float', format: '#.00', dataIndx: 'V_r1_2', sortable: false, width: 60, nodrag: true,
+                dataType: 'float', format: '#.0', dataIndx: 'V_r1_2', sortable: false, width: 60, nodrag: true,
               },
               {
                 title: this.translate.instant("fatigues.fold"),
-                dataType: 'float', format: '#.00', dataIndx: 'V_r1_3', sortable: false, width: 60, nodrag: true,
+                dataType: 'float', format: '#.0', dataIndx: 'V_r1_3', sortable: false, width: 60, nodrag: true,
               }
             ],
             nodrag: true,
