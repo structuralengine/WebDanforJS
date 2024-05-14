@@ -76,6 +76,8 @@ export class InputDesignPointsService {
           tmp["isVzCalc"] = false;
           if(!isManual){
             tmp["isMtCalc"] = false;
+          }else{
+            tmp["isMtCalc"] = true;
           }
         }
         // if (key === "isMyCalc" && tmp[key] === true) {
@@ -264,12 +266,16 @@ export class InputDesignPointsService {
         for (const key of Object.keys(new_point)) {
           if (key in old_point) {
             new_point[key] = old_point[key];
+            if (key ==="axis_type"){
+              new_point[key] = 1
+            }
           }
         }
       }
       for (const key of Object.keys(new_point)) {
         if (key in pos) {
           new_point[key] = pos[key];
+          new_point["axis_type"] = 1
         }
       }
       // 部材長をセットする
