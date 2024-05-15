@@ -241,8 +241,8 @@ export class InputDesignPointsService {
       p_id: null,
       axis_type: 2,
       isMyCalc: false,
-      isVyCalc: false,
-      isMzCalc: false,
+      isVyCalc: true,
+      isMzCalc: true,
       isVzCalc: false,
       isMtCalc: true
       // La: null
@@ -250,7 +250,7 @@ export class InputDesignPointsService {
   }
 
   // pick up ファイルをセットする関数
-  public setPickUpData(pickup_data: Object) {
+  public setPickUpData(pickup_data: Object,mode:any) {
     const keys: string[] = Object.keys(pickup_data);
     const positions: any[] = pickup_data[keys[0]];
 
@@ -266,16 +266,23 @@ export class InputDesignPointsService {
         for (const key of Object.keys(new_point)) {
           if (key in old_point) {
             new_point[key] = old_point[key];
-            if (key ==="axis_type"){
-              new_point[key] = 1
-            }
           }
         }
       }
       for (const key of Object.keys(new_point)) {
         if (key in pos) {
           new_point[key] = pos[key];
-          new_point["axis_type"] = 1
+          if (mode === "pik") {
+            new_point["axis_type"] = 2
+          }
+          if (mode === "csv") {
+            new_point["axis_type"] = 1
+          }
+          new_point["isMyCalc"] = false
+          new_point["isVyCalc"] = false
+          new_point["isMzCalc"] = false
+          new_point["isVzCalc"] = false
+          new_point["isMtCalc"] = false
         }
       }
       // 部材長をセットする

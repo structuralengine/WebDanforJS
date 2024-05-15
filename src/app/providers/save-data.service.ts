@@ -169,7 +169,7 @@ export class SaveDataService {
 
       this.basic.setPickUpData();
       this.members.setPickUpData(pickup1);
-      this.points.setPickUpData(pickup1);
+      this.points.setPickUpData(pickup1,mode);
       this.bars.setPickUpData();
       this.steel.setPickUpData();
       this.basic.setPickUpData();
