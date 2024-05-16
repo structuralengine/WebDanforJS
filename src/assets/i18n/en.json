@@ -175,7 +175,9 @@
         "z_around":"Around z-axis",
         "y_direction":"y-axis direction",
         "z_direction":"z-axis direction",
-        "check_target":"Check target axis"
+        "check_target":"Check target axis",
+        "upper_side":"Upper side tension check",
+        "lower_side":"Lower side tension check"
     },
     "bars":{
         "m_no":"Member\nNo",

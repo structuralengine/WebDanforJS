@@ -42,7 +42,7 @@ export class InputDesignPointsService {
     return this.position_list;
   }
 
-  public setSaveData(points: any, is3DPickUp?: any, isManual?:any): void {
+  public setSaveData(points: any, is3DPickUp?: any, isManual?:any, bars?:any): void {
 
     this.clear();
     for (const data of points) {
@@ -50,6 +50,25 @@ export class InputDesignPointsService {
       for (const key of Object.keys(tmp)) {
         if (key in data) {
           tmp[key] = data[key];
+        }else {
+          if ((key === "isUpperCalc" || key === "isLowerCalc") && bars !== undefined) {
+            let index = bars.findIndex(bar => data.index === bar.index)
+            if (index !== -1) {
+              if (bars[index].rebar1.enable !== undefined){
+                tmp["isUpperCalc"] = bars[index].rebar1.enable
+              }else{
+                tmp["isUpperCalc"] = true
+              }
+              if (bars[index].rebar2.enable !== undefined) {
+                tmp["isLowerCalc"] = bars[index].rebar2.enable
+              } else {
+                tmp["isLowerCalc"] = true
+              }
+            } else {
+              tmp["isUpperCalc"] = true
+              tmp["isLowerCalc"] = true
+            }
+          }
         }
         if(is3DPickUp){
           if (tmp["isMyCalc"] === true || tmp['isVzCalc'] === true) {
@@ -85,7 +104,13 @@ export class InputDesignPointsService {
       }
       this.position_list.push(tmp);
     }
-  }
+    if (bars !== undefined) {
+      bars.map((bar: any) => {
+        delete bar.rebar1.enable
+        delete bar.rebar2.enable
+      })
+    }
+}
 
   public setTableColumns(points: any, is3DPickUp?: any, isManual?:any ): void {
 
@@ -230,7 +255,9 @@ export class InputDesignPointsService {
       isVyCalc: true,
       isMzCalc: true,
       isVzCalc: false,
-      isMtCalc: true
+      isMtCalc: true,
+      isUpperCalc: true,
+      isLowerCalc: true
       // La: null
     };
   }
