@@ -61,6 +61,8 @@
             type="radio"
             name="calculate_moment"
             class="checkbox-input"
+            [(ngModel)]="consider_moment_checked"
+            [checked]="consider_moment_checked"
             (click)="notConsider($event)"
           />
           <span translate class="checkbox-parts"
@@ -75,6 +77,8 @@
             name="calculate_moment"
             class="checkbox-input"
             [disabled]="considerMomentChecked"
+            (change)="handleOption($event)"
+            [(ngModel)]="otp_max_min"
           />
           <span translate class="checkbox-parts" style="width: 475px"
             >calculation-print.option1</span
@@ -86,6 +90,8 @@
             name="calculate_moment"
             class="checkbox-input"
             [disabled]="considerMomentChecked"
+            (change)="handleOption($event)"
+            [(ngModel)]="otp_tens_only"
           />
           <span translate class="checkbox-parts" style="width: 475px"
             >calculation-print.option2</span
@@ -105,6 +111,8 @@
             name="calculate_moment"
             class="checkbox-input"
             [disabled]="considerMomentChecked"
+            (change)="handleOption($event)"
+            [(ngModel)]="opt_no_for_v"
           />
           <span translate class="checkbox-parts" style="width: 575px"
             >calculation-print.option3</span

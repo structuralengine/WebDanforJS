@@ -19,6 +19,11 @@ export class SafetyFactorsMaterialStrengthsComponent
   public arrayAxis: any[]
   public consider_moment_checked: boolean;
   public groupMem: any;
+
+  public used : boolean = true
+  public otp_max_min: boolean =false;
+  public otp_tens_only:boolean = false;
+  public opt_no_for_v: boolean =false;
   // 安全係数
   @ViewChild('grid1') grid1: SheetComponent;
   public options1: pq.gridT.options;
@@ -97,7 +102,6 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.members.checkGroupNo();
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(value => {
        // Kiểm tra nếu giá trị mới khác với giá trị hiện tại
-        console.log("radiovalue",value)
         this.checkedRadioValue = value;
         // Thực hiện các hành động cần thiết sau khi nhận giá trị mới
       
@@ -782,6 +786,40 @@ export class SafetyFactorsMaterialStrengthsComponent
   }
   notConsider(e:any){
     this.considerMomentChecked =true;
+    this.used= false;
+    this.otp_max_min= false;
+    this.otp_tens_only = false;
+    this.opt_no_for_v= false;
+    const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
+    this.safety.axisforce_condition = {...updatedObject}
+  }
+  handleOption(e:any){
+    if(this.checkedRadioValue === 0 ||
+      this.checkedRadioValue === 1 ||
+      this.checkedRadioValue === 2 ||
+      this.checkedRadioValue === undefined){
+        this.opt_no_for_v = true;
+    }else{
+      this.opt_no_for_v = false;
+    }
+    const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
+    this.safety.axisforce_condition = {...updatedObject} 
+  }
+  generateUpdatedObject(used: boolean,opt_no_for_v: boolean,otp_max_min: boolean,otp_tens_only: boolean): any {
+
+    const result: { [key: string]: { used: boolean; opt_no_for_v: boolean; otp_max_min: boolean; otp_tens_only: boolean; } } = {};
+    this.groupe_list[0].map((item:any) => {
+      if (!result[item.g_id]) {
+          result[item.g_id] = {
+              used: used,
+              opt_no_for_v: opt_no_for_v,
+              otp_max_min: otp_max_min,
+              otp_tens_only: otp_tens_only
+          };
+      }
+  });
+
+  return result;
   }
   handleSetSelect(dataTable:any,id:any){
     const safety = this.safety.getTableColumns();

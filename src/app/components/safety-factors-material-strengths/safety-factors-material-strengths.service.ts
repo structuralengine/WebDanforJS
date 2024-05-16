@@ -15,6 +15,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
   private material_steel: any;
   private material_concrete: any;
   public pile_factor: any;
+  public axisforce_condition: any;
   public arrayAxis: any[]
   public arrayAxisBase: any[]
   public groupe_name: any[]
@@ -33,9 +34,10 @@ export class InputSafetyFactorsMaterialStrengthsService {
     this.material_steel = {};
     this.material_concrete = {};
     this.pile_factor = {};
+    // this.axisforce_condition = {};
     this.arrayAxis = new Array();
   }
-
+  
   // 材料強度情報
   /// specification1_selected によって変わる項目の設定
   public default_safety_factor(): any {
@@ -361,7 +363,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
       material_bar,
       material_steel,
       material_concrete,
-      pile_factor
+      pile_factor,
     };
 
   }
@@ -443,12 +445,14 @@ export class InputSafetyFactorsMaterialStrengthsService {
 
   // ファイルに書き込む用
   public getSaveData(): any {
+
     return {
       safety_factor: this.safety_factor,
       material_bar: this.material_bar,
       material_steel: this.material_steel,
       material_concrete: this.material_concrete,
       pile_factor: this.pile_factor,
+      axisforce_condition: this.axisforce_condition,
       component: this.material.getSaveData().component,
       verification: this.material.getSaveData().verification,
       other: this.material.getSaveData().other
@@ -460,7 +464,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
     this.material_bar = safety.material_bar,
     //this.material_steel = safety.material_steel,
     this.material_concrete = safety.material_concrete,
-    this.pile_factor = safety.pile_factor
+    this.pile_factor = safety.pile_factor,
+    this.axisforce_condition = this.axisforce_condition
   }
 
   public getGroupeName(i: number): string {
