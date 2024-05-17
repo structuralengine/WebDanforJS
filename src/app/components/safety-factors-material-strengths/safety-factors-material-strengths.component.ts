@@ -108,6 +108,10 @@ export class SafetyFactorsMaterialStrengthsComponent
             this.opt_no_for_v = true;
             const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
             this.safety.axisforce_condition = {...updatedObject}
+        }else{
+          this.opt_no_for_v = false;
+            const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
+            this.safety.axisforce_condition = {...updatedObject}
         }
     });
   }
