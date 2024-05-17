@@ -466,7 +466,6 @@ export class InputBarsService {
 
   public setSaveData(bar: any) {
     this.bar_list = bar;
-    console.log("this.bar_list", this.bar_list)
   }
 
   public getGroupeName(i: number): string {
