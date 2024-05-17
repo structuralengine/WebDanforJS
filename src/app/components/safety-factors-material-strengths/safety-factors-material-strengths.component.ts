@@ -101,10 +101,14 @@ export class SafetyFactorsMaterialStrengthsComponent
   ) { 
     this.members.checkGroupNo();
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(value => {
-       // Kiểm tra nếu giá trị mới khác với giá trị hiện tại
-        this.checkedRadioValue = value;
-        // Thực hiện các hành động cần thiết sau khi nhận giá trị mới
-      
+      this.checkedRadioValue = value;
+        if(this.checkedRadioValue === 3 ||
+          this.checkedRadioValue === 4
+        ){
+            this.opt_no_for_v = true;
+            const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
+            this.safety.axisforce_condition = {...updatedObject}
+        }
     });
   }
   public isManual(): boolean {
@@ -112,6 +116,9 @@ export class SafetyFactorsMaterialStrengthsComponent
   }
   ngOnInit() {
     this.setTitle();
+    if(this.consider_moment_checked === undefined ){
+      this.consider_moment_checked = false
+    }
     const safety = this.safety.getTableColumns();
     this.checkedRadioValue =  this.menuService.getCheckedRadio()
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
@@ -777,6 +784,9 @@ export class SafetyFactorsMaterialStrengthsComponent
   changeButton(el: any) {
     this.showOption= true;
     this.considerMomentChecked =false;
+    this.used = true;
+    const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
+    this.safety.axisforce_condition = {...updatedObject}
     this.arrayAxis.forEach((data)=>{
       if(data.id === this.groupMem){
         data.consider_moment_checked = el.target.checked
@@ -794,14 +804,14 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.safety.axisforce_condition = {...updatedObject}
   }
   handleOption(e:any){
-    if(this.checkedRadioValue === 0 ||
-      this.checkedRadioValue === 1 ||
-      this.checkedRadioValue === 2 ||
-      this.checkedRadioValue === undefined){
-        this.opt_no_for_v = true;
-    }else{
-      this.opt_no_for_v = false;
-    }
+    // if(this.checkedRadioValue === 0 ||
+    //   this.checkedRadioValue === 1 ||
+    //   this.checkedRadioValue === 2 
+    // ){
+    //     this.opt_no_for_v = true;
+    // }else{
+    //   this.opt_no_for_v = false;
+    // }
     const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
     this.safety.axisforce_condition = {...updatedObject} 
   }
