@@ -53,6 +53,7 @@ export class MenuComponent implements OnInit {
   public train_A_count: number;
   public train_B_count: number;
   public service_life: number;
+  public showIcon:boolean = false
 
 
   @ViewChild('grid1') grid1: SheetComponent;
@@ -228,7 +229,14 @@ export class MenuComponent implements OnInit {
           }
           break;
         default:
-          this.save.readInputData(response.text);
+          if (this.save.checkVerFile(response.text)) {
+            this.showIcon = false
+            this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
+            this.helper.alert(this.translate.instant("menu.message_ver"));
+          } else {
+            this.showIcon = true
+            this.save.readInputData(response.text);
+          }
           this.open_done(modalRef);
       }
     }, 10);
@@ -264,13 +272,20 @@ export class MenuComponent implements OnInit {
           .then((text) => {
             //Check to hide design condition
             this.hideDCJ3_J5 = this.save.hideDC(text);
-
+            
             //Read file
-            this.save.readInputData(text);
-            let basicFile = this.save.getBasicData();
-            this.specification1_list_file = basicFile.specification1_list;
-            this.basic.set_specification1_data_file(this.specification1_list_file);
-            this.specification2_list = basicFile.specification2_list
+            if (this.save.checkVerFile(text)){
+              this.showIcon = false
+              this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
+              this.helper.alert(this.translate.instant("menu.message_ver"));
+            }else{
+              this.showIcon = true
+              this.save.readInputData(text);
+              let basicFile = this.save.getBasicData();
+              this.specification1_list_file = basicFile.specification1_list;
+              this.basic.set_specification1_data_file(this.specification1_list_file);
+              this.specification2_list = basicFile.specification2_list
+            }
             this.open_done(modalRef);
           })
           .catch((err) => {
