@@ -99,6 +99,8 @@ export class InputDesignPointsService {
             tmp["isMzCalc"] = true;
             tmp["isVyCalc"] = true;
             tmp["isMtCalc"] = true;
+            tmp["isUpperCalc"] = true
+            tmp["isLowerCalc"] = true
           }
         }
       }
