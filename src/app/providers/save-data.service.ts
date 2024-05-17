@@ -452,8 +452,9 @@ export class SaveDataService {
     const jsonData: any = JSON.parse(inputText);
     if ("basic" in jsonData) {
       let specification1_list = jsonData.basic.specification1_list
-      if (specification1_list.length >2) {
-        if (specification1_list[2].id === 2 && specification1_list[2].selected) {
+      let indexRoad = specification1_list.findIndex(data=> data.id === 2 )
+      if (indexRoad !== -1) {
+        if (specification1_list[indexRoad].selected) {
           return true
         } else {
           return false
