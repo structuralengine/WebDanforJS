@@ -16,7 +16,8 @@
         "open":"Please open",
         "acceptedFile":"Please choose pik or csv file format",
         "NewWindow":"New window",
-        "contact":"Contact"
+        "contact":"Contact",
+        "message_ver":"The current version of WebDan does not support roads (beta version)"
     },
     "login-dialog":{
         "createAccount":"Creat account",

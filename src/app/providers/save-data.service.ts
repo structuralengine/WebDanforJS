@@ -446,4 +446,24 @@ export class SaveDataService {
   public getBasicData(): any{
     return this.basic;
   }
+
+  public checkVerFile(inputText: string) {
+    this.clear();
+    const jsonData: any = JSON.parse(inputText);
+    if ("basic" in jsonData) {
+      let specification1_list = jsonData.basic.specification1_list
+      let indexRoad = specification1_list.findIndex(data=> data.id === 2 )
+      if (indexRoad !== -1) {
+        if (specification1_list[indexRoad].selected) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  }
 }

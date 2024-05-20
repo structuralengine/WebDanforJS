@@ -15,7 +15,8 @@
         "fail":"ファイルを開くことに失敗しました, status:",
         "open":"を開いてください！",
         "NewWindow":"新しいウィンドウ",
-        "contact":"お問い合わせ"
+        "contact":"お問い合わせ",
+        "message_ver":"現バージョンのWebDanは道路（β版）に対応しておりません"
     },
     "login-dialog":{
         "createAccount":"ユーザー登録がお済みでない方はこちらから",
