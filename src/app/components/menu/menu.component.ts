@@ -533,8 +533,8 @@ export class MenuComponent implements OnInit {
         jR003.selected = false;
       }
     }
-    if (item.id === "JR-003" || item.id === "JR-005")
-      this.members.setGTypeForMembers();
+    // if (item.id === "JR-003" || item.id === "JR-005")
+      // this.members.setGTypeForMembers();
   }
   handelClickChat() {
     const elementChat = document.getElementById("chatplusheader");
