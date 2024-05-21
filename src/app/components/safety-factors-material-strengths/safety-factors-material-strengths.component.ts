@@ -5,6 +5,7 @@ import pq from 'pqgrid';
 import { InputMembersService } from '../members/members.service';
 import { visitAll } from '@angular/compiler';
 import { SaveDataService } from "../../providers/save-data.service";
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from '../menu/menu.service';
 import { Subscription } from 'rxjs';
@@ -92,6 +93,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   checkedRadioValue: number    ;
   private checkedRadioSubscription: Subscription;
   constructor(
+    private basic: InputBasicInformationService,
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private members: InputMembersService,
     private translate: TranslateService,
@@ -120,6 +122,32 @@ export class SafetyFactorsMaterialStrengthsComponent
   }
   ngOnInit() {
     this.setTitle();
+    if(!this.safety.axisforce_condition){
+      this.used = true;
+      this.otp_tens_only = false;
+      if(this.basic.conditions_list[3].selected === true){
+        this.opt_no_for_v = true;
+      }if(this.basic.conditions_list[3].selected === false){
+        this.opt_no_for_v = false;
+      }
+      if(this.safety.getAxisForceJson().length !==0) {
+        this.safety.getAxisForceJson().forEach(item =>{
+          if(item.consider_moment_checked === true){
+            this.otp_max_min = true
+          }else{
+            this.otp_max_min = false
+          }
+        })
+      }if(this.safety.getAxisForceJson().length === 0){
+        this.otp_max_min = false
+      }
+      const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
+      this.safety.axisforce_condition = {...updatedObject}
+      delete this.basic.conditions_list[3]
+    }if (this.safety.axisforce_condition){
+      delete this.basic.conditions_list[3]
+      // delete this.save.
+    }
     if(this.consider_moment_checked === undefined ){
       this.consider_moment_checked = false
     }
@@ -822,16 +850,18 @@ export class SafetyFactorsMaterialStrengthsComponent
   generateUpdatedObject(used: boolean,opt_no_for_v: boolean,otp_max_min: boolean,otp_tens_only: boolean): any {
 
     const result: { [key: string]: { used: boolean; opt_no_for_v: boolean; otp_max_min: boolean; otp_tens_only: boolean; } } = {};
-    this.groupe_list[0].map((item:any) => {
-      if (!result[item.g_id]) {
-          result[item.g_id] = {
-              used: used,
-              opt_no_for_v: opt_no_for_v,
-              otp_max_min: otp_max_min,
-              otp_tens_only: otp_tens_only
-          };
-      }
-  });
+    for(let i = 0; i < this.safety.getTableColumns().groupe_list.length; i++){
+      this.safety.getTableColumns().groupe_list[i].map((item:any) => {
+        if (!result[item.g_id]) {
+            result[item.g_id] = {
+                used: used,
+                opt_no_for_v: opt_no_for_v,
+                otp_max_min: otp_max_min,
+                otp_tens_only: otp_tens_only
+            };
+        }
+    });
+    }
 
   return result;
   }

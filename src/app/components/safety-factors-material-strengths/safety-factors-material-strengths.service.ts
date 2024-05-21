@@ -26,26 +26,25 @@ export class InputSafetyFactorsMaterialStrengthsService {
     private translate: TranslateService,
     private material: InputMaterialStrengthVerificationConditionService
     ) {
-    this.clear();
-  }
-  public clear(): void {
-    this.safety_factor = {};
-    this.material_bar = {};
-    this.material_steel = {};
-    this.material_concrete = {};
-    this.pile_factor = {};
-    // this.axisforce_condition = {};
-    this.arrayAxis = new Array();
-  }
-  
-  // 材料強度情報
-  /// specification1_selected によって変わる項目の設定
-  public default_safety_factor(): any {
-
-    let result: any;
-    const sp1 = this.basic.get_specification1();
-    const sp2 = this.basic.get_specification2();
-    switch (sp1) {
+      this.clear();
+    }
+    public clear(): void {
+      this.safety_factor = {};
+      this.material_bar = {};
+      this.material_steel = {};
+      this.material_concrete = {};
+      this.pile_factor = {};
+      // this.axisforce_condition = {};
+      this.arrayAxis = new Array();
+    }
+    
+    // 材料強度情報
+    /// specification1_selected によって変わる項目の設定
+    public default_safety_factor(): any {
+      let result: any;
+      const sp1 = this.basic.get_specification1();
+      const sp2 = this.basic.get_specification2();
+      switch (sp1) {
       case 0: // 鉄道
       case 1: // 土木学会
 
@@ -465,7 +464,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
     //this.material_steel = safety.material_steel,
     this.material_concrete = safety.material_concrete,
     this.pile_factor = safety.pile_factor,
-    this.axisforce_condition = this.axisforce_condition
+    this.axisforce_condition = safety.axisforce_condition
   }
 
   public getGroupeName(i: number): string {
@@ -594,6 +593,9 @@ export class InputSafetyFactorsMaterialStrengthsService {
     if(this.arrayAxis !== undefined &&  this.arrayAxis.length > 0){
       return this.arrayAxis
     }
+    // if(this.axisforce_condition || !this.axisforce_condition){
+    //   return this.arrayAxisBase =[];
+    // }
     else return this.arrayAxisBase;
   }
 }

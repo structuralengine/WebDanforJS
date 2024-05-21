@@ -715,7 +715,7 @@ export class InputBasicInformationService {
           {
             id: "JR-001",
             title: this.translate.instant("basic-information.limit100"),
-            selected: true,
+            selected: false,
           },
           {
             id: "JR-003",
