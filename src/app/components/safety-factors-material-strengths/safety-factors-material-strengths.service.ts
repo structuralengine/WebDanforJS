@@ -593,9 +593,6 @@ export class InputSafetyFactorsMaterialStrengthsService {
     if(this.arrayAxis !== undefined &&  this.arrayAxis.length > 0){
       return this.arrayAxis
     }
-    // if(this.axisforce_condition || !this.axisforce_condition){
-    //   return this.arrayAxisBase =[];
-    // }
     else return this.arrayAxisBase;
   }
 }

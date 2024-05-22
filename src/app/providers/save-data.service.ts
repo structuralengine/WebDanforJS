@@ -294,7 +294,7 @@ export class SaveDataService {
       force: this.force.getSaveData(),
       // 計算印刷設定
       calc: this.calc.getSaveData(),
-      axis_max_min: this.safety.getAxisForceJson()
+      // axis_max_min: this.safety.getAxisForceJson()
     };
   }
 
