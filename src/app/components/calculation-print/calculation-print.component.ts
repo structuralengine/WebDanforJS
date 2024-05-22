@@ -310,6 +310,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     ui_data['calc']['print_safety_ratio_checked'] = this.print_safety_ratio_checked;
     ui_data['calc']['print_section_force_checked'] = this.print_section_force_checked;
     ui_data['calc']['print_summary_table_checked'] = false;
+    console.log("pdf summary", ui_data)
     this.http
       .post(url, ui_data, {
         headers: new HttpHeaders({
@@ -375,8 +376,8 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     ui_data['calc']['print_calculate_checked'] = false;
     ui_data['calc']['print_safety_ratio_checked'] = false;
     ui_data['calc']['print_section_force_checked'] = false;
+    ui_data['calc']['print_summary_table_checked'] = true;
     console.log(JSON.stringify(ui_data));
-
     const url_summary = environment.printURL;
     this.http
       .post(url_summary, ui_data, {
