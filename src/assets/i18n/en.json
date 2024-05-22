@@ -351,7 +351,7 @@
         "p_check":"Performance check",
         "safety_ratio":"Safety ratio list",
         "check":"Check",
-        "axis_maxmin":"Axis force max/min",
+        "axis_maxmin":"Consideration of axial force",
         "consider":"Consider",
         "notconsider":"Don't consider",
         "option1":"Also inspect maximum and minimum axial forces",

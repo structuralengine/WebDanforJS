@@ -20,7 +20,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   public arrayAxis: any[]
   public consider_moment_checked: boolean;
   public groupMem: any;
-
+  
   public used : boolean = true
   public otp_max_min: boolean =false;
   public otp_tens_only:boolean = false;
@@ -170,7 +170,6 @@ export class SafetyFactorsMaterialStrengthsComponent
       const first = groupe[0];
       const id = first.g_id;
       this.groupe_name.push({ name: this.members.getGroupeName(i) ,id});
-      
       // 安全係数
       const bar = [], steel = [];
       for (const col of safety.safety_factor[id]) {
@@ -765,11 +764,11 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.groupMem=group.name;
     this.activeButtons(id);
     this.current_index = id;    
-    this.arrayAxis.map((data: any)=>{
-      if(data.id === group.name){
-        this.consider_moment_checked = data.consider_moment_checked
-      }
-    })
+    // this.arrayAxis.map((data: any)=>{
+    //   if(data.id === group.name){
+    //     this.consider_moment_checked = data.consider_moment_checked
+    //   }
+    // })
     this.options1 = this.option1_list[id];
     this.grid1.options = this.options1;
     this.grid1.refreshDataAndView();
@@ -819,11 +818,11 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.used = true;
     const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
     this.safety.axisforce_condition = {...updatedObject}
-    this.arrayAxis.forEach((data)=>{
-      if(data.id === this.groupMem){
-        data.consider_moment_checked = el.target.checked
-      }
-    })
+    // this.arrayAxis.forEach((data)=>{
+    //   if(data.id === this.groupMem){
+    //     data.consider_moment_checked = el.target.checked
+    //   }
+    // })
     this.safety.arrayAxis = this.arrayAxis;
   }
   notConsider(e:any){
@@ -836,14 +835,6 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.safety.axisforce_condition = {...updatedObject}
   }
   handleOption(e:any){
-    // if(this.checkedRadioValue === 0 ||
-    //   this.checkedRadioValue === 1 ||
-    //   this.checkedRadioValue === 2 
-    // ){
-    //     this.opt_no_for_v = true;
-    // }else{
-    //   this.opt_no_for_v = false;
-    // }
     const updatedObject = this.generateUpdatedObject(this.used,this.opt_no_for_v,this.otp_max_min,this.otp_tens_only)
     this.safety.axisforce_condition = {...updatedObject} 
   }
