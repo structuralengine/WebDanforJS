@@ -58,7 +58,6 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
    
     this.isManual = this.save.isManual();
     this.setTitle(this.isManual);
-
     // グリッドの基本的な オプションを登録する
     this.options = {
       showTop: false,
@@ -384,7 +383,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     this.members.setTableColumns(this.table_datas, this.save.isManual());
 
     //set g-type again
-    this.members.setGTypeForMembers();
+    // this.members.setGTypeForMembers();
 
     if (this.save.isManual()) {
       // 断面力手入力モードの時 部材・断面の入力があったら

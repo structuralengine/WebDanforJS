@@ -99,7 +99,7 @@ export class InputMembersService {
       g_no: null,
       g_id: '',
       g_name: '',
-      g_type: undefined, //set g-Type == undefined
+      // g_type: undefined, //set g-Type == undefined
       shape: 0,
       B: null,
       H: null,
@@ -513,55 +513,58 @@ export class InputMembersService {
           def[k] = m[k];
         }
       }
-      this.setGType(def, m.g_type);
+      // this.setGType(def, m.g_type);
+      // this.setGType(def);
       this.member_list.push(def)
     }
   }
 
 
   //Set for g_type in member
-  public setGTypeForMembers() {
-    if (this.member_list && this.member_list.length > 0) {
-      this.member_list.forEach((m) => {
-        this.setGType(m);
-      });
-    }
-  }
+  // public setGTypeForMembers() {
+  //   if (this.member_list && this.member_list.length > 0) {
+  //     this.member_list.forEach((m) => {
+  //       this.setGType(m);
+  //     });
+  //   }
+  // }
 
   //Set for g_type in member
-  public setGType(member: any, gType?: any) {
-    if (member.g_id === undefined || member.g_id === "blank"){
-      member.g_type = null;
-      return;
-    }
-    if (gType === undefined || gType === null) {
-      const conditions_list = this.basicService.conditions_list;
-      var jr003 = conditions_list.find(e => e.id === "JR-003");
-      var jr005 = conditions_list.find(e => e.id === "JR-005");
-      // Circle
-      if (member.shape === 3) {
-        if (jr003.selected === false && jr005.selected === true) member.g_type = 1;
-        if (jr003.selected === true && jr005.selected === false) member.g_type = 2;
-        if (jr003.selected === false && jr005.selected === false) member.g_type = 3;
-      }
+  // public setGType(member: any, gType?: any) {
+  //   if (member.g_id === undefined || member.g_id === "blank"){
+  //     member.g_type = null;
+  //     return;
+  //   }
+  //   if (gType === undefined || gType === null) {
+  //     const conditions_list = this.basicService.conditions_list;
+  //     var jr003 = conditions_list.find(e => e.id === "JR-003");
+  //     var jr005 = conditions_list.find(e => e.id === "JR-005");
+  //     // Circle
+  //     if (member.shape === 3) {
+  //       if (jr003.selected === false && jr005.selected === true) member.g_type = 1;
+  //       if (jr003.selected === true && jr005.selected === false) member.g_type = 2;
+  //       if (jr003.selected === false && jr005.selected === false) member.g_type = 3;
+  //     }
 
-      // rectangle or t-shape
-      if (member.shape === 1 || member.shape === 2) {
-        member.g_type = null;
-      }
-      // oval
-      if (member.shape === 4) {
-        member.g_type = 1;
-      }
-    }
-    else {
-      member.g_type = gType;
-    }
-  }
+  //     // rectangle or t-shape
+  //     if (member.shape === 1 || member.shape === 2) {
+  //       member.g_type = null;
+  //     }
+  //     // oval
+  //     if (member.shape === 4) {
+  //       member.g_type = 1;
+  //     }
+  //   }
+  //   else {
+  //     member.g_type = gType;
+  //   }
+  // }
 
   public checkHideDesignCondition(members: any[]) {
     //true -> hide; false ->  show
-    let filterMembers = members.filter(member => member.shape === 3 && "g_type" in member);
+    let filterMembers = members.filter(member => member.shape === 3 
+      // && "g_type" in member
+    );
     if (filterMembers == undefined || filterMembers.length === 0) return false;
     //check has multi group
     let gNos = filterMembers.map(member => member.g_id);
@@ -573,8 +576,9 @@ export class InputMembersService {
     let firstElement = filterMembers[0];
     filterMembers.forEach((val, i) => {
       if (i > 0 &&
-        val.g_no !== firstElement.g_no &&
-        val.g_type !== firstElement.g_type) {
+        val.g_no !== firstElement.g_no 
+        // &&val.g_type !== firstElement.g_type
+      ) {
         hide = true
         return;
       }
