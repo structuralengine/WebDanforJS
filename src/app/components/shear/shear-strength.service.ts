@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { InputDesignPointsService } from '../design-points/design-points.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,7 @@ export class ShearStrengthService {
 
   // 部材情報
   public shear_list: any[];
+  public refreshTable$ = new BehaviorSubject<any>({});
 
   constructor(
     private helper: DataHelperModule,

@@ -15,7 +15,8 @@
         "fail":"ファイルを開くことに失敗しました, status:",
         "open":"を開いてください！",
         "NewWindow":"新しいウィンドウ",
-        "contact":"お問い合わせ"
+        "contact":"お問い合わせ",
+        "message_ver":"現バージョンのWebDanは道路（β版）に対応しておりません"
     },
     "login-dialog":{
         "createAccount":"ユーザー登録がお済みでない方はこちらから",
@@ -174,7 +175,10 @@
         "y_around":"y軸周り",
         "z_around":"z軸周り",
         "y_direction":"y軸方向",
-        "z_direction":"z軸方向"
+        "z_direction":"z軸方向",
+        "check_target":"計算対象軸",
+        "upper_side": "上側引張照査",
+        "lower_side": "下側引張照査"
     },
     "bars":{
         "m_no":"部材\n番号",
@@ -361,7 +365,8 @@
         "preparing":"印刷中...",
         "p_login":"ログインしてください。",
         "download":"総括表ダウンロード",
-        "downloading":"ダウンロード中"
+        "downloading":"ダウンロード中",
+        "judgement": "検討結果一覧表"
     },
     "section-force-list":{
         "m_no":"部材\n番号",

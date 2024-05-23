@@ -129,7 +129,8 @@
               class="d-flex"
               [ngClass]="{
                 'spec-rdo-active': item.selected,
-                'spec-rdo': !item.selected
+                'spec-rdo': !item.selected,
+                'hidden': item.id === 2
               }"
             >
               <input
@@ -277,6 +278,7 @@
   <ng-template #file>
     <div class="file-layout">
       <svg
+        *ngIf="showIcon"
         width="13"
         height="16"
         viewBox="0 0 13 16"
