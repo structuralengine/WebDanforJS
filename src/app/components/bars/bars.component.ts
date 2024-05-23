@@ -34,6 +34,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public style ={"pointer-events":"none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size":"0" }
   public styleShaded1:any =   { 
     haunch_height : { ...this.style},
+    tan: { ...this.style }
   }
   public styleShaded2 ={
     stirrup_dia :{...this.style},
@@ -48,6 +49,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public prop={edit: false,show:false}
   public propShaded1:any =   { 
     haunch_height : { ...this.prop},
+    tan: { ...this.prop }
   }
   public propShaded2 ={
     stirrup_dia :{...this.prop},
