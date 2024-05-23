@@ -841,9 +841,8 @@ export class SafetyFactorsMaterialStrengthsComponent
   generateUpdatedObject(used: boolean,opt_no_for_v: boolean,otp_max_min: boolean,otp_tens_only: boolean): any {
 
     const result: { [key: string]: { used: boolean; opt_no_for_v: boolean; otp_max_min: boolean; otp_tens_only: boolean; } } = {};
-    const groups = this.safety.getTableColumns().groupe_list
-    for(let i = 0; i < groups.length; i++){
-      groups.forEach((item:any) => {
+    for(let i = 0; i < this.safety.getTableColumns().groupe_list.length; i++){
+      this.safety.getTableColumns().groupe_list[i].map((item:any) => {
         if (!result[item.g_id]) {
             result[item.g_id] = {
                 used: used,
