@@ -105,7 +105,9 @@ export class InputMembersService {
       H: null,
       Bt: null,
       t: null,
-      n: null
+      n: null,
+      c_type: 1,
+      vo_type: 2
     };
   }
 
@@ -185,6 +187,12 @@ export class InputMembersService {
           }
 
           for (const k of Object.keys(def)) {
+            // if (k === "c_type" && column["c_type"] === null) {
+            //   column["c_type"] = 1
+            // }
+            // if (k === "vo_type" && column["vo_type"] === null) {
+            //   column["vo_type"] = 2
+            // }
             if (k in column)
               def[k] = column[k];
           }
@@ -206,6 +214,12 @@ export class InputMembersService {
 
           const def = this.default_member(column.m_no);
           for (const k of Object.keys(def)) {
+            // if (k === "c_type" && column["c_type"] === null) {
+            //   column["c_type"] = 1
+            // }
+            // if (k === "vo_type" && column["vo_type"] === null) {
+            //   column["vo_type"] = 2
+            // }
             if (k in column)
               def[k] = column[k];
           }
@@ -509,6 +523,14 @@ export class InputMembersService {
     for (const m of members) {
       const def = this.default_member(m.m_no);
       for (const k of Object.keys(def)) {
+        // if (k === "c_type" && m["c_type"] === undefined) {
+        //   m["c_type"] = 1
+        //   console.log("m[c_type]", m[k])
+        // }
+        // if (k === "vo_type" && m["vo_type"] === undefined) {
+        //   m["vo_type"] = 2
+        //   console.log("m[vo_type]", m[k])
+        // }
         if (k in m) {
           def[k] = m[k];
         }
