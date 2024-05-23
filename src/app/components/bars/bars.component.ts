@@ -8,6 +8,8 @@ import { InputMembersService } from '../members/members.service';
 import { MenuService } from '../menu/menu.service';
 import { data } from 'jquery';
 import { log } from 'console';
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-bars',
@@ -60,12 +62,16 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public show:boolean = false
   public elements: any;
   public element: any;
+
+  public refreshSubscription: Subscription;
+  
   constructor(
     private members: InputMembersService,
     private bars: InputBarsService,
     private save: SaveDataService,
     private translate: TranslateService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private basic: InputBasicInformationService
   ) { 
     this.members.checkGroupNo();
   }
@@ -181,6 +187,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     this.activeButtons(0);
     this.setActiveTab(this.activeTab);
+    this.refreshSubscription = this.bars.refreshShowHidden$.subscribe(()=>{
+      this.handleShowHiddenCol()
+    })
   }
 
   private setTitle(isManual: boolean): void {
@@ -493,6 +502,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.saveData();
+    this.refreshSubscription?.unsubscribe()
   }
   public saveData(): void {
     const a = [];
@@ -615,8 +625,13 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         const isFixedCell = index <= FIXED_CELLS_COUNT;
         const isCheckCell = index === CHECK_CELL_INDEX;
         column.hidden = !(isInTargetRange || isFixedCell || isCheckCell);
+        if (column.dataIndx === "tan") {
+          column.hidden = this.basic.get_specification2() !== 3 && this.basic.get_specification2() !== 4 ? false : true
+          console.log("column", column)
+        }
       });
     }
+    this.grid.refreshCM()
     this.grid.refreshDataAndView();
   }
 
@@ -640,5 +655,15 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.element = {}
       this.show=false
     }
+  }
+  handleShowHiddenCol() {
+    this.grid.grid.getColModel().forEach((column, index) => {
+      if (column.dataIndx === "tan" && this.activeTab === "rebar_ax") {
+        column.hidden = this.basic.get_specification2() !== 3 && this.basic.get_specification2() !== 4 ? false : true
+        console.log("column", column)
+      }
+    });
+    this.grid.refreshCM()
+    this.grid.refreshDataAndView();
   }
 }

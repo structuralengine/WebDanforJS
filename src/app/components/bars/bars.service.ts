@@ -3,11 +3,13 @@ import { DataHelperModule } from '../../providers/data-helper.module';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
 import { TranslateService } from "@ngx-translate/core";
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InputBarsService {
+  public refreshShowHidden$ = new BehaviorSubject<any>({});
 
   // 鉄筋情報
   private bar_list: any[];
