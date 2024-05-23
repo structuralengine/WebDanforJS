@@ -37,6 +37,7 @@ import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
 import { InputCrackSettingsService } from "../crack/crack-settings.service";
+import { InputBarsService } from "../bars/bars.service";
 import { ShearStrengthService } from "../shear/shear-strength.service";
 
 @Component({
@@ -108,7 +109,8 @@ export class MenuComponent implements OnInit {
     private translate: TranslateService,
     private elementRef: ElementRef,
     private readonly keycloak: KeycloakService,
-    private multiWindowService: MultiWindowService
+    private multiWindowService: MultiWindowService,
+    private bars:InputBarsService
   ) {
     // this.auth = getAuth();
     this.fileName = "";
@@ -491,6 +493,7 @@ export class MenuComponent implements OnInit {
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
+    this.bars.refreshShowHidden$.next({})
     this.crack.refreshTitle$.next({});
     this.shear.refreshTable$.next({})
     this.basic.setPreSpecification2(this.specification1_select_id, this.specification2_list);
