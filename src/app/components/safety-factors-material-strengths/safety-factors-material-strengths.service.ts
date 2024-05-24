@@ -450,6 +450,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
       material_steel: this.material_steel,
       material_concrete: this.material_concrete,
       pile_factor: this.pile_factor,
+      axisforce_condition: this.axisforce_condition,
       component: this.material.getSaveData().component,
       verification: this.material.getSaveData().verification,
       other: this.material.getSaveData().other
