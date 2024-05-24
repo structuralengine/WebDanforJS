@@ -15,6 +15,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
   private material_steel: any;
   private material_concrete: any;
   public pile_factor: any;
+  public axisforce_condition:any;
   public arrayAxis: any[]
   public arrayAxisBase: any[]
   public groupe_name: any[]
@@ -460,7 +461,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
     this.material_bar = safety.material_bar,
     //this.material_steel = safety.material_steel,
     this.material_concrete = safety.material_concrete,
-    this.pile_factor = safety.pile_factor
+    this.pile_factor = safety.pile_factor,
+    this.axisforce_condition = this.handleAxisforceCondition(safety)
   }
 
   public getGroupeName(i: number): string {
@@ -590,6 +592,43 @@ export class InputSafetyFactorsMaterialStrengthsService {
       return this.arrayAxis
     }
     else return this.arrayAxisBase;
+  }
+ public handleAxisforceCondition(safety:any): any{
+  const groupe_list = this.members.getGroupeList();
+  const conditions_list = this.basic.conditions_list
+  const axisMaxMin = this.getAxisForceJson()
+  let axisforce_condition:any={}
+  let indexJR4 = conditions_list.findIndex((data)=> data.id==="JR-004")
+  if(safety.axisforce_condition === undefined){
+    for( const groupe of groupe_list){
+      const first = groupe[0];
+      const id = first.g_id;
+      let temp = {
+        used: false,
+        opt_max_min: false,
+        opt_tens_only: false,
+        opt_no_for_v: false
+      };
+      axisforce_condition[id]= temp
+      axisforce_condition[id]["used"]= true
+      axisforce_condition[id]["opt_tens_only"]= true
+      if(indexJR4 !== -1 && conditions_list[indexJR4].selected){
+        axisforce_condition[id]["opt_no_for_v"]= true
+      }else{
+        axisforce_condition[id]["opt_no_for_v"]= false
+      }
+      let indexMoment = axisMaxMin.findIndex((data)=>data.id===first.g_name)
+      if(indexMoment !== -1 && axisMaxMin[indexMoment].consider_moment_checked
+      ){
+        axisforce_condition[id]["opt_max_min"]= true
+      }else{
+        axisforce_condition[id]["opt_max_min"]= false
+      }
+    }
+  }else{
+
+  }
+    return axisforce_condition
   }
 }
 
