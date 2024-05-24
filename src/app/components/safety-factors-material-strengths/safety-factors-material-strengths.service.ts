@@ -626,7 +626,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
       }
     }
   }else{
-
+    axisforce_condition= safety["axisforce_condition"]
   }
     return axisforce_condition
   }
