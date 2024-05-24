@@ -213,3 +213,118 @@ body {
 #screenArea div {
     z-index: 1;
   }
+
+// Preview bar css - Start
+.display-preview-button {
+    display:flex; 
+    justify-content:center; 
+    align-items: center; 
+    background: #395B43 !important; 
+    cursor: pointer;
+
+    &:hover {
+        background: #375244 !important; 
+    }
+}
+
+.pq-select-box > div > select {
+    width: 100%; 
+    height: 100%;
+    padding: 0; 
+    border: none; 
+    background:var(--text_sub); 
+    color: var(--text_main); 
+    display:inline-block; 
+    white-space: nowrap;
+}
+
+.pq-select-box > div {
+    padding: 2px 2px !important;
+    height: 100% !important;
+}
+
+.dot, .dot-line, .l-shape, .last-l-shape {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: none !important;
+    border-bottom: none !important;
+}
+
+.dot > div {
+    width: 10px;      
+    height: 10px;     
+    background-color: var(--text_main);   
+    border-radius: 50%;  
+    display: inline-block;
+}
+
+.dot-line > div {
+    width: 10px;      
+    height: 10px;     
+    background-color: var(--text_main);   
+    border-radius: 50%;  
+    display: inline-block;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 47%;
+        width: 2px;  
+        height: 14px;   
+        background-color: var(--text_main);
+    }
+}
+
+.l-shape > div {
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 47%;
+        width: 2px;  
+        height: 27px;   
+        background-color: var(--text_main); 
+    }
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 12px;  
+        height: 2px;   
+        background-color: var(--text_main); 
+    }
+}
+
+.last-l-shape > div {
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 47%;
+        width: 2px;  
+        height: 14px;   
+        background-color: var(--text_main); 
+    }
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 47%;
+        width: 13px;  
+        height: 2px;   
+        background-color: var(--text_main); 
+    }
+}
+
+.long-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
+    &[title] {
+        background-image: none !important;
+    }
+}
+// Preview bar css - End

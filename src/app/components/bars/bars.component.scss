@@ -1,6 +1,10 @@
+.barArea {
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
 .tabArea {
-  display: flex;
-  align-items: center;
+  position: relative;
   column-gap: 8px;
   padding: 16px 16px 0;
   background: var(--base-900);
@@ -38,8 +42,7 @@
   background: var(--base-900);
   width: 1000px;
   height: 860px;
-  border-radius: 7px;
-  border: 1px solid black;
+  border-radius: 4px;
   position: absolute;
   z-index: 9999;
   top: 100px;
@@ -93,3 +96,20 @@
   }
 }
 
+.preview-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: var(--text_main);
+  font-size: 12px;
+  text-align: center;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  background: var(--primary-800);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--primary-600);
+  }
+}

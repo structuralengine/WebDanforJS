@@ -30,7 +30,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   private beamHeaders: object[] = new Array();
   // private columnHeaders: object[] = new Array();
   // private pileHeaders: object[] = new Array();
-
+  public rebar: any;
+  public rebarList: any[];
   public table_datas: any[];
   // タブのヘッダ名
   public groupe_name: string[];
@@ -63,6 +64,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     
   }
 
+
   constructor(
     private members: InputMembersService,
     public bars: InputBarsService,
@@ -80,7 +82,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.setTitle(this.save.isManual());
     this.table_datas = this.bars.getTableColumns();
-
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
@@ -92,6 +93,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         }
        }
        })
+      this.table_datas[i].push({},{})
       const op = {
         showTop: false,
         reactive: true,
@@ -102,6 +104,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.beamHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: (this.save.isManual()) ? 3 : 4,
+        mergeCells: (this.save.isManual()) ? [{r1: this.table_datas[i].length -2,c1: 5,rc: 2,cc: 10}]: [{r1: this.table_datas[i].length -2,c1: 6,rc: 2,cc: 10}],
         contextMenu: {
           on: true,
           items: [
@@ -167,68 +170,84 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                    
             }
             this.removeScene()
-            this.threeNode.createDrawingLine()
+            // this.threeNode.createDrawingLine()
             // this.threeNode.createDemoOval()
-            // this.threeNode.createDemoCircleRing()
+            this.threeNode.createDemoCircleRing()
           }
         }, 
         cellClick: (evt, ui) =>{         
-          // if (ui.rowIndx % 2 ===0){
-          //   this.threeNode.type = "Vertical"
-          // }else{
-          //   this.threeNode.type = "Horizontal"
-          // } 
-          // if (ui.rowIndx % 2 === 0) {
-          //   this.threeNode.type = "Circle"
-          // } else {
-          //   this.threeNode.type = "Ring"
-          // } 
-          let m_no = ui.rowData.m_no;
-          const rowData = ui.rowData
-          let index = ui.rowData.index;
-          if(ui.rowIndx % 2 != 0){
-            const data_index = this.table_datas[i][ui.rowIndx - 1];
-            m_no = data_index.m_no;
-            index = data_index.index
-          }           
-          this.threeNodeGuide.dataNode= rowData
-          if(ui.colIndx ===6 ||ui.colIndx ===7||ui.colIndx ===8||ui.colIndx===9||ui.colIndx===10||ui.colIndx ===11){
-            if(ui.rowIndxPage % 2 ===0){
-               this.threeNodeGuide.checkKey='up'
+          if(ui.rowIndx !== this.options.mergeCells[0].r1) {
+            if (ui.rowIndx % 2 ===0){
+              this.threeNode.type = "Vertical"
             }else{
-              this.threeNodeGuide.checkKey='lower'
+              this.threeNode.type = "Horizontal"
+            } 
+            // if (ui.rowIndx % 2 === 0 ) {
+            //   this.threeNode.type = "Circle"
+            // } else {
+            //   this.threeNode.type = "Ring"
+            // } 
+            let m_no = ui.rowData.m_no;
+            const rowData = ui.rowData
+            let index = ui.rowData.index;
+            if(ui.rowIndx % 2 != 0){
+              const data_index = this.table_datas[i][ui.rowIndx - 1];
+              m_no = data_index.m_no;
+              index = data_index.index
+            }           
+            this.threeNodeGuide.dataNode= rowData
+            if(ui.colIndx ===6 ||ui.colIndx ===7||ui.colIndx ===8||ui.colIndx===9||ui.colIndx===10||ui.colIndx ===11){
+              if(ui.rowIndxPage % 2 ===0){
+                this.threeNodeGuide.checkKey='up'
+              }else{
+                this.threeNodeGuide.checkKey='lower'
+              }
+            }
+            if(ui.colIndx ===12 ||ui.colIndx ===13||ui.colIndx ===14||ui.colIndx===15){
+            this.threeNodeGuide.checkKey='lateral'
+            if(ui.rowIndx % 2 != 0){     
+              this.threeNodeGuide.dataUpper=this.table_datas[i][ui.rowIndx - 1];
+              this.threeNodeGuide.dataLower= this.table_datas[i][ui.rowIndx];
+            }else{
+              this.threeNodeGuide.dataUpper = this.table_datas[i][ui.rowIndx ];
+              this.threeNodeGuide.dataLower = this.table_datas[i][ui.rowIndx +1]
+            }
+            }
+            if(m_no != null && m_no != undefined){     
+              this.bars.setTableColumns(this.table_datas[i])       
+              let data = this.bars.getDataPreview(index); 
+              this.rebar = {
+                rebarList: this.bars.bar_list,
+                selectedCalPoint: data
+              } 
+                this.threeNode.memNo = m_no;
+                this.threeNode.dataNode = data;
+                const member = this.member.getTableColumns(m_no);     
+                this.calPoint = {
+                  m_no: member.m_no,
+                  shape: member.shape,
+                  p_name: data.p_name
+                }            
             }
           }
-          if(ui.colIndx ===12 ||ui.colIndx ===13||ui.colIndx ===14||ui.colIndx===15){
-          this.threeNodeGuide.checkKey='lateral'
-          if(ui.rowIndx % 2 != 0){     
-            this.threeNodeGuide.dataUpper=this.table_datas[i][ui.rowIndx - 1];
-            this.threeNodeGuide.dataLower= this.table_datas[i][ui.rowIndx];
-          }else{
-            this.threeNodeGuide.dataUpper = this.table_datas[i][ui.rowIndx ];
-            this.threeNodeGuide.dataLower = this.table_datas[i][ui.rowIndx +1]
-          }
-          }
-          if(m_no != null && m_no != undefined){     
-            this.bars.setTableColumns(this.table_datas[i])       
-            let data = this.bars.getDataPreview(index);           
-              this.threeNode.memNo = m_no;
-              this.threeNode.dataNode = data;
-              const member = this.member.getTableColumns(m_no);           
-              this.calPoint = {
-                m_no: member.m_no,
-                shape: member.shape,
-                p_name: data.p_name
-              }            
-                      
-          }
          if(this.bars.is_review){
+          this.removeScene()
+          // this.threeNode.createDrawingLine()
+          // this.threeNode.createDemoOval()
+          this.threeNode.createDemoCircleRing()
+         }
+         let colIndex = this.save.isManual() ? 5 : 6
+         if (
+          ui.rowIndx === this.options.mergeCells[0].r1 
+          && ui.colIndx === colIndex
+        ) {
+          this.preview()
           this.removeScene()
           this.threeNode.createDrawingLine()
           // this.threeNode.createDemoOval()
           // this.threeNode.createDemoCircleRing()
          }
-        }
+        },
       };
       this.option_list.push(op);
     }
@@ -248,6 +267,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private setTitle(isManual: boolean): void {
     this.beamHeaders = [];
+    const displayPreviewText = this.translate.instant("bars.display_preview");
+
     if (isManual) {
       // 断面力手入力モードの場合
       this.beamHeaders = [
@@ -310,6 +331,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           {
             title: this.translate.instant("bars.dia"),
             dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
+            render : function (ui) {
+              if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === 6 ) {
+                return {
+                  text: displayPreviewText,
+                  cls: 'display-preview-button',
+                }
+              }
+            }
           },
           {
             title: this.translate.instant("bars.number"),
@@ -444,6 +473,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           {
             title: this.translate.instant("bars.dia"),
             dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
+            render : function (ui) {
+              if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === 6 ) {
+                return {
+                  text: displayPreviewText,
+                  cls: 'display-preview-button',
+                }
+              }
+            }
           },
           {
             title: this.translate.instant("bars.number"),
@@ -577,7 +614,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.setTitle(this.save.isManual());
     // this.option_list[id].colModel = this.beamHeaders
     this.activeButtons(id);
-    
+    this.bars.is_review = false;
+    this.rebar = {}
     this.options = this.option_list[id];
     this.grid.options = this.options;
     this.setActiveTab(this.activeTab);
@@ -734,5 +772,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.threeNode.nodeList.children.splice(i, 1);
     
   }
+  }
+
+  public preview(): void{
+    this.bars.is_review = !this.bars.is_review;
   }
 }

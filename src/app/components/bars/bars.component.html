@@ -1,43 +1,30 @@
-<div class="c-subNavArea">
-  <nav>
-    <ul class="c-subNavArea__nav">
-      <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i" >
-        <a (click)="activePageChenge(i)" id="bar{{i}}" class="c-subNavArea__navItemTitle">
-          <span>{{getGroupeName(i)}}</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-  <div class="tabArea">
-    <ul class="tab-select-items">
-      <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_ax'}" (click)="setActiveTab('rebar_ax')" translate>bars.rebar_ax</li>
-      <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_sh'}" (click)="setActiveTab('rebar_sh')" translate>bars.rebar_sh</li>
-    </ul>
-  </div>
-</div>
-<div class="c-sheetArea">
-  <app-sheet #grid [options]="options"></app-sheet> 
-</div>
-
-<div *ngIf="bars.is_review" cdkDrag id="body-container-id">
-  <div class="headBar">
-    <a (click)="closePreview()">×</a>
-  </div>
-  <div class="bodyBar">
-    <div class="three-container">   
-      <app-three [typeView]="'preview'"></app-three>
-    </div>
-    <div class="shape">
-      <div class="calculation-point" *ngIf="calPoint.m_no != undefined">
-        <p>Member number: {{calPoint.m_no}}</p>       
-        <p>Calculation point name: {{calPoint.p_name}}</p>       
-        <p>Cross-section shape: {{calPoint.shape}}</p>        
-      </div>
-      <div class="item-guide">  
-        <app-three [typeView]="'noPreview'"></app-three>
-      </div>
+<div class="barArea">
+  <div class="c-subNavArea">
+    <nav>
+      <ul class="c-subNavArea__nav">
+        <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i">
+          <a (click)="activePageChenge(i)" id="bar{{i}}" class="c-subNavArea__navItemTitle">
+            <span>{{getGroupeName(i)}}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="tabArea">
+      <ul *ngIf="!bars.is_review" class="tab-select-items">
+        <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_ax'}"
+          (click)="setActiveTab('rebar_ax')" translate>bars.rebar_ax</li>
+        <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_sh'}"
+          (click)="setActiveTab('rebar_sh')" translate>bars.rebar_sh</li>
+      </ul>
+      <button *ngIf="!bars.is_review" class="preview-button" (click)="preview()" translate>bars.preview_mode</button>
     </div>
   </div>
- 
+  <div *ngIf="!bars.is_review; else tableView" class="c-sheetArea">
+    <app-sheet #grid [options]="options"></app-sheet>
+  </div>
 </div>
-
+<ng-template #tableView>
+  <div class="previewArea">
+    <app-preview-rebar [rebar]="rebar"></app-preview-rebar>
+  </div>
+</ng-template>

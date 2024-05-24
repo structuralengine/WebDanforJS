@@ -30,9 +30,12 @@ export class ThreeNodeService {
   public getJson() {
     let scale = this.scale;
     const memNo = this.memNo;
+    console.log("dataNode", this.dataNode)
+    console.log('memNo', memNo)
     if (memNo == 0) return;
     let jsonData: object = {};
     var member = this.memmber.getData(memNo);
+    console.log('member', member)
     let memH = member['H'];
     let memBt = member['Bt'];
     let memB = member['B'];
@@ -388,7 +391,7 @@ export class ThreeNodeService {
     const material = new THREE.MeshBasicMaterial({
       transparent: true,
       side: THREE.DoubleSide,
-      color: 0x7f8F9F,
+      color: 0xB9B9B9,
       opacity: 0.7,
     });
 

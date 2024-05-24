@@ -10,7 +10,7 @@ import { TranslateService } from "@ngx-translate/core";
 export class InputBarsService {
 
   // 鉄筋情報
-  private bar_list: any[];
+  public bar_list: any[];
   private jp_rebar_List: any[];
   private ph_rebar_List: any[];
   public is_review: boolean

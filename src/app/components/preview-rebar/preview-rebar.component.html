@@ -1,12 +1,41 @@
-<div appLoadPreview class="preset">
-  <div class="presetArea">
-    <div class="headArea">
-      <h2 translate>menu.preset</h2>
-      <a routerLink="/">×</a>
+<div class="datasheet">
+  <div class="data-table">
+    <div class="table">
+      <h6 class="header" translate>preview_rebar.axial_rebar</h6>
+      <app-sheet #axialGrid [options]="axialRebarOptions"></app-sheet>
     </div>
-    <div class="bodyArea">
-      <div class="presetdata-choice">       
+    <div class="table">
+      <h6 class="header" translate>preview_rebar.stirrup</h6>
+      <app-sheet #stirrupGrid [options]="stirrupOptions"></app-sheet>
+    </div>
+    <div class="table">
+      <h6 class="header" translate>preview_rebar.p_title <span class="sub-title"
+          translate>preview_rebar.p_subtitle</span></h6>
+      <app-sheet #calPointGrid [options]="calculatedPointOptions"></app-sheet>
+    </div>
+  </div>
+
+  <div class="three-model">
+    <!-- <div class="headBar">
+      <a (click)="closePreview()">×</a>
+    </div> -->
+    <div>
+      <button *ngIf="bars.is_review" class="table-button" (click)="back()" translate>bars.table_mode</button>
+    </div>
+    <div class="bodyBar">
+      <div class="three-container">
+        <app-three [typeView]="'preview'"></app-three>
       </div>
-    </div>   
+      <!-- <div class="shape">
+        <div class="calculation-point" *ngIf="calPoint.m_no != undefined">
+          <p>Member number: {{calPoint.m_no}}</p>
+          <p>Calculation point name: {{calPoint.p_name}}</p>
+          <p>Cross-section shape: {{calPoint.shape}}</p>
+        </div>
+        <div class="item-guide">
+          <app-three [typeView]="'noPreview'"></app-three>
+        </div>
+      </div> -->
+    </div>
   </div>
 </div>
