@@ -18,6 +18,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
   public axisforce_condition:any;
   public arrayAxis: any[]
   public arrayAxisBase: any[]
+  public axisForce: any[]
   public groupe_name: any[]
   constructor(
     private basic: InputBasicInformationService,
@@ -35,6 +36,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
     this.material_concrete = {};
     this.pile_factor = {};
     this.arrayAxis = new Array();
+    this.axisForce = new Array();
+
   }
 
   // 材料強度情報

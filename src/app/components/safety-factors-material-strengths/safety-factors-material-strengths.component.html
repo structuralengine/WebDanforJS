@@ -44,7 +44,8 @@
       <div class="checkbox-consider">
         <label class="checkbox-container">
           <input
-            type="radio"
+            id="consider"
+            type="checkbox"
             name="calculate_moment"
             class="checkbox-input"
             (click)="changeButton($event)"
@@ -58,10 +59,13 @@
         </label>
         <label class="checkbox-container">
           <input
-            type="radio"
+            id="not_consider"
+            type="checkbox"
             name="calculate_moment"
             class="checkbox-input"
-            (click)="notConsider($event)"
+            (click)="changeButton($event)"
+            [(ngModel)]="not_consider_moment_checked"
+            [checked]="not_consider_moment_checked"
           />
           <span translate class="checkbox-parts"
             >calculation-print.notconsider</span
@@ -70,10 +74,15 @@
       </div>
       <div *ngIf="showOption" class="checkbox-condition">
         <label class="checkbox-container" *ngIf="!isManual()">
-          <input
+          <input          
+            id="1"  
             type="checkbox"
             name="calculate_moment"
             class="checkbox-input"
+            (click)="changeOption($event)"
+            [(ngModel)]="otp_max_min"
+            [checked]="otp_max_min"
+            [value]="otp_max_min"
             [disabled]="considerMomentChecked"
           />
           <span translate class="checkbox-parts" style="width: 475px"
@@ -82,10 +91,15 @@
         </label>
         <label class="checkbox-container">
           <input
+            id="2" 
             type="checkbox"
             name="calculate_moment"
             class="checkbox-input"
+            (click)="changeOption($event)"
             [disabled]="considerMomentChecked"
+            [(ngModel)]="otp_tens_only"
+            [checked]="otp_tens_only"
+            [value]="otp_tens_only"
           />
           <span translate class="checkbox-parts" style="width: 475px"
             >calculation-print.option2</span
@@ -101,10 +115,15 @@
           "
         >
           <input
+            id="3" 
             type="checkbox"
             name="calculate_moment"
             class="checkbox-input"
+            (click)="changeOption($event)"
             [disabled]="considerMomentChecked"
+            [(ngModel)]="opt_no_for_v"           
+            [checked]="opt_no_for_v"
+            [value]="opt_no_for_v"
           />
           <span translate class="checkbox-parts" style="width: 575px"
             >calculation-print.option3</span
