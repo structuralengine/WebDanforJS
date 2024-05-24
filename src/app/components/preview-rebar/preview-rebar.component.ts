@@ -129,13 +129,14 @@ export class PreviewRebarComponent implements OnInit {
                 "no" : "pq-focus"
               }
             })
+          } else {
+            calPointListData.push({
+              no: point.m_no,
+              pos: point.position,
+              p_name: point.p_name,
+              haunch: point.haunch_M // haunch_M or haunch_V ???
+            })
           }
-          calPointListData.push({
-            no: point.m_no,
-            pos: point.position,
-            p_name: point.p_name,
-            haunch: point.haunch_M // haunch_M or haunch_V ???
-          })
         }
       }
     }
