@@ -17,7 +17,13 @@ import { Subscription } from 'rxjs';
 export class SafetyFactorsMaterialStrengthsComponent
   implements OnInit, OnDestroy, AfterViewInit {
   public arrayAxis: any[]
-  public consider_moment_checked: boolean;
+  public arrayAxisForce: any[]
+  public consider_moment_checked: boolean = true;  
+  public not_consider_moment_checked: boolean = false;
+  public used : boolean = true;
+  public otp_max_min: boolean = false;
+  public otp_tens_only:boolean = false;
+  public opt_no_for_v: boolean = false;
   public groupMem: any;
   // 安全係数
   @ViewChild('grid1') grid1: SheetComponent;
@@ -106,6 +112,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.setTitle();
     const safety = this.safety.getTableColumns();
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
+    this.arrayAxisForce = this.safety.axisForce !== undefined ? this.safety.axisForce : new Array();
     this.groupe_list = safety.groupe_list;
     this.groupe_name = new Array();
     // 配列を作成
@@ -450,7 +457,17 @@ export class SafetyFactorsMaterialStrengthsComponent
       if(this.arrayAxis.length < this.groupe_name.length) 
         this.arrayAxis.push({id: data.name, consider_moment_checked: false})
     })  
-    this.groupMem = this.arrayAxis[0].id;
+
+    this.groupe_name.map((data: any) => {     
+      if(this.arrayAxisForce.length < this.groupe_name.length) 
+        this.arrayAxisForce.push({
+          id: data.name, 
+          used: this.used,
+          opt_no_for_v: this.opt_no_for_v,
+          otp_max_min: this.otp_max_min,
+          otp_tens_only: this.otp_tens_only
+        })
+    })  
     this.current_index = 0;
     this.options1 = this.option1_list[0];
     this.options2 = this.option2_list[0];
@@ -460,6 +477,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.options6 = this.pile_factor_list[0];
     this.pile_factor_select_id = this.getPileFactorSelectId();
     this.safety.arrayAxis = this.arrayAxis;
+    this.safety.axisForce = this.arrayAxisForce;    
   }
 
   ngAfterViewInit() {
@@ -471,6 +489,15 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.arrayAxis.map((data: any)=>{
       if(data.id === this.groupMem){
         this.consider_moment_checked = data.consider_moment_checked
+      }
+    })
+
+    this.arrayAxisForce.map((data: any)=>{
+      if(data.id === this.groupMem){
+        this.used = data.used,
+        this.opt_no_for_v= data.opt_no_for_v,
+        this.otp_max_min= data.otp_max_min,
+        this.otp_tens_only= data.otp_tens_only
       }
     })
     this.cdref.detectChanges();
@@ -695,6 +722,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       pile_factor
     })
     this.safety.arrayAxis = this.arrayAxis
+    this.safety.axisForce = this.arrayAxisForce
   }
 
   // 杭の施工条件を変更を処理する関数
@@ -722,6 +750,17 @@ export class SafetyFactorsMaterialStrengthsComponent
         this.consider_moment_checked = data.consider_moment_checked
       }
     })
+   
+    this.arrayAxisForce.map((data: any)=>{
+      if(data.id === this.groupMem){
+        this.used = data.used,
+        this.opt_no_for_v= data.opt_no_for_v,
+        this.otp_max_min= data.otp_max_min,
+        this.otp_tens_only= data.otp_tens_only,
+        this.consider_moment_checked  =  data.used
+      }
+    })
+    this.considerMomentChecked = !this.used;
     this.options1 = this.option1_list[id];
     this.grid1.options = this.options1;
     this.grid1.refreshDataAndView();
@@ -765,18 +804,59 @@ export class SafetyFactorsMaterialStrengthsComponent
   public setActiveTab(tab: string) {
     this.activeTab = tab;
   }
-  changeButton(el: any) {
-    this.showOption= true;
-    this.considerMomentChecked =false;
-    this.arrayAxis.forEach((data)=>{
+  changeButton(el: any) {   
+    
+    if (el.target.checked && el.target.id !== "not_consider"){
+      this.showOption= true;
+      this.used= true;     
+      this.not_consider_moment_checked = false;
+      this.considerMomentChecked =false;
+    }      
+    else if (el.target.checked && el.target.id === "not_consider") {      
+      this.consider_moment_checked = false;
+      this.used= false;
+      this.otp_max_min= false;
+      this.otp_tens_only = false;
+      this.opt_no_for_v= false;
+      this.considerMomentChecked =true;
+    }
+    this.arrayAxisForce.forEach((data: any)=>{
       if(data.id === this.groupMem){
-        data.consider_moment_checked = el.target.checked
+        data.used = this.used,
+        data.opt_no_for_v = this.opt_no_for_v,
+        data.otp_max_min= this.otp_max_min,
+        data.otp_tens_only= this.otp_tens_only
       }
     })
-    this.safety.arrayAxis = this.arrayAxis;
+  }
+  changeOption(el: any){
+    switch(el.target.id){
+      case "1":
+        this.opt_no_for_v = el.target.checked
+        break;
+      case "2":
+        this.otp_max_min = el.target.checked
+        break;
+      case "3":
+        this.otp_tens_only = el.target.checked
+        break;
+    }
+    this.arrayAxisForce.forEach((data: any)=>{
+      if(data.id === this.groupMem){
+        data.used = this.used,
+        data.opt_no_for_v = this.opt_no_for_v,
+        data.otp_max_min= this.otp_max_min,
+        data.otp_tens_only= this.otp_tens_only
+      }
+    })
+    this.safety.arrayAxis = this.arrayAxisForce;   
   }
   notConsider(e:any){
     this.considerMomentChecked =true;
+    this.used= false;
+    this.otp_max_min= false;
+    this.otp_tens_only = false;
+    this.opt_no_for_v= false;
   }
   handleSetSelect(dataTable:any,id:any){
     const safety = this.safety.getTableColumns();
