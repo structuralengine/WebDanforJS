@@ -463,32 +463,40 @@ export class ThreeNodeService {
     div.style.fontSize = '12px'
     switch (style) {
       case 1:
-        div.style.marginTop = "-2.5px";
+        div.style.marginTop = "-47.5px";
+        // div.style.marginTop = "-2.5px";
         div.style.marginLeft = "10px";
         break;
       case 2:
-        div.style.marginTop = "13.5px"
+        // div.style.marginTop = "13.5px"
+        div.style.marginTop = "-28.5px"
         break;
       case 3:
-        div.style.marginTop = "-1.5px";
+        div.style.marginTop = "-45.5px";
+        // div.style.marginTop = "-1.5px";
         div.style.marginLeft = "-19px";
         break;
       case 4:
-        div.style.marginTop = "10.5px";
+        div.style.marginTop = "-32.5px";
+        // div.style.marginTop = "10.5px";
         break;
       case 5:
-        div.style.marginTop = "-12.5px";
+        div.style.marginTop = "-60.5px";
+        // div.style.marginTop = "-12.5px";
         break;
       case 6:
-        div.style.marginTop = "-1.5px";
+        div.style.marginTop = "-45.5px";
+        // div.style.marginTop = "-1.5px";
         div.style.marginLeft = "-19px";
         break;
       case 7:
-        div.style.marginTop = "-2.5px";
+        div.style.marginTop = "-48.5px";
+        // div.style.marginTop = "-2.5px";
         div.style.marginLeft = "-26px";
         break;
       case 8:
         div.style.textAlign = "center";
+        div.style.marginTop = "-48.5px";
         div.style.marginLeft = "-19px";
         break;
       case 9:
@@ -496,7 +504,8 @@ export class ThreeNodeService {
         div.style.marginLeft = "19px";
         break;
       default:
-        div.style.marginTop = "-14.5px";
+        div.style.marginTop = "-66.5px";
+        // div.style.marginTop = "-14.5px";
         break;
     }
     const label = new CSS2DObject(div);
