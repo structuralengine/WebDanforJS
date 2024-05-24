@@ -18,7 +18,6 @@ export class InputSafetyFactorsMaterialStrengthsService {
   public axisforce_condition:any;
   public arrayAxis: any[]
   public arrayAxisBase: any[]
-  public axisForce: any[]
   public groupe_name: any[]
   constructor(
     private basic: InputBasicInformationService,
@@ -36,7 +35,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
     this.material_concrete = {};
     this.pile_factor = {};
     this.arrayAxis = new Array();
-    this.axisForce = new Array();
+    this.axisforce_condition = new Array();
 
   }
 
@@ -263,6 +262,16 @@ export class InputSafetyFactorsMaterialStrengthsService {
     }
     return result;
   }
+  
+  public default_axisforce_condition():any{
+    const result = {
+      used: true,
+      opt_max_min: false,
+      opt_tens_only: false,
+      opt_no_for_v: false
+    };
+    return result;
+  }
 
   // component で使う用
   // 部材グループ別に並べている
@@ -273,6 +282,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
     const material_steel = {};
     const material_concrete = {};
     const pile_factor = {};
+    const axisforce_condition = {}
 
     // グリッド用データの作成
     const groupe_list = this.members.getGroupeList();
@@ -286,6 +296,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
       const tmp_material_steel = this.default_material_steel();
       const tmp_material_concrete = this.default_material_concrete();
       const tmp_pile_factor = this.default_pile_factor();
+      const tmp_axisforce_condition = this.default_axisforce_condition()
 
       if (id in this.safety_factor) {
         const old_safety_factor = this.safety_factor[id];
@@ -352,11 +363,25 @@ export class InputSafetyFactorsMaterialStrengthsService {
           }
         }
       }
+      if (id in this.axisforce_condition) {
+        const old_axisforce_condition = this.axisforce_condition[id];
+        for (let i = 0; i < tmp_axisforce_condition.length; i++) {
+          const tmp = tmp_axisforce_condition[i];
+          const old = old_axisforce_condition[i];
+          for (const key of Object.keys(tmp)) {
+            if(key==='title')
+              continue;
+            if (key in old)
+              tmp[key] = old[key]; 
+          }
+        }
+      }
       safety_factor[id] = tmp_safety_factor;
       material_bar[id] = tmp_material_bar
       material_steel[id] = tmp_material_steel;
       material_concrete[id] = tmp_material_concrete;
       pile_factor[id] = tmp_pile_factor;
+      axisforce_condition[id] = tmp_axisforce_condition
 
     }
     return {
@@ -365,7 +390,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
       material_bar,
       material_steel,
       material_concrete,
-      pile_factor
+      pile_factor,
+      axisforce_condition
     };
 
   }

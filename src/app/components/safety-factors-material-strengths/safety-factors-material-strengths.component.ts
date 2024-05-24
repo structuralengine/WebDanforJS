@@ -112,7 +112,13 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.setTitle();
     const safety = this.safety.getTableColumns();
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
-    this.arrayAxisForce = this.safety.axisForce !== undefined ? this.safety.axisForce : new Array();
+    if(safety.axisforce_condition !== undefined){
+      this.arrayAxisForce =[]
+    }else{
+      this.arrayAxisForce = new Array()
+
+    }
+    // this.arrayAxisForce = safety.axisforce_condition !== undefined ? safety.axisforce_condition : new Array();
     this.groupe_list = safety.groupe_list;
     this.groupe_name = new Array();
     // 配列を作成
@@ -477,7 +483,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.options6 = this.pile_factor_list[0];
     this.pile_factor_select_id = this.getPileFactorSelectId();
     this.safety.arrayAxis = this.arrayAxis;
-    this.safety.axisForce = this.arrayAxisForce;    
+    this.safety.axisforce_condition = this.arrayAxisForce;    
   }
 
   ngAfterViewInit() {
@@ -492,14 +498,14 @@ export class SafetyFactorsMaterialStrengthsComponent
       }
     })
 
-    this.arrayAxisForce.map((data: any)=>{
-      if(data.id === this.groupMem){
-        this.used = data.used,
-        this.opt_no_for_v= data.opt_no_for_v,
-        this.otp_max_min= data.otp_max_min,
-        this.otp_tens_only= data.otp_tens_only
-      }
-    })
+    // this.arrayAxisForce.map((data: any)=>{
+    //   if(data.id === this.groupMem){
+    //     this.used = data.used,
+    //     this.opt_no_for_v= data.opt_no_for_v,
+    //     this.otp_max_min= data.otp_max_min,
+    //     this.otp_tens_only= data.otp_tens_only
+    //   }
+    // })
     this.cdref.detectChanges();
  }
  
@@ -722,7 +728,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       pile_factor
     })
     this.safety.arrayAxis = this.arrayAxis
-    this.safety.axisForce = this.arrayAxisForce
+    this.safety.axisforce_condition = this.arrayAxisForce
   }
 
   // 杭の施工条件を変更を処理する関数
