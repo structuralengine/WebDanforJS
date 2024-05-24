@@ -365,16 +365,12 @@ export class InputSafetyFactorsMaterialStrengthsService {
       }
       if (id in this.axisforce_condition) {
         const old_axisforce_condition = this.axisforce_condition[id];
-        for (let i = 0; i < tmp_axisforce_condition.length; i++) {
-          const tmp = tmp_axisforce_condition[i];
-          const old = old_axisforce_condition[i];
+        const tmp = tmp_axisforce_condition;
+        const old = old_axisforce_condition;
           for (const key of Object.keys(tmp)) {
-            if(key==='title')
-              continue;
             if (key in old)
               tmp[key] = old[key]; 
           }
-        }
       }
       safety_factor[id] = tmp_safety_factor;
       material_bar[id] = tmp_material_bar

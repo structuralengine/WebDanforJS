@@ -83,9 +83,9 @@
             name="calculate_moment"
             class="checkbox-input"
             (click)="changeOption($event)"
-            [(ngModel)]="otp_max_min"
-            [checked]="otp_max_min"
-            [value]="otp_max_min"
+            [(ngModel)]="opt_max_min"
+            [checked]="opt_max_min"
+            [value]="opt_max_min"
             [disabled]="considerMomentChecked"
           />
           <span translate class="checkbox-parts" style="width: 475px"
@@ -100,9 +100,9 @@
             class="checkbox-input"
             (click)="changeOption($event)"
             [disabled]="considerMomentChecked"
-            [(ngModel)]="otp_tens_only"
-            [checked]="otp_tens_only"
-            [value]="otp_tens_only"
+            [(ngModel)]="opt_tens_only"
+            [checked]="opt_tens_only"
+            [value]="opt_tens_only"
           />
           <span translate class="checkbox-parts" style="width: 475px"
             >calculation-print.option2</span
