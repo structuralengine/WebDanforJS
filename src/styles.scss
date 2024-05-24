@@ -327,4 +327,13 @@ body {
         background-image: none !important;
     }
 }
+.pq-state-select.ui-state-highlight {
+    background: #5d656c !important;
+    color: var(--text_main);
+
+    & > div {
+        background: #5d656c !important;
+        color: var(--text_main);
+    }
+}
 // Preview bar css - End

@@ -5,6 +5,8 @@ import { NONE_TYPE } from '@angular/compiler';
 import { InputBarsService } from '../bars/bars.service';
 import { create } from 'domain';
 import { InputMembersService } from '../members/members.service';
+import { SheetComponent } from '../sheet/sheet.component';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-preview-rebar',
@@ -22,7 +24,7 @@ export class PreviewRebarComponent implements OnInit {
   private calculatedPointHeaders: object[] = new Array();
   private table_datas: any[];
   @Input() rebar: any
-
+  @ViewChild('calPointGrid') grid: SheetComponent;
   constructor(
     public bars: InputBarsService,
     private translate: TranslateService,
@@ -116,6 +118,18 @@ export class PreviewRebarComponent implements OnInit {
           } else {
             point.m_no = m_no
           }
+          if (calPoint.index === point.index) {
+            calPointListData.push({
+              no: point.m_no,
+              pos: point.position,
+              p_name: point.p_name,
+              haunch: point.haunch_M, // haunch_M or haunch_V ???
+              pq_rowcls: "pq-state-select ui-state-highlight",
+              pq_cellcls: {
+                "no" : "pq-focus"
+              }
+            })
+          }
           calPointListData.push({
             no: point.m_no,
             pos: point.position,
@@ -178,12 +192,27 @@ export class PreviewRebarComponent implements OnInit {
       },
       colModel: this.calculatedPointHeaders,
       dataModel: { data: calPointListData },
+      // selectionModel: { type: 'row', mode: 'single' },
+      rowClick: (evt, ui) => {
+        this.clearFocus(calPointListData);
+        console.log(ui.rowData)
+        ui.rowData.pq_rowcls = "pq-state-select ui-state-highlight";
+        this.grid.refreshDataAndView();
+
+      },
     }
 
     this.option_list.push(axialRebarOption);
     this.axialRebarOptions = this.option_list[0];
     this.stirrupOptions = stirrupOption;
     this.calculatedPointOptions = calculatedPointOption;
+  }
+
+  private clearFocus(calPointListData : any) {
+    calPointListData.forEach(row => {
+      row.pq_rowcls = ""; 
+      row.pq_cellcls = {}; 
+    });
   }
 
   private setColumnWidth(column) {
