@@ -110,12 +110,7 @@
         </label>
         <label
           class="checkbox-container"
-          *ngIf="
-            checkedRadioValue === 0 ||
-            checkedRadioValue === 1 ||
-            checkedRadioValue === 2 ||
-            checkedRadioValue === undefined
-          "
+          *ngIf="checkedRadioValue < 3"
         >
           <input
             id="3" 
