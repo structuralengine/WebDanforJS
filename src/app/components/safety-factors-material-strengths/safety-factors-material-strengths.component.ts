@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs';
 export class SafetyFactorsMaterialStrengthsComponent
   implements OnInit, OnDestroy, AfterViewInit {
   public arrayAxis: any[]
-  public arrayAxisForce: any[]
+  public arrayAxisForce: any = {}
   public consider_moment_checked: boolean = true;  
   public not_consider_moment_checked: boolean = false;
   public used : boolean = true;
@@ -25,6 +25,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   public otp_tens_only:boolean = false;
   public opt_no_for_v: boolean = false;
   public groupMem: any;
+  public groupId: any;
   // 安全係数
   @ViewChild('grid1') grid1: SheetComponent;
   public options1: pq.gridT.options;
@@ -113,10 +114,9 @@ export class SafetyFactorsMaterialStrengthsComponent
     const safety = this.safety.getTableColumns();
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
     if(safety.axisforce_condition !== undefined){
-      this.arrayAxisForce =[]
+      this.arrayAxisForce = {...safety.axisforce_condition}
     }else{
-      this.arrayAxisForce = new Array()
-
+      this.arrayAxisForce = {}
     }
     // this.arrayAxisForce = safety.axisforce_condition !== undefined ? safety.axisforce_condition : new Array();
     this.groupe_list = safety.groupe_list;
@@ -489,7 +489,14 @@ export class SafetyFactorsMaterialStrengthsComponent
   ngAfterViewInit() {
     this.activeButtons(0);
     this.setActiveTab(this.activeTab);
-   
+    
+    let dataOfTab = this.arrayAxisForce[this.groupMem];
+    if(dataOfTab != undefined){
+      this.used = dataOfTab.used
+      this.opt_no_for_v = dataOfTab.opt_no_for_v
+      this.otp_max_min = dataOfTab.otp_max_min
+      this.otp_tens_only = dataOfTab.otp_tens_only
+    }
   }
   ngAfterContentChecked() {
     this.arrayAxis.map((data: any)=>{
@@ -497,8 +504,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         this.consider_moment_checked = data.consider_moment_checked
       }
     })
-
-    // this.arrayAxisForce.map((data: any)=>{
+    // this.arrayAxisForce. map((data: any)=>{
     //   if(data.id === this.groupMem){
     //     this.used = data.used,
     //     this.opt_no_for_v= data.opt_no_for_v,
@@ -749,6 +755,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
   public activePageChenge(id: number, group: any): void {
     this.groupMem=group.name;
+    this.groupId=group.id;
     this.activeButtons(id);
     this.current_index = id;    
     this.arrayAxis.map((data: any)=>{
@@ -757,15 +764,21 @@ export class SafetyFactorsMaterialStrengthsComponent
       }
     })
    
-    this.arrayAxisForce.map((data: any)=>{
-      if(data.id === this.groupMem){
-        this.used = data.used,
-        this.opt_no_for_v= data.opt_no_for_v,
-        this.otp_max_min= data.otp_max_min,
-        this.otp_tens_only= data.otp_tens_only,
-        this.consider_moment_checked  =  data.used
-      }
-    })
+    let dataOfTab = this.arrayAxisForce[group.id];
+    this.used = dataOfTab.used
+      this.opt_no_for_v = dataOfTab.opt_no_for_v
+      this.otp_max_min = dataOfTab.otp_max_min
+      this.otp_tens_only = dataOfTab.otp_tens_only
+      this.consider_moment_checked  =  this.used
+    // this.arrayAxisForce.map((data: any)=>{
+    //   if(data.id === this.groupMem){
+    //     this.used = data.used,
+    //     this.opt_no_for_v= data.opt_no_for_v,
+    //     this.otp_max_min= data.otp_max_min,
+    //     this.otp_tens_only= data.otp_tens_only,
+    //     this.consider_moment_checked  =  data.used
+    //   }
+    // })
     this.considerMomentChecked = !this.used;
     this.options1 = this.option1_list[id];
     this.grid1.options = this.options1;
@@ -838,23 +851,20 @@ export class SafetyFactorsMaterialStrengthsComponent
   changeOption(el: any){
     switch(el.target.id){
       case "1":
-        this.opt_no_for_v = el.target.checked
-        break;
-      case "2":
         this.otp_max_min = el.target.checked
         break;
-      case "3":
+      case "2":
         this.otp_tens_only = el.target.checked
         break;
+      case "3":
+        this.opt_no_for_v = el.target.checked
+        break;
     }
-    this.arrayAxisForce.forEach((data: any)=>{
-      if(data.id === this.groupMem){
+    let data = this.arrayAxisForce[this.groupId];
         data.used = this.used,
         data.opt_no_for_v = this.opt_no_for_v,
         data.otp_max_min= this.otp_max_min,
         data.otp_tens_only= this.otp_tens_only
-      }
-    })
     this.safety.arrayAxis = this.arrayAxisForce;   
   }
   notConsider(e:any){
