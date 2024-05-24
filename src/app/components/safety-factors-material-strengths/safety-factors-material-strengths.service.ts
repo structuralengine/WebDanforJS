@@ -637,7 +637,6 @@ export class InputSafetyFactorsMaterialStrengthsService {
       };
       axisforce_condition[id]= temp
       axisforce_condition[id]["used"]= true
-      axisforce_condition[id]["opt_tens_only"]= true
       if(indexJR4 !== -1 && conditions_list[indexJR4].selected){
         axisforce_condition[id]["opt_no_for_v"]= true
       }else{
