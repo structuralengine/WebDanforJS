@@ -37,14 +37,172 @@ h5 {
 
   .download-item {   
     margin-top: 10px;
-    width: 348px;
+    // width: 348px;
+    width: 100%;
     .checkbox-container {
       display: flex;
       align-items: center;
       margin: 0;
     }
   }
+  .download-item-content{
+    display: flex;
+    // min-width: 800px;
+    width: 100%;
+    height: 100%;
+  }
+  .checkbox-condition{
+    padding-left:15px;
+  }
+  .checkbox-input:disabled + .checkbox-parts{
+    background: var(--disabled);
+    opacity: 0.7;
+  }
+}
 
+.safety-factors,
+.material-strength {
+  display: inline-block;
+}
+
+.pile-factors {
+  display: inline-block;
+
+  table {
+    margin: 15px;
+  }
+
+  th {
+    border: 1px solid var(--table_border);
+    font-weight: normal;
+    font-size: 14px;
+    text-align: center;
+    padding: 0;
+    line-height: 1.5;
+    background: var(--table_row_even_bg);
+  }
+
+  td {
+    border: 1px solid var(--table_border);
+    font-weight: normal;
+    font-size: 14px;
+    text-align: center;
+    padding: 0;
+    line-height: 1.5;
+  }
+
+  tr:nth-child(odd) {
+    background: var(--table_row_odd_bg);
+  }
+
+  tr:nth-child(even) {
+    background: var(--table_row_even_bg);
+  }
+}
+
+.table-container {
+  float: left;
+  // margin-bottom: 15px;
+}
+
+.range-fieldset {
+  float: right;
+  // margin-left: 15px;
+}
+
+.tab-select {
+  &-items {
+    display: flex;
+    list-style: none;
+    column-gap: 2px;
+    padding: 0;
+    margin: 0;
+  }
+
+  &-item {
+    color: var(--text_main);
+    font-size: 12px;
+    padding: 8px 16px;
+    background: var(--base-700);
+    cursor: pointer;
+
+    &:first-child {
+      border-radius: 4px 0 0 4px;
+    }
+
+    &:last-child {
+      border-radius: 0 4px 4px 0;
+    }
+
+    &.is-active {
+      color: var(--primary);
+      background: var(--base-950);
+    }
+  }
+}
+
+.sectionTitle {
+  color: #fff;
+}legend {
+  font-size: 16px;
+  line-height: 1.1;
+}
+
+fieldset {
+  border: 1px #cacaca solid;
+  padding-right: 15px;
+}
+
+h5 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text_main);
+}
+
+
+.tabContent {
+  padding: 15px;
+  background: var(--base-900);
+  overflow: auto;
+  height: 94%;
+  .tab-inner {
+    padding-top: 16px;
+  }
+
+  .item-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 24px;
+
+    &.hide {
+      visibility: collapse;
+      height: 0;
+    }
+  }
+
+  .download-item {   
+    margin-top: 10px;
+    // width: 348px;
+    width: 100%;
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin: 0;
+    }
+  }
+  .download-item-content{
+    display: flex;
+    // min-width: 800px;
+    width: 100%;
+    height: 100%;
+  }
+  .checkbox-condition{
+    padding-left:15px;
+  }
+  .checkbox-input:disabled + .checkbox-parts{
+    background: var(--disabled);
+    opacity: 0.7;
+  }
 }
 
 .safety-factors,
