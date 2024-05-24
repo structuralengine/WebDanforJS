@@ -129,6 +129,10 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.table5_datas = new Array();      // 鉄骨材料
     this.pile_factor_list = new Array();  // 杭の施工条件
 
+
+    if(safety.groupe_list.length > 0){
+      this.groupId = safety.groupe_list[0][0].g_id
+    }
     // 入力項目を作成
     for (let i = 0; i < safety.groupe_list.length; i++) {
       const groupe = safety.groupe_list[i];
@@ -499,11 +503,11 @@ export class SafetyFactorsMaterialStrengthsComponent
     }
   }
   ngAfterContentChecked() {
-    this.arrayAxis.map((data: any)=>{
-      if(data.id === this.groupMem){
-        this.consider_moment_checked = data.consider_moment_checked
-      }
-    })
+    // this.arrayAxis.map((data: any)=>{
+    //   if(data.id === this.groupMem){
+    //     this.consider_moment_checked = data.consider_moment_checked
+    //   }
+    // })
     // this.arrayAxisForce. map((data: any)=>{
     //   if(data.id === this.groupMem){
     //     this.used = data.used,
@@ -758,27 +762,21 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.groupId=group.id;
     this.activeButtons(id);
     this.current_index = id;    
-    this.arrayAxis.map((data: any)=>{
-      if(data.id === group.name){
-        this.consider_moment_checked = data.consider_moment_checked
-      }
-    })
+    // this.arrayAxis.map((data: any)=>{
+    //   if(data.id === group.name){
+    //     this.consider_moment_checked = data.consider_moment_checked
+    //   }
+    // })
    
     let dataOfTab = this.arrayAxisForce[group.id];
     this.used = dataOfTab.used
       this.opt_no_for_v = dataOfTab.opt_no_for_v
       this.otp_max_min = dataOfTab.otp_max_min
       this.otp_tens_only = dataOfTab.otp_tens_only
-      this.consider_moment_checked  =  this.used
-    // this.arrayAxisForce.map((data: any)=>{
-    //   if(data.id === this.groupMem){
-    //     this.used = data.used,
-    //     this.opt_no_for_v= data.opt_no_for_v,
-    //     this.otp_max_min= data.otp_max_min,
-    //     this.otp_tens_only= data.otp_tens_only,
-    //     this.consider_moment_checked  =  data.used
-    //   }
-    // })
+ 
+          this.consider_moment_checked  =  this.used
+          this.not_consider_moment_checked = !this.used
+      
     this.considerMomentChecked = !this.used;
     this.options1 = this.option1_list[id];
     this.grid1.options = this.options1;
@@ -839,14 +837,11 @@ export class SafetyFactorsMaterialStrengthsComponent
       this.opt_no_for_v= false;
       this.considerMomentChecked =true;
     }
-    this.arrayAxisForce.forEach((data: any)=>{
-      if(data.id === this.groupMem){
+    let data = this.arrayAxisForce[this.groupId];
         data.used = this.used,
         data.opt_no_for_v = this.opt_no_for_v,
         data.otp_max_min= this.otp_max_min,
         data.otp_tens_only= this.otp_tens_only
-      }
-    })
   }
   changeOption(el: any){
     switch(el.target.id){

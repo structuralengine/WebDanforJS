@@ -51,7 +51,8 @@
             (click)="changeButton($event)"
             [value]="consider_moment_checked"
             [(ngModel)]="consider_moment_checked"
-            [checked]="consider_moment_checked"
+            [checked]="consider_moment_checked" 
+            [ngModelOptions]="{standalone: true}"
           />
           <span translate class="checkbox-parts" style="width: 180px"
             >calculation-print.consider</span
@@ -66,6 +67,8 @@
             (click)="changeButton($event)"
             [(ngModel)]="not_consider_moment_checked"
             [checked]="not_consider_moment_checked"
+            [value]="not_consider_moment_checked" 
+            [ngModelOptions]="{standalone: true}"
           />
           <span translate class="checkbox-parts"
             >calculation-print.notconsider</span
