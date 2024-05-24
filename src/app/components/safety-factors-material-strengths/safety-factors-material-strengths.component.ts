@@ -8,6 +8,7 @@ import { SaveDataService } from "../../providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from '../menu/menu.service';
 import { Subscription } from 'rxjs';
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
 
 @Component({
   selector: 'app-safety-factors-material-strengths',
@@ -99,7 +100,8 @@ export class SafetyFactorsMaterialStrengthsComponent
     private translate: TranslateService,
     private cdref: ChangeDetectorRef,
     private save: SaveDataService,
-    private menuService: MenuService
+    private menuService: MenuService,
+    private basic: InputBasicInformationService
   ) { 
     this.members.checkGroupNo();
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(value => {
@@ -110,6 +112,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     return this.save.isManual();
   }
   ngOnInit() {
+    this.checkedRadioValue = this.basic.get_specification2();
     this.setTitle();
     const safety = this.safety.getTableColumns();
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
@@ -839,11 +842,13 @@ export class SafetyFactorsMaterialStrengthsComponent
       this.opt_no_for_v= false;
       this.considerMomentChecked =true;
     }
-    let data = this.arrayAxisForce[this.groupId];
+    if(this.groupId != undefined){
+      let data = this.arrayAxisForce[this.groupId];
         data.used = this.used,
         data.opt_no_for_v = this.opt_no_for_v,
         data.opt_max_min= this.opt_max_min,
         data.opt_tens_only= this.opt_tens_only
+    }
   }
   changeOption(el: any){
     switch(el.target.id){
