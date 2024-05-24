@@ -919,6 +919,11 @@ export class InputBasicInformationService {
   public setPickUpData() {}
 
   public getSaveData(): any {
+    let indexJR4 = this.conditions_list.findIndex((data)=>data.id==="JR-004")
+    if (indexJR4 !==-1){
+      this.conditions_list.splice(indexJR4,1)
+    }
+    console.log("this.conditions_list",this.conditions_list)
     return {
       pickup_moment: this.pickup_moment,
       pickup_shear_force: this.pickup_shear_force,
