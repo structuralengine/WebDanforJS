@@ -85,6 +85,7 @@ export class MenuComponent implements OnInit {
   public windows: KnownAppWindow[] = [];
   public logs: string[] = [];
   public hideDCJ3_J5: boolean = false;
+  public firstCondition: any;
 
   constructor(
     private modalService: NgbModal,
@@ -126,6 +127,9 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    if (this.conditions_list.length > 0) {
+      this.firstCondition = this.conditions_list[0];
+    } 
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -490,6 +494,7 @@ export class MenuComponent implements OnInit {
 
   /// 仕様 変更時の処理
   public setSpecification2(id: number): void {
+    this.menuService.setCheckedRadio(id);
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;

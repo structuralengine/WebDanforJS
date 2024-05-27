@@ -294,7 +294,7 @@ export class SaveDataService {
       force: this.force.getSaveData(),
       // 計算印刷設定
       calc: this.calc.getSaveData(),
-      axis_max_min: this.safety.getAxisForceJson()
+      // axis_max_min: this.safety.getAxisForceJson()
     };
   }
 
@@ -368,7 +368,11 @@ export class SaveDataService {
     }
     // 安全係数情報
     if ("safety" in jsonData) {
-      this.safety.setSaveData(jsonData.safety);
+      if ("axis_max_min" in jsonData){
+        this.safety.setSaveData(jsonData.safety, jsonData.axis_max_min);
+      }else{
+        this.safety.setSaveData(jsonData.safety);
+      }
       this.material.setSaveData(jsonData.safety);
     } else {
       this.safety.clear();
