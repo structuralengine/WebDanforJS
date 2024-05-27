@@ -482,13 +482,13 @@ export class InputSafetyFactorsMaterialStrengthsService {
     }
   }
 
-  public setSaveData(safety: any) {
+  public setSaveData(safety: any, axisMaxMin?:any) {
     this.safety_factor = safety.safety_factor,
     this.material_bar = safety.material_bar,
     //this.material_steel = safety.material_steel,
     this.material_concrete = safety.material_concrete,
     this.pile_factor = safety.pile_factor,
-    this.axisforce_condition = this.handleAxisforceCondition(safety)
+      this.axisforce_condition = this.handleAxisforceCondition(safety, axisMaxMin)
   }
 
   public getGroupeName(i: number): string {
@@ -619,10 +619,10 @@ export class InputSafetyFactorsMaterialStrengthsService {
     }
     else return this.arrayAxisBase;
   }
- public handleAxisforceCondition(safety:any): any{
+  public handleAxisforceCondition(safety: any, axisMaxMin:any=[]): any{
   const groupe_list = this.members.getGroupeList();
   const conditions_list = this.basic.conditions_list
-  const axisMaxMin = this.getAxisForceJson()
+  // const axisMaxMin = this.getAxisForceJson()
   let axisforce_condition:any={}
   let indexJR4 = conditions_list.findIndex((data)=> data.id==="JR-004")
   if(safety.axisforce_condition === undefined){
@@ -642,7 +642,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
       }else{
         axisforce_condition[id]["opt_no_for_v"]= false
       }
-      let indexMoment = axisMaxMin.findIndex((data)=>data.id===first.g_name)
+      let indexMoment = axisMaxMin.length > 0 ? axisMaxMin.findIndex((data) => data.id === id) : -1
       if(indexMoment !== -1 && axisMaxMin[indexMoment].consider_moment_checked
       ){
         axisforce_condition[id]["opt_max_min"]= true
