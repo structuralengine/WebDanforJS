@@ -106,6 +106,9 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.members.checkGroupNo();
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(value => {
       this.checkedRadioValue = value;
+      if(this.checkedRadioValue > 3 ){
+        this.opt_no_for_v = true
+      }
     });
   }
   public isManual(): boolean {

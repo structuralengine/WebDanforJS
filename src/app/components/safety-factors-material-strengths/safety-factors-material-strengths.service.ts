@@ -622,7 +622,6 @@ export class InputSafetyFactorsMaterialStrengthsService {
   public handleAxisforceCondition(safety: any, axisMaxMin:any=[]): any{
   const groupe_list = this.members.getGroupeList();
   const conditions_list = this.basic.conditions_list
-  // const axisMaxMin = this.getAxisForceJson()
   let axisforce_condition:any={}
   let indexJR4 = conditions_list.findIndex((data)=> data.id==="JR-004")
   if(safety.axisforce_condition === undefined){
