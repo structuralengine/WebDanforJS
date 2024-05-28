@@ -179,6 +179,13 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
               if (shade != null) {
                 tbData[i].pq_cellstyle = shade.style;
                 tbData[i].pq_cellprop = shade.prop;
+                tbData[i].Bt = null;
+                tbData[i].t =null;
+                if (keyShapeIdNew === 3){
+                  tbData[i].Bt = null;
+                tbData[i].t =null;
+                tbData[i].H = null;
+                }
               }
               else{
                 tbData[i].pq_cellstyle = null;
