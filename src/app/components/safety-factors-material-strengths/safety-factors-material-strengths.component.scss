@@ -131,10 +131,14 @@ h5 {
 .sectionTitle {
   color: #fff;
 }
+.c-subNavArea{
+  padding-bottom: 1px;
+}
 .c-subNavArea__nav{
   overflow: scroll;
   overflow-x: auto;
   overflow-y: hidden;
+  margin: 0 0 6px 16px !important;
 }
 ::-webkit-scrollbar-track
 {

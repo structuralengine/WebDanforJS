@@ -1,5 +1,9 @@
 .calculate-container {
     padding: 16px;
+    overflow:scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 900px;
 }
 
 .c-contentsArea {
@@ -18,10 +22,6 @@
 
         .download-item {
             width: 348px;
-            overflow:scroll;
-            overflow-x: hidden;
-            overflow-y: auto;
-            max-height: 800px;
             .title {
                 .checkbox-all {
                     margin-right: 8px;

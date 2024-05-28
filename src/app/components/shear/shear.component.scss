@@ -22,10 +22,14 @@
       margin-left: 15px;
     }
   }
+  .c-subNavArea{
+    padding-bottom: 1px;
+  }
   .c-subNavArea__nav{
     overflow: scroll;
     overflow-x: auto;
     overflow-y: hidden;
+    margin: 0 0 6px 16px !important;
   }
   ::-webkit-scrollbar-track
   {
@@ -47,6 +51,9 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #475059;
   }
-  
+  .c-contentsArea {
+    background: var(--base-950) !important;
+}
+
   
   
