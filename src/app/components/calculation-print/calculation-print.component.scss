@@ -1,9 +1,10 @@
 .calculate-container {
     padding: 16px;
-    // overflow:scroll;
-    // overflow-x: hidden;
-    // overflow-y: auto;
+    overflow:scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
     // max-height: 600px;
+    height: 100vh;
 }
 
 .c-contentsArea {
@@ -17,7 +18,7 @@
     overflow:scroll;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 500px;
+    max-height: 50%;
     .download-items {
         display: flex;
         flex-direction: row;
