@@ -62,6 +62,47 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     stirrup_n:{...this.textStyle2},
     stirrup_ss:{...this.textStyle2},
   };
+  //
+  public cell1 = {
+    rebar_dia: { ...this.textStyle2 }
+    };
+    public cell2 = {
+    rebar_cover: { ...this.textStyle2 }
+    };
+    public cell3 = {
+    rebar_lines: { ...this.textStyle2 }
+    };
+    public cell4 = {
+    rebar_n: { ...this.textStyle2 }
+    };
+    public cell5 = {
+    rebar_space: { ...this.textStyle2 }
+    };
+    public cell6 = {
+    rebar_ss: { ...this.textStyle2 }
+    };
+    public cell7 = {
+    side_cover: { ...this.textStyle2 }
+    };
+    public cell8 = {
+    side_dia: { ...this.textStyle2 }
+    };
+    public cell9 = {
+    side_n: { ...this.textStyle2 }
+    };
+    public cell10 = {
+    side_ss: { ...this.textStyle2 }
+    };
+    public cell11 = {
+    stirrup_dia: { ...this.textStyle2 }
+    };
+    public cell12 = {
+    stirrup_n: { ...this.textStyle2 }
+    };
+    public cell13 = {
+    stirrup_ss: { ...this.textStyle2 }
+    };
+  //
   public styleShaded1:any =   { 
     haunch_height : { ...this.style},
   }
@@ -173,46 +214,133 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         numberCell: { show: false }, // 行番号
         colModel: this.beamHeaders,
         dataModel: { data: this.table_datas[i] },
-        freezeCols: (this.save.isManual()) ? 3 : 4,
+        freezeCols: this.save.isManual() ? 3 : 4,
         contextMenu: {
           on: true,
           items: [
             {
               name: this.translate.instant("action_key.copy"),
-              shortcut: 'Ctrl + C',
+              shortcut: "Ctrl + C",
               action: function (evt, ui, item) {
                 this.copy();
-              }
+              },
             },
             {
               name: this.translate.instant("action_key.paste"),
-              shortcut: 'Ctrl + V',
+              shortcut: "Ctrl + V",
               action: function (evt, ui, item) {
                 this.paste();
-              }
+              },
             },
             {
               name: this.translate.instant("action_key.cut"),
-              shortcut: 'Ctrl + X',
+              shortcut: "Ctrl + X",
               action: function (evt, ui, item) {
                 this.cut();
-              }
+              },
             },
             {
               name: this.translate.instant("action_key.undo"),
-              shortcut: 'Ctrl + Z',
+              shortcut: "Ctrl + Z",
               action: function (evt, ui, item) {
                 this.History().undo();
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         change: (evt, ui) => {
           if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
-            ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.rowStyle2}
-            ui.updateList[i].rowData.userChanged = true;
-            this.grid.refreshDataAndView();
-            this.saveData();
+            const keys = Object.keys(ui.updateList[i].newRow);
+
+            keys.forEach((key) => {
+              switch (key) {
+                case "rebar_dia":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell1,
+                  };
+                  break;
+                case "rebar_cover":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell2,
+                  };
+                  break;
+                case "rebar_lines":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell3,
+                  };
+                  break;
+                case "rebar_n":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell4,
+                  };
+                  break;
+                case "rebar_space":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell5,
+                  };
+                  break;
+                case "rebar_ss":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell6,
+                  };
+                  break;
+                case "side_dia":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell8,
+                  };
+                  break;
+                case "side_cover":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell7,
+                  };
+                  break;
+                case "side_n":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell9,
+                  };
+                  break;
+                case "side_ss":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell10,
+                  };
+                  break;
+                case "stirrup_dia":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell11,
+                  };
+                  break;
+                case "stirrup_n":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell12,
+                  };
+                  break;
+                case "stirrup_ss":
+                  ui.updateList[i].rowData.pq_cellstyle = {
+                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...this.cell13,
+                  };
+                  break;
+                default:
+                  console.log(`Key ${key} is not recognized`);
+                  break;
+              }
+            });
+            // ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.rowStyle2}
+            // ui.updateList[i].rowData.userChanged = true;
+            // this.grid.refreshDataAndView();
+            // this.saveData();
           }
           for (const property of ui.updateList) {
             for (const key of Object.keys(property.newRow)) {
@@ -220,7 +348,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               if (property.newRow[key] == null) {
                 continue; // 削除した場合 何もしない
               }
-              if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
+              if (
+                key === "rebar_dia" ||
+                key === "side_dia" ||
+                key === "stirrup_dia"
+              ) {
                 // 鉄筋径の規格以外は入力させない
                 const value0 = this.bars.matchBarSize(property.newRow[key]);
                 const j = property.rowIndx;
@@ -230,7 +362,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
           }
-        }
+        },
       };
       this.option_list.push(op);
     }

@@ -80,6 +80,74 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     V_r1_2:{...this.textStyle2},
     V_r1_3:{...this.textStyle2},
   };
+  //
+  public cell1 = {
+    M_A: { ...this.textStyle2 }
+    };
+    public cell2 = {
+    M_B: { ...this.textStyle2 }
+    };
+    public cell3 = {
+    M_Class: { ...this.textStyle2 }
+    };
+    public cell4 = {
+    M_NA06: { ...this.textStyle2 }
+    };
+    public cell5 = {
+    M_NB06: { ...this.textStyle2 }
+    };
+    public cell6 = {
+    M_NA12: { ...this.textStyle2 }
+    };
+    public cell7 = {
+    M_NB12: { ...this.textStyle2 }
+    };
+    public cell8 = {
+    M_SA: { ...this.textStyle2 }
+    };
+    public cell9 = {
+    M_SB: { ...this.textStyle2 }
+    };
+    public cell10 = {
+    M_r1_1: { ...this.textStyle2 }
+    };
+    public cell11 = {
+    M_r1_3: { ...this.textStyle2 }
+    };
+    public cell12 = {
+    M_weld: { ...this.textStyle2 }
+    };
+    public cell13 = {
+    V_A: { ...this.textStyle2 }
+    };
+    public cell14 = {
+    V_B: { ...this.textStyle2 }
+    };
+    public cell15 = {
+    V_NA06: { ...this.textStyle2 }
+    };
+    public cell16 = {
+    V_NA12: { ...this.textStyle2 }
+    };
+    public cell17 = {
+    V_NB06: { ...this.textStyle2 }
+    };
+    public cell18 = {
+    V_NB12: { ...this.textStyle2 }
+    };
+    public cell19 = {
+    V_SA: { ...this.textStyle2 }
+    };
+    public cell20 = {
+    V_SB: { ...this.textStyle2 }
+    };
+    public cell21 = {
+    V_r1_2: { ...this.textStyle2 }
+    };
+    public cell22 = {
+    V_r1_3: { ...this.textStyle2 }
+    };
+  //
   constructor(
     private fatigues: InputFatiguesService,
     private save: SaveDataService,
@@ -202,10 +270,84 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         change :(event,ui)=>{
               if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
-                  ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
-                  ui.updateList[i].rowData.userChanged = true;
-                  this.grid.refreshDataAndView();
-                  this.saveData();
+                const keys = Object.keys(ui.updateList[i].newRow);
+                keys.forEach((key) =>{
+                  switch(key){
+                    case "M_A":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell1}
+                      break;
+                    case "M_B":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell2}
+                      break;
+                    case "M_Class":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell3}
+                      break;
+                    case "M_NA06":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell4}
+                      break;
+                    case "M_NB06":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell5}
+                      break;
+                    case "M_NA12":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell6}
+                      break;
+                    case "M_NB12":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell7}
+                    break;
+                    case "M_SA":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell8}
+                      break;
+                      case "M_SB":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell9}
+                      break;
+                      case "M_r1_1":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell10}
+                      break;
+                      case "M_r1_3":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell11}
+                      break;
+                      case "M_weld":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell12}
+                      break;
+                      case "V_A":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell13}
+                      break;
+                      case "V_B":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell14}
+                      break;
+                      case "V_NA06":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell15}
+                      break;
+                      case "V_NA12":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell16}
+                      break;
+                      case "V_NB06":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell17}
+                      break;
+                      case "V_NB12":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell18}
+                      break;
+                      case "V_SA":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell19}
+                      break;
+                      case "V_SB":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell20}
+                      break;
+                      case "V_r1_2":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell21}
+                      break;
+                      case "V_r1_3":
+                      ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell22}
+                      break;
+                    default: 
+                      console.log(`Key ${key} is not recognized`);
+                    break;
+                  }
+                })
+                  // ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
+                  // ui.updateList[i].rowData.userChanged = true;
+                  // this.grid.refreshDataAndView();
+                  // this.saveData();
               }
         }
       };

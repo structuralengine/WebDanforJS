@@ -48,10 +48,34 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     con_u: { ...this.textStyle2 },
     ecsd_l: { ...this.textStyle2 },
     ecsd_u: { ...this.textStyle2 },
-    kr:{...this.textStyle },
-    k4: { ...this.textStyle },
+    kr:{...this.textStyle2 },
+    k4: { ...this.textStyle2 },
     extend: { ...this.textStyle },
   };
+  public cell1 = {
+    con_s: { ...this.textStyle2 },
+    };
+    public cell2 = {
+      con_l: { ...this.textStyle2 },
+    };
+    public cell3 = {
+      con_u: { ...this.textStyle2 },
+    };
+    public cell4 = {
+      ecsd_l: { ...this.textStyle2 },
+    };
+    public cell5 = {
+      kr:{...this.textStyle2},
+    };
+    public cell6 = {
+      k4: { ...this.textStyle2 },
+    };
+    public cell7 = {
+      extend: { ...this.textStyle2 },
+    };
+    public cell8 = {
+      ecsd_u: { ...this.textStyle2 },
+    };
   checkedRadioValue: number;
   private checkedRadioSubscription: Subscription;
   constructor(
@@ -170,10 +194,42 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         
           change :(event,ui)=>{
                 if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
-                    ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
-                    ui.updateList[i].rowData.userChanged = true;
-                    this.grid.refreshDataAndView();
-                    this.saveData();
+                  const keys = Object.keys(ui.updateList[i].newRow);
+                  keys.forEach((key) =>{
+                    switch(key){
+                      case "con_s":
+                        ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell1}
+                        break;
+                      case "con_l":
+                        ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell2}
+                        break;
+                      case "con_u":
+                        ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell3}
+                        break;
+                      case "ecsd_l":
+                        ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell4}
+                        break;
+                      case "kr":
+                        ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell5}
+                        break;
+                      case "k4":
+                        ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell6}
+                        break;
+                      case "extend":
+                        ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell7}
+                      break;
+                      case "ecsd_u":
+                        ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.cell8}
+                        break;
+                      default: 
+                        console.log(`Key ${key} is not recognized`);
+                      break;
+                    }
+                  })
+                    // ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
+                    // ui.updateList[i].rowData.userChanged = true;
+                    // this.grid.refreshDataAndView();
+                    // this.saveData();
                 }
           }
         
