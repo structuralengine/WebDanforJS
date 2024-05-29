@@ -1,9 +1,9 @@
 .calculate-container {
     padding: 16px;
-    overflow:scroll;
-    overflow-x: hidden;
-    overflow-y: auto;
-    max-height: 800px;
+    // overflow:scroll;
+    // overflow-x: hidden;
+    // overflow-y: auto;
+    // max-height: 600px;
 }
 
 .c-contentsArea {
@@ -14,7 +14,10 @@
     display: flex;
     flex-direction: column;
     row-gap: 16px;
-
+    overflow:scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 500px;
     .download-items {
         display: flex;
         flex-direction: row;
@@ -34,19 +37,19 @@
         }
     }
 
-    #downloadButton {
-        font-size: 16px;
-        font-weight: 700;
-        padding: 12px 30px;
-        background: var(--primary-600);
-        color: var(--text-main);
-        border: none;
-        border-radius: 4px;
+}
+#downloadButton {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 12px 30px;
+    background: var(--primary-600);
+    color: var(--text-main);
+    border: none;
+    border-radius: 4px;
 
-        &:disabled {
-            background: var(--primary-800);
-            opacity: 0.7;
-        }
+    &:disabled {
+        background: var(--primary-800);
+        opacity: 0.7;
     }
 }
 
