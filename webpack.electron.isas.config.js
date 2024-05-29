@@ -7,7 +7,7 @@ module.exports = {
   ...baseConfig,
   mode: 'production',
   entry: {
-    main: path.join(src, 'isas.ts')
+    main: path.join(src, 'main.ts')
   },
   output: {
     path: path.join(process.cwd(), 'dist'),
