@@ -86,6 +86,7 @@ export class MenuComponent implements OnInit {
   public logs: string[] = [];
   public hideDCJ3_J5: boolean = false;
   public firstCondition: any;
+  public arg_wdj: string = null;
 
   constructor(
     private modalService: NgbModal,
@@ -127,6 +128,10 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    this.arg_wdj = this.electronService.ipcRenderer.sendSync("get-isas-wdj");
+    if(this.arg_wdj !== null){
+      this.open_electron(); // isasの場合は、ファイルを開いた状態で起動
+    }
     if (this.conditions_list.length > 0) {
       this.firstCondition = this.conditions_list[0];
     } 
