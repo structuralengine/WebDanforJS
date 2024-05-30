@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
-import { SaveDataService } from 'src/app/providers/save-data.service';
+import { SaveDataService } from 'src/app/providers/save-data.service'; 
 import { InputMembersService } from '../members/members.service';
 
 @Injectable({
@@ -42,7 +42,7 @@ export class InputDesignPointsService {
     return this.position_list;
   }
 
-  public setSaveData(points: any): void {
+  public setSaveData(points: any, is3DPickUp?: any, isManual?:any, bars?:any): void {
 
     this.clear();
     for (const data of points) {
@@ -50,13 +50,71 @@ export class InputDesignPointsService {
       for (const key of Object.keys(tmp)) {
         if (key in data) {
           tmp[key] = data[key];
+        }else {
+          if ((key === "isUpperCalc" || key === "isLowerCalc") && bars !== undefined) {
+            let index = bars.findIndex(bar => data.index === bar.index)
+            if (index !== -1) {
+              if (bars[index].rebar1.enable !== undefined){
+                tmp["isUpperCalc"] = bars[index].rebar1.enable
+              }else{
+                tmp["isUpperCalc"] = true
+              }
+              if (bars[index].rebar2.enable !== undefined) {
+                tmp["isLowerCalc"] = bars[index].rebar2.enable
+              } else {
+                tmp["isLowerCalc"] = true
+              }
+            } else {
+              tmp["isUpperCalc"] = true
+              tmp["isLowerCalc"] = true
+            }
+          }
+        }
+        if(is3DPickUp){
+          if (tmp["isMyCalc"] === true || tmp['isVzCalc'] === true) {
+            tmp["isMzCalc"] = false;
+            tmp["isVyCalc"] = false;
+            tmp["axis_type"] = 1;
+          }else{
+            if (tmp["isMzCalc"] === true ||tmp["isVyCalc"] === true) {
+              tmp["isMyCalc"] = false;
+              tmp["isVzCalc"] = false;
+              tmp["axis_type"] = 2;
+            }else{
+              if (tmp["isMyCalc"] === false &&
+                tmp["isVzCalc"] === false &&
+                tmp["isMzCalc"] === false &&
+                tmp["isVyCalc"] === false) {
+                tmp["axis_type"] = 1;
+              }
+            }
+          }          
+        }else{
+          tmp["axis_type"] = 2;
+          tmp["isMyCalc"] = false;
+          tmp["isVzCalc"] = false;
+          if(!isManual){
+            tmp["isMtCalc"] = false;
+          }else{
+            tmp["isMzCalc"] = true;
+            tmp["isVyCalc"] = true;
+            tmp["isMtCalc"] = true;
+            tmp["isUpperCalc"] = true
+            tmp["isLowerCalc"] = true
+          }
         }
       }
       this.position_list.push(tmp);
     }
-  }
+    if (bars !== undefined) {
+      bars.map((bar: any) => {
+        delete bar.rebar1.enable
+        delete bar.rebar2.enable
+      })
+    }
+}
 
-  public setTableColumns(points: any): void {
+  public setTableColumns(points: any, is3DPickUp?: any, isManual?:any ): void {
 
     for (const data of points) {
       const tmp = this.default_position(data.index);
@@ -72,6 +130,12 @@ export class InputDesignPointsService {
       for (const key of Object.keys(tmp)) {
         if (key in data) {
           tmp[key] = data[key];
+        }
+        if (key === "axis_type") {
+          tmp[key] = +data[key];
+        }
+        if (key === "isMtCalc" && is3DPickUp !== undefined && !is3DPickUp && isManual !== undefined && !isManual){
+          tmp[key]= false;
         }
       }
       if (i >= 0) {
@@ -188,17 +252,20 @@ export class InputDesignPointsService {
       position: null,
       p_name: null,
       p_id: null,
+      axis_type: 2,
       isMyCalc: false,
-      isVyCalc: false,
-      isMzCalc: false,
+      isVyCalc: true,
+      isMzCalc: true,
       isVzCalc: false,
-      isMtCalc: false
+      isMtCalc: true,
+      isUpperCalc: true,
+      isLowerCalc: true
       // La: null
     };
   }
 
   // pick up ファイルをセットする関数
-  public setPickUpData(pickup_data: Object) {
+  public setPickUpData(pickup_data: Object,mode:any) {
     const keys: string[] = Object.keys(pickup_data);
     const positions: any[] = pickup_data[keys[0]];
 
@@ -220,6 +287,17 @@ export class InputDesignPointsService {
       for (const key of Object.keys(new_point)) {
         if (key in pos) {
           new_point[key] = pos[key];
+          if (mode === "pik") {
+            new_point["axis_type"] = 2
+          }
+          if (mode === "csv") {
+            new_point["axis_type"] = 1
+          }
+          new_point["isMyCalc"] = false
+          new_point["isVyCalc"] = false
+          new_point["isMzCalc"] = false
+          new_point["isVzCalc"] = false
+          new_point["isMtCalc"] = false
         }
       }
       // 部材長をセットする

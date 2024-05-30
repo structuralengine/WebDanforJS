@@ -14,7 +14,9 @@
         "login":"ログイン",
         "fail":"ファイルを開くことに失敗しました, status:",
         "open":"を開いてください！",
-        "NewWindow":"新しいウィンドウ"
+        "NewWindow":"新しいウィンドウ",
+        "contact":"お問い合わせ",
+        "message_ver":"現バージョンのWebDanは道路（β版）に対応しておりません"
     },
     "login-dialog":{
         "createAccount":"ユーザー登録がお済みでない方はこちらから",
@@ -101,7 +103,9 @@
         "allowable_stress_method":"許容応力度法",
         "adopt":"円形断面のせん断耐力が小さくなるような鉄筋配置を採用",
         "note_img": "※[]内の数値は下表（作用の組合せ）の番号に対応",
-        "noti_section_force":"「断面力」モードでは「基本データ」の入力は不要です"
+        "noti_section_force":"「断面力」モードでは「基本データ」の入力は不要です",
+        "study_edge_str":"縁応力度検討用",
+        "per_act":"永久作用"
     },
     "basic-information-road":{
         "bs_dcp_of_is": "耐久性 内部鋼材の防食[1]",
@@ -141,12 +145,16 @@
         "oval":"小判",
         "circle":"円形・円環",
         "m_no":"部材\n番号",
-        "m_len":"部材長",
+        "m_len":"部材長\n(m)",
         "g_no":"グループNo",
         "g_name":"部材名",
         "section":"断面(mm)",
         "part_n":"部材数",
-        "group": "「部材・断面」のグループNoが空欄です。"
+        "group": "「部材・断面」のグループNoが空欄です。",
+        "c_circle": "円形",
+        "ring": "円環",
+        "v_oval": "縦小判形",
+        "h_oval": "横小判形"
     },
     "section-forces":{
         "b_check":"曲げ照査",
@@ -160,43 +168,47 @@
         "s_len":"せん断スパン長(mm)",
         "m_no":"部材\n番号",
         "p_id":"算出点",
-        "position":"位置",
+        "position":"位置\n(m)",
         "b_check":"曲げ照査",
         "s_check":"せん断照査",
         "t_check":"ねじり照査",
         "y_around":"y軸周り",
         "z_around":"z軸周り",
         "y_direction":"y軸方向",
-        "z_direction":"z軸方向"
+        "z_direction":"z軸方向",
+        "check_target":"計算対象軸",
+        "upper_side": "上側引張照査",
+        "lower_side": "下側引張照査"
     },
     "bars":{
         "m_no":"部材\n番号",
-        "position":"位置",
+        "position":"位置\n(m)",
+        "position_":"位置",
         "p_name":"算出点名",
-        "bh":"断面BH",
-        "haunch":"ハンチ高",
+        "bh":"断面BH\n(mm)",
+        "haunch":"ハンチ高\n(mm)",
         "bending":"曲げ",
         "shear":"せん断",
         "rebar_ax":"軸方向鉄筋",
-        "dia":"鉄筋径",
+        "dia":"鉄筋径\n(mm)",
         "number":"本数",
-        "cover":"かぶり\n1段目",
+        "cover":"芯かぶり\n1段目\n(mm)",
         "lines":"ならび\n本数",
-        "space":"アキ",
-        "ss":"間隔",
+        "space":"段間隔\n(mm)",
+        "ss":"間隔\n(mm)",
         "rebar_la":"側方鉄筋",
         "pieces":"本数片",
         "rebar_sh":"せん断補強鉄筋",
         "rebar_ob":"主鉄筋の斜率",
         "rebar_fo":"折曲げ鉄筋",
-        "angle":"角度",
+        "angle":"角度\n(°)",
         "process":"処理",
-        "tp":"上端位置",
-        "tp_side":"上端位置\n/側かぶり"
+        "tp":"上端位置\n(mm)",
+        "tp_side":"上端位置\n/側芯かぶり"
     },
     "steels":{
         "m_no":"部材\n番号",
-        "position":"位置",
+        "position":"位置\n(m)",
         "p_name":"算出点名",
         "bh":"断面\nB\nH",
         "dis_above":"上からの距離",
@@ -215,19 +227,23 @@
         "cor":"腐食性",
         "es_cor":"とくに厳しい腐食性",
         "m_no":"部材\n番号",
-        "position":"位置",
+        "position":"位置\n(m)",
         "p_name":"算出点名",
         "top":"上側",
         "under":"下側",
         "shear":"せん断",
-        "crack":"ひび割 εcsd",
+        "crack":"ひび割 εcsd\n(x10^-6)",
         "shear_kr":"せん断\nkr",
         "exterior":"外観",
-        "JRTT05": "省略しない"
+        "JRTT05": "省略しない",
+        "dry": "常時乾燥",
+        "dry_wet_cyc": "乾湿繰り返し",
+        "wet": "常時湿潤",
+        "water": "水掛かりの程度"
     },
     "shear-strength":{
         "m_no":"部材\n番号",
-        "position":"位置",
+        "position":"位置\n(m)",
         "p_name":"算出点名",
         "s_len":"せん断スパン長(mm)",
         "s_len_a":"せん断スパン長\n a(mm)",
@@ -240,9 +256,10 @@
     "fatigues":{
         "durable":"耐用年数",
         "m_no":"部材\n番号",
-        "position":"位置",
+        "position":"位置\n(m)",
+        "position_":"位置",
         "p_name":"算出点名",
-        "bh":"断面\nB\nH",
+        "bh":"断面\nB\nH\n(mm)",
         "for_b":"曲げ用",
         "d_r2":"複線補正 r2",
         "b_r1":"曲げ加工 r1",
@@ -301,7 +318,7 @@
         "cs":"圧縮強度",
         "as":"付着強度",
         "young":"ヤング係数",
-        "rebar_ax":"軸方向鉄筋",
+        "rebar_ax":"軸方向鉄筋（折曲げ鉄筋含む）",
         "rebar_la":"側方向鉄筋",
         "stirrup":"スターラップ",
         "tys":"引張降伏強度",
@@ -313,10 +330,10 @@
         "s_safe":"せん断安全係数",
         "t_safe":"ねじり安全係数",
         "γi":"係数γi",
-        "ys":"降伏強度",
+        "ys":"降伏強度\n(N/mm2)",
         "d25":"D25以下",
         "d29":"D29以上",
-        "dts":"設計引張強度",
+        "dts":"引張強度\n(N/mm2)",
         "d_u":"耐久性, 使用性",
         "safe_ff":"安全性 （疲労破壊）",
         "safe_d":"安全性 （破壊）",
@@ -328,7 +345,9 @@
         "muddy_less":"泥水比重1.04以下",
         "natural_less":"自然泥水, 泥水比重1.10以下",
         "bentonite":"ベントナイト泥水",
-        "aerial":"気中施工"
+        "aerial":"気中施工",
+        "rbmt": "鉄筋材種",
+        "av":"任意値"
     },
     "calculation-print":{
         "dc":"設計条件",
@@ -336,8 +355,12 @@
         "p_check":"性能照査",
         "safety_ratio":"安全率一覧表",
         "check":"照査",
-        "axis_maxmin":"軸力 最大最小",
+        "axis_maxmin":"軸力の考慮",
         "consider":"考慮する",
+        "notconsider":"考慮しない",
+        "option1":"軸力最大最小も考慮する",
+        "option2":"引張（マイナス）のみ考慮",
+        "option3":"せん断耐力におけるβn算定時のMudは軸力を考慮しない",
         "bend":"曲げ",
         "shear":"せん断",
         "twist":"ねじり",
@@ -346,7 +369,8 @@
         "preparing":"印刷中...",
         "p_login":"ログインしてください。",
         "download":"総括表ダウンロード",
-        "downloading":"ダウンロード中"
+        "downloading":"ダウンロード中",
+        "judgement": "検討結果一覧表"
     },
     "section-force-list":{
         "m_no":"部材\n番号",
@@ -564,7 +588,8 @@
     "modal": {
         "close": "閉じる",
         "cancel": "キャンセル",
-        "ok": "OK"
+        "ok": "はい",      
+        "updateMessage": "アップデートがあります。\n 再起動してアップデートを行いますか？\nキャンセルを選ばれた場合、アプリ終了後に自動アップデートされます。"       
     },
     "window": {
         "closeTitle": "確認",
@@ -576,5 +601,14 @@
         "paste": "貼り付け",
         "undo": "元に戻す",
         "cut": "切り取り"
+    },
+    "modal_preview":{
+        "Rectangle": "矩形",
+        "TShape": "T形",
+        "Circle": "円形形状",
+        "Ring": "円環形状",
+        "HorizontalOval": "横小判形状",
+        "VerticalOval": "縦小判形状",
+        "CircleRing": "円形・円環"
     }
 }

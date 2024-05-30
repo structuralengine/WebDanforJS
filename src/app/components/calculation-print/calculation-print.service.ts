@@ -21,7 +21,8 @@ export class InputCalclationPrintService {
       print_summary_table_checked: false,
       calculate_moment_checked: false,
       calculate_shear_force: false,
-      calculate_torsional_moment: false
+      calculate_torsional_moment: false,
+      member_group_selection : []
     }
   }
 
@@ -55,16 +56,54 @@ export class InputCalclationPrintService {
   }
 
   public getSaveData(): any {
+    this.updateMemberGroupSelection(); //refresh member_group_selection
     return this.print_selected
   }
 
   public setSaveData(calc: any): void {
-    this.print_selected = this.default_print_selected();
-    for(const key in Object.keys(this.print_selected)){
+    this.clear();
+
+    // this.print_selected = this.default_print_selected()
+    for(const key of Object.keys(this.print_selected)){
       if(key in calc){
         this.print_selected[key] = calc[key];
       }
     }
+
+    //Check if "calc" don't have member_group_selection
+    if(this.print_selected.member_group_selection.length === 0)
+    {
+      const groups =  this.getColumnData();
+      for (var i = 0; groups.length > i; i++)
+      this.print_selected.member_group_selection.push({
+        GroupName: groups[i].g_name,
+        Checked: groups[i].checked
+      });
+    }
   }
 
+  public updateMemberGroupSelection() {
+    const oldData = this.print_selected.member_group_selection;
+
+    //get group again to update;
+    const groups = this.getColumnData();
+    this.print_selected.member_group_selection = [];
+
+    for (var i = 0; groups.length > i; i++) {
+      const idx = oldData.findIndex( el => el.GroupName === groups[i].g_name)
+      if(idx === -1) //Add new
+        this.print_selected.member_group_selection.push({
+          GroupName: groups[i].g_name,
+          Checked: groups[i].checked
+        });
+      else
+      {
+        //Update checked
+        this.print_selected.member_group_selection.push({
+          GroupName: oldData[idx].GroupName,
+          Checked: oldData[idx].Checked
+        });
+      }
+    }
+  }
 }

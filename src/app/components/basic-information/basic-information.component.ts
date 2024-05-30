@@ -44,6 +44,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   // 設計条件
   public conditions_list: any[];
 
+  public removeData:any
   constructor(
     private basic: InputBasicInformationService,
     private save: SaveDataService,
@@ -119,7 +120,14 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
         el.no = null
       });
     }
-
+    if(this.basic.get_specification1()===0 || this.basic.get_specification1()===1){
+      let index = this.table1_datas.findIndex((data) => data.id === 2)
+      if (index > -1) {
+        this.removeData = this.table1_datas[index]
+        this.basic.removeData = JSON.parse(JSON.stringify(this.removeData));
+        this.table1_datas.splice(index, 1)
+      }
+    }
     this.options1 = {
       height: 340,
       showTop: false,
@@ -162,6 +170,16 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
           }
         ]
       },
+      change:(evt:any,ui:any)=>{
+        if (this.basic.get_specification1() ===2){
+          let updateList = ui.updateList[0];
+          let rowChange = updateList.rowData.id;
+          if(rowChange===2){
+            this.basic.removeData.no = updateList.newRow.no
+            this.removeData.no = updateList.newRow.no
+          }
+        }
+      }
     };
 
     this.options2 = {
@@ -207,7 +225,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
         ]
       },
     };
-
+    
     this.options3 = {
       height: 340,
       showTop: false,
@@ -217,7 +235,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       numberCell: { show: true }, // 行番号
       colModel: this.menuService.selectedRoad ? this.columnHeaderDisableds : this.columnHeaders,
       dataModel: { data: this.table3_datas },
-      editable:false,
+      editable:this.menuService.selectedRoad ? false : true,
       contextMenu: {
         on: true,
         items: [
@@ -289,9 +307,16 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     this.saveData();
   }
 
-  public saveData(): void {
+  public  saveData(): void {
+    let tableTemp = JSON.parse(JSON.stringify(this.table1_datas)); 
+    if (this.basic.get_specification1() === 0 || this.basic.get_specification1() === 1) {
+      let index = tableTemp.findIndex((data) => data.id === 2)
+      if (this.basic.removeData && index===-1){
+        tableTemp.splice(2, 0, this.basic.removeData);
+    }
+  }
     this.basic.setSaveData({
-      pickup_moment: this.table1_datas,
+      pickup_moment: tableTemp,
       pickup_shear_force: this.table2_datas,
       pickup_torsional_moment: this.table3_datas,
 
@@ -299,7 +324,6 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
       specification2_list: this.specification2_list, // 仕様
       conditions_list: this.conditions_list         // 設計条件
     });
-
   }
 
   /// <summary>

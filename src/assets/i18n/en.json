@@ -15,7 +15,9 @@
         "fail":"Failed to open the file. status:",
         "open":"Please open",
         "acceptedFile":"Please choose pik or csv file format",
-        "NewWindow":"New window"
+        "NewWindow":"New window",
+        "contact":"Contact",
+        "message_ver":"The current version of WebDan does not support roads (beta version)"
     },
     "login-dialog":{
         "createAccount":"Creat account",
@@ -101,7 +103,9 @@
         "allowable_stress_method":"allowable stress method",
         "adopt":"Adopt a rebar placement method that reduces shear capacity in a circular section",
         "note_img": "※ The numbers in [] correspond to the numbers in the table below (combination of actions).",
-        "noti_section_force":"No 'Basic Data' input is required for 'Cross Sectional Force' mode."
+        "noti_section_force":"No 'Basic Data' input is required for 'Cross Sectional Force' mode.",
+        "study_edge_str":"Studying edge stress",
+        "per_act":"Permanent action"
     },
     "basic-information-road":{
         "bs_dcp_of_is": "Durability Corrosion protection of internal steel [1]",
@@ -137,16 +141,20 @@
         "shape":"Shape",
         "rectangle":"Rectangle",
         "t_shape":"T shape",
-        "r_shape":"Round,Circle",
+        "r_shape":"Circle, Ring",
         "oval":"oval",
-        "circle":"Round/Circle",
+        "circle":"Circle/Ring",
         "m_no":"Member\nNo",
-        "m_len":"Distance",
+        "m_len":"Distance\n(m)",
         "g_no":"Group No",
         "g_name":"Part name",
         "section":"Cross section (mm)",
         "part_n":"Number of parts",
-        "group": "Group No. in \"Member/Cross Section\" is blank"
+        "group": "Group No. in \"Member/Cross Section\" is blank",
+        "c_circle": "Circle",
+        "ring": "Ring",
+        "v_oval": "Vertical oval",
+        "h_oval": "Horizontal oval"
     },
     "section-forces":{
         "b_check":"Bending check",
@@ -160,38 +168,42 @@
         "s_len":"Shear span length (mm)",
         "m_no":"Member\nNo",
         "p_id":"Calculation point",
-        "position":"Position",
+        "position":"Position\n(m)",
         "b_check":"Bending check",
         "s_check":"Shear check",
         "t_check":"Torsion check",
         "y_around":"Around y-axis",
         "z_around":"Around z-axis",
         "y_direction":"y-axis direction",
-        "z_direction":"z-axis direction"
+        "z_direction":"z-axis direction",
+        "check_target":"Check target axis",
+        "upper_side":"Upper side tension check",
+        "lower_side":"Lower side tension check"
     },
     "bars":{
         "m_no":"Member\nNo",
-        "position":"Position",
+        "position":"Position\n(m)",
+        "position_":"Position",
         "p_name":"Calculated point name",
-        "bh":"Section\nB\nH",
-        "haunch":"Haunch height",
+        "bh":"Section\nB\nH\n(mm)",
+        "haunch":"Haunch height\n(mm)",
         "bending":"Bending",
         "shear":"Shear",
         "rebar_ax":"Axial rebar",
-        "dia":"Reinforcing bar diameter",
+        "dia":"Reinforcing bar diameter\n(mm)",
         "number":"Number",
-        "cover":"Cover\n1st cut",
+        "cover":"Cover\n1st cut\n(mm)",
         "lines":"Number of lines",
-        "space":"Space",
-        "ss":"Interval",
+        "space":"Space\n(mm)",
+        "ss":"Interval\n(mm)",
         "rebar_la":"Lateral rebar",
         "pieces":"Pieces",
         "rebar_sh":"Shear reinforcement rebar",
         "rebar_ob":"Oblique ratio of main reinforcing bar",
         "rebar_fo":"Folded rebar",
-        "angle":"Angle",
+        "angle":"Angle\n(°)",
         "process":"Process",
-        "tp":"Top position",
+        "tp":"Top position\n(mm)",
         "tp_side":"Top position side cover"
     },
     "steels":{
@@ -215,19 +227,23 @@
         "cor":"Corrosive",
         "es_cor":"Especially severe corrosiveness",
         "m_no":"Member\nNo",
-        "position":"Position",
+        "position":"Position\n(m)",
         "p_name":"Calculated point name",
         "top":"Upper side",
         "under":"Lower side",
         "shear":"Shear",
-        "crack":"Crack εcsd",
+        "crack":"Crack εcsd\n(x10^-6)",
         "shear_kr":"Shear kr",
         "exterior":"Exterior",
-        "JRTT05": "Don't omit"
+        "JRTT05": "Don't omit",
+        "dry":"Dry",
+        "dry_wet_cyc":"Dry wet cycle",
+        "wet":"Wet",
+        "water":"Water exposure"
     },
     "shear-strength":{
         "m_no":"Member\nNo",
-        "position":"Position",
+        "position":"Position\n(m)",
         "p_name":"Calculated point name",
         "s_len":"Shear span length (mm)",
         "s_len_a":"Shear span length\n a(mm)",
@@ -240,9 +256,10 @@
     "fatigues":{
         "durable":"Durable life",
         "m_no":"Member\nNo",
-        "position":"Position",
+        "position":"Position\n(m)",
+        "position_":"Position",
         "p_name":"Calculated point name",
-        "bh":"Section\nB\nH",
+        "bh":"Section\nB\nH\n(mm)",
         "for_b":"For bending",
         "d_r2":"Double track correction r2",
         "b_r1":"Bending r1",
@@ -301,7 +318,7 @@
         "cs":"Compressive strength",
         "as":"Adhesion strength",
         "young":"Young's modulus",
-        "rebar_ax":"Axial rebar",
+        "rebar_ax":"Axial rebar (including bent reinforcement)",
         "rebar_la":"Lateral rebar",
         "stirrup":"Stirrup",
         "tys":"Tensile yield strength",
@@ -313,10 +330,10 @@
         "s_safe":"Shear factor of safety",
         "t_safe":"Torsion factor of safety",
         "γi":"Coefficient γi",
-        "ys":"Yield strength",
+        "ys":"Yield strength\n(N/mm2)",
         "d25":"D25 or less",
         "d29":"D29 and above",
-        "dts":"Design tensile strength",
+        "dts":"Tensile strength\n(N/mm2)",
         "d_u":"Durability, usability",
         "safe_ff":"Safety (fatigue fracture)",
         "safe_d":"Safety (destruction)",
@@ -328,7 +345,9 @@
         "muddy_less":"Muddy water specific density 1.04 or less",
         "natural_less":"Natural muddy water, muddy water specific density 1.10 or less",
         "bentonite":"Bentonite muddy water",
-        "aerial":"Aerial construction"
+        "aerial":"Aerial construction",
+        "rbmt":"Reinforcing bar material type",
+        "av":"Arbitrary value"
     },
     "calculation-print":{
         "dc":"Design condition",
@@ -336,8 +355,12 @@
         "p_check":"Performance check",
         "safety_ratio":"Safety ratio list",
         "check":"Check",
-        "axis_maxmin":"Axis force max/min",
+        "axis_maxmin":"Consideration of axial force",
         "consider":"Consider",
+        "notconsider":"Don't consider",
+        "option1":"Also inspect maximum and minimum axial forces",
+        "option2":"Consider only tension (negative values)",
+        "option3":"When calculating βn for shear strength, Mud does not consider axial forces",
         "bend":"Bending",
         "shear":"Shear",
         "twist":"Twist",
@@ -346,7 +369,8 @@
         "preparing":"Printing...",
         "download":"Summary download",
         "downloading": "Downloading",
-        "p_login":"Please login"
+        "p_login":"Please login",
+        "judgement": "Judgement value list"
     },
     "section-force-list":{
         "m_no":"Member\nNo",
@@ -564,7 +588,8 @@
     "modal": {
         "close": "Close",
         "cancel": "Cancel",
-        "ok": "OK"
+        "ok": "OK",       
+        "updateMessage": "Update is available.\nDo you want to reboot to perform the update?\nIf you choose to cancel, the application will be automatically updated after it is closed."
     },
     "window": {
         "closeTitle": "Confirm",
@@ -576,5 +601,14 @@
         "paste": "Paste",
         "undo": "Undo",
         "cut": "Cut"
-    }
+    },
+    "modal_preview":{
+        "Rectangle": "Rectangle",
+        "TShape": "T shape",
+        "Circle": "Circle",
+        "Ring": "Ring",
+        "HorizontalOval": "Horizontal Oval",
+        "VerticalOval": "Vertical Oval",
+        "CircleRing": "Circle・Ring"
+    }    
 }

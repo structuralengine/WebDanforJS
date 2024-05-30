@@ -53,6 +53,9 @@ import { CrackSettingsComponent } from "./components/crack/crack-settings.compon
 import { CalculationPrintComponent } from "./components/calculation-print/calculation-print.component";
 import { SheetComponent } from "./components/sheet/sheet.component";
 
+import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from "src/environments/environment";
 
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
@@ -72,6 +75,7 @@ import {MultiWindowConfig, MultiWindowModule, WindowSaveStrategy} from 'ngx-mult
 import { DurabilityDataComponent } from "./components/durability-data/durability-data.component";
 import { InputMaterialStrengthVerificationConditionService } from "./components/material-strength-verification-conditions/material-strength-verification-conditions.service";
 import { MaterialStrengthVerificationConditionComponent } from "./components/material-strength-verification-conditions/material-strength-verification-conditions.component";
+import { ModalPreview } from "./components/modal-preview/modal-preview.component";
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
   new TranslateHttpLoader(http, "./assets/i18n/", ".json");
@@ -111,9 +115,9 @@ function initializeKeycloak(keycloak: KeycloakService) {
         NgbModule,
         NgxPrintModule,
         KeycloakAngularModule,
-        // provideFirebaseApp(() => initializeApp(environment.firebase)),
-        // provideAuth(() => getAuth()),
-        // provideFirestore(() => getFirestore()),
+        provideFirebaseApp(() => initializeApp(environment.firebase)),
+        provideAuth(() => getAuth()),
+        provideFirestore(() => getFirestore()),
         DataHelperModule,
         TranslateModule.forRoot({
             loader: {
@@ -152,6 +156,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         ShearComponent,
         ActivateSessionComponent,
         PreviewExcelComponent,
+        ModalPreview,
     ],
     providers: [
         MenuService,

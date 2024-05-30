@@ -144,7 +144,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         align: 'center', dataType: 'float', dataIndx: 'bh', editable: false, frozen: true, sortable: false, width: 85, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
       },
       {
-        title: this.translate.instant("fatigues.position"),
+        title: this.translate.instant("fatigues.position_"),
         align: 'center', dataType: 'string', dataIndx: 'design_point_id', editable: false, frozen: true, sortable: false, width: 40, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
       },
       {

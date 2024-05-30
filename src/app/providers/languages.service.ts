@@ -21,10 +21,10 @@ export class LanguagesService {
     public electronService: ElectronService,
   ) {
 
-    // if(translate.getBrowserLang() in this.languageIndex)
-    //   this.browserLang = translate.getBrowserLang();
-    // else
-    //   this.browserLang = this.default_lang;
+    if(translate.getBrowserLang() in this.languageIndex)
+      this.browserLang = translate.getBrowserLang();
+    else
+      this.browserLang = this.translate.currentLang;
 
     // console.log("BROWSER LANG: ", this.browserLang);
     // translate.use(this.browserLang);
