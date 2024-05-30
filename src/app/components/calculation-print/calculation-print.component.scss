@@ -4,7 +4,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     // max-height: 600px;
-    height: 100vh;
+    height: 90vh;
 }
 
 .c-contentsArea {
@@ -13,12 +13,13 @@
 
 .download-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     row-gap: 16px;
-    overflow:scroll;
-    overflow-x: hidden;
-    overflow-y: auto;
-    max-height: 50%;
+    // overflow:scroll;
+    // overflow-x: hidden;
+    // overflow-y: auto;
+    // max-height: 50%;
+    height: 100%;
     .download-items {
         display: flex;
         flex-direction: row;
