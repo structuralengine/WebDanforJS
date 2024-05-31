@@ -1,9 +1,16 @@
 <div class="c-subNavArea">
   <nav>
     <ul class="c-subNavArea__nav">
-      <li class="c-subNavArea__navItem" *ngFor="let groupe of groupe_name; index as i">
-        <a (click)="activePageChenge(i, groupe)" id="saf{{i}}" class="c-subNavArea__navItemTitle">
-          <span>{{groupe.name}}</span>
+      <li
+        class="c-subNavArea__navItem"
+        *ngFor="let groupe of groupe_name; index as i"
+      >
+        <a
+          (click)="activePageChenge(i, groupe)"
+          id="saf{{ i }}"
+          class="c-subNavArea__navItemTitle"
+        >
+          <span>{{ groupe.name }}</span>
         </a>
       </li>
     </ul>
@@ -12,25 +19,123 @@
 
 <div class="tabContent">
   <ul class="tab-select-items">
-    <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rsb_con'}" (click)="setActiveTab('rsb_con')"
-      translate>safety-factors-material-strengths.rsb_con</li>
+    <li
+      class="tab-select-item"
+      [ngClass]="{ 'is-active': activeTab === 'rsb_con' }"
+      (click)="setActiveTab('rsb_con')"
+      translate
+    >
+      safety-factors-material-strengths.rsb_con
+    </li>
     <!-- <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'steel'}" (click)="setActiveTab('steel')" translate>safety-factors-material-strengths.steel</li> -->
-    <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'pile'}" (click)="setActiveTab('pile')"
-      translate>safety-factors-material-strengths.pile</li>
+    <li
+      class="tab-select-item"
+      [ngClass]="{ 'is-active': activeTab === 'pile' }"
+      (click)="setActiveTab('pile')"
+      translate
+    >
+      safety-factors-material-strengths.pile
+    </li>
   </ul>
 
   <div class="download-item">
     <legend translate>calculation-print.axis_maxmin</legend>
-    <div>
-      <label class="checkbox-container">
-        <input type="checkbox" name="calculate_moment" class="checkbox-input" (click)="changeButton($event)"
-          [value]="consider_moment_checked" [(ngModel)]="consider_moment_checked" [checked]="consider_moment_checked" />
-        <span translate class="checkbox-parts">calculation-print.consider</span>
-      </label>
+    <div class="download-item-content">
+      <div class="checkbox-consider">
+        <label class="checkbox-container">
+          <input
+            id="consider"
+            type="checkbox"
+            name="calculate_moment"
+            class="checkbox-input"
+            (click)="changeButton($event)"
+            [value]="consider_moment_checked"
+            [(ngModel)]="consider_moment_checked"
+            [checked]="consider_moment_checked" 
+            [ngModelOptions]="{standalone: true}"
+          />
+          <span translate class="checkbox-parts" style="width: 180px"
+            >calculation-print.consider</span
+          >
+        </label>
+        <label class="checkbox-container">
+          <input
+            id="not_consider"
+            type="checkbox"
+            name="calculate_moment"
+            class="checkbox-input"
+            (click)="changeButton($event)"
+            [(ngModel)]="not_consider_moment_checked"
+            [checked]="not_consider_moment_checked"
+            [value]="not_consider_moment_checked" 
+            [ngModelOptions]="{standalone: true}"
+          />
+          <span translate class="checkbox-parts"
+            >calculation-print.notconsider</span
+          >
+        </label>
+      </div>
+      <div *ngIf="showOption" class="checkbox-condition">
+        <label class="checkbox-container" *ngIf="!isManual()">
+          <input          
+            id="1"  
+            type="checkbox"
+            name="calculate_moment"
+            class="checkbox-input"
+            (click)="changeOption($event)"
+            [(ngModel)]="opt_max_min"
+            [checked]="opt_max_min"
+            [value]="opt_max_min"
+            [disabled]="considerMomentChecked"
+          />
+          <span translate class="checkbox-parts" style="width: 475px"
+            >calculation-print.option1</span
+          >
+        </label>
+        <label class="checkbox-container">
+          <input
+            id="2" 
+            type="checkbox"
+            name="calculate_moment"
+            class="checkbox-input"
+            (click)="changeOption($event)"
+            [disabled]="considerMomentChecked"
+            [(ngModel)]="opt_tens_only"
+            [checked]="opt_tens_only"
+            [value]="opt_tens_only"
+          />
+          <span translate class="checkbox-parts" style="width: 475px"
+            >calculation-print.option2</span
+          >
+        </label>
+        <label
+          class="checkbox-container"
+          *ngIf="checkedRadioValue < 3"
+        >
+          <input
+            id="3" 
+            type="checkbox"
+            name="calculate_moment"
+            class="checkbox-input"
+            (click)="changeOption($event)"
+            [disabled]="considerMomentChecked"
+            [(ngModel)]="opt_no_for_v"           
+            [checked]="opt_no_for_v"
+            [value]="opt_no_for_v"
+          />
+          <span translate class="checkbox-parts" style="width: 575px"
+            >calculation-print.option3</span
+          >
+        </label>
+      </div>
     </div>
   </div>
   <div class="tab-inner">
-    <div class="item-container" *ngIf="activeTab === 'rsb_con'" [ngClass]="{'hide': activeTab !== 'rsb_con'}">
+    <div
+      class="item-container"
+      *ngIf="activeTab === 'rsb_con'"
+      [ngClass]="{ hide: activeTab !== 'rsb_con' }"
+    >
       <div class="safety-factors">
         <h5 translate>safety-factors-material-strengths.safe</h5>
         <div class="table-container">
@@ -50,7 +155,11 @@
       </div>
     </div>
 
-    <div class="item-container" *ngIf="activeTab === 'steel'" [ngClass]="{'hide': activeTab !== 'steel'}">
+    <div
+      class="item-container"
+      *ngIf="activeTab === 'steel'"
+      [ngClass]="{ hide: activeTab !== 'steel' }"
+    >
       <div class="safety-factors">
         <h5 translate>safety-factors-material-strengths.safe</h5>
         <div class="table-container">
@@ -66,7 +175,11 @@
       </div>
     </div>
 
-    <div class="item-container" *ngIf="activeTab === 'pile'"  [ngClass]="{'hide': activeTab !== 'pile'}">
+    <div
+      class="item-container"
+      *ngIf="activeTab === 'pile'"
+      [ngClass]="{ hide: activeTab !== 'pile' }"
+    >
       <div class="pile-factors">
         <h5 translate>safety-factors-material-strengths.pile</h5>
         <table>
@@ -98,14 +211,21 @@
             <ng-container *ngFor="let item of options6; index as i">
               <tr>
                 <td width="20px">
-                  <input type="radio" name="pile_factor" id="pile_factor{{i}}" [(ngModel)]="pile_factor_select_id"
-                    [value]="item.id" [checked]="item.selected" (change)="setPileFactor(i)" />
+                  <input
+                    type="radio"
+                    name="pile_factor"
+                    id="pile_factor{{ i }}"
+                    [(ngModel)]="pile_factor_select_id"
+                    [value]="item.id"
+                    [checked]="item.selected"
+                    (change)="setPileFactor(i)"
+                  />
                 </td>
-                <td style="text-align: left" width="200px">{{item.title}}</td>
-                <td>{{item.rfck.toFixed(2)}}</td>
-                <td>{{item.rfbok.toFixed(2)}}</td>
-                <td>{{item.rEc.toFixed(2)}}</td>
-                <td>{{item.rVcd.toFixed(2)}}</td>
+                <td style="text-align: left" width="200px">{{ item.title }}</td>
+                <td>{{ item.rfck.toFixed(2) }}</td>
+                <td>{{ item.rfbok.toFixed(2) }}</td>
+                <td>{{ item.rEc.toFixed(2) }}</td>
+                <td>{{ item.rVcd.toFixed(2) }}</td>
               </tr>
             </ng-container>
           </tbody>
@@ -113,5 +233,4 @@
       </div>
     </div>
   </div>
-
 </div>

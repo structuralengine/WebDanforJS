@@ -99,13 +99,15 @@ export class InputMembersService {
       g_no: null,
       g_id: '',
       g_name: '',
-      g_type: undefined, //set g-Type == undefined
+      // g_type: undefined, //set g-Type == undefined
       shape: 0,
       B: null,
       H: null,
       Bt: null,
       t: null,
-      n: null
+      n: null,
+      c_type: 1,
+      vo_type: 2
     };
   }
 
@@ -267,7 +269,7 @@ export class InputMembersService {
 
     //check if user enter new_shapeId : keyShapeId. If not, it will be read from the file
     if(!keyShapeId)
-    {
+      {
       switch (Number(member.shape)) {
         case 1:
         case 2:
@@ -305,7 +307,7 @@ export class InputMembersService {
     let key_ = key.trim();
     for (let shape_id = 1; 6 >= shape_id; shape_id++) {
       if (-1 != this.shape_names_new[shape_id].indexOf(key_))
-       return shape_id;
+        return shape_id;
     }
     return 0;
   }
@@ -509,59 +511,68 @@ export class InputMembersService {
     for (const m of members) {
       const def = this.default_member(m.m_no);
       for (const k of Object.keys(def)) {
+        if (k === "c_type" && m["c_type"] === null) {
+          m["c_type"] = 1
+        }
+        if (k === "vo_type" && m["vo_type"] === null) {
+          m["vo_type"] = 2
+        }
         if (k in m) {
           def[k] = m[k];
         }
       }
-      this.setGType(def, m.g_type);
+      // this.setGType(def, m.g_type);
+      // this.setGType(def);
       this.member_list.push(def)
     }
   }
 
 
   //Set for g_type in member
-  public setGTypeForMembers() {
-    if (this.member_list && this.member_list.length > 0) {
-      this.member_list.forEach((m) => {
-        this.setGType(m);
-      });
-    }
-  }
+  // public setGTypeForMembers() {
+  //   if (this.member_list && this.member_list.length > 0) {
+  //     this.member_list.forEach((m) => {
+  //       this.setGType(m);
+  //     });
+  //   }
+  // }
 
   //Set for g_type in member
-  public setGType(member: any, gType?: any) {
-    if (member.g_id === undefined || member.g_id === "blank"){
-      member.g_type = null;
-      return;
-    }
-    if (gType === undefined || gType === null) {
-      const conditions_list = this.basicService.conditions_list;
-      var jr003 = conditions_list.find(e => e.id === "JR-003");
-      var jr005 = conditions_list.find(e => e.id === "JR-005");
-      // Circle
-      if (member.shape === 3) {
-        if (jr003.selected === false && jr005.selected === true) member.g_type = 1;
-        if (jr003.selected === true && jr005.selected === false) member.g_type = 2;
-        if (jr003.selected === false && jr005.selected === false) member.g_type = 3;
-      }
+  // public setGType(member: any, gType?: any) {
+  //   if (member.g_id === undefined || member.g_id === "blank"){
+  //     member.g_type = null;
+  //     return;
+  //   }
+  //   if (gType === undefined || gType === null) {
+  //     const conditions_list = this.basicService.conditions_list;
+  //     var jr003 = conditions_list.find(e => e.id === "JR-003");
+  //     var jr005 = conditions_list.find(e => e.id === "JR-005");
+  //     // Circle
+  //     if (member.shape === 3) {
+  //       if (jr003.selected === false && jr005.selected === true) member.g_type = 1;
+  //       if (jr003.selected === true && jr005.selected === false) member.g_type = 2;
+  //       if (jr003.selected === false && jr005.selected === false) member.g_type = 3;
+  //     }
 
-      // rectangle or t-shape
-      if (member.shape === 1 || member.shape === 2) {
-        member.g_type = null;
-      }
-      // oval
-      if (member.shape === 4) {
-        member.g_type = 1;
-      }
-    }
-    else {
-      member.g_type = gType;
-    }
-  }
+  //     // rectangle or t-shape
+  //     if (member.shape === 1 || member.shape === 2) {
+  //       member.g_type = null;
+  //     }
+  //     // oval
+  //     if (member.shape === 4) {
+  //       member.g_type = 1;
+  //     }
+  //   }
+  //   else {
+  //     member.g_type = gType;
+  //   }
+  // }
 
   public checkHideDesignCondition(members: any[]) {
     //true -> hide; false ->  show
-    let filterMembers = members.filter(member => member.shape === 3 && "g_type" in member);
+    let filterMembers = members.filter(member => member.shape === 3
+      // && "g_type" in member
+    );
     if (filterMembers == undefined || filterMembers.length === 0) return false;
     //check has multi group
     let gNos = filterMembers.map(member => member.g_id);
@@ -573,8 +584,9 @@ export class InputMembersService {
     let firstElement = filterMembers[0];
     filterMembers.forEach((val, i) => {
       if (i > 0 &&
-        val.g_no !== firstElement.g_no &&
-        val.g_type !== firstElement.g_type) {
+        val.g_no !== firstElement.g_no
+        // &&val.g_type !== firstElement.g_type
+      ) {
         hide = true
         return;
       }

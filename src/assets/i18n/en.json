@@ -16,7 +16,8 @@
         "open":"Please open",
         "acceptedFile":"Please choose pik or csv file format",
         "NewWindow":"New window",
-        "contact":"Contact"
+        "contact":"Contact",
+        "message_ver":"The current version of WebDan does not support roads (beta version)"
     },
     "login-dialog":{
         "createAccount":"Creat account",
@@ -174,7 +175,10 @@
         "y_around":"Around y-axis",
         "z_around":"Around z-axis",
         "y_direction":"y-axis direction",
-        "z_direction":"z-axis direction"
+        "z_direction":"z-axis direction",
+        "check_target":"Check target axis",
+        "upper_side":"Upper side tension check",
+        "lower_side":"Lower side tension check"
     },
     "bars":{
         "m_no":"Member\nNo",
@@ -351,8 +355,12 @@
         "p_check":"Performance check",
         "safety_ratio":"Safety ratio list",
         "check":"Check",
-        "axis_maxmin":"Axis force max/min",
+        "axis_maxmin":"Consideration of axial force",
         "consider":"Consider",
+        "notconsider":"Don't consider",
+        "option1":"Also inspect maximum and minimum axial forces",
+        "option2":"Consider only tension (negative values)",
+        "option3":"When calculating βn for shear strength, Mud does not consider axial forces",
         "bend":"Bending",
         "shear":"Shear",
         "twist":"Twist",
@@ -361,7 +369,8 @@
         "preparing":"Printing...",
         "download":"Summary download",
         "downloading": "Downloading",
-        "p_login":"Please login"
+        "p_login":"Please login",
+        "judgement": "Judgement value list"
     },
     "section-force-list":{
         "m_no":"Member\nNo",

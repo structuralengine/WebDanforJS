@@ -169,7 +169,7 @@ export class SaveDataService {
 
       this.basic.setPickUpData();
       this.members.setPickUpData(pickup1);
-      this.points.setPickUpData(pickup1);
+      this.points.setPickUpData(pickup1,mode);
       this.bars.setPickUpData();
       this.steel.setPickUpData();
       this.basic.setPickUpData();
@@ -294,7 +294,7 @@ export class SaveDataService {
       force: this.force.getSaveData(),
       // 計算印刷設定
       calc: this.calc.getSaveData(),
-      axis_max_min: this.safety.getAxisForceJson()
+      // axis_max_min: this.safety.getAxisForceJson()
     };
   }
 
@@ -337,7 +337,7 @@ export class SaveDataService {
     }
     // 着目点情報
     if ("points" in jsonData) {
-      this.points.setSaveData(jsonData.points);
+      this.points.setSaveData(jsonData.points,this.is3DPickUp(),this.isManual(),jsonData.bar);
     } else {
       this.points.clear();
     }
@@ -368,7 +368,11 @@ export class SaveDataService {
     }
     // 安全係数情報
     if ("safety" in jsonData) {
-      this.safety.setSaveData(jsonData.safety);
+      if ("axis_max_min" in jsonData){
+        this.safety.setSaveData(jsonData.safety, jsonData.axis_max_min);
+      }else{
+        this.safety.setSaveData(jsonData.safety);
+      }
       this.material.setSaveData(jsonData.safety);
     } else {
       this.safety.clear();
@@ -445,5 +449,25 @@ export class SaveDataService {
 
   public getBasicData(): any{
     return this.basic;
+  }
+
+  public checkVerFile(inputText: string) {
+    this.clear();
+    const jsonData: any = JSON.parse(inputText);
+    if ("basic" in jsonData) {
+      let specification1_list = jsonData.basic.specification1_list
+      let indexRoad = specification1_list.findIndex(data=> data.id === 2 )
+      if (indexRoad !== -1) {
+        if (specification1_list[indexRoad].selected) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
   }
 }
