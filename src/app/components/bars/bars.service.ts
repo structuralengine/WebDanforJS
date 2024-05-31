@@ -3,11 +3,13 @@ import { DataHelperModule } from '../../providers/data-helper.module';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
 import { TranslateService } from "@ngx-translate/core";
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InputBarsService {
+  public refreshShowHidden$ = new BehaviorSubject<any>({});
 
   // 鉄筋情報
   private bar_list: any[];
@@ -172,7 +174,7 @@ export class InputBarsService {
       rebar_space: null,
       rebar_ss: null,
       cos: null,
-      enable: true
+      // enable: true
     };
   }
 
@@ -253,7 +255,7 @@ export class InputBarsService {
           column1['rebar_space'] = data['rebar1'].rebar_space;
           column1['rebar_ss'] = data['rebar1'].rebar_ss;
           column1['cos'] = data['rebar1'].cos;
-          column1['enable'] = data['rebar1'].enable;
+          // column1['enable'] = data['rebar1'].enable;
 
           column1['side_dia'] = data['sidebar1'].side_dia;
           column1['side_n'] = data['sidebar1'].side_n;
@@ -285,7 +287,7 @@ export class InputBarsService {
           column2['rebar_space'] = data['rebar2'].rebar_space;
           column2['rebar_ss'] = data['rebar2'].rebar_ss;
           column2['cos'] = data['rebar2'].cos;
-          column2['enable'] = data['rebar2'].enable;
+          // column2['enable'] = data['rebar2'].enable;
           if("sidebar2" in data){ 
             column2['side_cover'] = data['sidebar2'].side_cover;
           }
@@ -409,7 +411,7 @@ export class InputBarsService {
       b.rebar1.rebar_space = column1.rebar_space;
       b.rebar1.rebar_ss = column1.rebar_ss;
       b.rebar1.cos = column1.cos;
-      b.rebar1.enable = column1.enable;
+      // b.rebar1.enable = column1.enable;
 
       b.rebar2.title = column2.design_point_id;
       b.rebar2.rebar_dia = column2.rebar_dia;
@@ -419,7 +421,7 @@ export class InputBarsService {
       b.rebar2.rebar_space = column2.rebar_space;
       b.rebar2.rebar_ss = column2.rebar_ss;
       b.rebar2.cos = column2.cos;
-      b.rebar2.enable = column2.enable;
+      // b.rebar2.enable = column2.enable;
 
       b.sidebar1.side_dia = column1.side_dia;
       b.sidebar1.side_n = column1.side_n;

@@ -15,6 +15,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
   private material_steel: any;
   private material_concrete: any;
   public pile_factor: any;
+  public axisforce_condition:any;
   public arrayAxis: any[]
   public arrayAxisBase: any[]
   public groupe_name: any[]
@@ -34,6 +35,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
     this.material_concrete = {};
     this.pile_factor = {};
     this.arrayAxis = new Array();
+    this.axisforce_condition = new Array();
+
   }
 
   // 材料強度情報
@@ -259,6 +262,16 @@ export class InputSafetyFactorsMaterialStrengthsService {
     }
     return result;
   }
+  
+  public default_axisforce_condition():any{
+    const result = {
+      used: true,
+      opt_max_min: false,
+      opt_tens_only: false,
+      opt_no_for_v: false
+    };
+    return result;
+  }
 
   // component で使う用
   // 部材グループ別に並べている
@@ -269,6 +282,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
     const material_steel = {};
     const material_concrete = {};
     const pile_factor = {};
+    const axisforce_condition = {}
 
     // グリッド用データの作成
     const groupe_list = this.members.getGroupeList();
@@ -282,6 +296,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
       const tmp_material_steel = this.default_material_steel();
       const tmp_material_concrete = this.default_material_concrete();
       const tmp_pile_factor = this.default_pile_factor();
+      const tmp_axisforce_condition = this.default_axisforce_condition()
 
       if (id in this.safety_factor) {
         const old_safety_factor = this.safety_factor[id];
@@ -348,11 +363,21 @@ export class InputSafetyFactorsMaterialStrengthsService {
           }
         }
       }
+      if (id in this.axisforce_condition) {
+        const old_axisforce_condition = this.axisforce_condition[id];
+        const tmp = tmp_axisforce_condition;
+        const old = old_axisforce_condition;
+          for (const key of Object.keys(tmp)) {
+            if (key in old)
+              tmp[key] = old[key]; 
+          }
+      }
       safety_factor[id] = tmp_safety_factor;
       material_bar[id] = tmp_material_bar
       material_steel[id] = tmp_material_steel;
       material_concrete[id] = tmp_material_concrete;
       pile_factor[id] = tmp_pile_factor;
+      axisforce_condition[id] = tmp_axisforce_condition
 
     }
     return {
@@ -361,7 +386,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
       material_bar,
       material_steel,
       material_concrete,
-      pile_factor
+      pile_factor,
+      axisforce_condition
     };
 
   }
@@ -449,18 +475,20 @@ export class InputSafetyFactorsMaterialStrengthsService {
       material_steel: this.material_steel,
       material_concrete: this.material_concrete,
       pile_factor: this.pile_factor,
+      axisforce_condition: this.axisforce_condition,
       component: this.material.getSaveData().component,
       verification: this.material.getSaveData().verification,
       other: this.material.getSaveData().other
     }
   }
 
-  public setSaveData(safety: any) {
+  public setSaveData(safety: any, axisMaxMin?:any) {
     this.safety_factor = safety.safety_factor,
     this.material_bar = safety.material_bar,
     //this.material_steel = safety.material_steel,
     this.material_concrete = safety.material_concrete,
-    this.pile_factor = safety.pile_factor
+    this.pile_factor = safety.pile_factor,
+      this.axisforce_condition = this.handleAxisforceCondition(safety, axisMaxMin)
   }
 
   public getGroupeName(i: number): string {
@@ -590,6 +618,41 @@ export class InputSafetyFactorsMaterialStrengthsService {
       return this.arrayAxis
     }
     else return this.arrayAxisBase;
+  }
+  public handleAxisforceCondition(safety: any, axisMaxMin:any=[]): any{
+  const groupe_list = this.members.getGroupeList();
+  const conditions_list = this.basic.conditions_list
+  let axisforce_condition:any={}
+  let indexJR4 = conditions_list.findIndex((data)=> data.id==="JR-004")
+  if(safety.axisforce_condition === undefined){
+    for( const groupe of groupe_list){
+      const first = groupe[0];
+      const id = first.g_id;
+      let temp = {
+        used: false,
+        opt_max_min: false,
+        opt_tens_only: false,
+        opt_no_for_v: false
+      };
+      axisforce_condition[id]= temp
+      axisforce_condition[id]["used"]= true
+      if(indexJR4 !== -1 && conditions_list[indexJR4].selected){
+        axisforce_condition[id]["opt_no_for_v"]= true
+      }else{
+        axisforce_condition[id]["opt_no_for_v"]= false
+      }
+      let indexMoment = axisMaxMin.length > 0 ? axisMaxMin.findIndex((data) => data.id === id) : -1
+      if(indexMoment !== -1 && axisMaxMin[indexMoment].consider_moment_checked
+      ){
+        axisforce_condition[id]["opt_max_min"]= true
+      }else{
+        axisforce_condition[id]["opt_max_min"]= false
+      }
+    }
+  }else{
+    axisforce_condition= safety["axisforce_condition"]
+  }
+    return axisforce_condition
   }
 }
 
