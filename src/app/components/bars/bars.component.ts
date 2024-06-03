@@ -27,6 +27,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   // private pileHeaders: object[] = new Array();
 
   public table_datas: any[];
+  public idTab: number;
   // タブのヘッダ名
   public groupe_name: string[];
   public style ={"pointer-events":"none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size":"0" }
@@ -249,86 +250,89 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
         },
         change: (evt, ui) => {
-          if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
-            const keys = Object.keys(ui.updateList[i].newRow);
+          var currentObj = ui.updateList[0].newRow;
+          let nextObj = this.table_datas[this.idTab][ui.updateList[0].rowIndx + 2];
+          Object.assign(nextObj,currentObj);
+          if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+            const keys = Object.keys(ui.updateList[0].newRow);
 
             keys.forEach((key) => {
               switch (key) {
                 case "rebar_dia":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell1,
                   };
                   break;
                 case "rebar_cover":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell2,
                   };
                   break;
                 case "rebar_lines":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell3,
                   };
                   break;
                 case "rebar_n":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell4,
                   };
                   break;
                 case "rebar_space":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell5,
                   };
                   break;
                 case "rebar_ss":
                   ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell6,
                   };
                   break;
                 case "side_dia":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell8,
                   };
                   break;
                 case "side_cover":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell7,
                   };
                   break;
                 case "side_n":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell9,
                   };
                   break;
                 case "side_ss":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell10,
                   };
                   break;
                 case "stirrup_dia":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell11,
                   };
                   break;
                 case "stirrup_n":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell12,
                   };
                   break;
                 case "stirrup_ss":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell13,
                   };
                   break;
@@ -367,7 +371,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.option_list.push(op);
     }
     this.options = this.option_list[0];
-
+    this.idTab = 0;
     // タブのタイトルとなる
     this.groupe_name = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
@@ -713,7 +717,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.setTitle(this.save.isManual());
     // this.option_list[id].colModel = this.beamHeaders
     this.activeButtons(id);
-    
+    this.idTab = id;
     this.options = this.option_list[id];
     this.grid.options = this.options;
     this.setActiveTab(this.activeTab);

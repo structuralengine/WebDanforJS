@@ -216,55 +216,55 @@ export class CrackSettingsComponent
           let nextObj = this.table_datas[this.idTab][ui.updateList[0].rowIndx + 1];
           
           Object.assign(nextObj, currentObj);
-          if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
-            const keys = Object.keys(ui.updateList[i].newRow);
+          if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+            const keys = Object.keys(ui.updateList[0].newRow);
             keys.forEach((key) => {
               switch (key) {
                 case "con_s":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell1,
                   };
                   break;
                 case "con_l":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell2,
                   };
                   break;
                 case "con_u":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell3,
                   };
                   break;
                 case "ecsd_l":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell4,
                   };
                   break;
                 case "kr":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell5,
                   };
                   break;
                 case "k4":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell6,
                   };
                   break;
                 case "extend":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell7,
                   };
                   break;
                 case "ecsd_u":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[i].rowData.pq_cellstyle,
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
                     ...this.cell8,
                   };
                   break;
