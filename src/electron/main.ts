@@ -13,7 +13,7 @@ let arg_path: string = null;
 autoUpdater.autoDownload = false
 async function createWindow() {
   check = -1;
-  log.info("check install k", check);
+  // log.info("check install k", check);
   mainWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
@@ -152,6 +152,7 @@ ipcMain.on('open', (event: Electron.IpcMainEvent) => {
         path: path,
         text
       };
+      arg_path = null
     } catch (error) {
       event.returnValue = { status: false, message: error.message };
     }
