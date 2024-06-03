@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:dev": "concurrently \"ng build --delete-output-path=false --watch\" \"webpack --config webpack.electron.dev.config.js --watch\"",
-    "start:dev": "electron dist/shell.js",
+    "start:dev": "electron dist/shell.js \"D:/DuongTuanAnh/Test File/Test File/Test File/WebDan/task262/Test_2D.wdj\"",
     "electron:windows": "npm run build:prod && npx electron-builder build --windows",
     "build:prod": "ng build --configuration production --optimization --extract-licenses --build-optimizer && webpack --config webpack.electron.prod.config.js && npm run filecopy1 && npm run filecopy2",
     "start:prod": "electron dist/index.js",
