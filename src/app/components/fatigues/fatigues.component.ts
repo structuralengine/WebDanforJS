@@ -26,6 +26,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = new Array();
+  public idTab: number;
 
   public table_datas: any[];
   // タブのヘッダ名
@@ -269,6 +270,10 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         },
         change :(event,ui)=>{
+          var currentObj = ui.updateList[0].newRow;
+          let nextObj = this.table_datas[this.idTab][ui.updateList[0].rowIndx + 1];
+          
+          Object.assign(nextObj, currentObj);
               if (ui.updateList[i].oldRow !== ui.updateList[i].newRow) {
                 const keys = Object.keys(ui.updateList[i].newRow);
                 keys.forEach((key) =>{
@@ -354,6 +359,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       this.option_list.push(op);
     }
     this.options = this.option_list[0];
+    this.idTab = 0;
 
     // タブのタイトルとなる
     this.groupe_name = new Array();
@@ -531,7 +537,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public activePageChenge(id: number): void {
     this.activeButtons(id);
-
+    this.idTab = id;
     this.options = this.option_list[id];
     this.grid.options = this.options;
     this.grid.refreshDataAndView();
