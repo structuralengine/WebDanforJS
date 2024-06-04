@@ -529,7 +529,19 @@ export class SafetyFactorsMaterialStrengthsComponent
  
   private setTitle(): void {
     this.columnHeaders1 = [
+      
       { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' } },
+      {
+        // title: this.translate.instant("shear-strength.fixed_end"),
+        titles: "new check",
+        align: "center",
+        dataType: "bool",
+        // dataIndx: "fixed_end",
+        type: "checkbox",
+        sortable: false,
+        width: 70,
+        nodrag: true,
+      },
       {
         title: this.translate.instant("safety-factors-material-strengths.b_safe"),
         align: 'center', colModel: [
