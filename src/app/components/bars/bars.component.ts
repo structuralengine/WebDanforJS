@@ -263,9 +263,18 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
           // Loop through each item in the array starting from startIndex and assign properties from currentObj
           for (let i = startIndex; i < this.table_datas[this.idTab].length; i++) {
+            
             // Merge currentObj properties into each item
             if ((i - startIndex) % 2 === 0) {
               continue;
+            }
+            const item = this.table_datas[this.idTab][i];
+
+            // Check if the item has the pq_cellstyle property and if it has any property with "color": "white"
+            const itemHasPqCellStyleWithWhiteColor = item.hasOwnProperty('pq_cellstyle') && Object.values(item.pq_cellstyle).some((obj:any) => obj.color === "white");
+            // If the item has pq_cellstyle with "color": "white", skip the assignment
+            if (itemHasPqCellStyleWithWhiteColor) {
+                continue;
             }
             Object.assign(this.table_datas[this.idTab][i], currentObj);
           }
