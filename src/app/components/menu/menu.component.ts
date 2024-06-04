@@ -37,6 +37,8 @@ import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
 import { InputCrackSettingsService } from "../crack/crack-settings.service";
+import { InputBarsService } from "../bars/bars.service";
+import { ShearStrengthService } from "../shear/shear-strength.service";
 
 @Component({
   selector: "app-menu",
@@ -53,6 +55,7 @@ export class MenuComponent implements OnInit {
   public train_A_count: number;
   public train_B_count: number;
   public service_life: number;
+  public showIcon:boolean = false
 
 
   @ViewChild('grid1') grid1: SheetComponent;
@@ -82,6 +85,7 @@ export class MenuComponent implements OnInit {
   public windows: KnownAppWindow[] = [];
   public logs: string[] = [];
   public hideDCJ3_J5: boolean = false;
+  public firstCondition: any;
 
   constructor(
     private modalService: NgbModal,
@@ -99,13 +103,15 @@ export class MenuComponent implements OnInit {
     private fatigues: InputFatiguesService,
     private menuBehaviorSubject: MenuBehaviorSubject,
     private crack: InputCrackSettingsService,
+    private shear: ShearStrengthService,
     // public auth: Auth,
     public language: LanguagesService,
     public electronService: ElectronService,
     private translate: TranslateService,
     private elementRef: ElementRef,
     private readonly keycloak: KeycloakService,
-    private multiWindowService: MultiWindowService
+    private multiWindowService: MultiWindowService,
+    private bars:InputBarsService
   ) {
     // this.auth = getAuth();
     this.fileName = "";
@@ -121,6 +127,9 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    if (this.conditions_list.length > 0) {
+      this.firstCondition = this.conditions_list[0];
+    } 
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -228,7 +237,14 @@ export class MenuComponent implements OnInit {
           }
           break;
         default:
-          this.save.readInputData(response.text);
+          if (this.save.checkVerFile(response.text)) {
+            this.showIcon = false
+            this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
+            this.helper.alert(this.translate.instant("menu.message_ver"));
+          } else {
+            this.showIcon = true
+            this.save.readInputData(response.text);
+          }
           this.open_done(modalRef);
       }
     }, 10);
@@ -264,13 +280,20 @@ export class MenuComponent implements OnInit {
           .then((text) => {
             //Check to hide design condition
             this.hideDCJ3_J5 = this.save.hideDC(text);
-
+            
             //Read file
-            this.save.readInputData(text);
-            let basicFile = this.save.getBasicData();
-            this.specification1_list_file = basicFile.specification1_list;
-            this.basic.set_specification1_data_file(this.specification1_list_file);
-            this.specification2_list = basicFile.specification2_list
+            if (this.save.checkVerFile(text)){
+              this.showIcon = false
+              this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
+              this.helper.alert(this.translate.instant("menu.message_ver"));
+            }else{
+              this.showIcon = true
+              this.save.readInputData(text);
+              let basicFile = this.save.getBasicData();
+              this.specification1_list_file = basicFile.specification1_list;
+              this.basic.set_specification1_data_file(this.specification1_list_file);
+              this.specification2_list = basicFile.specification2_list
+            }
             this.open_done(modalRef);
           })
           .catch((err) => {
@@ -471,10 +494,13 @@ export class MenuComponent implements OnInit {
 
   /// 仕様 変更時の処理
   public setSpecification2(id: number): void {
+    this.menuService.setCheckedRadio(id);
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
-    this.crack.refreshTitle$.next({})
+    this.bars.refreshShowHidden$.next({})
+    this.crack.refreshTitle$.next({});
+    this.shear.refreshTable$.next({})
     this.basic.setPreSpecification2(this.specification1_select_id, this.specification2_list);
   }
 

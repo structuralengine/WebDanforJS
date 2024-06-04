@@ -105,7 +105,9 @@ export class InputMembersService {
       H: null,
       Bt: null,
       t: null,
-      n: null
+      n: null,
+      c_type: 1,
+      vo_type: 2
     };
   }
 
@@ -267,7 +269,7 @@ export class InputMembersService {
 
     //check if user enter new_shapeId : keyShapeId. If not, it will be read from the file
     if(!keyShapeId)
-    {
+      {
       switch (Number(member.shape)) {
         case 1:
         case 2:
@@ -305,7 +307,7 @@ export class InputMembersService {
     let key_ = key.trim();
     for (let shape_id = 1; 6 >= shape_id; shape_id++) {
       if (-1 != this.shape_names_new[shape_id].indexOf(key_))
-       return shape_id;
+        return shape_id;
     }
     return 0;
   }
@@ -509,6 +511,12 @@ export class InputMembersService {
     for (const m of members) {
       const def = this.default_member(m.m_no);
       for (const k of Object.keys(def)) {
+        if (k === "c_type" && m["c_type"] === null) {
+          m["c_type"] = 1
+        }
+        if (k === "vo_type" && m["vo_type"] === null) {
+          m["vo_type"] = 2
+        }
         if (k in m) {
           def[k] = m[k];
         }
@@ -562,7 +570,7 @@ export class InputMembersService {
 
   public checkHideDesignCondition(members: any[]) {
     //true -> hide; false ->  show
-    let filterMembers = members.filter(member => member.shape === 3 
+    let filterMembers = members.filter(member => member.shape === 3
       // && "g_type" in member
     );
     if (filterMembers == undefined || filterMembers.length === 0) return false;
@@ -576,7 +584,7 @@ export class InputMembersService {
     let firstElement = filterMembers[0];
     filterMembers.forEach((val, i) => {
       if (i > 0 &&
-        val.g_no !== firstElement.g_no 
+        val.g_no !== firstElement.g_no
         // &&val.g_type !== firstElement.g_type
       ) {
         hide = true
