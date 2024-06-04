@@ -559,6 +559,137 @@ export class ThreeNodeService {
     return arr;
   }
 
+  createDemoTShape() {
+    this.createTShape(650 / this.scale, 850 / this.scale, 400 / this.scale, 200 / this.scale, 0xb9b9b9)
+    this.createLineRectangle(400 / this.scale, 850 / this.scale, 20 / this.scale, 0x333D46)
+    this.scene.render()
+  }
+  createTShape(bt: any, h: any, b: any, t: any, color: any) {
+    const materialPlane = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
+    let geometry1: any = new THREE.PlaneGeometry(bt, t);
+    const plane1 = new THREE.Mesh(geometry1, materialPlane);
+    plane1.position.set(0, Math.abs(h / 2 - t / 2), 0);
+
+    let geometry2: any = new THREE.PlaneGeometry(b, h - t);
+    const plane2 = new THREE.Mesh(geometry2, materialPlane);
+    plane2.position.set(0, -t / 2, 0);
+
+    this.scene.add(plane1);
+    this.scene.add(plane2);
+  }
+
+  createDemoRectangle() {
+    this.createRectangle(450 / this.scale, 700 / this.scale, 0xb9b9b9)
+    this.createLineRectangle(450 / this.scale, 700 / this.scale, 20 / this.scale, 0x333D46)
+    this.scene.render()
+  }
+  createRectangle(b: any, h: any, color: any) {
+    let geometry: any = new THREE.PlaneGeometry(b, h);
+    const materialPlane = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
+    const plane = new THREE.Mesh(geometry, materialPlane);
+    plane.position.set(0, 0, 0);
+    this.scene.add(plane);
+  }
+  createLineRectangle(b: any, h: any, ranger: any, color: any,) {
+    const material = new THREE.LineBasicMaterial({ color: color })
+    let pointsLine1: any = []
+    let pointsLine2: any = []
+    let pointsLine3: any = []
+    let pointsLine4: any = []
+
+    let line1: any
+    let line2: any
+    let line3: any
+    let line4: any
+
+    let curve1: any
+    let curve2: any
+    let curve3: any
+    let curve4: any
+
+    let ellipse1: any
+    let ellipse2: any
+    let ellipse3: any
+    let ellipse4: any
+
+    curve1 = new THREE.EllipseCurve(
+      b / 2 - 2 * ranger, h / 2 - 2 * ranger,
+      ranger, ranger,
+      0, Math.PI / 2,
+      false,
+      0
+    );
+    ellipse1 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve1.getPoints(100)), material);
+
+    curve2 = new THREE.EllipseCurve(
+      -Math.abs(b / 2 - 2 * ranger), h / 2 - 2 * ranger,
+      ranger, ranger,
+      Math.PI / 2, Math.PI,
+      false,
+      0
+    );
+    ellipse2 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve2.getPoints(100)), material);
+
+    curve3 = new THREE.EllipseCurve(
+      -Math.abs(b / 2 - 2 * ranger), -Math.abs(h / 2 - 2 * ranger),
+      ranger, ranger,
+      Math.PI, 3 * Math.PI / 2,
+      false,
+      0
+    );
+    ellipse3 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve3.getPoints(100)), material);
+
+    curve4 = new THREE.EllipseCurve(
+      b / 2 - 2 * ranger, -Math.abs(h / 2 - 2 * ranger),
+      ranger, ranger,
+      3 * Math.PI / 2, 2 * Math.PI,
+      false,
+      0
+    );
+    ellipse4 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve4.getPoints(100)), material);
+
+    pointsLine1.push(new THREE.Vector3(Math.abs(b / 2 - 2 * ranger), Math.abs(h / 2 - ranger), 0));
+    pointsLine1.push(new THREE.Vector3(-Math.abs(b / 2 - 2 * ranger), Math.abs(h / 2 - ranger), 0));
+
+    pointsLine2.push(new THREE.Vector3(Math.abs(b / 2 - 2 * ranger), -Math.abs(h / 2 - ranger), 0));
+    pointsLine2.push(new THREE.Vector3(-Math.abs(b / 2 - 2 * ranger), -Math.abs(h / 2 - ranger), 0));
+
+    pointsLine3.push(new THREE.Vector3(-Math.abs(b / 2 - ranger), Math.abs(h / 2 - 2 * ranger), 0));
+    pointsLine3.push(new THREE.Vector3(-Math.abs(b / 2 - ranger), -Math.abs(h / 2 - 2 * ranger), 0));
+
+    pointsLine4.push(new THREE.Vector3(Math.abs(b / 2 - ranger), Math.abs(h / 2 - 2 * ranger), 0));
+    pointsLine4.push(new THREE.Vector3(Math.abs(b / 2 - ranger), -Math.abs(h / 2 - 2 * ranger), 0));
+
+    line1 = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(pointsLine1),
+      material
+    );
+
+    line2 = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(pointsLine2),
+      material
+    );
+
+    line3 = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(pointsLine3),
+      material
+    );
+
+    line4 = new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(pointsLine4),
+      material
+    );
+
+    this.scene.add(line1)
+    this.scene.add(line2)
+    this.scene.add(line3)
+    this.scene.add(line4)
+    this.scene.add(ellipse1);
+    this.scene.add(ellipse2);
+    this.scene.add(ellipse3);
+    this.scene.add(ellipse4);
+  }
+
   createDemoOval() {
     if (this.type === "Vertical") {
       this.createOval(450 / this.scale, 900 / this.scale, 0xb9b9b9, this.type);
@@ -672,7 +803,7 @@ export class ThreeNodeService {
     this.scene.add(line2)
   }
   createLineDashedOval(b: any, h: any, range: any, color: any, type) {
-    const material = new THREE.LineBasicMaterial({ color: color})
+    const material = new THREE.LineBasicMaterial({ color: color })
     const materialLine = new THREE.LineDashedMaterial({ color: color, dashSize: 1.5, gapSize: 1.5 })
 
     let pointsLine1: any = []
@@ -766,7 +897,7 @@ export class ThreeNodeService {
       materialLine
     );
     line1.computeLineDistances()
-    
+
     line2 = new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(pointsLine2),
       materialLine
@@ -778,37 +909,37 @@ export class ThreeNodeService {
 
     points3 = curve3.getPoints(100);
     ellipse3 = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(points3), material);
-   
+
     this.scene.add(ellipse1)
     this.scene.add(ellipse3)
     this.scene.add(line1)
     this.scene.add(line2)
   }
-  
-  createDemoCircleRing(){
-   if(this.type==="Circle"){
-     this.createCircleRing(0xb9b9b9, this.type, 750 / this.scale)
-   }else{
-     this.createCircleRing(0xb9b9b9, this.type, 750 / this.scale, 250 / this.scale)
-   }
+
+  createDemoCircleRing() {
+    if (this.type === "Circle") {
+      this.createCircleRing(0xb9b9b9, this.type, 750 / this.scale)
+    } else {
+      this.createCircleRing(0xb9b9b9, this.type, 750 / this.scale, 250 / this.scale)
+    }
     this.createLineCircleRing(0x333D46, 50 / this.scale, 750 / this.scale)
     this.createLineDashCircleRing(0x333D46, 60 / this.scale, 110 / this.scale, 750 / this.scale)
   }
-  createCircleRing(color: any, type: any, b: any, h?: any,){
-    const material = new THREE.MeshBasicMaterial({ color: color});
-    let geometry ;
-    let mesh 
+  createCircleRing(color: any, type: any, b: any, h?: any,) {
+    const material = new THREE.MeshBasicMaterial({ color: color });
+    let geometry;
+    let mesh
 
-    if (type ==="Circle"){
-      geometry = new THREE.CircleGeometry(b/2, 100)
-    }else{
-      geometry = new THREE.RingGeometry(h/2, b/2, 100)
+    if (type === "Circle") {
+      geometry = new THREE.CircleGeometry(b / 2, 100)
+    } else {
+      geometry = new THREE.RingGeometry(h / 2, b / 2, 100)
     }
     mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(0, 0, 0);
     this.scene.add(mesh);
   }
-  createLineCircleRing(color: any,range:any, b: any) {
+  createLineCircleRing(color: any, range: any, b: any) {
     const material = new THREE.LineBasicMaterial({ color: color })
 
     let points: any
@@ -818,18 +949,18 @@ export class ThreeNodeService {
     curve = new THREE.EllipseCurve(
       0, 0,
       Math.abs(b / 2 - range), Math.abs(b / 2 - range),
-      0, 2 * Math.PI ,
+      0, 2 * Math.PI,
       false,
       0
     );
 
     points = curve.getPoints(100);
     ellipse = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), material);
- 
+
     this.scene.add(ellipse)
-    
+
   }
-  createLineDashCircleRing(color: any, range1: any, range2: any, b: any){
+  createLineDashCircleRing(color: any, range1: any, range2: any, b: any) {
     const material = new THREE.LineDashedMaterial({ color: color, dashSize: 1, gapSize: 1 })
 
     let points1: any
@@ -843,12 +974,12 @@ export class ThreeNodeService {
     curve1 = new THREE.EllipseCurve(
       0, 0,
       Math.abs(b / 2 - range1), Math.abs(b / 2 - range1),
-      0,2* Math.PI,
+      0, 2 * Math.PI,
       false,
       0
     );
     curve2 = new THREE.EllipseCurve(
-      0,0,
+      0, 0,
       Math.abs(b / 2 - range1 - range2), Math.abs(b / 2 - range1 - range2),
       0, 2 * Math.PI,
       false,
