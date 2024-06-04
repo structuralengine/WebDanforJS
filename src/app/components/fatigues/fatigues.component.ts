@@ -784,7 +784,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
               {
                 title: this.translate.instant("fatigues.hoop"),
                 dataType: "float",
-                format: "#.0",
+                format: "#.00",
                 dataIndx: "V_r1_2",
                 sortable: false,
                 width: 60,

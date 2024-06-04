@@ -199,7 +199,7 @@
         "rebar_ob":"主鉄筋の斜率",
         "rebar_fo":"折曲げ鉄筋",
         "angle":"角度\n(°)",
-        "process":"引張側",
+        "process":"照査対象",
         "tp":"上端位置\n(mm)",
         "tp_side":"上端位置\n/側芯かぶり"
     },

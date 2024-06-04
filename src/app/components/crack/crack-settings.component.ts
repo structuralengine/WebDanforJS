@@ -428,7 +428,7 @@ export class CrackSettingsComponent
       {
         title: this.translate.instant("crack-settings.shear_kr"),
         dataType: "float",
-        format: "#.0",
+        format: "#.00",
         dataIndx: "kr",
         sortable: false,
         width: 70,
@@ -438,7 +438,7 @@ export class CrackSettingsComponent
         title: this.translate.instant("crack-settings.k4"),
         align: "center",
         dataType: "float",
-        format: "#.00",
+        format: "#.0",
         dataIndx: "k4",
         sortable: false,
         width: 70,
