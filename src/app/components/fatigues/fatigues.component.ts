@@ -294,11 +294,23 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
         },
         change: (event, ui) => {
-          var currentObj = ui.updateList[0].newRow;
-          let nextObj =
-            this.table_datas[this.idTab][ui.updateList[0].rowIndx + 1];
+          // var currentObj = ui.updateList[0].newRow;
+          // let nextObj =
+          //   this.table_datas[this.idTab][ui.updateList[0].rowIndx + 1];
 
-          Object.assign(nextObj, currentObj);
+          // Object.assign(nextObj, currentObj);
+          // Extract the current object to be copied
+          // Extract the current object to be copied
+          var currentObj = ui.updateList[0].newRow;
+
+          // Get the starting index from which to update the array
+          let startIndex = ui.updateList[0].rowIndx + 1;
+
+          // Loop through each item in the array starting from startIndex and assign properties from currentObj
+          for (let i = startIndex; i < this.table_datas[this.idTab].length; i++) {
+            // Merge currentObj properties into each item
+            Object.assign(this.table_datas[this.idTab][i], currentObj);
+          }
           if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
             const keys = Object.keys(ui.updateList[0].newRow);
             keys.forEach((key) => {
