@@ -106,6 +106,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   //
   public styleShaded1:any =   { 
     haunch_height : { ...this.style},
+    side_dia: { ...this.style},
+    side_n: { ...this.style},
+    side_ss :{ ...this.style}
   }
   public styleShaded2 ={
     stirrup_dia :{...this.style},
@@ -167,7 +170,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.setTitle(this.save.isManual());
     this.table_datas = this.bars.getTableColumns();
-
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
@@ -262,6 +264,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           // Loop through each item in the array starting from startIndex and assign properties from currentObj
           for (let i = startIndex; i < this.table_datas[this.idTab].length; i++) {
             // Merge currentObj properties into each item
+            if ((i - startIndex) % 2 === 0) {
+              continue;
+            }
             Object.assign(this.table_datas[this.idTab][i], currentObj);
           }
           if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
