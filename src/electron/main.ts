@@ -8,9 +8,10 @@ import path from 'path'
 
 let mainWindow: BrowserWindow;
 let locale = 'ja';
-let check = -1; 
+let check = -1;
 let arg_path: string = null;
 autoUpdater.autoDownload = false
+log.transports.file.resolvePath = () => path.join('D:/logs/main.logs')
 async function createWindow() {
   check = -1;
   // log.info("check install k", check);
@@ -36,13 +37,23 @@ async function createWindow() {
       if (choice == 1) {
         e.preventDefault();
       }
-    }  
+    }
   });
-  if (process.argv.length > 2) {
-    arg_path = process.argv[2];
+  log.info("process.argv", process.argv)
+  // if (process.argv.length > 2) {
+  //   log.info("process.argv[2]", process.argv[2])
+  //   arg_path = process.argv[2];
+  // } else {
+  //   arg_path = null;
+  // }
+  const myArgIndex = process.argv.findIndex(arg => arg.startsWith('--my-arg='));
+  if (myArgIndex !== -1) {
+    arg_path = process.argv[myArgIndex].split('=')[1];
+    log.info("arg_path findIndex", arg_path)
   } else {
     arg_path = null;
   }
+  log.info("arg_path create 1", arg_path)
   await mainWindow.loadFile('index.html');
 }
 
@@ -58,7 +69,7 @@ app.whenReady().then(async () => {
 //autoUpdater.checkForUpdatesAndNotify();
 autoUpdater.on('update-available', (info) => {
   log.info('update-available', info)
-  autoUpdater.downloadUpdate();  
+  autoUpdater.downloadUpdate();
 });
 autoUpdater.on('error', (err) => {
   log.info('Error in auto-updater:', err);
@@ -85,18 +96,19 @@ autoUpdater.on('update-downloaded', (info) => {
         title: langText.window.closeTitle,
         message: langText.window.closeMessage,
       });
-    if (choice1 == 0) {   
+    if (choice1 == 0) {
       check = 0;
       log.info("check install", check);
       autoUpdater.quitAndInstall();
-    }       
+    }
   }
-  
+
 });
 // Angular -> Electron --------------------------------------------------
 ipcMain.on("newWindow", async() => await createWindow())
 // ファイルを開く
 ipcMain.on('open', (event: Electron.IpcMainEvent) => {
+  log.info("arg_path open", arg_path)
   if(!arg_path){
     // ファイルを選択
     const paths = dialog.showOpenDialogSync(mainWindow, {
@@ -253,8 +265,8 @@ ipcMain.on(
 );
 ipcMain.on(
   'change-lang', (event, lang) => {
-  locale = lang;
-})
+    locale = lang;
+  })
 ipcMain.on(
   'get-main-wdj', (event: Electron.IpcMainEvent) => {
     event.returnValue = arg_path;

@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:dev": "concurrently \"ng build --delete-output-path=false --watch\" \"webpack --config webpack.electron.dev.config.js --watch\"",
-    "start:dev": "electron dist/shell.js \"D:/DuongTuanAnh/Test File/Test File/Test File/WebDan/task262/Test_2D.wdj\"",
+    "start:dev": "electron dist/shell.js --my-arg=\"D:/DuongTuanAnh/Test File/Test File/Test File/WebDan/task262/Test_2D.wdj\"",
     "electron:windows": "npm run build:prod && npx electron-builder build --windows",
     "build:prod": "ng build --configuration production --optimization --extract-licenses --build-optimizer && webpack --config webpack.electron.prod.config.js && npm run filecopy1 && npm run filecopy2",
     "start:prod": "electron dist/index.js",
@@ -76,7 +76,7 @@
     "pqgrid": "file:./paramquery-9.0.1/",
     "print-js": "^1.6.0",
     "rxfire": "^6.0.3",
-    "rxjs": "~6.6.0", 
+    "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "webpack": "^5.75.0",
     "zone.js": "~0.11.4"
@@ -114,7 +114,7 @@
     "ts-loader": "^9.2.5",
     "typescript": "~4.9.5",
     "webpack-cli": "^4.8.0",
-    "webpack-node-externals": "^3.0.0"   
+    "webpack-node-externals": "^3.0.0"
   },
   "engines": {
     "npm": ">=9.0.0 <10.0.0",
