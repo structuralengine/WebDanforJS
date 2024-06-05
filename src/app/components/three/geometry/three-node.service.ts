@@ -110,10 +110,11 @@ export class ThreeNodeService {
     let startNode = 8;
     let checkNode = startNode;
     const len = this.getLength(jsonData["1"], jsonData["8"]);
-    this.drawLineDemension(jsonData["1"], len, member['Bt'], true, [1, 6, 8])
-    this.drawLineDemension(jsonData["4"], this.getLength(jsonData["4"], jsonData["5"]), member['B'], true, [1, 6, 8], 2)
-    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
-    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false, member['shape'] == 1 ? [1, 4, 6] : [8, 11, 13], 9)
+    this.drawLineDim(jsonData["1"], jsonData["2"],0,  member['Bt'], true, 6)
+    // this.drawLineDemension(jsonData["1"], len, member['Bt'], true, [1, 6, 8])
+    // this.drawLineDemension(jsonData["4"], this.getLength(jsonData["4"], jsonData["5"]), member['B'], true, [1, 6, 8], 2)
+     this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
+    // this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false, member['shape'] == 1 ? [1, 4, 10] : [8, 11, 13], 9)
     //drawing node rebar1
     let rebar1 = this.dataNode['rebar1'];
     let rb_n1 = rebar1['rebar_n'];
@@ -146,12 +147,12 @@ export class ThreeNodeService {
     }
     if (checkNode < startNode) {
       if (startNode - checkNode >= 2)
-        this.drawLineDemension(jsonData[`${checkNode + 1}`], this.getLength(jsonData[`${checkNode + 1}`], jsonData[`${checkNode + 2}`]), rebar1['rebar_ss'], true, [1, 3, 4], 5)
-      this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 }), rebar1['rebar_cover'], false, [1, 4, 5], 6)
+        //this.drawLineDemension(jsonData[`${checkNode + 1}`], this.getLength(jsonData[`${checkNode + 1}`], jsonData[`${checkNode + 2}`]), rebar1['rebar_ss'], true, [1, 3, 4], 5)
+      //this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 }), rebar1['rebar_cover'], false, [1, 4, 5], 6)
       if (Math.ceil(rebar1['rebar_n'] / rebar1['rebar_lines']) > 1) {
-        this.drawLineDemension({ x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 },
-          this.getLength(jsonData[`${checkNode + 1}`], { x: jsonData[`${checkNode + 1}`]['x'], y: jsonData[`${checkNode + rebar1['rebar_lines'] + 1}`]['y'], z: 0 }),
-          rebar1['rebar_space'], false, [1, 4, 5], 3)
+        //this.drawLineDemension({ x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 },
+          //this.getLength(jsonData[`${checkNode + 1}`], { x: jsonData[`${checkNode + 1}`]['x'], y: jsonData[`${checkNode + rebar1['rebar_lines'] + 1}`]['y'], z: 0 }),
+          //rebar1['rebar_space'], false, [1, 4, 5], 3)
       }
 
       checkNode = startNode
@@ -184,10 +185,10 @@ export class ThreeNodeService {
       }
     }
     if (checkNode < startNode) {
-      this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData[`${checkNode + 1}_i`], jsonData[`${checkNode + 2}_i`]), rebar2['rebar_ss'], true, [1, 4, 5], 4)
+      //this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData[`${checkNode + 1}_i`], jsonData[`${checkNode + 2}_i`]), rebar2['rebar_ss'], true, [1, 4, 5], 4)
       if (Math.ceil(rebar2['rebar_n'] / rebar2['rebar_lines']) >= 2)
-        this.drawLineDemension({ x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode + 1}_i`], { x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }), rebar2['rebar_space'], false, [1, 4, 5], 3)
-      this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData["4"], { y: jsonData[`${checkNode + 1}_i`]['y'], x: jsonData["4"]['x'], z: 0 }), rebar2['rebar_cover'], false, [1, 4, 5], 3)
+       // this.drawLineDemension({ x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode + 1}_i`], { x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }), rebar2['rebar_space'], false, [1, 4, 5], 3)
+      //this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData["4"], { y: jsonData[`${checkNode + 1}_i`]['y'], x: jsonData["4"]['x'], z: 0 }), rebar2['rebar_cover'], false, [1, 4, 5], 3)
 
       checkNode = startNode
     }
@@ -216,9 +217,9 @@ export class ThreeNodeService {
         }
       }
       if (checkNode < startNode) {
-        this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar1['side_cover'], false, [8, 10, 12], 8)
-        this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode + 1}_s`], jsonData[`${checkNode + 2}_s`]), sidebar1['side_ss'], false, [1, 7, 8], 7)
-        this.drawLineDemension({ x: jsonData["3"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }, this.getLength(jsonData["3"], { y: jsonData["3"]['y'], x: jsonData[`${checkNode + 1}_s`]['x'], z: 0 }), sidebar2['side_cover'], true, [1, 3, 4])
+        // this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar1['side_cover'], false, [8, 10, 12], 8)
+        // this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode + 1}_s`], jsonData[`${checkNode + 2}_s`]), sidebar1['side_ss'], false, [1, 7, 8], 7)
+        // this.drawLineDemension({ x: jsonData["3"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }, this.getLength(jsonData["3"], { y: jsonData["3"]['y'], x: jsonData[`${checkNode + 1}_s`]['x'], z: 0 }), sidebar2['side_cover'], true, [1, 3, 4])
       }
     } else {
       let sidebar = this.dataNode['sidebar'];
@@ -240,8 +241,8 @@ export class ThreeNodeService {
         }
       }
       if (checkNode < startNode) {
-        this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar['side_cover'], false, [1, 4, 8])
-        this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode + 1}_s`], jsonData[`${checkNode + 2}_s`]), rebar2['rebar_space'], false, [1, 4, 8])
+      //   this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar['side_cover'], false, [1, 4, 8])
+      //   this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode + 1}_s`], jsonData[`${checkNode + 2}_s`]), rebar2['rebar_space'], false, [1, 4, 8])
       }
     }
 
@@ -401,7 +402,7 @@ export class ThreeNodeService {
       this.scene.add(mesh);
     }
   }
-  private drawLineDemension(pointStart: any, length: number, title: number, dir: boolean, kc: any[], style: number = -1) {
+  private  drawLineDemension(pointStart: any, length: number, title: number, dir: boolean, kc: any[], style: number = -1) {
     if (title == null) return;
     let points = [];
     const point = pointStart as [];
@@ -419,8 +420,9 @@ export class ThreeNodeService {
       points.push(new THREE.Vector3(x, py3, z));
       points.push(new THREE.Vector3(x, py2, z));
       points.push(new THREE.Vector3(x + length, py2, z));
-      points.push(new THREE.Vector3(x + length, py1, z));
       points.push(new THREE.Vector3(x + length, py3, z));
+      points.push(new THREE.Vector3(x + length, py1 + 2, z));
+     
     } else {
       points.push(new THREE.Vector3(px1, y, z));
       points.push(new THREE.Vector3(px3, y, z));
@@ -435,7 +437,7 @@ export class ThreeNodeService {
       new THREE.LineBasicMaterial({ color: 0x000000 })
     );
     const vect = new THREE.Vector3(length, 0, 0);
-    const geometry = new THREE.CylinderBufferGeometry(1, 1, vect.length(), 12);
+    const geometry = new THREE.CylinderBufferGeometry(0, 0, vect.length(), 12);
 
     // 要素をシーンに追加
     const mesh = new THREE.Mesh(
@@ -452,7 +454,7 @@ export class ThreeNodeService {
     else {
       mesh.position.set((px1 + px3) / 2, y - length / 2, z);
       mesh.rotation.z = Math.acos(-1);
-      mesh.rotation.y = 0.5 * Math.PI + Math.atan2(px1 - px3, -length);
+     // mesh.rotation.y = 0.5 * Math.PI + Math.atan2(px1 - px3, -length);
     }
     // 文字をシーンに追加
     const div = document.createElement("div");
@@ -461,53 +463,53 @@ export class ThreeNodeService {
 
     div.style.color = '#000000'
     div.style.fontSize = '12px'
-    switch (style) {
-      case 1:
-        div.style.marginTop = "-47.5px";
-        // div.style.marginTop = "-2.5px";
-        div.style.marginLeft = "10px";
-        break;
-      case 2:
-        // div.style.marginTop = "13.5px"
-        div.style.marginTop = "-28.5px"
-        break;
-      case 3:
-        div.style.marginTop = "-45.5px";
-        // div.style.marginTop = "-1.5px";
-        div.style.marginLeft = "-19px";
-        break;
-      case 4:
-        div.style.marginTop = "-32.5px";
-        // div.style.marginTop = "10.5px";
-        break;
-      case 5:
-        div.style.marginTop = "-60.5px";
-        // div.style.marginTop = "-12.5px";
-        break;
-      case 6:
-        div.style.marginTop = "-45.5px";
-        // div.style.marginTop = "-1.5px";
-        div.style.marginLeft = "-19px";
-        break;
-      case 7:
-        div.style.marginTop = "-48.5px";
-        // div.style.marginTop = "-2.5px";
-        div.style.marginLeft = "-26px";
-        break;
-      case 8:
-        div.style.textAlign = "center";
-        div.style.marginTop = "-48.5px";
-        div.style.marginLeft = "-19px";
-        break;
-      case 9:
-        div.style.textAlign = "center";
-        div.style.marginLeft = "19px";
-        break;
-      default:
-        div.style.marginTop = "-66.5px";
-        // div.style.marginTop = "-14.5px";
-        break;
-    }
+    // switch (style) {
+    //   case 1:
+    //     div.style.marginTop = "-47.5px";
+    //     // div.style.marginTop = "-2.5px";
+    //     div.style.marginLeft = "10px";
+    //     break;
+    //   case 2:
+    //     // div.style.marginTop = "13.5px"
+    //     div.style.marginTop = "-28.5px"
+    //     break;
+    //   case 3:
+    //     div.style.marginTop = "-45.5px";
+    //     // div.style.marginTop = "-1.5px";
+    //     div.style.marginLeft = "-19px";
+    //     break;
+    //   case 4:
+    //     div.style.marginTop = "-32.5px";
+    //     // div.style.marginTop = "10.5px";
+    //     break;
+    //   case 5:
+    //     div.style.marginTop = "-60.5px";
+    //     // div.style.marginTop = "-12.5px";
+    //     break;
+    //   case 6:
+    //     div.style.marginTop = "-45.5px";
+    //     // div.style.marginTop = "-1.5px";
+    //     div.style.marginLeft = "-19px";
+    //     break;
+    //   case 7:
+    //     div.style.marginTop = "-48.5px";
+    //     // div.style.marginTop = "-2.5px";
+    //     div.style.marginLeft = "-26px";
+    //     break;
+    //   case 8:
+    //     div.style.textAlign = "center";
+    //     div.style.marginTop = "-48.5px";
+    //     div.style.marginLeft = "-19px";
+    //     break;
+    //   case 9:
+    //     div.style.textAlign = "center";
+    //     div.style.marginLeft = "19px";
+    //     break;
+    //   default:
+    //     div.style.marginTop = "-66.5px";
+    //     // div.style.marginTop = "-14.5px";
+    //     break;
+    // }
     const label = new CSS2DObject(div);
 
     label.position.set(0, 0, 0);
@@ -529,6 +531,85 @@ export class ThreeNodeService {
 
     const result: number = Math.sqrt((xi - xj) ** 2 + (yi - yj) ** 2 + (zi - zj) ** 2);
     return result;
+  }
+  private drawLineDim(point1: any, point2: any, style: number, title: any, vertical: boolean, lenDim: any){
+    let p1: any;
+    let p2: any;
+    let p3: any;
+    let points = [];    
+  
+    let x = point1["x"], y = -point1["y"];
+    let a = point2["x"], b = -point2["y"];
+    if(x !== a && y !== b){
+      if(vertical){
+        if(x > a) point2["x"] = x;
+        else point1["x"] = a;
+      }else{
+        if(y > b) point2["y"] = y;
+        else point1["y"] = b;
+      }
+    }
+    var length = this.getLength(point1, point2);
+    if(vertical){
+      p1 = x > 0 ? x + lenDim: -(Math.abs(x) + lenDim)
+      p2 = x > 0 ? x + lenDim - 2: -(Math.abs(x) + lenDim - 2) 
+      p3 = x > 0 ? x + 1 : -(Math.abs(x)  + 1);
+      points.push(new THREE.Vector3(p1, y, 0));
+      points.push(new THREE.Vector3(p3, y, 0));
+      const line = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.LineBasicMaterial({ color: 0x000000 })
+      );
+
+      points = [];
+      this.scene.add(line);
+      points.push(new THREE.Vector3(p2, y, 0));
+      points.push(new THREE.Vector3(p2, y - length, 0));
+      const line1 = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.LineBasicMaterial({ color: 0x000000 })
+      );
+      this.scene.add(line1);
+      points = [];
+      points.push(new THREE.Vector3(p1, y - length, 0));
+      points.push(new THREE.Vector3(a  , y - length, 0));
+      const line2 = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.LineBasicMaterial({ color: 0x000000 })
+      );
+      this.scene.add(line2);
+      
+    }    
+    const vect = new THREE.Vector3(length, 0, 0);
+    const geometry = new THREE.CylinderBufferGeometry(1, 1, vect.length(), 12);
+
+    // 要素をシーンに追加
+    const mesh = new THREE.Mesh(
+      geometry,
+      new THREE.MeshBasicMaterial({ color: 0x000000 })
+    );
+    mesh.name = "member" + 2;
+
+    if(vertical){
+      mesh.position.set((x+a)/2, (-y + -b)/ 2, 0);
+      mesh.rotation.z = Math.acos(-1);
+    }
+    const div = document.createElement("div");
+    div.className = "label";
+    div.textContent = `${title}`;
+
+    div.style.color = '#000000'
+    div.style.fontSize = '12px'
+    const label = new CSS2DObject(div);
+
+    //label.position.set(0, 0, 0);
+    label.name = "font";
+    label.visible = true;
+    mesh.add(label);
+    mesh.scale.set(0, 1, 0);
+   
+    this.nodeList.children.push(mesh);
+    this.scene.render()
   }
   private getRadius(scale: number) {
     let arr: any = [];
