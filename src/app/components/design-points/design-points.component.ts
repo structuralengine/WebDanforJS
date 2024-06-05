@@ -206,7 +206,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
       // 断面力手入力モードの場合
       this.columnHeaders = [
         {
-          title: this.translate.instant("design-points.m_no"),
+          title: "",
           align: "left",
           dataType: "string",
           dataIndx: "m_no",
@@ -229,7 +229,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           nodrag: true,
           style: { 'background': '#373e45' },
           styleHead: { 'background': '#373e45' },
-          hidden:true
+          hidden:true,
         },
         {
           title: this.translate.instant("design-points.position"),
@@ -252,6 +252,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           frozen: true,
           sortable: false,
           width: 250,
+          editable: false,
           nodrag: true,
         },
         {

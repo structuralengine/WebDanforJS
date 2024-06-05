@@ -336,9 +336,9 @@ export class InputDesignPointsService {
     const data = [];
     for (const g of this.getTableColumns(true)) {
       for (const p of g) {
-        p.isMzCalc = false;
-        p.isVyCalc = false;
-        p.isMtCalc = false;
+        // p.isMzCalc = false;
+        // p.isVyCalc = false;
+        // p.isMtCalc = false;
         data.push(p);
       }
     }
