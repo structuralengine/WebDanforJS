@@ -49,7 +49,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setTitle(this.save.isManual());
 
     this.table_datas = this.points.getTableColumns();
-    
+
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
@@ -219,38 +219,6 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           styleHead: { 'background': '#373e45' }
         },
         {
-          title: this.translate.instant("design-points.p_name"),
-          dataType: "string",
-          dataIndx: "p_name",
-          frozen: true,
-          sortable: false,
-          width: 250,
-          nodrag: true,
-        },
-        // {
-        //   title: this.translate.instant("design-points.s_len"),
-        //   dataType: "float",
-        //   dataIndx: "La",
-        //   sortable: false,
-        //   width: 140,
-        // },
-      ];
-    } else {
-      this.columnHeaders=[
-        {
-          title: this.translate.instant("design-points.m_no"),
-          align: "left",
-          dataType: "string",
-          dataIndx: "m_no",
-          frozen: true,
-          sortable: false,
-          width: 70,
-          editable: false,
-          nodrag: true,
-          style: { 'background': '#373e45' },
-          styleHead: { 'background': '#373e45' }
-        },
-        {
           title: this.translate.instant("design-points.p_id"),
           dataType: "string",
           dataIndx: "p_id",
@@ -260,7 +228,8 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           editable: false,
           nodrag: true,
           style: { 'background': '#373e45' },
-          styleHead: { 'background': '#373e45' }
+          styleHead: { 'background': '#373e45' },
+          hidden:true,
         },
         {
           title: this.translate.instant("design-points.position"),
@@ -273,7 +242,8 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           editable: false,
           nodrag: true,
           style: { 'background': '#373e45' },
-          styleHead: { 'background': '#373e45' }
+          styleHead: { 'background': '#373e45' },
+          hidden: true
         },
         {
           title: this.translate.instant("design-points.p_name"),
@@ -282,6 +252,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           frozen: true,
           sortable: false,
           width: 250,
+          editable: false,
           nodrag: true,
         },
         {
@@ -319,10 +290,11 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
             options: this.optionsArray,
             labelIndx: 'text',
             valueIndx: 'id',
-          },          
+          },
           render: (ui) => {
             return (this.optionsCheck[ui.cellData] || {}).text;
-          }, 
+          },
+          hidden:true
         },
         {
           title: this.translate.instant("design-points.b_check"),
@@ -345,75 +317,198 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           width: 85,
           nodrag: true,
           editor: false,
+        },
+        {
+          title: this.translate.instant("design-points.t_check"),
+          align: "center",
+          dataType: "bool",
+          dataIndx: "isMtCalc",
+          type: "checkbox",
+          sortable: false,
+          width: 85,
+          nodrag: true,
+          editor: false,
         }
       ];
-      if (this.save.is3DPickUp()) {
-        this.columnHeaders.push(
-          {
-            title: this.translate.instant("design-points.t_check"),
-            align: "center",
-            dataType: "bool",
-            dataIndx: "isMtCalc",
-            type: "checkbox",
-            sortable: false,
-            width: 85,
-            nodrag: true,
-            editor: false,
-          }
-        )
-      }
+  } else {
+  this.columnHeaders=[
+    {
+      title: this.translate.instant("design-points.m_no"),
+      align: "left",
+      dataType: "string",
+      dataIndx: "m_no",
+      frozen: true,
+      sortable: false,
+      width: 70,
+      editable: false,
+      nodrag: true,
+      style: { 'background': '#373e45' },
+      styleHead: { 'background': '#373e45' }
+    },
+    {
+      title: this.translate.instant("design-points.p_id"),
+      dataType: "string",
+      dataIndx: "p_id",
+      frozen: true,
+      sortable: false,
+      width: 85,
+      editable: false,
+      nodrag: true,
+      style: { 'background': '#373e45' },
+      styleHead: { 'background': '#373e45' }
+    },
+    {
+      title: this.translate.instant("design-points.position"),
+      dataType: "float",
+      format: "#.000",
+      dataIndx: "position",
+      frozen: true,
+      sortable: false,
+      width: 110,
+      editable: false,
+      nodrag: true,
+      style: { 'background': '#373e45' },
+      styleHead: { 'background': '#373e45' }
+    },
+    {
+      title: this.translate.instant("design-points.p_name"),
+      dataType: "string",
+      dataIndx: "p_name",
+      frozen: true,
+      sortable: false,
+      width: 250,
+      nodrag: true,
+    },
+    {
+      title: this.translate.instant("design-points.upper_side"),
+      align: "center",
+      dataType: "bool",
+      dataIndx: "isUpperCalc",
+      type: "checkbox",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      editor: false,
+    },
+    {
+      title: this.translate.instant("design-points.lower_side"),
+      align: "center",
+      dataType: "bool",
+      dataIndx: "isLowerCalc",
+      type: "checkbox",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      editor: false,
+    },
+    {
+      title: this.translate.instant("design-points.check_target"),
+      align: "center",
+      dataIndx: "axis_type",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      cls: 'pq-drop-icon pq-side-icon',
+      editor: {
+        type: 'select',
+        options: this.optionsArray,
+        labelIndx: 'text',
+        valueIndx: 'id',
+      },
+      render: (ui) => {
+        return (this.optionsCheck[ui.cellData] || {}).text;
+      },
+    },
+    {
+      title: this.translate.instant("design-points.b_check"),
+      align: "center",
+      dataType: "bool",
+      dataIndx: "isMCalc",
+      type: "checkbox",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      editor: false,
+    },
+    {
+      title: this.translate.instant("design-points.s_check"),
+      align: "center",
+      dataType: "bool",
+      dataIndx: "isVCalc",
+      type: "checkbox",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      editor: false,
     }
+  ];
+  if (this.save.is3DPickUp()) {
+    this.columnHeaders.push(
+      {
+        title: this.translate.instant("design-points.t_check"),
+        align: "center",
+        dataType: "bool",
+        dataIndx: "isMtCalc",
+        type: "checkbox",
+        sortable: false,
+        width: 85,
+        nodrag: true,
+        editor: false,
+      }
+    )
+  }
+}
   }
 
-  ngOnDestroy() {
-    this.saveData();
-  }
+ngOnDestroy() {
+  this.saveData();
+}
 
   public saveData(): void {
-    const a = [];
-    for (const g of this.table_datas) {
-      for (const p of g) {
-        a.push(p);
-      }
-    }
-    if (this.save.isManual()) {
-      this.points.setSaveData(a,false);
-    } else {
-      this.points.setTableColumns(a, this.save.is3DPickUp(), this.save.isManual());
-    }
+  const a = [];
+  for (const g of this.table_datas) {
+  for (const p of g) {
+    a.push(p);
+  }
+}
+if (this.save.isManual()) {
+  this.points.setSaveData(a,false,true);
+} else {
+  this.points.setTableColumns(a, this.save.is3DPickUp(), this.save.isManual());
+}
   }
 
   // 表の高さを計算する
   private tableHeight(): number {
-    let containerHeight = window.innerHeight;
-    containerHeight -= 230;
-    return containerHeight;
-  }
+  let containerHeight = window.innerHeight;
+  containerHeight -= 230;
+  return containerHeight;
+}
 
   public activePageChenge(id: number): void {
-    this.activeButtons(id);
+  this.activeButtons(id);
 
-    this.options = this.option_list[id];
-    this.grid.options = this.options;
-    this.grid.refreshDataAndView();
-  }
+  this.options = this.option_list[id];
+  this.grid.options = this.options;
+  this.grid.refreshDataAndView();
+}
 
   // アクティブになっているボタンを全て非アクティブにする
   private activeButtons(id: number) {
-    for (let i = 0; i <= this.table_datas.length; i++) {
-      const data = document.getElementById("pos" + i);
-      if (data != null) {
-        if (i === id) {
-          data.classList.add("is-active");
-        } else if (data.classList.contains("is-active")) {
-          data.classList.remove("is-active");
-        }
+  for (let i = 0; i <= this.table_datas.length; i++) {
+    const data = document.getElementById("pos" + i);
+    if (data != null) {
+      if (i === id) {
+        data.classList.add("is-active");
+      } else if (data.classList.contains("is-active")) {
+        data.classList.remove("is-active");
       }
     }
   }
+}
 
   // タブのヘッダ名
   public getGroupeName(i: number): string {
-    return this.groupe_name[i];
-  }
+  return this.groupe_name[i];
+}
 }
