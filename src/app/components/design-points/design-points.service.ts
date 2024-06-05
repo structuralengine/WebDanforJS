@@ -53,6 +53,9 @@ export class InputDesignPointsService {
           if ((key === "isMzCalc" || key === "isVyCalc" || key === "isMtCalc") && data[key] === null && isManual){
             tmp[key] = false;
           }
+          if ((key === "isUpperCalc" || key === "isLowerCalc") && data[key] === null && isManual){
+            tmp[key] = true;
+          }
         }else {
           if ((key === "isUpperCalc" || key === "isLowerCalc") && bars !== undefined) {
             let index = bars.findIndex(bar => data.index === bar.index)
