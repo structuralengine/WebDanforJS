@@ -308,6 +308,10 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
           // Loop through each item in the array starting from startIndex and assign properties from currentObj
           for (let i = startIndex; i < this.table_datas[this.idTab].length; i++) {
+            // Merge currentObj properties into each item
+            if ((i - startIndex) % 2 === 0) {
+              continue;
+            }
             const item = this.table_datas[this.idTab][i];
 
             // Check if the item has the pq_cellstyle property and if it has any property with "color": "white"
