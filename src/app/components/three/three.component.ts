@@ -9,7 +9,7 @@ import { ThreeNodeGuideService } from './geometry/three-node-guide.service';
   styleUrls: ['./three.component.scss']
 })
 export class ThreeComponent implements OnInit {
-  @Input('typeView') typeView:string;
+  @Input('typeView') typeView: string;
   @ViewChild("myCanvas", { static: true }) private canvasRef: ElementRef;
   private get canvas(): HTMLCanvasElement {
     return this.canvasRef.nativeElement;
@@ -39,18 +39,20 @@ export class ThreeComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.typeView=== 'preview'){
-      this.node.createDrawingLine(); 
+    if (this.typeView === 'preview') {
+      // this.node.createDrawingLine(); 
       // this.node.createDemoOval()
       // this.node.createDemoCircleRing()
-    } else{
+      // this.node.createDemoRectangle()
+      this.node.createDemoTShape()
+    } else {
       // this.createDrawingLineRebar()
     }
     console.log(this.scene)
     this.node.onInit();
   }
   ngAfterViewInit(): void {
-    if(this.typeView === 'preview'){
+    if (this.typeView === 'preview') {
       this.scene.OnInit(
         this.getAspectRatio(),
         this.canvas,
@@ -58,7 +60,7 @@ export class ThreeComponent implements OnInit {
         520,
         520
       );
-    }else{
+    } else {
       // this.scene.OnInitRebar(
       //   this.getAspectRatioRebar(),
       //   this.canvasRebar,
