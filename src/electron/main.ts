@@ -11,7 +11,7 @@ let locale = 'ja';
 let check = -1;
 let arg_path: string = null;
 autoUpdater.autoDownload = false
-log.transports.file.resolvePath = () => path.join('D:/logs/main.logs')
+// log.transports.file.resolvePath = () => path.join('D:/logs/main.logs')
 async function createWindow() {
   check = -1;
   // log.info("check install k", check);
@@ -39,21 +39,15 @@ async function createWindow() {
       }
     }
   });
-  log.info("process.argv", process.argv)
-  // if (process.argv.length > 2) {
-  //   log.info("process.argv[2]", process.argv[2])
-  //   arg_path = process.argv[2];
-  // } else {
-  //   arg_path = null;
-  // }
-  const myArgIndex = process.argv.findIndex(arg => arg.startsWith('--my-arg='));
-  if (myArgIndex !== -1) {
-    arg_path = process.argv[myArgIndex].split('=')[1];
-    log.info("arg_path findIndex", arg_path)
+  if (process.argv.length > 1) {
+    const arg_path_list = process.argv[1];
+    const trimmedStr = arg_path_list.slice(1, -1);
+    const pathsArray = trimmedStr.split(",");
+    const cleanedPaths = pathsArray.map(path => path.slice(1, -1));
+    arg_path = cleanedPaths[0]
   } else {
     arg_path = null;
   }
-  log.info("arg_path create 1", arg_path)
   await mainWindow.loadFile('index.html');
 }
 
@@ -108,66 +102,47 @@ autoUpdater.on('update-downloaded', (info) => {
 ipcMain.on("newWindow", async() => await createWindow())
 // ファイルを開く
 ipcMain.on('open', (event: Electron.IpcMainEvent) => {
-  log.info("arg_path open", arg_path)
-  if(!arg_path){
-    // ファイルを選択
-    const paths = dialog.showOpenDialogSync(mainWindow, {
-      buttonLabel: 'open', // 確認ボタンのラベル
-      filters: [{ name: 'wdj', extensions: ['wdj'] }, { name: 'dsd', extensions: ['dsd'] }],
-      properties: [
-        'openFile', // ファイルの選択を許可
-        'createDirectory', // ディレクトリの作成を許可 (macOS)
-      ],
-    });
+  // ファイルを選択
+  const paths = dialog.showOpenDialogSync(mainWindow, {
+    buttonLabel: 'open', // 確認ボタンのラベル
+    filters: [{ name: 'wdj', extensions: ['wdj'] }, { name: 'dsd', extensions: ['dsd'] }],
+    defaultPath: arg_path? arg_path :"",
+    properties: [
+      'openFile', // ファイルの選択を許可
+      'createDirectory', // ディレクトリの作成を許可 (macOS)
+    ],
+  });
 
-    // キャンセルで閉じた場合
-    if (paths == null) {
-      event.returnValue = { status: undefined };
-      return;
+  // キャンセルで閉じた場合
+  if (paths == null) {
+    event.returnValue = { status: undefined };
+    return;
+  }
+
+  // ファイルの内容を返却
+  try {
+    const path = paths[0];
+    const buff = fs.readFileSync(path);
+    // ファイルを読み込む
+    let text = null;
+    switch (path.split('.').pop()) {
+      case "dsd":
+        text = buff;
+        break;
+      default:
+        text = buff.toString();
     }
 
-    // ファイルの内容を返却
-    try {
-      const path = paths[0];
-      const buff = fs.readFileSync(path);
-      // ファイルを読み込む
-      let text = null;
-      switch (path.split('.').pop()) {
-        case "dsd":
-          text = buff;
-          break;
-        default:
-          text = buff.toString();
-      }
-
-      // リターン
-      event.returnValue = {
-        status: true,
-        path: path,
-        textB: buff,
-        text
-      };
-    } catch (error) {
-      event.returnValue = { status: false, message: error.message };
-    }
-  }else{
-    try {
-      const path = arg_path;
-      const buff = fs.readFileSync(path);
-
-      // ファイルを読み込む
-      let text = buff.toString();
-
-      // リターン
-      event.returnValue = {
-        status: true,
-        path: path,
-        text
-      };
-      arg_path = null
-    } catch (error) {
-      event.returnValue = { status: false, message: error.message };
-    }
+    // リターン
+    event.returnValue = {
+      status: true,
+      path: path,
+      textB: buff,
+      text
+    };
+    arg_path = null
+  } catch (error) {
+    event.returnValue = { status: false, message: error.message };
   }
 });
 
