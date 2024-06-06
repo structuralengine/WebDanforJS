@@ -4,6 +4,7 @@ import {
   OnDestroy,
   AfterViewInit,
   ViewChild,
+  ElementRef
 } from "@angular/core";
 import { InputDesignPointsService } from "./design-points.service";
 import { SaveDataService } from "../../providers/save-data.service";
@@ -19,8 +20,9 @@ import { TranslateService } from "@ngx-translate/core";
 })
 export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild("grid") grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
   public options: pq.gridT.options;
-
+  hasScrollbar: boolean = false;
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = [];
@@ -194,13 +196,19 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
-
+    this.checkForScrollbar();
     this.grid.refreshCell({
       rowIndx: 0,
       colIndx: 0,
     });
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     if (isManual) {
       // 断面力手入力モードの場合

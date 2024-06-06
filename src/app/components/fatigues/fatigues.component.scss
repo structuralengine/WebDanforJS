@@ -49,7 +49,14 @@
   overflow: scroll;
   overflow-x: auto;
   overflow-y: hidden;
-  margin: 0 0 6px 16px !important;
+  // margin: 0 0 6px 16px !important;
+}
+.c-subNavArea__nav.no-scrollbar {
+  margin: 0 !important; /* hoặc giá trị margin khác mà bạn muốn sử dụng khi có scrollbar */
+  }
+  
+  .c-subNavArea__nav.has-scrollbar {
+    margin: 0 0 6px 16px !important;
 }
 ::-webkit-scrollbar-track
 {

@@ -1,5 +1,5 @@
 import { Menu } from "electron";
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild,ElementRef } from "@angular/core";
 import { SheetComponent } from "../sheet/sheet.component";
 import pq from "pqgrid";
 import { SaveDataService } from "src/app/providers/save-data.service";
@@ -20,6 +20,8 @@ import { Subscription } from "rxjs";
 })
 export class ShearComponent implements OnInit {
   @ViewChild("grid") grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+  hasScrollbar: boolean = false;
   public options: pq.gridT.options;
   public isSubstructure: boolean = false;
   public isRoad: boolean = false;
@@ -234,13 +236,20 @@ export class ShearComponent implements OnInit {
     }
   }
   ngAfterViewInit() {
+    this.checkForScrollbar();
     this.activeButtons(0);
     this.refreshSubscription=  this.shear.refreshTable$.subscribe(()=>{
       this.saveData();
       this.onInitData();
     })
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     if (!this.isRoad) {
       if (isManual) {
