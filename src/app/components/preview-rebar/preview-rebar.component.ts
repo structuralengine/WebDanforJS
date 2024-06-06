@@ -23,6 +23,7 @@ export class PreviewRebarComponent implements OnInit {
   private stirrupHeaders: object[] = new Array();
   private calculatedPointHeaders: object[] = new Array();
   private table_datas: any[];
+  public typeView: any
   @Input() rebar: any
   @ViewChild('calPointGrid') grid: SheetComponent;
   constructor(
@@ -49,7 +50,8 @@ export class PreviewRebarComponent implements OnInit {
       var axialRebarData = [];
       var stirrupData = [];
       var calPointListData = [];
-
+      this.typeView = this.rebar.typeView
+      console.log("typeview", this.typeView)
       //Upper Side Rebar
       // if (this.hasRebar(calPoint.rebar1)) {
         const upperRebar = calPoint.rebar1;

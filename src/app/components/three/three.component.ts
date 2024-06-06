@@ -24,8 +24,7 @@ export class ThreeComponent implements OnInit {
   // private nodeListRebar: THREE.Object3D;
   constructor(
     public scene: SceneService,
-    private node: ThreeNodeService,
-    private nodeGuide: ThreeNodeGuideService
+    private node: ThreeNodeService
   ) {
     THREE.Object3D.DefaultUp.set(0, 0, 1);
     // this.node.geometry = new THREE.SphereBufferGeometry(0.5);
@@ -39,20 +38,20 @@ export class ThreeComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.typeView === 'preview') {
-      // this.node.createDrawingLine(); 
-      // this.node.createDemoOval()
-      // this.node.createDemoCircleRing()
-      // this.node.createDemoRectangle()
-      this.node.createDemoTShape()
-    } else {
-      // this.createDrawingLineRebar()
-    }
-    console.log(this.scene)
+    switch(this.typeView){
+      case "T shape": {
+        this.node.createDemoTShape();
+        break;
+      }
+      case "Rectangle": {
+        this.node.createDemoRectangle();
+        break;
+      }
+    }   
     this.node.onInit();
   }
   ngAfterViewInit(): void {
-    if (this.typeView === 'preview') {
+    if (this.typeView !== 'preview') {
       this.scene.OnInit(
         this.getAspectRatio(),
         this.canvas,
