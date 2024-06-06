@@ -8,6 +8,7 @@ import { CSS2DObject } from "../libs/CSS2DRenderer.js";
 })
 export class ThreeNodeService {
   public dataNode: any[];
+  public dataRebar: any;
   public memNo: number;
   public geometry: THREE.SphereBufferGeometry;
   public geometry1: THREE.SphereBufferGeometry;
@@ -22,9 +23,9 @@ export class ThreeNodeService {
   ) {
     this.memNo = 0;
     this.dataNode = new Array();
-    this.scale = 9
+    this.scale = 25   
   }
-  public onInit(): void {
+  public onInit(): void {    
     this.scene.render();
   }
   public getJson() {
@@ -110,7 +111,7 @@ export class ThreeNodeService {
     let startNode = 8;
     let checkNode = startNode;
     const len = this.getLength(jsonData["1"], jsonData["8"]);
-    this.drawLineDim(jsonData["1"], jsonData["2"],0,  member['Bt'], true, 6)
+   // this.drawLineDim(jsonData["1"], jsonData["2"],0,  member['Bt'], true, 6)
     // this.drawLineDemension(jsonData["1"], len, member['Bt'], true, [1, 6, 8])
     // this.drawLineDemension(jsonData["4"], this.getLength(jsonData["4"], jsonData["5"]), member['B'], true, [1, 6, 8], 2)
      this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
@@ -251,7 +252,8 @@ export class ThreeNodeService {
   }
 
   public changeData(): object {
-
+    
+    
     const jsonKeys = Object.keys(this.jsonData);
     let data: any = [];
     if (jsonKeys.length <= 0) {
@@ -375,7 +377,6 @@ export class ThreeNodeService {
     }
     this.scene.render()
   }
-
   private createPanel(vertexlist, row): void {
 
     const points = []
@@ -532,56 +533,83 @@ export class ThreeNodeService {
     const result: number = Math.sqrt((xi - xj) ** 2 + (yi - yj) ** 2 + (zi - zj) ** 2);
     return result;
   }
-  private drawLineDim(point1: any, point2: any, style: number, title: any, vertical: boolean, lenDim: any){
-    let p1: any;
-    let p2: any;
-    let p3: any;
-    let points = [];    
-  
-    let x = point1["x"], y = -point1["y"];
-    let a = point2["x"], b = -point2["y"];
-    if(x !== a && y !== b){
-      if(vertical){
-        if(x > a) point2["x"] = x;
-        else point1["x"] = a;
-      }else{
-        if(y > b) point2["y"] = y;
-        else point1["y"] = b;
-      }
-    }
-    var length = this.getLength(point1, point2);
+  private drawLineDim(ni: any, nj: any, style: number, title: any, vertical: boolean, lenDim: any, distanceDim: any, distance: any){
+    let x: any;
+    let y: any;   
+    let px: any;
+    let py: any;
+    let xmin: any = ni.x;
+    let ymin: any = ni.y;
+    let i = JSON.parse(JSON.stringify(ni));
+    let j = JSON.parse(JSON.stringify(nj));
     if(vertical){
-      p1 = x > 0 ? x + lenDim: -(Math.abs(x) + lenDim)
-      p2 = x > 0 ? x + lenDim - 2: -(Math.abs(x) + lenDim - 2) 
-      p3 = x > 0 ? x + 1 : -(Math.abs(x)  + 1);
-      points.push(new THREE.Vector3(p1, y, 0));
-      points.push(new THREE.Vector3(p3, y, 0));
+      if(i.x > j.x){
+        xmin = j.x
+        j.x = i.x              
+      } 
+      else{
+        xmin = i.x
+        i.x = j.x
+      } 
+      x = i.x;
+      y = j.y > i.y ? j.y : i.y
+    }else{
+      if(i.y > j.y){
+        ymin = j.y
+        j.y = i.y
+      } 
+      else {
+        ymin = i.y
+        i.y = j.y       
+      }
+      x = i.x > j.x ? i.x : j.x;
+      y = j.y 
+    }
+   
+    var length = this.getLength(i, j);
+    if(vertical){
+      let pointHors = [];  
+       px = x > 0 ? x + distance : x - distance;
+       py = px > 0 ? px + lenDim : px - lenDim;
+      pointHors.push(new THREE.Vector3(px, y, 0));
+      pointHors.push(new THREE.Vector3(py, y, 0));
       const line = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.BufferGeometry().setFromPoints(pointHors),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
+      this.scene.add(line);  
 
-      points = [];
-      this.scene.add(line);
-      points.push(new THREE.Vector3(p2, y, 0));
-      points.push(new THREE.Vector3(p2, y - length, 0));
-      const line1 = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(points),
-        new THREE.LineBasicMaterial({ color: 0x000000 })
-      );
-      this.scene.add(line1);
-      points = [];
-      points.push(new THREE.Vector3(p1, y - length, 0));
-      points.push(new THREE.Vector3(a  , y - length, 0));
+      let points = [];
+      points.push(new THREE.Vector3(x != xmin? xmin : px, y - length, 0));
+      points.push(new THREE.Vector3(py, y - length, 0));
       const line2 = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(points),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
       this.scene.add(line2);
       
-    }    
-    const vect = new THREE.Vector3(length, 0, 0);
-    const geometry = new THREE.CylinderBufferGeometry(1, 1, vect.length(), 12);
+    } else{
+      let pointHors = [];  
+      px = y > 0 ? y + distance : y - distance;
+      py = px > 0 ? px + lenDim : px - lenDim;
+      pointHors.push(new THREE.Vector3(x, px, 0));
+      pointHors.push(new THREE.Vector3(x, py, 0));
+      const line = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(pointHors),
+        new THREE.LineBasicMaterial({ color: 0x000000 })
+      );
+      this.scene.add(line);  
+
+      let points = [];
+      points.push(new THREE.Vector3(x - length, px, 0));
+      points.push(new THREE.Vector3(x - length, py, 0));
+      const line2 = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(points),
+        new THREE.LineBasicMaterial({ color: 0x000000 })
+      );
+      this.scene.add(line2);
+    } 
+    const geometry = new THREE.CylinderGeometry(0.1, 0.1, length, 12);
 
     // 要素をシーンに追加
     const mesh = new THREE.Mesh(
@@ -591,24 +619,37 @@ export class ThreeNodeService {
     mesh.name = "member" + 2;
 
     if(vertical){
-      mesh.position.set((x+a)/2, (-y + -b)/ 2, 0);
-      mesh.rotation.z = Math.acos(-1);
+      mesh.position.set(px + lenDim - distanceDim, y - length / 2 , 0);   
+    }else{
+      mesh.position.set(x - length/2, (px + py)/2 + distanceDim, 0);
+      mesh.rotation.z = Math.acos(0);
+      mesh.rotation.y = 0.5 * Math.PI + Math.atan2(length, 0);
     }
     const div = document.createElement("div");
     div.className = "label";
     div.textContent = `${title}`;
-
+    switch(style){
+      case 0:
+        div.style.marginTop = "-4em";
+        div.style.marginLeft = "1em";
+        break;
+      case 1:
+        div.style.marginTop = "-5em"; 
+        if(y < 0) div.style.marginTop = "-3em"; 
+        break;
+    }
+   
     div.style.color = '#000000'
     div.style.fontSize = '12px'
     const label = new CSS2DObject(div);
 
-    //label.position.set(0, 0, 0);
+    label.position.set(0, 0, 0);
     label.name = "font";
     label.visible = true;
     mesh.add(label);
-    mesh.scale.set(0, 1, 0);
    
-    this.nodeList.children.push(mesh);
+    this.scene.add(mesh);
+    //this.nodeList.children.push(mesh);
     this.scene.render()
   }
   private getRadius(scale: number) {
@@ -638,11 +679,19 @@ export class ThreeNodeService {
       }
     }
     return arr;
-  }
-
+  } 
   createDemoTShape() {
-    this.createTShape(650 / this.scale, 850 / this.scale, 400 / this.scale, 200 / this.scale, 0xb9b9b9)
-    this.createLineRectangle(400 / this.scale, 850 / this.scale, 20 / this.scale, 0x333D46)
+    console.log("rebar", this.dataRebar);
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);   
+    console.log(member)
+    let memH = member['H'];
+    let memBt = member['Bt'];
+    let memB = member['B'];
+    let memt = member['t']
+    let haucnch_M = this.dataRebar.selectedCalPoint.haucnch_M;
+    if(!!haucnch_M) memH = memH + haucnch_M;
+    this.createTShape(memBt / this.scale, memH / this.scale, memB / this.scale, memt / this.scale, 0xb9b9b9)
+    this.createLineRectangle(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
   }
   createTShape(bt: any, h: any, b: any, t: any, color: any) {
@@ -656,9 +705,68 @@ export class ThreeNodeService {
     plane2.position.set(0, -t / 2, 0);
 
     this.scene.add(plane1);
-    this.scene.add(plane2);
+    this.scene.add(plane2);   
+    this.convertToCoodidateTShape(bt, h, b, t); 
   }
+  convertToCoodidateTShape(bt: any, h: any, b: any, t: any){
+    let jsonData: object = {};
+    const x_start = bt / 2;
+    const y_start = h / 2
+    const n =(bt-b)/2
+    if (b != 0 && h != 0 && bt != 0 && t != 0) {
+      jsonData["1"] = {
+        x: x_start,
+        y: y_start,
+        z: 0
+      }
+      jsonData["2"] = {
+        x: x_start,
+        y: y_start - t,
+        z: 0
+      }
+      jsonData["3"] = {
+        x: x_start - n,
+        y: y_start - t,
+        z: 0
+      }
+      jsonData["4"] = {
+        x: x_start - n,
+        y: - y_start,
+        z: 0
+      }
+      jsonData["5"] = {
+        x: -(x_start - n),
+        y: - y_start,
+        z: 0
+      }
 
+      jsonData["6"] = {
+        x: -(x_start - n),
+        y: y_start - t,
+        z: 0
+      }
+      jsonData["7"] = {
+        x: - x_start,
+        y: -(y_start - t),
+        z: 0
+      }
+      jsonData["8"] = {
+        x: -x_start,
+        y: -y_start,
+        z: 0
+      }
+    }
+    console.log("json", jsonData);
+    this.drawLineDim(jsonData["1"], jsonData["2"], 0, t * this.scale, true, 6, 4, 1);
+    this.drawLineDim(jsonData["1"], jsonData["4"], 0, h * this.scale, true, 8, 1, 4);
+
+    this.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 1, 4);
+    this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 8, -2, 4);
+
+    // dimenstions for rebar_type = 0
+    const rebar1 = this.dataRebar.selectedCalPoint.rebar1;
+    
+  }
   createDemoRectangle() {
     this.createRectangle(450 / this.scale, 700 / this.scale, 0xb9b9b9)
     this.createLineRectangle(450 / this.scale, 700 / this.scale, 20 / this.scale, 0x333D46)

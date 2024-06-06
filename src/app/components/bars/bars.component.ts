@@ -216,37 +216,40 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             if(m_no != null && m_no != undefined){     
               this.bars.setTableColumns(this.table_datas[i])       
               let data = this.bars.getDataPreview(index); 
+              const member = this.member.getTableColumns(m_no); 
               this.rebar = {
                 rebarList: this.bars.bar_list,
-                selectedCalPoint: data
+                selectedCalPoint: data,
+                typeView: member.shape
               } 
-                this.threeNode.memNo = m_no;
-                this.threeNode.dataNode = data;
-                const member = this.member.getTableColumns(m_no);     
-                this.calPoint = {
-                  m_no: member.m_no,
-                  shape: member.shape,
-                  p_name: data.p_name
-                }            
+              this.threeNode.memNo = m_no;
+              this.threeNode.dataNode = data;
+              this.threeNode.dataRebar = this.rebar
+                  
+              this.calPoint = {
+                m_no: member.m_no,
+                shape: member.shape,
+                p_name: data.p_name
+              }            
             }
           }
-         if(this.bars.is_review){
-          this.removeScene()
-          // this.threeNode.createDrawingLine()
-          // this.threeNode.createDemoOval()
-          this.threeNode.createDemoCircleRing()
-         }
-         let colIndex = this.save.isManual() ? 5 : 6
-         if (
-          ui.rowIndx === this.options.mergeCells[0].r1 
-          && ui.colIndx === colIndex
-        ) {
-          this.preview()
-          this.removeScene()
-          this.threeNode.createDrawingLine()
-          // this.threeNode.createDemoOval()
-          // this.threeNode.createDemoCircleRing()
-         }
+        // if(this.bars.is_review){
+        //   this.removeScene()
+        //   // this.threeNode.createDrawingLine()
+        //   // this.threeNode.createDemoOval()
+        //   this.threeNode.createDemoTShape()
+        //  }
+        //  let colIndex = this.save.isManual() ? 5 : 6
+        //  if (
+        //   ui.rowIndx === this.options.mergeCells[0].r1 
+        //   && ui.colIndx === colIndex
+        // ) {
+        //   this.preview()
+        //   this.removeScene()
+        //   this.threeNode.createDemoTShape()
+        //   // this.threeNode.createDemoOval()
+        //   // this.threeNode.createDemoCircleRing()
+        //  }
         },
       };
       this.option_list.push(op);
@@ -746,10 +749,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public removeScene(){
     let index =[]
     if(this.scene.scene.children.length > 0){ 
+      console.log("child", this.scene.scene.children)
       for(let i =0;i< this.scene.scene.children.length;i++){
         let name = this.scene.scene.children[i].name;
         let type = this.scene.scene.children[i].type;
-        if((name==="panel-0" && type==="Mesh")|| (name==="panel-1" && type==="Mesh")|| type==="Line"){
+        if(type==="Mesh"|| type==="Line"){
          index.push(i)
         }
       }
@@ -761,20 +765,21 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
      })
     
   }
-  for (let i = this.threeNode.nodeList.children.length - 1; i >= 0; i--) {
+  // for (let i = this.threeNode.nodeList.children.length - 1; i >= 0; i--) {
    
   
-      const target = this.threeNode.nodeList.children[i];
-      while (target.children.length > 0) {
-        const object = target.children[0];
-        object.parent.remove(object);
-      }
-      this.threeNode.nodeList.children.splice(i, 1);
+  //     const target = this.threeNode.nodeList.children[i];
+  //     while (target.children.length > 0) {
+  //       const object = target.children[0];
+  //       object.parent.remove(object);
+  //     }
+  //     this.threeNode.nodeList.children.splice(i, 1);
     
-  }
-  }
+  // }
+}
 
   public preview(): void{
+    this.removeScene();
     this.bars.is_review = !this.bars.is_review;
   }
 }
