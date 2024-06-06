@@ -230,7 +230,7 @@ export class CrackSettingsComponent
             const itemHasPqCellStyleWithWhiteColor = item.hasOwnProperty('pq_cellstyle') && Object.values(item.pq_cellstyle).some((obj:any) => obj.color === "white");
             // If the item has pq_cellstyle with "color": "white", skip the assignment
             if (itemHasPqCellStyleWithWhiteColor) {
-                continue;
+                break;
             }
             // Merge currentObj properties into each item
             Object.assign(this.table_datas[this.idTab][i], currentObj);
