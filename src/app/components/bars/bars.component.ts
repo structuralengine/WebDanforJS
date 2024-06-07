@@ -178,8 +178,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         const rowData = this.table_datas[i];
         for (let j = 0; j < rowData.length; j++) {
             const currentCell = rowData[j];
-            if (j < rowData.length - 1) {
-                const nextCell = rowData[j + 1];
+            if (j < rowData.length - 2) {
+                const nextCell = rowData[j + 2];
                 if (
                   JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia) &&
                   JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover) &&

@@ -167,6 +167,12 @@ export class InputCrackSettingsService {
   public setSaveData(crack: any) {
     ////////// 情報追加による調整コード //////////
     for (const value of crack) {
+      const defaultValue = this.default_crack(value.index);
+    for (const key in defaultValue) {
+      if (defaultValue.hasOwnProperty(key) && (value[key] === null || value[key] === undefined)) {
+        value[key] = defaultValue[key];
+      }
+    }
       if (value.ecsd_u == null && value.ecsd_l == null) {
         if (value.ecsd !== null) {
           value['ecsd_u'] = value.ecsd;

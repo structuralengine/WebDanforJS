@@ -315,6 +315,28 @@ export class InputFatiguesService {
     this.train_A_count = fatigues.train_A_count;
     this.train_B_count = fatigues.train_B_count;
     this.service_life = fatigues.service_life;
+    // list fatigue
+  this.fatigue_list = fatigues.fatigue_list.map((value) => {
+    const defaultValue = this.default_fatigue(value.index);
+    for (const key in defaultValue) {
+      if (defaultValue.hasOwnProperty(key) && (value[key] === null || value[key] === undefined)) {
+        value[key] = defaultValue[key];
+      }
+    }
+
+    //  M1, M2, V1, V2
+    const subKeys = ["M1", "M2", "V1", "V2"];
+    subKeys.forEach(subKey => {
+      const defaultSubValue = this.default_fatigue_coefficient(subKey.startsWith('M') ? 'Md' : 'Vd');
+      for (const subKeyAttr in defaultSubValue) {
+        if (defaultSubValue.hasOwnProperty(subKeyAttr) && (value[subKey][subKeyAttr] === null || value[subKey][subKeyAttr] === undefined)) {
+          value[subKey][subKeyAttr] = defaultSubValue[subKeyAttr];
+        }
+      }
+    });
+
+    return value;
+  });
   }
 
   public setInputData(train_A_count: any, train_B_count : any, service_life : any) {

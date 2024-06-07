@@ -210,8 +210,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         for (let j = 0; j < rowData.length; j++) {
           const currentCell = rowData[j];
-          if (j < rowData.length - 1) {
-            const nextCell = rowData[j + 1];
+          if (j < rowData.length - 2) {
+            const nextCell = rowData[j + 2];
             if (
               JSON.stringify(currentCell.M_SA) ===
                 JSON.stringify(nextCell.M_SA) &&
