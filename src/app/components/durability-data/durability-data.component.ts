@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit,ElementRef } from '@angular/core';
 import pq from 'pqgrid';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { SaveDataService } from 'src/app/providers/save-data.service';
@@ -16,8 +16,9 @@ import { InputMaterialStrengthVerificationConditionService } from '../material-s
 export class DurabilityDataComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('grid') grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
   public options: pq.gridT.options;
-
+  hasScrollbar: boolean = false;
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = new Array();
@@ -115,9 +116,16 @@ export class DurabilityDataComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   ngAfterViewInit() {
+    this.checkForScrollbar();
     this.activeButtons(0);
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   //Set show following component type is "Substructure"
   public setShow(id){
     let components = this.material.getSaveData().component;

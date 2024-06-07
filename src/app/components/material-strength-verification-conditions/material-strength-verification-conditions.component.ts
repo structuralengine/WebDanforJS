@@ -1,7 +1,7 @@
 
 
 
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild,ElementRef } from '@angular/core';
 import { InputMembersService } from '../members/members.service';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { InputMaterialStrengthVerificationConditionService } from './material-strength-verification-conditions.service';
@@ -24,6 +24,8 @@ export class MaterialStrengthVerificationConditionComponent implements OnInit {
 
   public groupMem: any;
   @ViewChild('grid1') grid1: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+  hasScrollbar: boolean = false;
   public options1: pq.gridT.options;
   private option1_list: pq.gridT.options[] = new Array();
   private columnHeaders1: object[] = [];
@@ -268,8 +270,16 @@ export class MaterialStrengthVerificationConditionComponent implements OnInit {
 
   }
   ngAfterViewInit(): void {
+    this.checkForScrollbar();
     this.activeButtons(0);
     this.setActiveTab(this.activeTab)
+  }
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
   }
   private setTitle(): void {
     this.columnHeaders1 = [
