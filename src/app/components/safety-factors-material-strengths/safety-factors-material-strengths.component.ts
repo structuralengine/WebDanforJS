@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, AfterViewInit, ChangeDetectorRef,ElementRef } from '@angular/core';
 import { InputSafetyFactorsMaterialStrengthsService } from './safety-factors-material-strengths.service'
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
@@ -27,6 +27,8 @@ export class SafetyFactorsMaterialStrengthsComponent
   public opt_no_for_v: boolean = false;
   public groupMem: any;
   public groupId: any;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+  hasScrollbar: boolean = false;
   // 安全係数
   @ViewChild('grid1') grid1: SheetComponent;
   public options1: pq.gridT.options;
@@ -499,6 +501,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   }
 
   ngAfterViewInit() {
+    this.checkForScrollbar();
     this.activeButtons(0);
     this.setActiveTab(this.activeTab);
     
@@ -508,6 +511,13 @@ export class SafetyFactorsMaterialStrengthsComponent
       this.opt_no_for_v = dataOfTab.opt_no_for_v
       this.opt_max_min = dataOfTab.opt_max_min
       this.opt_tens_only = dataOfTab.opt_tens_only
+    }
+  }
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
     }
   }
   ngAfterContentChecked() {

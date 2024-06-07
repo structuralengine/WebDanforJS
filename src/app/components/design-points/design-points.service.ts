@@ -50,6 +50,12 @@ export class InputDesignPointsService {
       for (const key of Object.keys(tmp)) {
         if (key in data) {
           tmp[key] = data[key];
+          if ((key === "isMzCalc" || key === "isVyCalc" || key === "isMtCalc") && data[key] === null && isManual){
+            tmp[key] = false;
+          }
+          if ((key === "isUpperCalc" || key === "isLowerCalc") && data[key] === null && isManual){
+            tmp[key] = true;
+          }
         }else {
           if ((key === "isUpperCalc" || key === "isLowerCalc") && bars !== undefined) {
             let index = bars.findIndex(bar => data.index === bar.index)
@@ -68,6 +74,9 @@ export class InputDesignPointsService {
               tmp["isUpperCalc"] = true
               tmp["isLowerCalc"] = true
             }
+          }
+          if ((key === "isMzCalc" || key === "isVyCalc" || key === "isMtCalc") && isManual ){
+            tmp[key] = false;
           }
         }
         if(is3DPickUp){
@@ -96,11 +105,7 @@ export class InputDesignPointsService {
           if(!isManual){
             tmp["isMtCalc"] = false;
           }else{
-            tmp["isMzCalc"] = true;
-            tmp["isVyCalc"] = true;
-            tmp["isMtCalc"] = true;
-            tmp["isUpperCalc"] = true
-            tmp["isLowerCalc"] = true
+            tmp['position'] = null
           }
         }
       }
@@ -254,10 +259,10 @@ export class InputDesignPointsService {
       p_id: null,
       axis_type: 2,
       isMyCalc: false,
-      isVyCalc: true,
-      isMzCalc: true,
+      isVyCalc: false,
+      isMzCalc: false,
       isVzCalc: false,
-      isMtCalc: true,
+      isMtCalc: false,
       isUpperCalc: true,
       isLowerCalc: true
       // La: null
@@ -334,9 +339,9 @@ export class InputDesignPointsService {
     const data = [];
     for (const g of this.getTableColumns(true)) {
       for (const p of g) {
-        p.isMzCalc = true;
-        p.isVyCalc = true;
-        p.isMtCalc = true;
+        // p.isMzCalc = false;
+        // p.isVyCalc = false;
+        // p.isMtCalc = false;
         data.push(p);
       }
     }
