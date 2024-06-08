@@ -102,47 +102,65 @@ autoUpdater.on('update-downloaded', (info) => {
 ipcMain.on("newWindow", async() => await createWindow())
 // ファイルを開く
 ipcMain.on('open', (event: Electron.IpcMainEvent) => {
-  // ファイルを選択
-  const paths = dialog.showOpenDialogSync(mainWindow, {
-    buttonLabel: 'open', // 確認ボタンのラベル
-    filters: [{ name: 'wdj', extensions: ['wdj'] }, { name: 'dsd', extensions: ['dsd'] }],
-    defaultPath: arg_path? arg_path :"",
-    properties: [
-      'openFile', // ファイルの選択を許可
-      'createDirectory', // ディレクトリの作成を許可 (macOS)
-    ],
-  });
+  if (!arg_path) {
+    // ファイルを選択
+    const paths = dialog.showOpenDialogSync(mainWindow, {
+      buttonLabel: 'open', // 確認ボタンのラベル
+      filters: [{ name: 'wdj', extensions: ['wdj'] }, { name: 'dsd', extensions: ['dsd'] }],
+      properties: [
+        'openFile', // ファイルの選択を許可
+        'createDirectory', // ディレクトリの作成を許可 (macOS)
+      ],
+    });
 
-  // キャンセルで閉じた場合
-  if (paths == null) {
-    event.returnValue = { status: undefined };
-    return;
-  }
-
-  // ファイルの内容を返却
-  try {
-    const path = paths[0];
-    const buff = fs.readFileSync(path);
-    // ファイルを読み込む
-    let text = null;
-    switch (path.split('.').pop()) {
-      case "dsd":
-        text = buff;
-        break;
-      default:
-        text = buff.toString();
+    // キャンセルで閉じた場合
+    if (paths == null) {
+      event.returnValue = { status: undefined };
+      return;
     }
 
-    // リターン
-    event.returnValue = {
-      status: true,
-      path: path,
-      textB: buff,
-      text
-    };
-    arg_path = null
-  } catch (error) {
-    event.returnValue = { status: false, message: error.message };
+    // ファイルの内容を返却
+    try {
+      const path = paths[0];
+      const buff = fs.readFileSync(path);
+      // ファイルを読み込む
+      let text = null;
+      switch (path.split('.').pop()) {
+        case "dsd":
+          text = buff;
+          break;
+        default:
+          text = buff.toString();
+      }
+
+      // リターン
+      event.returnValue = {
+        status: true,
+        path: path,
+        textB: buff,
+        text
+      };
+    } catch (error) {
+      event.returnValue = { status: false, message: error.message };
+    }
+  } else {
+    try {
+      const path = arg_path;
+      const buff = fs.readFileSync(path);
+
+      // ファイルを読み込む
+      let text = buff.toString();
+
+      // リターン
+      event.returnValue = {
+        status: true,
+        path: path,
+        text
+      };
+      arg_path = null
+    } catch (error) {
+      event.returnValue = { status: false, message: error.message };
+    }
   }
 });
 
