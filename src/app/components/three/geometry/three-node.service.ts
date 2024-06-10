@@ -771,10 +771,17 @@ export class ThreeNodeService {
     this.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 1, 4);
     this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 8, -2, 4);
     console.log("jsondata", jsonData)
+
     // dimenstions for rebar_type = 0
-    const index_rebar_type_0 = this.dataRebar.selectedCalPoint.rebar0.findIndex((data: any) => data.rebar_type === 0)
-    if (index_rebar_type_0 !== -1) {
-      const rebar_type_0 = this.dataRebar.selectedCalPoint.rebar0[index_rebar_type_0];
+    let arr_rebar_type_0 = []
+    this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
+      if (data.rebar_type === 0) {
+        arr_rebar_type_0.push(data)
+      }
+    })
+    arr_rebar_type_0.sort((a, b) => a.dist_top - b.dist_top)
+    const rebar_type_0 = arr_rebar_type_0[0];
+    if (rebar_type_0 != undefined) {
       const dist_top = rebar_type_0.dist_top / this.scale;
       const dist_side = rebar_type_0.dist_side / this.scale;
       const quantity = rebar_type_0.quantity;
@@ -799,12 +806,18 @@ export class ThreeNodeService {
       this.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
       this.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
     }
-    // dimenstions for rebar_type = 1
-    const index_rebar_type_1 = this.dataRebar.selectedCalPoint.rebar0.findIndex((data: any) => data.rebar_type === 1)
 
-    if (index_rebar_type_1 !== -1) {
-      const rebar_type_1 = this.dataRebar.selectedCalPoint.rebar0[index_rebar_type_1];
-      if (rebar_type_1 != null) {
+    // dimenstions for rebar_type = 1
+    let arr_rebar_type_1 = []
+    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
+      if (data.rebar_type === 1) {
+        arr_rebar_type_1.push(data)
+      }
+    })
+    arr_rebar_type_1.sort((a, b) => b.dist_top - a.dist_top)
+    const rebar_type_1 = arr_rebar_type_1[0];
+
+    if (rebar_type_1 != undefined) {
         const dist_top2 = rebar_type_1.dist_top / this.scale;
         const dist_side2 = rebar_type_1.dist_side / this.scale;
         const quantity2 = rebar_type_1.quantity;
@@ -821,10 +834,10 @@ export class ThreeNodeService {
         }
         this.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);
         this.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
-      }
     }
+
     // dimenstions for rebar_type = 0 & 1
-    if (index_rebar_type_1 !== -1 && index_rebar_type_0 !== -1) {
+    if (rebar_type_1 != undefined && rebar_type_0 != undefined) {
       const arr_dis_top = []
       const arr_gap = []
       this.dataRebar.selectedCalPoint.rebar0.map((data) => {
@@ -846,7 +859,6 @@ export class ThreeNodeService {
       }
       console.log("arr_gap", arr_gap)
     }
-
     // const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
     // const dist_top2 = rebar2.rebar_cover / this.scale;
     // const gap = 2;
@@ -867,7 +879,18 @@ export class ThreeNodeService {
     // this.drawLineDim(jsonData["rb_5"], jsonData["rb_4"], 0, Math.round(gap), true, 6 + n, 25+ n, 1);
     // this.drawLineDim(jsonData["rb_5"], jsonData["rb_1"], 0, Math.round(remain), true, 6 + n, 25+ n, 1);
 
-
+    // dimenstions for rebar_type = 4
+    let arr_rebar_type_4 = []
+    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
+      if (data.rebar_type === 4) {
+        arr_rebar_type_4.push(data)
+      }
+    })
+    arr_rebar_type_4.sort((a, b) => a.dist_top - b.dist_top)
+    const rebar_type_4 = arr_rebar_type_4[0];
+    if (rebar_type_4 != undefined){
+      console.log("rebar_type_4", rebar_type_4)
+    }
 
   }
   createDemoRectangle() {
