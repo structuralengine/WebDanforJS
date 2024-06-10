@@ -25,7 +25,7 @@ export class ThreeNodeService {
     this.dataNode = new Array();
     this.scale = 1;
   }
-  public onInit(): void {    
+  public onInit(): void {
     this.scene.render();
   }
   public getJson() {
@@ -111,10 +111,10 @@ export class ThreeNodeService {
     let startNode = 8;
     let checkNode = startNode;
     const len = this.getLength(jsonData["1"], jsonData["8"]);
-   // this.drawLineDim(jsonData["1"], jsonData["2"],0,  member['Bt'], true, 6)
+    // this.drawLineDim(jsonData["1"], jsonData["2"],0,  member['Bt'], true, 6)
     // this.drawLineDemension(jsonData["1"], len, member['Bt'], true, [1, 6, 8])
     // this.drawLineDemension(jsonData["4"], this.getLength(jsonData["4"], jsonData["5"]), member['B'], true, [1, 6, 8], 2)
-     this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
+    this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
     // this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false, member['shape'] == 1 ? [1, 4, 10] : [8, 11, 13], 9)
     //drawing node rebar1
     let rebar1 = this.dataNode['rebar1'];
@@ -149,12 +149,12 @@ export class ThreeNodeService {
     if (checkNode < startNode) {
       if (startNode - checkNode >= 2)
         //this.drawLineDemension(jsonData[`${checkNode + 1}`], this.getLength(jsonData[`${checkNode + 1}`], jsonData[`${checkNode + 2}`]), rebar1['rebar_ss'], true, [1, 3, 4], 5)
-      //this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 }), rebar1['rebar_cover'], false, [1, 4, 5], 6)
-      if (Math.ceil(rebar1['rebar_n'] / rebar1['rebar_lines']) > 1) {
-        //this.drawLineDemension({ x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 },
+        //this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 }), rebar1['rebar_cover'], false, [1, 4, 5], 6)
+        if (Math.ceil(rebar1['rebar_n'] / rebar1['rebar_lines']) > 1) {
+          //this.drawLineDemension({ x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 },
           //this.getLength(jsonData[`${checkNode + 1}`], { x: jsonData[`${checkNode + 1}`]['x'], y: jsonData[`${checkNode + rebar1['rebar_lines'] + 1}`]['y'], z: 0 }),
           //rebar1['rebar_space'], false, [1, 4, 5], 3)
-      }
+        }
 
       checkNode = startNode
     }
@@ -188,10 +188,10 @@ export class ThreeNodeService {
     if (checkNode < startNode) {
       //this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData[`${checkNode + 1}_i`], jsonData[`${checkNode + 2}_i`]), rebar2['rebar_ss'], true, [1, 4, 5], 4)
       if (Math.ceil(rebar2['rebar_n'] / rebar2['rebar_lines']) >= 2)
-       // this.drawLineDemension({ x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode + 1}_i`], { x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }), rebar2['rebar_space'], false, [1, 4, 5], 3)
-      //this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData["4"], { y: jsonData[`${checkNode + 1}_i`]['y'], x: jsonData["4"]['x'], z: 0 }), rebar2['rebar_cover'], false, [1, 4, 5], 3)
+        // this.drawLineDemension({ x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode + 1}_i`], { x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }), rebar2['rebar_space'], false, [1, 4, 5], 3)
+        //this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData["4"], { y: jsonData[`${checkNode + 1}_i`]['y'], x: jsonData["4"]['x'], z: 0 }), rebar2['rebar_cover'], false, [1, 4, 5], 3)
 
-      checkNode = startNode
+        checkNode = startNode
     }
     //drawing sidebar 1
     var objectKey = Object.keys(this.dataNode);
@@ -242,8 +242,8 @@ export class ThreeNodeService {
         }
       }
       if (checkNode < startNode) {
-      //   this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar['side_cover'], false, [1, 4, 8])
-      //   this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode + 1}_s`], jsonData[`${checkNode + 2}_s`]), rebar2['rebar_space'], false, [1, 4, 8])
+        //   this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar['side_cover'], false, [1, 4, 8])
+        //   this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode + 1}_s`], jsonData[`${checkNode + 2}_s`]), rebar2['rebar_space'], false, [1, 4, 8])
       }
     }
 
@@ -252,8 +252,8 @@ export class ThreeNodeService {
   }
 
   public changeData(): object {
-    
-    
+
+
     const jsonKeys = Object.keys(this.jsonData);
     let data: any = [];
     if (jsonKeys.length <= 0) {
@@ -403,7 +403,7 @@ export class ThreeNodeService {
       this.scene.add(mesh);
     }
   }
-  private  drawLineDemension(pointStart: any, length: number, title: number, dir: boolean, kc: any[], style: number = -1) {
+  private drawLineDemension(pointStart: any, length: number, title: number, dir: boolean, kc: any[], style: number = -1) {
     if (title == null) return;
     let points = [];
     const point = pointStart as [];
@@ -423,7 +423,7 @@ export class ThreeNodeService {
       points.push(new THREE.Vector3(x + length, py2, z));
       points.push(new THREE.Vector3(x + length, py3, z));
       points.push(new THREE.Vector3(x + length, py1 + 2, z));
-     
+
     } else {
       points.push(new THREE.Vector3(px1, y, z));
       points.push(new THREE.Vector3(px3, y, z));
@@ -455,7 +455,7 @@ export class ThreeNodeService {
     else {
       mesh.position.set((px1 + px3) / 2, y - length / 2, z);
       mesh.rotation.z = Math.acos(-1);
-     // mesh.rotation.y = 0.5 * Math.PI + Math.atan2(px1 - px3, -length);
+      // mesh.rotation.y = 0.5 * Math.PI + Math.atan2(px1 - px3, -length);
     }
     // 文字をシーンに追加
     const div = document.createElement("div");
@@ -533,63 +533,63 @@ export class ThreeNodeService {
     const result: number = Math.sqrt((xi - xj) ** 2 + (yi - yj) ** 2 + (zi - zj) ** 2);
     return result;
   }
-  private drawLineDim(ni: any, nj: any, style: number, title: any, vertical: boolean, lenDim: any, distanceDim: any, distance: any){
+  private drawLineDim(ni: any, nj: any, style: number, title: any, vertical: boolean, lenDim: any, distanceDim: any, distance: any) {
     let x: any;
-    let y: any;   
+    let y: any;
     let px: any;
     let py: any;
     let xmin: any = ni.x;
     let ymin: any = ni.y;
     let i = JSON.parse(JSON.stringify(ni));
     let j = JSON.parse(JSON.stringify(nj));
-    if(vertical){
-      if(Math.abs(i.x) > Math.abs(j.x)){
+    if (vertical) {
+      if (Math.abs(i.x) > Math.abs(j.x)) {
         xmin = j.x
-        j.x = i.x              
-      } 
-      else{
+        j.x = i.x
+      }
+      else {
         xmin = i.x
         i.x = j.x
-      } 
+      }
       x = i.x;
       y = j.y > i.y ? j.y : i.y
-    }else{
-      if(i.y > j.y){
+    } else {
+      if (i.y > j.y) {
         ymin = j.y
         j.y = i.y
-      } 
+      }
       else {
         ymin = i.y
-        i.y = j.y       
+        i.y = j.y
       }
       x = i.x > j.x ? i.x : j.x;
-      y = j.y 
+      y = j.y
     }
-   
+
     var length = this.getLength(i, j);
-    if(vertical){
-      let pointHors = [];  
-       px = x > 0 ? x + distance : x - distance;
-       py = px > 0 ? px + lenDim : px - lenDim;
+    if (vertical) {
+      let pointHors = [];
+      px = x > 0 ? x + distance : x - distance;
+      py = px > 0 ? px + lenDim : px - lenDim;
       pointHors.push(new THREE.Vector3(px, y, 0));
       pointHors.push(new THREE.Vector3(py, y, 0));
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(pointHors),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
-      this.scene.add(line);  
+      this.scene.add(line);
 
       let points = [];
-      points.push(new THREE.Vector3(x != xmin? xmin : px, y - length, 0));
+      points.push(new THREE.Vector3(x != xmin ? xmin : px, y - length, 0));
       points.push(new THREE.Vector3(py, y - length, 0));
       const line2 = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(points),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
       this.scene.add(line2);
-      
-    } else{
-      let pointHors = [];  
+
+    } else {
+      let pointHors = [];
       px = y > 0 ? y + distance : y - distance;
       py = px > 0 ? px + lenDim : px - lenDim;
       pointHors.push(new THREE.Vector3(x, px, 0));
@@ -598,7 +598,7 @@ export class ThreeNodeService {
         new THREE.BufferGeometry().setFromPoints(pointHors),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
-      this.scene.add(line);  
+      this.scene.add(line);
 
       let points = [];
       points.push(new THREE.Vector3(x - length, px, 0));
@@ -608,7 +608,7 @@ export class ThreeNodeService {
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
       this.scene.add(line2);
-    } 
+    }
     const geometry = new THREE.CylinderGeometry(0.1, 0.1, length, 12);
 
     // 要素をシーンに追加
@@ -618,30 +618,30 @@ export class ThreeNodeService {
     );
     mesh.name = "member" + 2;
 
-    if(vertical){
-      mesh.position.set(px + lenDim - distanceDim, y - length / 2 , 0);   
-    }else{
-      mesh.position.set(x - length/2, (px + py)/2 + distanceDim, 0);
+    if (vertical) {
+      mesh.position.set(px + lenDim - distanceDim, y - length / 2, 0);
+    } else {
+      mesh.position.set(x - length / 2, (px + py) / 2 + distanceDim, 0);
       mesh.rotation.z = Math.acos(0);
       mesh.rotation.y = 0.5 * Math.PI + Math.atan2(length, 0);
     }
     const div = document.createElement("div");
     div.className = "label";
     div.textContent = `${title}`;
-    switch(style){
+    switch (style) {
       case 0:
         div.style.marginTop = "-4em";
         div.style.marginLeft = "1em";
-        if(x < 0){
+        if (x < 0) {
           div.style.marginLeft = "-2em";
         }
         break;
       case 1:
-        div.style.marginTop = "-5em"; 
-        if(y < 0) div.style.marginTop = "-3em"; 
+        div.style.marginTop = "-5em";
+        if (y < 0) div.style.marginTop = "-3em";
         break;
     }
-   
+
     div.style.color = '#000000'
     div.style.fontSize = '12px'
     const label = new CSS2DObject(div);
@@ -650,7 +650,7 @@ export class ThreeNodeService {
     label.name = "font";
     label.visible = true;
     mesh.add(label);
-   
+
     this.scene.add(mesh);
     //this.nodeList.children.push(mesh);
     this.scene.render()
@@ -682,22 +682,22 @@ export class ThreeNodeService {
       }
     }
     return arr;
-  } 
+  }
   createDemoTShape() {
     console.log("rebar", this.dataRebar);
-    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);   
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
     console.log(member)
     let memH = member['H'];
     let memBt = member['Bt'];
     let memB = member['B'];
     let memt = member['t'];
     var arr = [memH, memBt, memB, memt];
-    let max_val = arr.reduce(function(accumulator, element){
+    let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
     });
-    this.scale = max_val/88;
+    this.scale = max_val / 88;
     let haucnch_M = this.dataRebar.selectedCalPoint.haucnch_M;
-    if(!!haucnch_M) memH = memH + haucnch_M;
+    if (!!haucnch_M) memH = memH + haucnch_M;
     this.createTShape(memBt / this.scale, memH / this.scale, memB / this.scale, memt / this.scale, 0xb9b9b9)
     this.createLineRectangle(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
@@ -713,14 +713,14 @@ export class ThreeNodeService {
     plane2.position.set(0, -t / 2, 0);
 
     this.scene.add(plane1);
-    this.scene.add(plane2);   
-    this.convertToCoodidateTShape(bt, h, b, t); 
+    this.scene.add(plane2);
+    this.convertToCoordinatesTShape(bt, h, b, t);
   }
-  convertToCoodidateTShape(bt: any, h: any, b: any, t: any){
+  convertToCoordinatesTShape(bt: any, h: any, b: any, t: any) {
     let jsonData: object = {};
     const x_start = bt / 2;
     const y_start = h / 2
-    const n =(bt-b)/2
+    const n = (bt - b) / 2
     if (b != 0 && h != 0 && bt != 0 && t != 0) {
       jsonData["1"] = {
         x: x_start,
@@ -764,7 +764,7 @@ export class ThreeNodeService {
         z: 0
       }
     }
-   
+
     this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(t * this.scale), true, 6, 4, 1);
     this.drawLineDim(jsonData["1"], jsonData["4"], 0, Math.round(h * this.scale), true, 8, 1, 4);
 
@@ -772,35 +772,57 @@ export class ThreeNodeService {
     this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 8, -2, 4);
     console.log("jsondata", jsonData)
     // dimenstions for rebar_type = 0
-    const rebar1 = this.dataRebar.selectedCalPoint.rebar1;
-    if(rebar1.rebar_cover != null){
-      const dist_top = rebar1.rebar_cover / this.scale;
-      const dist_side = rebar1.rebar_ss / this.scale;
-      const quantity = rebar1.rebar_lines;
-      const interval =  (b - 2 * dist_side) / quantity;
-      jsonData["rb_1"]={
+    const index_rebar_type_0 = this.dataRebar.selectedCalPoint.rebar0.findIndex((data: any) => data.rebar_type === 0)
+    if (index_rebar_type_0 !== -1) {
+      const rebar_type_0 = this.dataRebar.selectedCalPoint.rebar0[index_rebar_type_0];
+      const dist_top = rebar_type_0.dist_top / this.scale;
+      const dist_side = rebar_type_0.dist_side / this.scale;
+      const quantity = rebar_type_0.quantity;
+      const interval = rebar_type_0.interval ? rebar_type_0.interval / this.scale : (b - 2 * dist_side) / quantity;
+      jsonData["rb_1"] = {
         x: -(x_start - n - dist_side),
-        y:  y_start - dist_top,
+        y: y_start - dist_top,
         z: 0
       }
-      jsonData["rb_2"]={
+      jsonData["rb_2"] = {
         x: -(x_start - n),
-        y:  y_start - dist_top,
+        y: y_start - 15 / this.scale,
         z: 0
       }
-      jsonData["rb_3"]={
+      jsonData["rb_3"] = {
         x: -(x_start - n - dist_side - interval),
-        y:  y_start - dist_top,
+        y: y_start - 15 / this.scale,
         z: 0
       }
-  
+
       this.drawLineDim(jsonData["8"], jsonData["rb_1"], 0, Math.round(dist_top * this.scale), true, 6, 10, 1);
       this.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
       this.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
-  
     }
-    
+    // dimenstions for rebar_type = 1
+    const index_rebar_type_1 = this.dataRebar.selectedCalPoint.rebar0.findIndex((data: any) => data.rebar_type === 1)
 
+    if (index_rebar_type_1 !== -1) {
+      const rebar_type_1 = this.dataRebar.selectedCalPoint.rebar0[index_rebar_type_1];
+      if (rebar_type_1 != null) {
+        const dist_top2 = rebar_type_1.dist_top / this.scale;
+        const dist_side2 = rebar_type_1.dist_side / this.scale;
+        const quantity2 = rebar_type_1.quantity;
+        const interval2 = rebar_type_1.interval ? rebar_type_1.interval / this.scale : (b - 2 * dist_side2) / quantity2;
+        jsonData["rb_7"] = {
+          x: -(x_start - n - dist_side2),
+          y: -(y_start),
+          z: 0
+        }
+        jsonData["rb_8"] = {
+          x: -(x_start - n - dist_side2 - interval2),
+          y: -(y_start),
+          z: 0
+        }
+        this.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);
+        this.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
+      }
+    }
     // dimenstions for rebar_type = 0 & 1
     // const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
     // const dist_top2 = rebar2.rebar_cover / this.scale;
@@ -822,39 +844,20 @@ export class ThreeNodeService {
     // this.drawLineDim(jsonData["rb_5"], jsonData["rb_4"], 0, Math.round(gap), true, 6 + n, 25+ n, 1);
     // this.drawLineDim(jsonData["rb_5"], jsonData["rb_1"], 0, Math.round(remain), true, 6 + n, 25+ n, 1);
 
-    // dimenstions for rebar_type = 1
-    const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
-    if(rebar2 != null){
-      const dist_top2 = rebar2.rebar_cover / this.scale;
-      const dist_side2 = rebar2.rebar_ss / this.scale;
-      const quantity2 = rebar2.rebar_lines;
-      const interval2 =  (b - 2 * dist_side2) / quantity2;  
-      jsonData["rb_7"]={
-        x: -(x_start - n - dist_side2),
-        y:  -(y_start),
-        z: 0
-      }
-      jsonData["rb_8"]={
-        x: -(x_start - n - dist_side2 - interval2),
-        y:  -(y_start),
-        z: 0
-      }    
-      this.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_top2 * this.scale), false, 6, -2, 1);
-      this.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);  
-    }
-   
+
+
   }
   createDemoRectangle() {
-    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);   
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
     let memH = member['H'];
     let memBt = member['Bt'];
     let memB = member['B'];
     let memt = member['t'];
     var arr = [memH, memBt, memB, memt];
-    let max_val = arr.reduce(function(accumulator, element){
+    let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
     });
-    this.scale = max_val/88;
+    this.scale = max_val / 88;
     this.createRectangle(memH / this.scale, memB / this.scale, 0xb9b9b9)
     //this.createLineRectangle(memH / this.scale, memB / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
