@@ -23,7 +23,7 @@ export class ThreeNodeService {
   ) {
     this.memNo = 0;
     this.dataNode = new Array();
-    this.scale = 25   
+    this.scale = 1;
   }
   public onInit(): void {    
     this.scene.render();
@@ -543,7 +543,7 @@ export class ThreeNodeService {
     let i = JSON.parse(JSON.stringify(ni));
     let j = JSON.parse(JSON.stringify(nj));
     if(vertical){
-      if(i.x > j.x){
+      if(Math.abs(i.x) > Math.abs(j.x)){
         xmin = j.x
         j.x = i.x              
       } 
@@ -632,6 +632,9 @@ export class ThreeNodeService {
       case 0:
         div.style.marginTop = "-4em";
         div.style.marginLeft = "1em";
+        if(x < 0){
+          div.style.marginLeft = "-2em";
+        }
         break;
       case 1:
         div.style.marginTop = "-5em"; 
@@ -687,7 +690,12 @@ export class ThreeNodeService {
     let memH = member['H'];
     let memBt = member['Bt'];
     let memB = member['B'];
-    let memt = member['t']
+    let memt = member['t'];
+    var arr = [memH, memBt, memB, memt];
+    let max_val = arr.reduce(function(accumulator, element){
+      return (accumulator > element) ? accumulator : element
+    });
+    this.scale = max_val/88;
     let haucnch_M = this.dataRebar.selectedCalPoint.haucnch_M;
     if(!!haucnch_M) memH = memH + haucnch_M;
     this.createTShape(memBt / this.scale, memH / this.scale, memB / this.scale, memt / this.scale, 0xb9b9b9)
@@ -752,24 +760,103 @@ export class ThreeNodeService {
       }
       jsonData["8"] = {
         x: -x_start,
-        y: -y_start,
+        y: y_start,
         z: 0
       }
     }
-    console.log("json", jsonData);
-    this.drawLineDim(jsonData["1"], jsonData["2"], 0, t * this.scale, true, 6, 4, 1);
-    this.drawLineDim(jsonData["1"], jsonData["4"], 0, h * this.scale, true, 8, 1, 4);
+   
+    this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(t * this.scale), true, 6, 4, 1);
+    this.drawLineDim(jsonData["1"], jsonData["4"], 0, Math.round(h * this.scale), true, 8, 1, 4);
 
     this.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 1, 4);
     this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 8, -2, 4);
-
+    console.log("jsondata", jsonData)
     // dimenstions for rebar_type = 0
     const rebar1 = this.dataRebar.selectedCalPoint.rebar1;
+    if(rebar1.rebar_cover != null){
+      const dist_top = rebar1.rebar_cover / this.scale;
+      const dist_side = rebar1.rebar_ss / this.scale;
+      const quantity = rebar1.rebar_lines;
+      const interval =  (b - 2 * dist_side) / quantity;
+      jsonData["rb_1"]={
+        x: -(x_start - n - dist_side),
+        y:  y_start - dist_top,
+        z: 0
+      }
+      jsonData["rb_2"]={
+        x: -(x_start - n),
+        y:  y_start - dist_top,
+        z: 0
+      }
+      jsonData["rb_3"]={
+        x: -(x_start - n - dist_side - interval),
+        y:  y_start - dist_top,
+        z: 0
+      }
+  
+      this.drawLineDim(jsonData["8"], jsonData["rb_1"], 0, Math.round(dist_top * this.scale), true, 6, 10, 1);
+      this.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
+      this.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
+  
+    }
     
+
+    // dimenstions for rebar_type = 0 & 1
+    // const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
+    // const dist_top2 = rebar2.rebar_cover / this.scale;
+    // const gap = 2;
+    // const dist_side2 = h - dist_top2;
+    // const remain = h - dist_top2 - gap;
+
+    // jsonData["rb_4"]= {
+    //   x:  -(x_start - n),
+    //   y:  - (dist_side2 - y_start),
+    //   z: 0
+    // }
+    // jsonData["rb_5"]= {
+    //   x:  -(x_start - n),
+    //   y:  - (dist_side2 - y_start - gap),
+    //   z: 0
+    // }
+    // this.drawLineDim(jsonData["5"], jsonData["rb_4"], 0, Math.round(dist_side2), true, 6 + n, 25 + n, 1);
+    // this.drawLineDim(jsonData["rb_5"], jsonData["rb_4"], 0, Math.round(gap), true, 6 + n, 25+ n, 1);
+    // this.drawLineDim(jsonData["rb_5"], jsonData["rb_1"], 0, Math.round(remain), true, 6 + n, 25+ n, 1);
+
+    // dimenstions for rebar_type = 1
+    const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
+    if(rebar2 != null){
+      const dist_top2 = rebar2.rebar_cover / this.scale;
+      const dist_side2 = rebar2.rebar_ss / this.scale;
+      const quantity2 = rebar2.rebar_lines;
+      const interval2 =  (b - 2 * dist_side2) / quantity2;  
+      jsonData["rb_7"]={
+        x: -(x_start - n - dist_side2),
+        y:  -(y_start),
+        z: 0
+      }
+      jsonData["rb_8"]={
+        x: -(x_start - n - dist_side2 - interval2),
+        y:  -(y_start),
+        z: 0
+      }    
+      this.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_top2 * this.scale), false, 6, -2, 1);
+      this.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);  
+    }
+   
   }
   createDemoRectangle() {
-    this.createRectangle(450 / this.scale, 700 / this.scale, 0xb9b9b9)
-    this.createLineRectangle(450 / this.scale, 700 / this.scale, 20 / this.scale, 0x333D46)
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);   
+    let memH = member['H'];
+    let memBt = member['Bt'];
+    let memB = member['B'];
+    let memt = member['t'];
+    var arr = [memH, memBt, memB, memt];
+    let max_val = arr.reduce(function(accumulator, element){
+      return (accumulator > element) ? accumulator : element
+    });
+    this.scale = max_val/88;
+    this.createRectangle(memH / this.scale, memB / this.scale, 0xb9b9b9)
+    //this.createLineRectangle(memH / this.scale, memB / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
   }
   createRectangle(b: any, h: any, color: any) {

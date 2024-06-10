@@ -56,8 +56,8 @@ export class ThreeComponent implements OnInit {
         this.getAspectRatio(),
         this.canvas,
         devicePixelRatio,
-        520,
-        520
+        600, 
+        600
       );
     } else {
       // this.scene.OnInitRebar(

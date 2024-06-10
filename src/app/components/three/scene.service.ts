@@ -71,7 +71,7 @@ export class SceneService {
     this.add(new THREE.AmbientLight(0xf0f0f0));
     // レンダラー
     this.createRender(canvasElement, deviceRatio, Width, Height);
-    this.createHelper();
+    //this.createHelper();
     // gui を生成する
     this.gui = new GUI();
     this.gui.domElement.id = "gui_css";    
@@ -110,7 +110,7 @@ export class SceneService {
     this.addRebar(new THREE.AmbientLight(0xf0f0f0));
     // レンダラー
     this.createRender(canvasElement, deviceRatio, Width, Height);
-    this.createHelperRebar();
+    //this.createHelperRebar();
     // gui を生成する
     this.gui = new GUI();
     this.gui.domElement.id = "gui_css";    

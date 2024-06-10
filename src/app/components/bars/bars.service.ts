@@ -151,7 +151,8 @@ export class InputBarsService {
     return {
       index: id,
       haunch_M: null,
-      haunch_V: null,
+      haunch_V: null,    
+      rebar0: [],
       rebar1: this.default_rebar(top),
       rebar2: this.default_rebar(under),
       sidebar1: this.default_sidebar(),
@@ -244,6 +245,7 @@ export class InputBarsService {
           column1['p_name'] = data['p_name'];
           column1['bh'] = data['b'];
           column1['haunch_height'] = data['haunch_M'];
+          column1['rebar0'] = data['rebar0'];
 
           column1['design_point_id'] = data['rebar1'].title;
           column1['rebar_dia'] = data['rebar1'].rebar_dia;
@@ -410,6 +412,7 @@ export class InputBarsService {
       b.h = column2.bh;
       b.haunch_M = column1.haunch_height;
       b.haunch_V = column2.haunch_height;
+      b.rebar0 = column1.rebar0
 
       b.rebar1.title = column1.design_point_id;
       b.rebar1.rebar_dia = column1.rebar_dia;
