@@ -40,11 +40,7 @@ async function createWindow() {
     }
   });
   if (process.argv.length > 1) {
-    const arg_path_list = process.argv[1];
-    const trimmedStr = arg_path_list.slice(1, -1);
-    const pathsArray = trimmedStr.split(",");
-    const cleanedPaths = pathsArray.map(path => path.slice(1, -1));
-    arg_path = cleanedPaths[0]
+    arg_path = process.argv[1];
   } else {
     arg_path = null;
   }
