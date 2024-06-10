@@ -173,33 +173,33 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
-      const rowData = this.table_datas[i];
-      for (let j = 0; j < rowData.length - 1; j++) {
-        const rowData = this.table_datas[i];
-        for (let j = 0; j < rowData.length; j++) {
-            const currentCell = rowData[j];
-            if (j < rowData.length - 2) {
-                const nextCell = rowData[j + 2];
-                if (
-                  JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia) &&
-                  JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover) &&
-                  JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines) &&
-                  JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_n) &&
-                  JSON.stringify(currentCell.rebar_space) === JSON.stringify(nextCell.rebar_space) &&
-                  JSON.stringify(currentCell.rebar_ss) === JSON.stringify(nextCell.rebar_ss) 
-              ) {
-                currentCell.pq_cellstyle = { ...this.rowStyle };
-                // currentCell.pq_cellprop={};
-                } else {
-                  currentCell.pq_cellstyle = { ...this.rowStyle2 };
-                  // currentCell.pq_cellprop={};
-                }
-            } else {
-              currentCell.pq_cellstyle = { ...this.rowStyle };
-              // currentCell.pq_cellprop={};
-            }
-        }
-      }
+      // const rowData = this.table_datas[i];
+      // for (let j = 0; j < rowData.length - 1; j++) {
+      //   const rowData = this.table_datas[i];
+      //   for (let j = 0; j < rowData.length; j++) {
+      //       const currentCell = rowData[j];
+      //       if (j < rowData.length - 2) {
+      //           const nextCell = rowData[j + 2];
+      //           if (
+      //             JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia) &&
+      //             JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover) &&
+      //             JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines) &&
+      //             JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_n) &&
+      //             JSON.stringify(currentCell.rebar_space) === JSON.stringify(nextCell.rebar_space) &&
+      //             JSON.stringify(currentCell.rebar_ss) === JSON.stringify(nextCell.rebar_ss) 
+      //         ) {
+      //           currentCell.pq_cellstyle = { ...this.rowStyle };
+      //           // currentCell.pq_cellprop={};
+      //           } else {
+      //             currentCell.pq_cellstyle = { ...this.rowStyle2 };
+      //             // currentCell.pq_cellprop={};
+      //           }
+      //       } else {
+      //         currentCell.pq_cellstyle = { ...this.rowStyle };
+      //         // currentCell.pq_cellprop={};
+      //       }
+      //   }
+      // }
       this.table_datas[i].forEach((data:any,index:any)=>{
        if(this.activeTab==="rebar_ax"){
         if(index % 2!==0){
@@ -794,8 +794,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         const rowData = this.table_datas[i];
         for (let j = 0; j < rowData.length; j++) {
             const currentCell = rowData[j];
-            if (j < rowData.length - 1) {
-                const nextCell = rowData[j + 1];
+            if (j < rowData.length - 2) {
+                const nextCell = rowData[j + 2];
                 if (
                   JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia) &&
                   JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover) &&
