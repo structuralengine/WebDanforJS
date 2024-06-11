@@ -25,503 +25,10 @@ export class ThreeNodeService {
     this.dataNode = new Array();
     this.scale = 1;
   }
-  public onInit(): void {    
+  public onInit(): void {
     this.scene.render();
   }
-  public getJson() {
-    let scale = this.scale;
-    const memNo = this.memNo;
-    console.log("dataNode", this.dataNode)
-    console.log('memNo', memNo)
-    if (memNo == 0) return;
-    let jsonData: object = {};
-    var member = this.memmber.getData(memNo);
-    console.log('member', member)
-    let memH = member['H'];
-    let memBt = member['Bt'];
-    let memB = member['B'];
-    let memt = member['t']
-    let ratio = 1;
-    if (member['shape'] !== 1) {
-      if (memH > 2500) {
-        ratio = memH / 2500;
-        memH = 2500;
-      }
-      if (member['Bt'] > 2000) memBt = memBt / ratio;
-      memB = memB / ratio;
-      memt = memt / ratio;
-      scale = 50;
-      this.scale = scale;
-    }
-
-    let b = memB / scale;
-    let h = memH / scale;
-    let bt = memBt / scale;
-    let t = memt / scale;
-    if (bt == 0 && t == 0) {
-      bt = b;
-      t = h;
-    }
-    const n = (bt - b) / 2;
-    const x_start = -bt / 2;
-    const y_start = -h / 2
-    if (b != 0 && h != 0 && bt != 0 && t != 0) {
-      jsonData["1"] = {
-        x: x_start,
-        y: y_start,
-        z: 0
-      }
-      jsonData["2"] = {
-        x: 0 + x_start,
-        y: t + y_start,
-        z: 0
-      }
-      jsonData["3"] = {
-        x: n + x_start,
-        y: t + y_start,
-        z: 0
-      }
-      jsonData["4"] = {
-        x: n + x_start,
-        y: h + y_start,
-        z: 0
-      }
-      jsonData["5"] = {
-        x: bt - n + x_start,
-        y: h + y_start,
-        z: 0
-      }
-
-      jsonData["6"] = {
-        x: n + b + x_start,
-        y: t + y_start,
-        z: 0
-      }
-      jsonData["7"] = {
-        x: bt + x_start,
-        y: t + y_start,
-        z: 0
-      }
-      jsonData["8"] = {
-        x: bt + x_start,
-        y: 0 + y_start,
-        z: 0
-      }
-    }
-    let startNode = 8;
-    let checkNode = startNode;
-    const len = this.getLength(jsonData["1"], jsonData["8"]);
-   // this.drawLineDim(jsonData["1"], jsonData["2"],0,  member['Bt'], true, 6)
-    // this.drawLineDemension(jsonData["1"], len, member['Bt'], true, [1, 6, 8])
-    // this.drawLineDemension(jsonData["4"], this.getLength(jsonData["4"], jsonData["5"]), member['B'], true, [1, 6, 8], 2)
-     this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["7"]), member['t'], false, [1, 3, 6], 1)
-    // this.drawLineDemension(jsonData["8"], this.getLength(jsonData["8"], jsonData["5"]) - 0.5, member['H'], false, member['shape'] == 1 ? [1, 4, 10] : [8, 11, 13], 9)
-    //drawing node rebar1
-    let rebar1 = this.dataNode['rebar1'];
-    let rb_n1 = rebar1['rebar_n'];
-    if (rb_n1 != null) {
-      let rb1_line = rebar1['rebar_lines'];
-      if (rb1_line == null) rb1_line = rb_n1;
-      if (rb_n1 != undefined && rb_n1 != null) {
-        let r = 1;
-        const numrow = Math.ceil(rb_n1 / rb1_line);
-        while (rb1_line > 0 && r <= numrow) {
-          const tt_len_rb1 = ((rb1_line - 1) * rebar1['rebar_ss'] / ratio) / scale;
-          let st_rb1 = (bt - tt_len_rb1) / 2;
-          if (tt_len_rb1 <= 0 && rb1_line > 1) break;
-          for (let i = 0; i < rb1_line; i++) {
-            startNode++;
-            console.log(st_rb1 + (rebar1['rebar_ss'] / ratio * i) / scale + x_start);
-            jsonData[`${startNode}`] = {
-              x: st_rb1 + (rebar1['rebar_ss'] / ratio * i) / scale + x_start,
-              y: (rebar1['rebar_cover'] / ratio) / scale + y_start + (rebar1['rebar_space'] / ratio * (r - 1)) / scale,
-              z: 0
-            }
-          }
-
-          rb_n1 = rb_n1 - rb1_line;
-          if (rb1_line > rb_n1) rb1_line = rb_n1
-          r++;
-        }
-
-      }
-    }
-    if (checkNode < startNode) {
-      if (startNode - checkNode >= 2)
-        //this.drawLineDemension(jsonData[`${checkNode + 1}`], this.getLength(jsonData[`${checkNode + 1}`], jsonData[`${checkNode + 2}`]), rebar1['rebar_ss'], true, [1, 3, 4], 5)
-      //this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 }), rebar1['rebar_cover'], false, [1, 4, 5], 6)
-      if (Math.ceil(rebar1['rebar_n'] / rebar1['rebar_lines']) > 1) {
-        //this.drawLineDemension({ x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}`]['y'], z: 0 },
-          //this.getLength(jsonData[`${checkNode + 1}`], { x: jsonData[`${checkNode + 1}`]['x'], y: jsonData[`${checkNode + rebar1['rebar_lines'] + 1}`]['y'], z: 0 }),
-          //rebar1['rebar_space'], false, [1, 4, 5], 3)
-      }
-
-      checkNode = startNode
-    }
-    //drawing rebar 2
-    let rebar2 = this.dataNode['rebar2'];
-    let rb_n2 = rebar2['rebar_n'];
-    if (rb_n2 != null) {
-      let rb2_line = rebar2['rebar_lines'];
-      if (rb2_line == null) rb2_line = rb_n2;
-      if (rb_n2 != undefined && rb_n2 != null) {
-        let r = 1;
-        const numrow = Math.ceil(rb_n2 / rb2_line);
-        while (rb2_line > 0 && r <= numrow) {
-          const total_length = ((rb2_line - 1) / ratio * rebar2['rebar_ss']) / scale;
-          let start_x = (b - total_length) / 2;
-          if (total_length <= 0 && rb2_line > 1) break;
-          for (let i = 0; i < rb2_line; i++) {
-            startNode++;
-            jsonData[`${startNode}_i`] = {
-              x: n + start_x + (rebar2['rebar_ss'] / ratio * (i)) / scale + x_start,
-              y: h - ((rebar2['rebar_cover'] / ratio / scale) + (rebar2['rebar_space'] / ratio * (r - 1)) / scale) + y_start,
-              z: 0
-            }
-          }
-          rb_n2 = rb_n2 - rb2_line;
-          if (rb2_line > rb_n2) rb2_line = rb_n2
-          r++;
-        }
-      }
-    }
-    if (checkNode < startNode) {
-      //this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData[`${checkNode + 1}_i`], jsonData[`${checkNode + 2}_i`]), rebar2['rebar_ss'], true, [1, 4, 5], 4)
-      if (Math.ceil(rebar2['rebar_n'] / rebar2['rebar_lines']) >= 2)
-       // this.drawLineDemension({ x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }, this.getLength(jsonData[`${checkNode + 1}_i`], { x: jsonData[`${checkNode + 1}_i`]['x'], y: jsonData[`${checkNode + rebar2['rebar_lines'] + 1}_i`]['y'], z: 0 }), rebar2['rebar_space'], false, [1, 4, 5], 3)
-      //this.drawLineDemension(jsonData[`${checkNode + 1}_i`], this.getLength(jsonData["4"], { y: jsonData[`${checkNode + 1}_i`]['y'], x: jsonData["4"]['x'], z: 0 }), rebar2['rebar_cover'], false, [1, 4, 5], 3)
-
-      checkNode = startNode
-    }
-    //drawing sidebar 1
-    var objectKey = Object.keys(this.dataNode);
-    if (!objectKey.includes("sidebar")) {
-      let sidebar2 = this.dataNode['sidebar2'];
-      const sb_cover_2 = sidebar2['side_cover'] / ratio / scale;
-      let kc = n + sb_cover_2;
-      let sidebar1 = this.dataNode['sidebar1'];
-      const sb_n2 = sidebar1['side_n'];
-      if (sb_n2 != null && sb_cover_2 != null) {
-        for (let i = 0; i < sb_n2; i++) {
-          startNode++;
-          jsonData[`${startNode}_s`] = {
-            x: kc + x_start,
-            y: (sidebar1['side_cover'] / ratio / scale) + i * (sidebar1['side_ss'] / ratio / scale) + y_start,
-            z: 0
-          }
-          jsonData[`${startNode}_s1`] = {
-            x: (n + b - sb_cover_2) + x_start,
-            y: (sidebar1['side_cover'] / ratio / scale) + i * (sidebar1['side_ss'] / ratio / scale) + y_start,
-            z: 0
-          }
-
-        }
-      }
-      if (checkNode < startNode) {
-        // this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar1['side_cover'], false, [8, 10, 12], 8)
-        // this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode + 1}_s`], jsonData[`${checkNode + 2}_s`]), sidebar1['side_ss'], false, [1, 7, 8], 7)
-        // this.drawLineDemension({ x: jsonData["3"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }, this.getLength(jsonData["3"], { y: jsonData["3"]['y'], x: jsonData[`${checkNode + 1}_s`]['x'], z: 0 }), sidebar2['side_cover'], true, [1, 3, 4])
-      }
-    } else {
-      let sidebar = this.dataNode['sidebar'];
-      const sb_n2 = sidebar['side_n'];
-      if (sb_n2 != null) {
-        for (let i = 0; i < sb_n2; i++) {
-          startNode++;
-          jsonData[`${startNode}_s`] = {
-            x: n + x_start,
-            y: (sidebar['side_cover'] / ratio / scale) + i * (sidebar['side_ss'] / ratio / scale) + y_start,
-            z: 0
-          }
-          jsonData[`${startNode}_s1`] = {
-            x: (n + b) + x_start,
-            y: (sidebar['side_cover'] / ratio / scale) + i * (sidebar['side_ss'] / ratio / scale) + y_start,
-            z: 0
-          }
-
-        }
-      }
-      if (checkNode < startNode) {
-      //   this.drawLineDemension(jsonData["1"], this.getLength(jsonData["1"], { x: jsonData["1"]['x'], y: jsonData[`${checkNode + 1}_s`]['y'], z: 0 }), sidebar['side_cover'], false, [1, 4, 8])
-      //   this.drawLineDemension(jsonData[`${checkNode + 1}_s`], this.getLength(jsonData[`${checkNode + 1}_s`], jsonData[`${checkNode + 2}_s`]), rebar2['rebar_space'], false, [1, 4, 8])
-      }
-    }
-
-    console.log(JSON.stringify(jsonData));
-    return jsonData;
-  }
-
-  public changeData(): object {
-    
-    
-    const jsonKeys = Object.keys(this.jsonData);
-    let data: any = [];
-    if (jsonKeys.length <= 0) {
-      return null;
-    }
-    for (const key of jsonKeys) {
-      if (!key.includes("s") && !key.includes("i"))
-        data.push({ x: this.jsonData[key].x, y: this.jsonData[key].y, z: this.jsonData[key].z })
-    }
-    console.log("rebar1", data)
-    return data;
-  }
-  public changeDataSide(): object {
-
-    const jsonKeys = Object.keys(this.jsonData);
-    let data: any = [];
-    if (jsonKeys.length <= 0) {
-      return null;
-    }
-    for (const key of jsonKeys) {
-      if (key.includes("s"))
-        data.push({ x: this.jsonData[key].x, y: this.jsonData[key].y, z: this.jsonData[key].z })
-    }
-    console.log("sidebar", data)
-    return data;
-  }
-
-  public changeDataRebar2(): object {
-
-    const jsonKeys = Object.keys(this.jsonData);
-    let data: any = [];
-    if (jsonKeys.length <= 0) {
-      return null;
-    }
-    for (const key of jsonKeys) {
-      if (key.includes("i"))
-        data.push({ x: this.jsonData[key].x, y: this.jsonData[key].y, z: this.jsonData[key].z })
-    }
-    console.log("rebar2", data)
-    return data;
-  }
-  createDrawingLine() {
-    this.jsonData = this.getJson();
-    let jsonData: any = this.changeData() as [];
-
-    const material = new THREE.LineBasicMaterial({ color: 0x000000 });
-    const points = [];
-
-    const arrPanel = [
-      [1, 2, 7, 8],
-      [3, 4, 5, 6]
-    ]
-    arrPanel.forEach(item => {
-      const vertexlist = [];
-      item.forEach(i => {
-        const n = jsonData[i - 1]
-        const x = n.x;
-        const y = n.y;
-        const z = n.z;
-        vertexlist.push([x, -y, z])
-      })
-      this.createPanel(vertexlist, arrPanel.indexOf(item));
-    })
-    let dem = 0;
-    jsonData.forEach(x => {
-      dem++;
-      if (dem <= 8) {
-        points.push(new THREE.Vector3(x['x'], -x['y'], x['z']));
-      }
-    })
-    let x = jsonData[0];
-    points.push(new THREE.Vector3(x['x'], -x['y'], x['z']));
-    const line = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(points),
-      material
-    );
-    this.scene.add(line);
-    const radiuses = this.getRadius(this.scale)
-    this.geometry = new THREE.SphereBufferGeometry(radiuses[0])
-    for (let i = 8; i < jsonData.length; i++) {
-      try {
-        const mesh = new THREE.Mesh(this.geometry,
-          new THREE.MeshBasicMaterial({ color: 0x000000 }));
-        mesh.name = 'node' + i;
-        mesh.position.x = jsonData[i]['x'];
-        mesh.position.y = -jsonData[i]['y'];
-        mesh.position.z = jsonData[i]['z'];
-        this.nodeList.children.push(mesh);
-      } catch {
-        console.log(jsonData)
-      }
-
-    }
-    const jsonRebar2 = this.changeDataRebar2() as [];
-    this.geometry2 = new THREE.SphereBufferGeometry(radiuses[1])
-    for (let i = 0; i < jsonRebar2.length; i++) {
-      try {
-        const mesh = new THREE.Mesh(this.geometry2,
-          new THREE.MeshBasicMaterial({ color: 0x000000 }));
-        mesh.name = 'nodeRebar2' + i;
-        mesh.position.x = jsonRebar2[i]['x'];
-        mesh.position.y = -jsonRebar2[i]['y'];
-        mesh.position.z = jsonRebar2[i]['z'];
-        this.nodeList.children.push(mesh);
-      } catch {
-        //console.log(jsonData)
-      }
-    }
-
-    const jsonSide = this.changeDataSide() as [];
-    this.geometry1 = new THREE.SphereBufferGeometry(radiuses[2])
-    for (let i = 0; i < jsonSide.length; i++) {
-
-      const mesh1 = new THREE.Mesh(this.geometry1,
-        new THREE.MeshBasicMaterial({ color: 0xfafafa }));
-      mesh1.name = 'nodeSide' + i;
-      mesh1.position.x = jsonSide[i]['x'];
-      mesh1.position.y = -jsonSide[i]['y'];
-      mesh1.position.z = jsonSide[i]['z'];
-      this.nodeList.children.push(mesh1);
-    }
-    this.scene.render()
-  }
-  private createPanel(vertexlist, row): void {
-
-    const points = []
-    const geometrys: THREE.BufferGeometry[] = [];
-    for (const p of vertexlist) {
-      points.push(new THREE.Vector3(p[0], p[1], p[2]))
-    }
-    // 三角形を作る
-    geometrys.push(new THREE.BufferGeometry().setFromPoints([points[0], points[1], points[2]]));
-    // 四角形が作れる場合
-    if (points.length > 3)
-      geometrys.push(new THREE.BufferGeometry().setFromPoints([points[3], points[0], points[2]]));
-
-    const material = new THREE.MeshBasicMaterial({
-      transparent: true,
-      side: THREE.DoubleSide,
-      color: 0xB9B9B9,
-      opacity: 0.7,
-    });
-
-    for (const g of geometrys) {
-      const mesh = new THREE.Mesh(g, material);
-      mesh.name = 'panel-' + row.toString();
-      this.scene.add(mesh);
-    }
-  }
-  private  drawLineDemension(pointStart: any, length: number, title: number, dir: boolean, kc: any[], style: number = -1) {
-    if (title == null) return;
-    let points = [];
-    const point = pointStart as [];
-    const x = point['x'];
-    const y = -point['y'];
-    const z = point['z'];
-    const py1 = y > 0 ? (y + kc[0]) : -(Math.abs(y) + kc[0]);
-    const py2 = y > 0 ? (y + kc[1]) : -(Math.abs(y) + kc[1]);
-    const py3 = y > 0 ? (y + kc[2]) : -(Math.abs(y) + kc[2]);
-    const px1 = x > 0 ? (x + kc[0]) : -(Math.abs(x) + kc[0]);
-    const px2 = x > 0 ? (x + kc[1]) : -(Math.abs(x) + kc[1]);
-    const px3 = x > 0 ? (x + kc[2]) : -(Math.abs(x) + kc[2]);
-    if (dir) {
-      points.push(new THREE.Vector3(x, py1, z));
-      points.push(new THREE.Vector3(x, py3, z));
-      points.push(new THREE.Vector3(x, py2, z));
-      points.push(new THREE.Vector3(x + length, py2, z));
-      points.push(new THREE.Vector3(x + length, py3, z));
-      points.push(new THREE.Vector3(x + length, py1 + 2, z));
-     
-    } else {
-      points.push(new THREE.Vector3(px1, y, z));
-      points.push(new THREE.Vector3(px3, y, z));
-      points.push(new THREE.Vector3(px2, y, z));
-      points.push(new THREE.Vector3(px2, y - length, z));
-      points.push(new THREE.Vector3(px1, y - length, z));
-      points.push(new THREE.Vector3(px3, y - length, z));
-    }
-
-    const line = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(points),
-      new THREE.LineBasicMaterial({ color: 0x000000 })
-    );
-    const vect = new THREE.Vector3(length, 0, 0);
-    const geometry = new THREE.CylinderBufferGeometry(0, 0, vect.length(), 12);
-
-    // 要素をシーンに追加
-    const mesh = new THREE.Mesh(
-      geometry,
-      new THREE.MeshBasicMaterial({ color: 0x000000 })
-    );
-    mesh.name = "member" + 1;
-
-    if (dir) {
-      mesh.position.set(x + length / 2, (py1 + py3) / 2, z);
-      mesh.rotation.z = Math.acos(0);
-      mesh.rotation.y = 0.5 * Math.PI + Math.atan2(length, 0);
-    }
-    else {
-      mesh.position.set((px1 + px3) / 2, y - length / 2, z);
-      mesh.rotation.z = Math.acos(-1);
-     // mesh.rotation.y = 0.5 * Math.PI + Math.atan2(px1 - px3, -length);
-    }
-    // 文字をシーンに追加
-    const div = document.createElement("div");
-    div.className = "label";
-    div.textContent = `${title}`;
-
-    div.style.color = '#000000'
-    div.style.fontSize = '12px'
-    // switch (style) {
-    //   case 1:
-    //     div.style.marginTop = "-47.5px";
-    //     // div.style.marginTop = "-2.5px";
-    //     div.style.marginLeft = "10px";
-    //     break;
-    //   case 2:
-    //     // div.style.marginTop = "13.5px"
-    //     div.style.marginTop = "-28.5px"
-    //     break;
-    //   case 3:
-    //     div.style.marginTop = "-45.5px";
-    //     // div.style.marginTop = "-1.5px";
-    //     div.style.marginLeft = "-19px";
-    //     break;
-    //   case 4:
-    //     div.style.marginTop = "-32.5px";
-    //     // div.style.marginTop = "10.5px";
-    //     break;
-    //   case 5:
-    //     div.style.marginTop = "-60.5px";
-    //     // div.style.marginTop = "-12.5px";
-    //     break;
-    //   case 6:
-    //     div.style.marginTop = "-45.5px";
-    //     // div.style.marginTop = "-1.5px";
-    //     div.style.marginLeft = "-19px";
-    //     break;
-    //   case 7:
-    //     div.style.marginTop = "-48.5px";
-    //     // div.style.marginTop = "-2.5px";
-    //     div.style.marginLeft = "-26px";
-    //     break;
-    //   case 8:
-    //     div.style.textAlign = "center";
-    //     div.style.marginTop = "-48.5px";
-    //     div.style.marginLeft = "-19px";
-    //     break;
-    //   case 9:
-    //     div.style.textAlign = "center";
-    //     div.style.marginLeft = "19px";
-    //     break;
-    //   default:
-    //     div.style.marginTop = "-66.5px";
-    //     // div.style.marginTop = "-14.5px";
-    //     break;
-    // }
-    const label = new CSS2DObject(div);
-
-    label.position.set(0, 0, 0);
-    label.name = "font";
-    label.visible = true;
-    mesh.add(label);
-    mesh.scale.set(0, 1, 0);
-    this.scene.add(line);
-    this.nodeList.children.push(mesh);
-    this.scene.render()
-  }
+ 
   private getLength(iPos: any, jPos: any) {
     const xi: number = iPos['x'];
     const yi: number = iPos['y'];
@@ -533,82 +40,97 @@ export class ThreeNodeService {
     const result: number = Math.sqrt((xi - xj) ** 2 + (yi - yj) ** 2 + (zi - zj) ** 2);
     return result;
   }
-  private drawLineDim(ni: any, nj: any, style: number, title: any, vertical: boolean, lenDim: any, distanceDim: any, distance: any){
+  
+  private drawLineDim(ni: any, nj: any, style: number, title: any, vertical: boolean, lenDim: any, distanceDim: any, distance: any) {
     let x: any;
-    let y: any;   
+    let y: any;
     let px: any;
     let py: any;
     let xmin: any = ni.x;
     let ymin: any = ni.y;
+    let check: boolean = false;
     let i = JSON.parse(JSON.stringify(ni));
     let j = JSON.parse(JSON.stringify(nj));
-    if(vertical){
-      if(Math.abs(i.x) > Math.abs(j.x)){
+    if (vertical) {
+      if (Math.abs(i.x) > Math.abs(j.x)) {
         xmin = j.x
-        j.x = i.x              
-      } 
-      else{
+        j.x = i.x
+      }
+      else {
         xmin = i.x
         i.x = j.x
-      } 
+      }
       x = i.x;
       y = j.y > i.y ? j.y : i.y
-    }else{
-      if(i.y > j.y){
+    } else {
+      if (i.y > j.y) {
         ymin = j.y
         j.y = i.y
-      } 
+      }
       else {
         ymin = i.y
-        i.y = j.y       
+        i.y = j.y
       }
       x = i.x > j.x ? i.x : j.x;
-      y = j.y 
+      y = j.y
     }
-   
+
     var length = this.getLength(i, j);
-    if(vertical){
-      let pointHors = [];  
-       px = x > 0 ? x + distance : x - distance;
-       py = px > 0 ? px + lenDim : px - lenDim;
+    if (vertical) {
+      let pointHors = [];
+      px = x > 0 ? x + distance : x - distance;
+      py = px > 0 ? px + lenDim : px - lenDim;
       pointHors.push(new THREE.Vector3(px, y, 0));
       pointHors.push(new THREE.Vector3(py, y, 0));
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(pointHors),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
-      this.scene.add(line);  
+      this.scene.add(line);
 
       let points = [];
-      points.push(new THREE.Vector3(x != xmin? xmin : px, y - length, 0));
+      points.push(new THREE.Vector3(x != xmin ? xmin : px, y - length, 0));
       points.push(new THREE.Vector3(py, y - length, 0));
       const line2 = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(points),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
       this.scene.add(line2);
-      
-    } else{
-      let pointHors = [];  
+
+    } else {
+      let pointHors = [];
       px = y > 0 ? y + distance : y - distance;
-      py = px > 0 ? px + lenDim : px - lenDim;
-      pointHors.push(new THREE.Vector3(x, px, 0));
+      py = px > 0 ? px + lenDim : px - lenDim;     
+      if(ni.x === x && ni.y === ymin && !check){
+        check = true;
+        pointHors.push(new THREE.Vector3(x, ni.y, 0));
+      }else if(nj.x === x && nj.y == ymin && !check){
+        check = true;
+        pointHors.push(new THREE.Vector3(x, nj.y, 0));
+      }else
+        pointHors.push(new THREE.Vector3(x, px, 0));
       pointHors.push(new THREE.Vector3(x, py, 0));
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(pointHors),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
-      this.scene.add(line);  
+      this.scene.add(line);
 
       let points = [];
-      points.push(new THREE.Vector3(x - length, px, 0));
+      if(ni.x === x && ni.y === ymin && !check){
+        points.push(new THREE.Vector3(x - length, ni.y, 0));
+      }else if(nj.x === x && nj.y == ymin && !check){
+        points.push(new THREE.Vector3(x - length, nj.y, 0));
+      }else
+        points.push(new THREE.Vector3(x - length, px, 0));
+      //points.push(new THREE.Vector3(x - length, px, 0));
       points.push(new THREE.Vector3(x - length, py, 0));
       const line2 = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(points),
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
       this.scene.add(line2);
-    } 
+    }
     const geometry = new THREE.CylinderGeometry(0.1, 0.1, length, 12);
 
     // 要素をシーンに追加
@@ -618,30 +140,30 @@ export class ThreeNodeService {
     );
     mesh.name = "member" + 2;
 
-    if(vertical){
-      mesh.position.set(px + lenDim - distanceDim, y - length / 2 , 0);   
-    }else{
-      mesh.position.set(x - length/2, (px + py)/2 + distanceDim, 0);
+    if (vertical) {
+      mesh.position.set(px + lenDim - distanceDim, y - length / 2, 0);
+    } else {
+      mesh.position.set(x - length / 2, (px + py) / 2 + distanceDim, 0);
       mesh.rotation.z = Math.acos(0);
       mesh.rotation.y = 0.5 * Math.PI + Math.atan2(length, 0);
     }
     const div = document.createElement("div");
     div.className = "label";
     div.textContent = `${title}`;
-    switch(style){
+    switch (style) {
       case 0:
         div.style.marginTop = "-4em";
         div.style.marginLeft = "1em";
-        if(x < 0){
+        if (x < 0) {
           div.style.marginLeft = "-2em";
         }
         break;
       case 1:
-        div.style.marginTop = "-5em"; 
-        if(y < 0) div.style.marginTop = "-3em"; 
+        div.style.marginTop = "-5em";
+        if (y < 0) div.style.marginTop = "-3em";
         break;
     }
-   
+
     div.style.color = '#000000'
     div.style.fontSize = '12px'
     const label = new CSS2DObject(div);
@@ -650,56 +172,29 @@ export class ThreeNodeService {
     label.name = "font";
     label.visible = true;
     mesh.add(label);
-   
+
     this.scene.add(mesh);
     //this.nodeList.children.push(mesh);
     this.scene.render()
   }
-  private getRadius(scale: number) {
-    let arr: any = [];
-    const rebar1 = this.dataNode['rebar1']
-    if (rebar1['rebar_dia'] != null) {
-      const radius = rebar1['rebar_dia'] / scale
-      arr.push(radius);
-    }
-    const rebar2 = this.dataNode['rebar2']
-    if (rebar2['rebar_dia'] != null) {
-      const radius = rebar2['rebar_dia'] / scale
-      arr.push(radius);
-    }
-    var objectKey = Object.keys(this.dataNode);
-    if (!objectKey.includes("sidebar")) {
-      const sidebar1 = this.dataNode['sidebar1']
-      if (sidebar1['side_dia'] != null) {
-        const radius = sidebar1['side_dia'] / scale
-        arr.push(radius);
-      }
-    } else {
-      const sidebar1 = this.dataNode['sidebar']
-      if (sidebar1['side_dia'] != null) {
-        const radius = sidebar1['side_dia'] / scale
-        arr.push(radius);
-      }
-    }
-    return arr;
-  } 
+  
   createDemoTShape() {
     console.log("rebar", this.dataRebar);
-    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);   
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
     console.log(member)
     let memH = member['H'];
     let memBt = member['Bt'];
     let memB = member['B'];
     let memt = member['t'];
     var arr = [memH, memBt, memB, memt];
-    let max_val = arr.reduce(function(accumulator, element){
+    let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
     });
-    this.scale = max_val/88;
+    this.scale = max_val / 88;
     let haucnch_M = this.dataRebar.selectedCalPoint.haucnch_M;
-    if(!!haucnch_M) memH = memH + haucnch_M;
+    if (!!haucnch_M) memH = memH + haucnch_M;
     this.createTShape(memBt / this.scale, memH / this.scale, memB / this.scale, memt / this.scale, 0xb9b9b9)
-    this.createLineRectangle(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46)
+    //this.createLineRectangle(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
   }
   createTShape(bt: any, h: any, b: any, t: any, color: any) {
@@ -713,14 +208,19 @@ export class ThreeNodeService {
     plane2.position.set(0, -t / 2, 0);
 
     this.scene.add(plane1);
-    this.scene.add(plane2);   
-    this.convertToCoodidateTShape(bt, h, b, t); 
+    this.scene.add(plane2);
+    this.convertToCoordinatesTShape(bt, h, b, t);
+    this.drawPointTShape(bt, h, b, t,0)
+    this.drawPointTShape(bt, h, b, t, 4)
+    this.drawPointTShape(bt, h, b, t, 1)
+
+    this.scene.render()
   }
-  convertToCoodidateTShape(bt: any, h: any, b: any, t: any){
+  convertToCoordinatesTShape(bt: any, h: any, b: any, t: any) {
     let jsonData: object = {};
     const x_start = bt / 2;
     const y_start = h / 2
-    const n =(bt-b)/2
+    const n = (bt - b) / 2
     if (b != 0 && h != 0 && bt != 0 && t != 0) {
       jsonData["1"] = {
         x: x_start,
@@ -764,97 +264,186 @@ export class ThreeNodeService {
         z: 0
       }
     }
-   
+
     this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(t * this.scale), true, 6, 4, 1);
     this.drawLineDim(jsonData["1"], jsonData["4"], 0, Math.round(h * this.scale), true, 8, 1, 4);
 
     this.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 1, 4);
-    this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 8, -2, 4);
+    this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 3, 0, 9);
     console.log("jsondata", jsonData)
+
     // dimenstions for rebar_type = 0
-    const rebar1 = this.dataRebar.selectedCalPoint.rebar1;
-    if(rebar1.rebar_cover != null){
-      const dist_top = rebar1.rebar_cover / this.scale;
-      const dist_side = rebar1.rebar_ss / this.scale;
-      const quantity = rebar1.rebar_lines;
-      const interval =  (b - 2 * dist_side) / quantity;
-      jsonData["rb_1"]={
+    let arr_rebar_type_0 = []
+    this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
+      if (data.rebar_type === 0) {
+        arr_rebar_type_0.push(data)
+      }
+    })
+    arr_rebar_type_0.sort((a, b) => a.dist_top - b.dist_top)
+    const rebar_type_0 = arr_rebar_type_0[0];
+    if (rebar_type_0 != undefined) {
+      const dist_top = rebar_type_0.dist_top / this.scale;
+      const dist_side = rebar_type_0.dist_side / this.scale;
+      const quantity = rebar_type_0.quantity;
+      const interval = rebar_type_0.interval ? rebar_type_0.interval / this.scale : (b - 2 * dist_side) / quantity;
+      jsonData["rb_1"] = {
         x: -(x_start - n - dist_side),
-        y:  y_start - dist_top,
+        y: y_start - dist_top,
         z: 0
       }
-      jsonData["rb_2"]={
+      jsonData["rb_2"] = {
         x: -(x_start - n),
-        y:  y_start - dist_top,
+        y: y_start - 15 / this.scale,
         z: 0
       }
-      jsonData["rb_3"]={
+      jsonData["rb_3"] = {
         x: -(x_start - n - dist_side - interval),
-        y:  y_start - dist_top,
+        y: y_start - 15 / this.scale,
         z: 0
       }
-  
-      this.drawLineDim(jsonData["8"], jsonData["rb_1"], 0, Math.round(dist_top * this.scale), true, 6, 10, 1);
+
+     
       this.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
       this.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
-  
     }
-    
-
-    // dimenstions for rebar_type = 0 & 1
-    // const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
-    // const dist_top2 = rebar2.rebar_cover / this.scale;
-    // const gap = 2;
-    // const dist_side2 = h - dist_top2;
-    // const remain = h - dist_top2 - gap;
-
-    // jsonData["rb_4"]= {
-    //   x:  -(x_start - n),
-    //   y:  - (dist_side2 - y_start),
-    //   z: 0
-    // }
-    // jsonData["rb_5"]= {
-    //   x:  -(x_start - n),
-    //   y:  - (dist_side2 - y_start - gap),
-    //   z: 0
-    // }
-    // this.drawLineDim(jsonData["5"], jsonData["rb_4"], 0, Math.round(dist_side2), true, 6 + n, 25 + n, 1);
-    // this.drawLineDim(jsonData["rb_5"], jsonData["rb_4"], 0, Math.round(gap), true, 6 + n, 25+ n, 1);
-    // this.drawLineDim(jsonData["rb_5"], jsonData["rb_1"], 0, Math.round(remain), true, 6 + n, 25+ n, 1);
 
     // dimenstions for rebar_type = 1
-    const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
-    if(rebar2 != null){
-      const dist_top2 = rebar2.rebar_cover / this.scale;
-      const dist_side2 = rebar2.rebar_ss / this.scale;
-      const quantity2 = rebar2.rebar_lines;
-      const interval2 =  (b - 2 * dist_side2) / quantity2;  
-      jsonData["rb_7"]={
-        x: -(x_start - n - dist_side2),
-        y:  -(y_start),
-        z: 0
+    let arr_rebar_type_1 = []
+    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
+      if (data.rebar_type === 1) {
+        arr_rebar_type_1.push(data)
       }
-      jsonData["rb_8"]={
-        x: -(x_start - n - dist_side2 - interval2),
-        y:  -(y_start),
-        z: 0
-      }    
-      this.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_top2 * this.scale), false, 6, -2, 1);
-      this.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);  
+    })
+    arr_rebar_type_1.sort((a, b) => b.dist_top - a.dist_top)
+    const rebar_type_1 = arr_rebar_type_1[0];
+
+    if (rebar_type_1 != undefined) {
+        const dist_top2 = rebar_type_1.dist_top / this.scale;
+        const dist_side2 = rebar_type_1.dist_side / this.scale;
+        const quantity2 = rebar_type_1.quantity;
+        const interval2 = rebar_type_1.interval ? rebar_type_1.interval / this.scale : (b - 2 * dist_side2) / quantity2;
+        jsonData["rb_7"] = {
+          x: -(x_start - n - dist_side2),
+          y: -(y_start),
+          z: 0
+        }
+        jsonData["rb_8"] = {
+          x: -(x_start - n - dist_side2 - interval2),
+          y: -(y_start),
+          z: 0
+        }
+        this.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);
+        this.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
     }
-   
+
+    // dimenstions for rebar_type = 0 & 1
+    const arr_gap01 = this.getArrGap(1,h)
+    console.log("arr_gap", arr_gap01)
+    //draw line rebar_type = 1
+    if (arr_gap01.length >0){  
+      let y = 0;
+      for(let i = 0; i< arr_gap01.length ; i++){        
+        jsonData[`rb0_${i}`]= {
+          x:  -(x_start),
+          y:  (y_start - y - arr_gap01[i]),
+          z: 0
+        }
+        if(i == 0)
+          this.drawLineDim(jsonData["8"], jsonData[`rb0_${i}`], 0, Math.round(arr_gap01[i] * this.scale), true, 6, 10, 1);
+        else
+        this.drawLineDim(jsonData[`rb0_${i - 1}`], jsonData[`rb0_${i}`], 0, Math.round(arr_gap01[i] * this.scale), true, 6, 10, 1);
+          
+        y += arr_gap01[i];
+      }    
+
+    }
+
+    // dimenstions for rebar_type = 4
+    const arr_gap04 = this.getArrGap(4,h)
+    console.log("arr_gap4", arr_gap04)
+    //draw line rebar_type = 4
+    jsonData["1.1"] = {
+      x: x_start - n,
+      y:jsonData["1"].y,
+      z:0
+    }
+    if (arr_gap04.length > 0) {
+      let y = 0;
+      for(let i = 0; i< arr_gap04.length ; i++){        
+        jsonData[`rb4_${i}`]= {
+          x:  x_start - n,
+          y:  (y_start - y - arr_gap04[i]),
+          z: 0
+        }
+        if(i == 0)
+          this.drawLineDim(jsonData["1.1"], jsonData[`rb4_${i}`], 0, Math.round(arr_gap04[i] * this.scale), true, 6, 2, 0);
+        else
+        this.drawLineDim(jsonData[`rb4_${i - 1}`], jsonData[`rb4_${i}`], 0, Math.round(arr_gap04[i] * this.scale), true, 6, 2, 0);
+          
+        y += arr_gap04[i];
+      }    
+
+    }
+
+  }
+  getArrGap(type:number,h:any){
+    const arr_gap =[]
+    const arr_dis_top=[]
+    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
+      if (data.rebar_type === 0 || data.rebar_type === type) {
+        arr_dis_top.push(data.dist_top / this.scale)
+      }
+    })
+    arr_dis_top.sort((a,b)=>a-b)
+    for (let i = 0; i <= arr_dis_top.length; i++) {
+      if (i === 0) {
+        arr_gap.push(arr_dis_top[i])
+      }
+      if (i === arr_dis_top.length) {
+        arr_gap.push(h  - arr_dis_top[i - 1])
+      }
+      if (i !== 0 && i !== arr_dis_top.length) {
+        arr_gap.push(arr_dis_top[i] - arr_dis_top[i - 1])
+      }
+    }
+    return arr_gap
+  }
+  drawPointTShape(bt: any, h: any, b: any, t: any,type:any){
+ 
+    let dataPoint = []
+    let n =( bt  - b) / 2
+    let color = type === 4 ? 0xfafafa : 0x000000
+    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
+      if (data.rebar_type === type) {
+        dataPoint.push(data)
+      }
+    })
+    this.geometry = new THREE.SphereBufferGeometry(1)
+    dataPoint.map((data,index)=>{
+      let interval=0
+      for (let i = 1; i <= data.quantity;i++){
+        const mesh = new THREE.Mesh(this.geometry,
+          new THREE.MeshBasicMaterial({ color: color }));
+        mesh.name = 'node' + index + i;
+        mesh.position.x = bt / 2- n - data.dist_side / this.scale - interval / this.scale;
+        mesh.position.y = h / 2 - data.dist_top / this.scale;
+        mesh.position.z = 0;
+        this.nodeList.children.push(mesh);
+        interval += data.interval
+      }
+    })
   }
   createDemoRectangle() {
-    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);   
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
     let memH = member['H'];
     let memBt = member['Bt'];
     let memB = member['B'];
     let memt = member['t'];
     var arr = [memH, memBt, memB, memt];
-    let max_val = arr.reduce(function(accumulator, element){
+    let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
     });
-    this.scale = max_val/88;
+    this.scale = max_val / 88;
     this.createRectangle(memH / this.scale, memB / this.scale, 0xb9b9b9)
     //this.createLineRectangle(memH / this.scale, memB / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
