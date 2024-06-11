@@ -540,6 +540,7 @@ export class ThreeNodeService {
     let py: any;
     let xmin: any = ni.x;
     let ymin: any = ni.y;
+    let check: boolean = false;
     let i = JSON.parse(JSON.stringify(ni));
     let j = JSON.parse(JSON.stringify(nj));
     if (vertical) {
@@ -591,8 +592,15 @@ export class ThreeNodeService {
     } else {
       let pointHors = [];
       px = y > 0 ? y + distance : y - distance;
-      py = px > 0 ? px + lenDim : px - lenDim;
-      pointHors.push(new THREE.Vector3(x, px, 0));
+      py = px > 0 ? px + lenDim : px - lenDim;     
+      if(ni.x === x && ni.y === ymin && !check){
+        check = true;
+        pointHors.push(new THREE.Vector3(x, ni.y, 0));
+      }else if(nj.x === x && nj.y == ymin && !check){
+        check = true;
+        pointHors.push(new THREE.Vector3(x, nj.y, 0));
+      }else
+        pointHors.push(new THREE.Vector3(x, px, 0));
       pointHors.push(new THREE.Vector3(x, py, 0));
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(pointHors),
@@ -601,7 +609,13 @@ export class ThreeNodeService {
       this.scene.add(line);
 
       let points = [];
-      points.push(new THREE.Vector3(x - length, px, 0));
+      if(ni.x === x && ni.y === ymin && !check){
+        points.push(new THREE.Vector3(x - length, ni.y, 0));
+      }else if(nj.x === x && nj.y == ymin && !check){
+        points.push(new THREE.Vector3(x - length, nj.y, 0));
+      }else
+        points.push(new THREE.Vector3(x - length, px, 0));
+      //points.push(new THREE.Vector3(x - length, px, 0));
       points.push(new THREE.Vector3(x - length, py, 0));
       const line2 = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(points),
@@ -699,7 +713,7 @@ export class ThreeNodeService {
     let haucnch_M = this.dataRebar.selectedCalPoint.haucnch_M;
     if (!!haucnch_M) memH = memH + haucnch_M;
     this.createTShape(memBt / this.scale, memH / this.scale, memB / this.scale, memt / this.scale, 0xb9b9b9)
-    this.createLineRectangle(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46)
+    //this.createLineRectangle(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
   }
   createTShape(bt: any, h: any, b: any, t: any, color: any) {
@@ -769,7 +783,7 @@ export class ThreeNodeService {
     this.drawLineDim(jsonData["1"], jsonData["4"], 0, Math.round(h * this.scale), true, 8, 1, 4);
 
     this.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 1, 4);
-    this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 8, -2, 4);
+    this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 3, 0, 9);
     console.log("jsondata", jsonData)
 
     // dimenstions for rebar_type = 0
@@ -802,7 +816,7 @@ export class ThreeNodeService {
         z: 0
       }
 
-      // this.drawLineDim(jsonData["8"], jsonData["rb_1"], 0, Math.round(dist_top * this.scale), true, 6, 10, 1);
+     
       this.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
       this.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
     }
@@ -840,34 +854,49 @@ export class ThreeNodeService {
     const arr_gap01 = this.getArrGap(1,h)
     console.log("arr_gap", arr_gap01)
     //draw line rebar_type = 1
-    if (arr_gap01.length >0){
-      // const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
-      // const dist_top2 = rebar2.rebar_cover / this.scale;
-      // const gap = 2;
-      // const dist_side2 = h - dist_top2;
-      // const remain = h - dist_top2 - gap;
+    if (arr_gap01.length >0){  
+      let y = 0;
+      for(let i = 0; i< arr_gap01.length ; i++){        
+        jsonData[`rb0_${i}`]= {
+          x:  -(x_start),
+          y:  (y_start - y - arr_gap01[i]),
+          z: 0
+        }
+        if(i == 0)
+          this.drawLineDim(jsonData["8"], jsonData[`rb0_${i}`], 0, Math.round(arr_gap01[i] * this.scale), true, 6, 10, 1);
+        else
+        this.drawLineDim(jsonData[`rb0_${i - 1}`], jsonData[`rb0_${i}`], 0, Math.round(arr_gap01[i] * this.scale), true, 6, 10, 1);
+          
+        y += arr_gap01[i];
+      }    
 
-      // jsonData["rb_4"]= {
-      //   x:  -(x_start - n),
-      //   y:  - (dist_side2 - y_start),
-      //   z: 0
-      // }
-      // jsonData["rb_5"]= {
-      //   x:  -(x_start - n),
-      //   y:  - (dist_side2 - y_start - gap),
-      //   z: 0
-      // }
-      // this.drawLineDim(jsonData["5"], jsonData["rb_4"], 0, Math.round(dist_side2), true, 6 + n, 25 + n, 1);
-      // this.drawLineDim(jsonData["rb_5"], jsonData["rb_4"], 0, Math.round(gap), true, 6 + n, 25+ n, 1);
-      // this.drawLineDim(jsonData["rb_5"], jsonData["rb_1"], 0, Math.round(remain), true, 6 + n, 25+ n, 1);
     }
 
     // dimenstions for rebar_type = 4
     const arr_gap04 = this.getArrGap(4,h)
     console.log("arr_gap4", arr_gap04)
     //draw line rebar_type = 4
+    jsonData["1.1"] = {
+      x: x_start - n,
+      y:jsonData["1"].y,
+      z:0
+    }
     if (arr_gap04.length > 0) {
-      
+      let y = 0;
+      for(let i = 0; i< arr_gap04.length ; i++){        
+        jsonData[`rb4_${i}`]= {
+          x:  x_start - n,
+          y:  (y_start - y - arr_gap04[i]),
+          z: 0
+        }
+        if(i == 0)
+          this.drawLineDim(jsonData["1.1"], jsonData[`rb4_${i}`], 0, Math.round(arr_gap04[i] * this.scale), true, 6, 2, 0);
+        else
+        this.drawLineDim(jsonData[`rb4_${i - 1}`], jsonData[`rb4_${i}`], 0, Math.round(arr_gap04[i] * this.scale), true, 6, 2, 0);
+          
+        y += arr_gap04[i];
+      }    
+
     }
 
   }
@@ -876,7 +905,7 @@ export class ThreeNodeService {
     const arr_dis_top=[]
     this.dataRebar.selectedCalPoint.rebar0.map((data) => {
       if (data.rebar_type === 0 || data.rebar_type === type) {
-        arr_dis_top.push(Math.round(data.dist_top))
+        arr_dis_top.push(data.dist_top / this.scale)
       }
     })
     arr_dis_top.sort((a,b)=>a-b)
@@ -885,7 +914,7 @@ export class ThreeNodeService {
         arr_gap.push(arr_dis_top[i])
       }
       if (i === arr_dis_top.length) {
-        arr_gap.push(h * this.scale - arr_dis_top[i - 1])
+        arr_gap.push(h  - arr_dis_top[i - 1])
       }
       if (i !== 0 && i !== arr_dis_top.length) {
         arr_gap.push(arr_dis_top[i] - arr_dis_top[i - 1])
