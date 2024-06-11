@@ -285,7 +285,7 @@ export class ThreeNodeService {
       const dist_top = rebar_type_0.dist_top / this.scale;
       const dist_side = rebar_type_0.dist_side / this.scale;
       const quantity = rebar_type_0.quantity;
-      const interval = rebar_type_0.interval ? rebar_type_0.interval / this.scale : (b - 2 * dist_side) / quantity;
+      const interval = rebar_type_0.interval ? rebar_type_0.interval / this.scale : (b - 2 * dist_side) / quantity - 1;
       jsonData["rb_1"] = {
         x: -(x_start - n - dist_side),
         y: y_start - dist_top,
@@ -321,7 +321,7 @@ export class ThreeNodeService {
         const dist_top2 = rebar_type_1.dist_top / this.scale;
         const dist_side2 = rebar_type_1.dist_side / this.scale;
         const quantity2 = rebar_type_1.quantity;
-        const interval2 = rebar_type_1.interval ? rebar_type_1.interval / this.scale : (b - 2 * dist_side2) / quantity2;
+        const interval2 = rebar_type_1.interval ? rebar_type_1.interval / this.scale : (b - 2 * dist_side2) / quantity2 - 1;
         jsonData["rb_7"] = {
           x: -(x_start - n - dist_side2),
           y: -(y_start),
