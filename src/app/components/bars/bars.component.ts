@@ -11,7 +11,6 @@ import { data } from 'jquery';
 import { Console, log } from 'console';
 import { ThreeNodeService } from '../three/geometry/three-node.service';
 import { SceneService } from '../three/scene.service';
-import { ThreeNodeGuideService } from '../three/geometry/three-node-guide.service';
 
 @Component({
   selector: 'app-bars',
@@ -72,7 +71,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     private translate: TranslateService,
     private menuService: MenuService,
     private threeNode: ThreeNodeService,
-    private threeNodeGuide: ThreeNodeGuideService,
     private scene: SceneService,
     private member: InputMembersService
   ) {     
@@ -195,24 +193,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               m_no = data_index.m_no;
               index = data_index.index
             }           
-            this.threeNodeGuide.dataNode= rowData
-            if(ui.colIndx ===6 ||ui.colIndx ===7||ui.colIndx ===8||ui.colIndx===9||ui.colIndx===10||ui.colIndx ===11){
-              if(ui.rowIndxPage % 2 ===0){
-                this.threeNodeGuide.checkKey='up'
-              }else{
-                this.threeNodeGuide.checkKey='lower'
-              }
-            }
-            if(ui.colIndx ===12 ||ui.colIndx ===13||ui.colIndx ===14||ui.colIndx===15){
-            this.threeNodeGuide.checkKey='lateral'
-            if(ui.rowIndx % 2 != 0){     
-              this.threeNodeGuide.dataUpper=this.table_datas[i][ui.rowIndx - 1];
-              this.threeNodeGuide.dataLower= this.table_datas[i][ui.rowIndx];
-            }else{
-              this.threeNodeGuide.dataUpper = this.table_datas[i][ui.rowIndx ];
-              this.threeNodeGuide.dataLower = this.table_datas[i][ui.rowIndx +1]
-            }
-            }
             if(m_no != null && m_no != undefined){     
               this.bars.setTableColumns(this.table_datas[i])       
               let data = this.bars.getDataPreview(index); 
@@ -233,8 +213,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }            
             }
           }
+          this.removeScene()
         // if(this.bars.is_review){
-        //   this.removeScene()
+       
         //   // this.threeNode.createDrawingLine()
         //   // this.threeNode.createDemoOval()
         //   this.threeNode.createDemoTShape()
@@ -749,12 +730,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public removeScene(){
     let index =[]
     if(this.scene.scene.children.length > 0){ 
-      console.log("child", this.scene.scene.children)
       for(let i =0;i< this.scene.scene.children.length;i++){
         let name = this.scene.scene.children[i].name;
         let type = this.scene.scene.children[i].type;
-        if(type==="Mesh"|| type==="Line"){
+        if(type==="Mesh"|| type==="Line" || name === "node"){
          index.push(i)
+        }
+        if (type === "Object3D"){
+          this.scene.scene.children[i].children=[]
         }
       }
       index.sort((a,b)=>b-a)
