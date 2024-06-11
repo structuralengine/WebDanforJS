@@ -837,61 +837,61 @@ export class ThreeNodeService {
     }
 
     // dimenstions for rebar_type = 0 & 1
-    if (rebar_type_1 != undefined && rebar_type_0 != undefined) {
-      const arr_dis_top = []
-      const arr_gap = []
-      this.dataRebar.selectedCalPoint.rebar0.map((data) => {
-        if (data.rebar_type === 0 || data.rebar_type === 1) {
-          arr_dis_top.push(Math.round(data.dist_top))
-        }
-      })
-      arr_dis_top.sort()
-      for (let i = 0; i <= arr_dis_top.length; i++) {
-        if (i === 0) {
-          arr_gap.push(arr_dis_top[i])
-        }
-        if (i === arr_dis_top.length) {
-          arr_gap.push(h * this.scale - arr_dis_top[i - 1])
-        }
-        if (i !== 0 && i !== arr_dis_top.length) {
-          arr_gap.push(arr_dis_top[i] - arr_dis_top[i - 1])
-        }
-      }
-      console.log("arr_gap", arr_gap)
-    }
-    // const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
-    // const dist_top2 = rebar2.rebar_cover / this.scale;
-    // const gap = 2;
-    // const dist_side2 = h - dist_top2;
-    // const remain = h - dist_top2 - gap;
+    const arr_gap01 = this.getArrGap(1,h)
+    console.log("arr_gap", arr_gap01)
+    //draw line rebar_type = 1
+    if (arr_gap01.length >0){
+      // const rebar2 = this.dataRebar.selectedCalPoint.rebar2;
+      // const dist_top2 = rebar2.rebar_cover / this.scale;
+      // const gap = 2;
+      // const dist_side2 = h - dist_top2;
+      // const remain = h - dist_top2 - gap;
 
-    // jsonData["rb_4"]= {
-    //   x:  -(x_start - n),
-    //   y:  - (dist_side2 - y_start),
-    //   z: 0
-    // }
-    // jsonData["rb_5"]= {
-    //   x:  -(x_start - n),
-    //   y:  - (dist_side2 - y_start - gap),
-    //   z: 0
-    // }
-    // this.drawLineDim(jsonData["5"], jsonData["rb_4"], 0, Math.round(dist_side2), true, 6 + n, 25 + n, 1);
-    // this.drawLineDim(jsonData["rb_5"], jsonData["rb_4"], 0, Math.round(gap), true, 6 + n, 25+ n, 1);
-    // this.drawLineDim(jsonData["rb_5"], jsonData["rb_1"], 0, Math.round(remain), true, 6 + n, 25+ n, 1);
+      // jsonData["rb_4"]= {
+      //   x:  -(x_start - n),
+      //   y:  - (dist_side2 - y_start),
+      //   z: 0
+      // }
+      // jsonData["rb_5"]= {
+      //   x:  -(x_start - n),
+      //   y:  - (dist_side2 - y_start - gap),
+      //   z: 0
+      // }
+      // this.drawLineDim(jsonData["5"], jsonData["rb_4"], 0, Math.round(dist_side2), true, 6 + n, 25 + n, 1);
+      // this.drawLineDim(jsonData["rb_5"], jsonData["rb_4"], 0, Math.round(gap), true, 6 + n, 25+ n, 1);
+      // this.drawLineDim(jsonData["rb_5"], jsonData["rb_1"], 0, Math.round(remain), true, 6 + n, 25+ n, 1);
+    }
 
     // dimenstions for rebar_type = 4
-    let arr_rebar_type_4 = []
-    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
-      if (data.rebar_type === 4) {
-        arr_rebar_type_4.push(data)
-      }
-    })
-    arr_rebar_type_4.sort((a, b) => a.dist_top - b.dist_top)
-    const rebar_type_4 = arr_rebar_type_4[0];
-    if (rebar_type_4 != undefined){
-      console.log("rebar_type_4", rebar_type_4)
+    const arr_gap04 = this.getArrGap(4,h)
+    console.log("arr_gap4", arr_gap04)
+    //draw line rebar_type = 4
+    if (arr_gap04.length > 0) {
+      
     }
 
+  }
+  getArrGap(type:number,h:any){
+    const arr_gap =[]
+    const arr_dis_top=[]
+    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
+      if (data.rebar_type === 0 || data.rebar_type === type) {
+        arr_dis_top.push(Math.round(data.dist_top))
+      }
+    })
+    arr_dis_top.sort((a,b)=>a-b)
+    for (let i = 0; i <= arr_dis_top.length; i++) {
+      if (i === 0) {
+        arr_gap.push(arr_dis_top[i])
+      }
+      if (i === arr_dis_top.length) {
+        arr_gap.push(h * this.scale - arr_dis_top[i - 1])
+      }
+      if (i !== 0 && i !== arr_dis_top.length) {
+        arr_gap.push(arr_dis_top[i] - arr_dis_top[i - 1])
+      }
+    }
+    return arr_gap
   }
   createDemoRectangle() {
     var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
