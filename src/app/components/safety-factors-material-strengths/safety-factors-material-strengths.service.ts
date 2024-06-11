@@ -65,7 +65,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
             title: this.translate.instant("safety-factors-material-strengths.safe_ff"),
             M_rc: 1.30, M_rs: 1.05, M_rbs: 1.00,
             V_rc: 1.30, V_rs: 1.05, V_rbc: 1.30, V_rbs: 1.0, V_rbv: null,
-            T_rbt:1.00,
+            T_rbt:null,
             ri: 1.10, range: 2,
             S_rs: 1.0, S_rb: 1.1
           },
@@ -306,8 +306,11 @@ export class InputSafetyFactorsMaterialStrengthsService {
             for (const key of Object.keys(tmp)) {
               if(key==='title')
                 continue;
-              if (key in old) 
-                tmp[key] = old[key]; 
+              if (key in old) {
+                // tmp[key] = old[key];
+              tmp[key] = old[key] !== null ? old[key] : tmp[key]; 
+              tmp['isDefault'] = old[key] === null;
+            }
               else
                 tmp[key] = null;
             }
