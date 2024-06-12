@@ -33,24 +33,25 @@
               menu.saveFile
             </button>
             <button *ngIf="electronService.isElectron" ngbDropdownItem (click)="overWrite()" translate>
-            <button
-              class="save-file"
-              [class.active-save]="user.userProfile"
-              *ngIf="electronService.isElectron"
-              ngbDropdownItem
-              (click)="overWrite()"
-              translate
-            >
-              menu.overwrite
-            </button>
-            <label style="width: 100%; margin: 0px">
-              <span ngbDropdownItem translate>menu.openPick
-                <input type="file" accept="application/text" (change)="pickup($event)" style="display: none"
-                  accept=".pik, .csv" />
-              </span>
-            </label>
-            <button *ngIf="electronService.isElectron" ngbDropdownItem (click)="newWindow()" translate>
-              menu.NewWindow
+              <button
+                class="save-file"
+                [class.active-save]="user.userProfile"
+                *ngIf="electronService.isElectron"
+                ngbDropdownItem
+                (click)="overWrite()"
+                translate
+              >
+                menu.overwrite
+              </button>
+              <label style="width: 100%; margin: 0px">
+                <span ngbDropdownItem translate>menu.openPick
+                  <input type="file" accept="application/text" (change)="pickup($event)" style="display: none"
+                    accept=".pik, .csv" />
+                </span>
+              </label>
+              <button *ngIf="electronService.isElectron" ngbDropdownItem (click)="newWindow()" translate>
+                menu.NewWindow
+              </button>
             </button>
           </div>
         </div>
