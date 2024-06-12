@@ -36,6 +36,8 @@ export class CrackSettingsComponent
   // タブのヘッダ名
   public groupe_name: string[];
   public refreshSubscription: Subscription;
+
+  public colAutoInputs = ["con_s", "con_l", "con_u", "ecsd_l", "kr", "k4", "extend", "ecsd_u"];
   public textStyle = { color: "gray" };
   public textStyle2 = { color: "white" };
 
@@ -59,30 +61,6 @@ export class CrackSettingsComponent
     kr: { ...this.textStyle2 },
     k4: { ...this.textStyle2 },
     extend: { ...this.textStyle },
-  };
-  public cell1 = {
-    con_s: { ...this.textStyle2 },
-  };
-  public cell2 = {
-    con_l: { ...this.textStyle2 },
-  };
-  public cell3 = {
-    con_u: { ...this.textStyle2 },
-  };
-  public cell4 = {
-    ecsd_l: { ...this.textStyle2 },
-  };
-  public cell5 = {
-    kr: { ...this.textStyle2 },
-  };
-  public cell6 = {
-    k4: { ...this.textStyle2 },
-  };
-  public cell7 = {
-    extend: { ...this.textStyle2 },
-  };
-  public cell8 = {
-    ecsd_u: { ...this.textStyle2 },
   };
   checkedRadioValue: number;
   private checkedRadioSubscription: Subscription;
@@ -143,7 +121,7 @@ export class CrackSettingsComponent
         });
       }
       const rowDataTab = this.table_datas[i];
-      let checks = ["con_s", "con_l", "con_u", "ecsd_l", "kr", "k4", "extend", "ecsd_u"];
+      
       for (let j = 0; j < rowDataTab.length; j++) {
         let currentCell = rowData[j];
         if (j === 0) {
@@ -152,46 +130,20 @@ export class CrackSettingsComponent
         } else {
           currentCell.pq_cellstyle = this.rowStyle;
           var prevRow = rowData[j - 1];
-          const keys = Object.keys(currentCell).filter(x => checks.filter(y => y === x).length > 0);
+          const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
           keys.forEach((key) => {
             if (
               JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
             ) {
               currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
-              currentCell.pq_cellstyle[`${key}`] = { color: "white" }
+              currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+              this.lstItemEdited.push(
+                i + "-" + j + "-" + key
+              );
             }
           });
         }
       }
-
-      // for (let j = 0; j < rowData.length - 1; j++) {
-      //   debugger
-      //   const rowData = this.table_datas[i];
-      //   for (let j = 0; j < rowData.length; j++) {
-      //     const currentCell = rowData[j];
-      //     if (j < rowData.length - 1) {
-      //       const nextCell = rowData[j + 1];
-      //       if (
-      //         JSON.stringify(currentCell.con_u) ===
-      //           JSON.stringify(nextCell.con_u) &&
-      //         JSON.stringify(currentCell.ecsd_u) ===
-      //           JSON.stringify(nextCell.ecsd_u) &&
-      //         JSON.stringify(currentCell.con_l) ===
-      //           JSON.stringify(nextCell.con_l) &&
-      //         JSON.stringify(currentCell.ecsd_l) ===
-      //           JSON.stringify(nextCell.ecsd_l) &&
-      //         JSON.stringify(currentCell.con_s) ===
-      //           JSON.stringify(nextCell.con_s)
-      //       ) {
-      //         currentCell.pq_cellstyle = this.rowStyle;
-      //       } else {
-      //         currentCell.pq_cellstyle = this.rowStyle2;
-      //       }
-      //     } else {
-      //       currentCell.pq_cellstyle = this.rowStyle;
-      //     }
-      //   }
-      // }
       const op = {
         showTop: false,
         reactive: true,
@@ -236,96 +188,49 @@ export class CrackSettingsComponent
           ],
         },
 
-        change: (event, ui) => {    
+        change: (event, ui) => {
           // var currentObj = ui.updateList[0].newRow;
           // let nextObj = this.table_datas[this.idTab][ui.updateList[0].rowIndx + 1];
-          
+
           // Object.assign(nextObj, currentObj);
           // Extract the current object to be copied
           var currentObj = ui.updateList[0].newRow;
           var col = Object.keys(ui.updateList[0].newRow)[0];
-          
 
           // Get the starting index from which to update the array
           let startIndex = ui.updateList[0].rowIndx + 1;
-          this.lstItemEdited.push(this.idTab + "-" + ui.updateList[0].rowIndx + '-' + col);
+          debugger
+          let sKey = this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
+          if(this.lstItemEdited.indexOf(sKey) === -1) { 
+            this.lstItemEdited.push(
+              sKey
+            );
+          }
+          
           // Loop through each item in the array starting from startIndex and assign properties from currentObj
-          for (let i = startIndex; i < this.table_datas[this.idTab].length; i++) {
+          for (let i = startIndex;i < this.table_datas[this.idTab].length;i++) 
+          {
+            debugger
             const item = this.table_datas[this.idTab][i];
-
-            // // Check if the item has the pq_cellstyle property and if it has any property with "color": "white"
-            // const itemHasPqCellStyleWithWhiteColor = item.hasOwnProperty('pq_cellstyle') && Object.values(item.pq_cellstyle).some((obj:any) => obj.color === "white");
-            // // If the item has pq_cellstyle with "color": "white", skip the assignment
-            // if (itemHasPqCellStyleWithWhiteColor) {
-            //     break;
-            // }
-            if (this.lstItemEdited.filter(x => x === this.idTab + "-" + i + '-' + col).length > 0) {
+            if(item[col] === currentObj[col]){
+              item.pq_cellstyle = { ...item.pq_cellstyle };
+              item.pq_cellstyle[`${col}`] = { color: "gray" }
+            }
+            else
+            {
+              if (this.lstItemEdited.filter((x) => x === this.idTab + "-" + i + "-" + col).length > 0
+              ) {
+              
                 break;
+              }
             }
             // Merge currentObj properties into each item
             Object.assign(this.table_datas[this.idTab][i], currentObj);
           }
+
           if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-            const keys = Object.keys(ui.updateList[0].newRow);
-            keys.forEach((key) => {
-              switch (key) {
-                case "con_s":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell1,
-                  };
-                  break;
-                case "con_l":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell2,
-                  };
-                  break;
-                case "con_u":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell3,
-                  };
-                  break;
-                case "ecsd_l":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell4,
-                  };
-                  break;
-                case "kr":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell5,
-                  };
-                  break;
-                case "k4":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell6,
-                  };
-                  break;
-                case "extend":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell7,
-                  };
-                  break;
-                case "ecsd_u":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell8,
-                  };
-                  break;
-                default:
-                  console.log(`Key ${key} is not recognized`);
-                  break;
-              }
-            });
-            // ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
-            // ui.updateList[i].rowData.userChanged = true;
-            // this.grid.refreshDataAndView();
-            // this.saveData();
+            ui.updateList[0].rowData.pq_cellstyle = { ...ui.updateList[0].rowData.pq_cellstyle };
+            ui.updateList[0].rowData.pq_cellstyle[`${col}`] = { color: "white" }
           }
         },
       };
