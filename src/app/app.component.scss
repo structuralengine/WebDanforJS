@@ -19,6 +19,7 @@
     max-width: 2500px;
     min-width: 1024px;
     padding-top: 44px;
+    height: 100vh;
 }
 
 .c-mainNavArea {
@@ -102,4 +103,6 @@
 // メインエリア
 .c-contentsArea {
     margin-left: 212px;
+    height: 100%;
+    // background: var(--base-950);
 }

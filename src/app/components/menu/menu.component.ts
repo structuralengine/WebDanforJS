@@ -21,7 +21,7 @@ import { SaveDataService } from "../../providers/save-data.service";
 import { ConfigService } from "../../providers/config.service";
 import { DsdDataService } from "src/app/providers/dsd-data.service";
 
-import { DataHelperModule } from "src/app/providers/data-helper.module";
+import {DataHelperModule} from "src/app/providers/data-helper.module";
 import { InputMembersService } from "../members/members.service";
 import { InputDesignPointsService } from "../design-points/design-points.service";
 // import { Auth, getAuth } from "@angular/fire/auth";
@@ -37,6 +37,8 @@ import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
 import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
 import { InputBarsService } from "../bars/bars.service";
+import { InputCrackSettingsService } from "../crack/crack-settings.service";
+import { ShearStrengthService } from "../shear/shear-strength.service";
 
 @Component({
   selector: "app-menu",
@@ -54,6 +56,8 @@ export class MenuComponent implements OnInit {
   public train_B_count: number;
   public service_life: number;
   public isReview: boolean;  
+  public showIcon:boolean = false
+
   @ViewChild('grid1') grid1: SheetComponent;
   private table1_datas: any[] = [];
   public options1: pq.gridT.options;
@@ -81,6 +85,7 @@ export class MenuComponent implements OnInit {
   public windows: KnownAppWindow[] = [];
   public logs: string[] = [];
   public hideDCJ3_J5: boolean = false;
+  public firstCondition: any;
 
   constructor(
     private modalService: NgbModal,
@@ -98,6 +103,8 @@ export class MenuComponent implements OnInit {
     private basic: InputBasicInformationService,
     private fatigues: InputFatiguesService,
     private menuBehaviorSubject: MenuBehaviorSubject,
+    private crack: InputCrackSettingsService,
+    private shear: ShearStrengthService,
     // public auth: Auth,
     public language: LanguagesService,
     public electronService: ElectronService,
@@ -105,7 +112,7 @@ export class MenuComponent implements OnInit {
     private elementRef: ElementRef,
     private readonly keycloak: KeycloakService,
     private multiWindowService: MultiWindowService,
-    private bars: InputBarsService
+    private bars: InputBarsService,
   ) {
     // this.auth = getAuth();
     this.fileName = "";
@@ -126,7 +133,6 @@ export class MenuComponent implements OnInit {
    
   }
   ngAfterViewInit(){
- 
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd))
     .subscribe((event: NavigationEnd) => {  
       console.log("event", event.url)    
@@ -135,6 +141,9 @@ export class MenuComponent implements OnInit {
       }else this.isReview = false;
     })
  
+    if (this.conditions_list.length > 0) {
+      this.firstCondition = this.conditions_list[0];
+    } 
   }
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload($event: BeforeUnloadEvent) {
@@ -171,11 +180,11 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  changeInput(){
+  changeInput() {
     this.fatigues.setInputData(
-    this.train_A_count,
-    this.train_B_count,
-    this.service_life);
+      this.train_A_count,
+      this.train_B_count,
+      this.service_life);
   }
 
 
@@ -241,7 +250,14 @@ export class MenuComponent implements OnInit {
           }
           break;
         default:
-          this.save.readInputData(response.text);
+          if (this.save.checkVerFile(response.text)) {
+            this.showIcon = false
+            this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
+            this.helper.alert(this.translate.instant("menu.message_ver"));
+          } else {
+            this.showIcon = true
+            this.save.readInputData(response.text);
+          }
           this.open_done(modalRef);
       }
     }, 10);
@@ -277,16 +293,20 @@ export class MenuComponent implements OnInit {
           .then((text) => {
             //Check to hide design condition
             this.hideDCJ3_J5 = this.save.hideDC(text);
-
+            
             //Read file
-            this.save.readInputData(text);
-            let basicFile = this.save.getBasicData();
-            this.specification1_list_file = basicFile.specification1_list;
-            this.basic.set_specification1_data_file(this.specification1_list_file);
-            this.specification2_list_file = basicFile.specification2_list;
-            this.specification2_list_file.forEach(el => {
-              this.setSpecification2(el.id);
-            })
+            if (this.save.checkVerFile(text)){
+              this.showIcon = false
+              this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
+              this.helper.alert(this.translate.instant("menu.message_ver"));
+            }else{
+              this.showIcon = true
+              this.save.readInputData(text);
+              let basicFile = this.save.getBasicData();
+              this.specification1_list_file = basicFile.specification1_list;
+              this.basic.set_specification1_data_file(this.specification1_list_file);
+              this.specification2_list = basicFile.specification2_list
+            }
             this.open_done(modalRef);
           })
           .catch((err) => {
@@ -304,7 +324,7 @@ export class MenuComponent implements OnInit {
   public shortenFilename(filename, maxLength = 30) {
     let tempName = filename;
     tempName = this.getFileNameFromUrl(tempName);
-    return tempName.length <= maxLength ? tempName : '...'+ tempName.slice(tempName.length - maxLength);
+    return tempName.length <= maxLength ? tempName : '...' + tempName.slice(tempName.length - maxLength);
   }
 
   private open_done(modalRef, error = null) {
@@ -436,15 +456,25 @@ export class MenuComponent implements OnInit {
 
   public setSpecification1(i: number): void {
 
-    const basic = this.basic.set_specification1(i);
+    let basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
 
-    ///temporary set default spe_2.2: "partial coefficient method"
-    if(i === 2)
-    {
-      basic.specification2_list.map(obj => 
+    ///Set selected for specification2_list 
+    if (i === 2) {
+      //Case Road: temporary set default spe_2.2: "partial coefficient method"
+      basic.specification2_list.map(obj =>
         obj.selected = (obj.id === 6) ? true : false);
-        this.specification2_select_id = 6;
+      this.specification2_select_id = 6;
+      this.basic.setPreSpecification2(this.specification1_select_id, basic.specification2_list)
+    }
+    else {
+      const prev = this.basic.prevSpecification2[i];
+      if (prev != undefined) {
+        this.basic.specification2_list = prev;
+        basic.specification2_list = this.basic.specification2_list;
+      }
+      const selectedObject = basic.specification2_list.find(obj => obj.selected === true);
+      this.specification2_select_id = selectedObject ? selectedObject.id : 0;
     }
 
     this.specification2_list = basic.specification2_list; // 仕様
@@ -477,9 +507,14 @@ export class MenuComponent implements OnInit {
 
   /// 仕様 変更時の処理
   public setSpecification2(id: number): void {
+    this.menuService.setCheckedRadio(id);
     this.specification2_list.map(
       obj => obj.selected = (obj.id === id) ? true : false);
     this.specification2_select_id = id;
+    this.bars.refreshShowHidden$.next({})
+    this.crack.refreshTitle$.next({});
+    this.shear.refreshTable$.next({})
+    this.basic.setPreSpecification2(this.specification1_select_id, this.specification2_list);
   }
 
   // 耐用年数, jA, jB
@@ -537,11 +572,16 @@ export class MenuComponent implements OnInit {
         jR003.selected = false;
       }
     }
-    if (item.id === "JR-003" || item.id === "JR-005")
-      this.members.setGTypeForMembers();
+    // if (item.id === "JR-003" || item.id === "JR-005")
+    //   this.members.setGTypeForMembers();
   } 
 
   public preview(): void{
     this.bars.is_review = true;
+  }
+
+  public handelClickChat() {
+    const elementChat = document.getElementById("chatplusheader");
+    elementChat.click()
   }
 }

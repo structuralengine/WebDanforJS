@@ -53,8 +53,466 @@
             >
           </label>
         </div>
+        <div class="button-container">
+          <button
+            [disabled]="!isAnyDownloadCheckboxChecked() || selectedRoad"
+            (click)="downloadSummaryFun4()"
+            id="downloadButton"
+            translate
+          >
+            calculation-print.download
+          </button>
+        </div>
+        <div id="download-loading" disabled="true" style="display: none">
+          <svg
+            width="50px"
+            height="50px"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="xMidYMid"
+            class="uil-spin"
+          >
+            <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
+            <g transform="translate(50 50)">
+              <g transform="rotate(0) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(45) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.12s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.12s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(90) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.25s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.25s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(135) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.37s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.37s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(180) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.5s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.5s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(225) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.62s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.62s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(270) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.75s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.75s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(315) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.87s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.87s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+            </g>
+          </svg>
+          <p translate>calculation-print.downloading</p>
+        </div>
+      
+        <!-- <div class="button-container">
+          <button (click)="previewSummary()" translate>calculation-print.summary</button>
+        </div> -->
+        <div class="print-container">
+          <div class="print-item">
+            <fieldset>
+              <legend translate>calculation-print.dc</legend>
+              <div *ngIf="isManual() == false">
+                <label class="checkbox-container">
+                  <input
+                    type="checkbox"
+                    name="print_section_force"
+                    id="print_section_force"
+                    class="checkbox-input"
+                    [value]="print_section_force"
+                    [(ngModel)]="print_section_force_checked"
+                    [checked]="print_section_force_checked"
+                    [disabled]="selectedRoad"
+                    (click)="changeButton($event)"
+                  />
+                  <span
+                    translate
+                    class="checkbox-parts"
+                    [style.color]="selectedRoad ? 'gray' : ''"
+                    >calculation-print.s_table</span
+                  >
+                </label>
+              </div>
+              <div>
+                <label class="checkbox-container">
+                  <input
+                    type="checkbox"
+                    name="print_calculate"
+                    id="print_calculate"
+                    class="checkbox-input"
+                    [value]="print_calculate_checked"
+                    [(ngModel)]="print_calculate_checked"
+                    [checked]="print_calculate_checked"
+                    (click)="changeButton($event)"
+                  />
+                  <span translate class="checkbox-parts"
+                    >calculation-print.p_check</span
+                  >
+                </label>
+              </div>
+              <div>
+                <label class="checkbox-container">
+                  <input
+                    type="checkbox"
+                    name="print_safety_ratio"
+                    id="print_safety_ratio"
+                    class="checkbox-input"
+                    [(ngModel)]="print_safety_ratio_checked"
+                    [checked]="print_safety_ratio_checked"
+                    [disabled]="selectedRoad"
+                    (click)="changeButton($event)"
+                  />
+                  <span
+                    translate
+                    class="checkbox-parts"
+                    [style.color]="selectedRoad ? 'gray' : ''"
+                    >calculation-print.judgement</span
+                  >
+                </label>
+              </div>
+            </fieldset>
+          </div>
+          <div class="button-container">
+            <button
+              [disabled]="!isAnyPrintCheckboxChecked()"
+              (click)="pdfSummary()"
+              id="printButton"
+            >
+              <span translate>calculation-print.print</span>
+            </button>
+          </div>
+        </div>
+      
+        <div id="print-loading" disabled="true" style="display: none">
+          <svg
+            width="50px"
+            height="50px"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="xMidYMid"
+            class="uil-spin"
+          >
+            <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
+            <g transform="translate(50 50)">
+              <g transform="rotate(0) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(45) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.12s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.12s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(90) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.25s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.25s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(135) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.37s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.37s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(180) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.5s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.5s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(225) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.62s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.62s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(270) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.75s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.75s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+              <g transform="rotate(315) translate(34 0)">
+                <circle cx="0" cy="0" r="8" fill="#000">
+                  <animate
+                    attributeName="opacity"
+                    from="1"
+                    to="0.1"
+                    begin="0.87s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animate>
+                  <animateTransform
+                    attributeName="transform"
+                    type="scale"
+                    from="1.5"
+                    to="1"
+                    begin="0.87s"
+                    dur="1s"
+                    repeatCount="indefinite"
+                  ></animateTransform>
+                </circle>
+              </g>
+            </g>
+          </svg>
+          <span translate>calculation-print.preparing</span>
+        </div>
       </div>
-      <div class="download-item">
+      
+      
+      </div>
+      <div class="download-item" style="width: 20%;padding-left: 40px;">
           <!-- *ngIf="table_datas.length > 0" -->
           <legend class="title" translate> 
             <input
@@ -82,461 +540,5 @@
         </div>
       </div>
     </div>
-    <div class="button-container">
-      <button
-        [disabled]="!isAnyDownloadCheckboxChecked() || selectedRoad"
-        (click)="downloadSummaryFun4()"
-        id="downloadButton"
-        translate
-      >
-        calculation-print.download
-      </button>
-    </div>
   </div>
-
-  <!-- <div class="button-container">
-    <button (click)="previewSummary()" translate>calculation-print.summary</button>
-  </div> -->
-  <div class="print-container">
-    <div class="print-item">
-      <fieldset>
-        <legend translate>calculation-print.dc</legend>
-        <div *ngIf="isManual() == false">
-          <label class="checkbox-container">
-            <input
-              type="checkbox"
-              name="print_section_force"
-              id="print_section_force"
-              class="checkbox-input"
-              [value]="print_section_force"
-              [(ngModel)]="print_section_force_checked"
-              [checked]="print_section_force_checked"
-              [disabled]="selectedRoad"
-              (click)="changeButton($event)"
-            />
-            <span
-              translate
-              class="checkbox-parts"
-              [style.color]="selectedRoad ? 'gray' : ''"
-              >calculation-print.s_table</span
-            >
-          </label>
-        </div>
-        <div>
-          <label class="checkbox-container">
-            <input
-              type="checkbox"
-              name="print_calculate"
-              id="print_calculate"
-              class="checkbox-input"
-              [value]="print_calculate_checked"
-              [(ngModel)]="print_calculate_checked"
-              [checked]="print_calculate_checked"
-              (click)="changeButton($event)"
-            />
-            <span translate class="checkbox-parts"
-              >calculation-print.p_check</span
-            >
-          </label>
-        </div>
-        <div>
-          <label class="checkbox-container">
-            <input
-              type="checkbox"
-              name="print_safety_ratio"
-              id="print_safety_ratio"
-              class="checkbox-input"
-              [(ngModel)]="print_safety_ratio_checked"
-              [checked]="print_safety_ratio_checked"
-              [disabled]="selectedRoad"
-              (click)="changeButton($event)"
-            />
-            <span
-              translate
-              class="checkbox-parts"
-              [style.color]="selectedRoad ? 'gray' : ''"
-              >calculation-print.safety_ratio</span
-            >
-          </label>
-        </div>
-      </fieldset>
-    </div>
-    <div class="button-container">
-      <button
-        [disabled]="!isAnyPrintCheckboxChecked()"
-        (click)="pdfSummary()"
-        id="printButton"
-      >
-        <span translate>calculation-print.print</span>
-      </button>
-    </div>
-  </div>
-
-  <div id="print-loading" disabled="true" style="display: none">
-    <svg
-      width="50px"
-      height="50px"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="xMidYMid"
-      class="uil-spin"
-    >
-      <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
-      <g transform="translate(50 50)">
-        <g transform="rotate(0) translate(34 0)">
-          <circle cx="0" cy="0" r="8" fill="#000">
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0.1"
-              begin="0s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              from="1.5"
-              to="1"
-              begin="0s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </circle>
-        </g>
-        <g transform="rotate(45) translate(34 0)">
-          <circle cx="0" cy="0" r="8" fill="#000">
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0.1"
-              begin="0.12s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              from="1.5"
-              to="1"
-              begin="0.12s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </circle>
-        </g>
-        <g transform="rotate(90) translate(34 0)">
-          <circle cx="0" cy="0" r="8" fill="#000">
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0.1"
-              begin="0.25s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              from="1.5"
-              to="1"
-              begin="0.25s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </circle>
-        </g>
-        <g transform="rotate(135) translate(34 0)">
-          <circle cx="0" cy="0" r="8" fill="#000">
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0.1"
-              begin="0.37s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              from="1.5"
-              to="1"
-              begin="0.37s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </circle>
-        </g>
-        <g transform="rotate(180) translate(34 0)">
-          <circle cx="0" cy="0" r="8" fill="#000">
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0.1"
-              begin="0.5s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              from="1.5"
-              to="1"
-              begin="0.5s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </circle>
-        </g>
-        <g transform="rotate(225) translate(34 0)">
-          <circle cx="0" cy="0" r="8" fill="#000">
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0.1"
-              begin="0.62s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              from="1.5"
-              to="1"
-              begin="0.62s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </circle>
-        </g>
-        <g transform="rotate(270) translate(34 0)">
-          <circle cx="0" cy="0" r="8" fill="#000">
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0.1"
-              begin="0.75s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              from="1.5"
-              to="1"
-              begin="0.75s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </circle>
-        </g>
-        <g transform="rotate(315) translate(34 0)">
-          <circle cx="0" cy="0" r="8" fill="#000">
-            <animate
-              attributeName="opacity"
-              from="1"
-              to="0.1"
-              begin="0.87s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animate>
-            <animateTransform
-              attributeName="transform"
-              type="scale"
-              from="1.5"
-              to="1"
-              begin="0.87s"
-              dur="1s"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </circle>
-        </g>
-      </g>
-    </svg>
-    <span translate>calculation-print.preparing</span>
-  </div>
-</div>
-
-<div id="download-loading" disabled="true" style="display: none">
-  <svg
-    width="50px"
-    height="50px"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 100 100"
-    preserveAspectRatio="xMidYMid"
-    class="uil-spin"
-  >
-    <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
-    <g transform="translate(50 50)">
-      <g transform="rotate(0) translate(34 0)">
-        <circle cx="0" cy="0" r="8" fill="#000">
-          <animate
-            attributeName="opacity"
-            from="1"
-            to="0.1"
-            begin="0s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animate>
-          <animateTransform
-            attributeName="transform"
-            type="scale"
-            from="1.5"
-            to="1"
-            begin="0s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </circle>
-      </g>
-      <g transform="rotate(45) translate(34 0)">
-        <circle cx="0" cy="0" r="8" fill="#000">
-          <animate
-            attributeName="opacity"
-            from="1"
-            to="0.1"
-            begin="0.12s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animate>
-          <animateTransform
-            attributeName="transform"
-            type="scale"
-            from="1.5"
-            to="1"
-            begin="0.12s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </circle>
-      </g>
-      <g transform="rotate(90) translate(34 0)">
-        <circle cx="0" cy="0" r="8" fill="#000">
-          <animate
-            attributeName="opacity"
-            from="1"
-            to="0.1"
-            begin="0.25s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animate>
-          <animateTransform
-            attributeName="transform"
-            type="scale"
-            from="1.5"
-            to="1"
-            begin="0.25s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </circle>
-      </g>
-      <g transform="rotate(135) translate(34 0)">
-        <circle cx="0" cy="0" r="8" fill="#000">
-          <animate
-            attributeName="opacity"
-            from="1"
-            to="0.1"
-            begin="0.37s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animate>
-          <animateTransform
-            attributeName="transform"
-            type="scale"
-            from="1.5"
-            to="1"
-            begin="0.37s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </circle>
-      </g>
-      <g transform="rotate(180) translate(34 0)">
-        <circle cx="0" cy="0" r="8" fill="#000">
-          <animate
-            attributeName="opacity"
-            from="1"
-            to="0.1"
-            begin="0.5s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animate>
-          <animateTransform
-            attributeName="transform"
-            type="scale"
-            from="1.5"
-            to="1"
-            begin="0.5s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </circle>
-      </g>
-      <g transform="rotate(225) translate(34 0)">
-        <circle cx="0" cy="0" r="8" fill="#000">
-          <animate
-            attributeName="opacity"
-            from="1"
-            to="0.1"
-            begin="0.62s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animate>
-          <animateTransform
-            attributeName="transform"
-            type="scale"
-            from="1.5"
-            to="1"
-            begin="0.62s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </circle>
-      </g>
-      <g transform="rotate(270) translate(34 0)">
-        <circle cx="0" cy="0" r="8" fill="#000">
-          <animate
-            attributeName="opacity"
-            from="1"
-            to="0.1"
-            begin="0.75s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animate>
-          <animateTransform
-            attributeName="transform"
-            type="scale"
-            from="1.5"
-            to="1"
-            begin="0.75s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </circle>
-      </g>
-      <g transform="rotate(315) translate(34 0)">
-        <circle cx="0" cy="0" r="8" fill="#000">
-          <animate
-            attributeName="opacity"
-            from="1"
-            to="0.1"
-            begin="0.87s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animate>
-          <animateTransform
-            attributeName="transform"
-            type="scale"
-            from="1.5"
-            to="1"
-            begin="0.87s"
-            dur="1s"
-            repeatCount="indefinite"
-          ></animateTransform>
-        </circle>
-      </g>
-    </g>
-  </svg>
-  <p translate>calculation-print.downloading</p>
-</div>
+  

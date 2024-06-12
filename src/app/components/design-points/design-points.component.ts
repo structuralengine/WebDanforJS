@@ -4,6 +4,7 @@ import {
   OnDestroy,
   AfterViewInit,
   ViewChild,
+  ElementRef
 } from "@angular/core";
 import { InputDesignPointsService } from "./design-points.service";
 import { SaveDataService } from "../../providers/save-data.service";
@@ -19,8 +20,9 @@ import { TranslateService } from "@ngx-translate/core";
 })
 export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild("grid") grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
   public options: pq.gridT.options;
-
+  hasScrollbar: boolean = false;
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = [];
@@ -28,7 +30,16 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
   public table_datas: any[];
   // タブのヘッダ名
   public groupe_name: string[];
-
+  public optionsCheck = {
+    1: { text: "My - Vz" },
+    2: { text: "Mz - Vy" },
+  }
+  public optionsArray = [
+    { id: "1", text: "My - Vz" },
+    { id: "2", text: "Mz - Vy" },
+  ];
+  public styleNoEdit = { "pointer-events": "none", "color": "#999C9F" }
+  public propNoEdit = { edit: false, }
   constructor(
     private points: InputDesignPointsService,
     private save: SaveDataService,
@@ -44,6 +55,30 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
+      if(this.save.is3DPickUp()){
+        this.table_datas[i].forEach((data:any)=>{
+          if (data["axis_type"]===1){
+            data["isMCalc"] = data["isMyCalc"]
+            data["isVCalc"] = data["isVzCalc"]
+          }else{
+            data["isMCalc"] = data["isMzCalc"]
+            data["isVCalc"] = data["isVyCalc"]
+          }
+        })
+      } else {
+        this.table_datas[i].forEach((data: any) => {
+          data["isMCalc"] = data["isMzCalc"]
+          data["isVCalc"] = data["isVyCalc"]
+          data.pq_cellstyl={
+            ...data.pq_cellstyle,
+            axis_type:{...this.styleNoEdit}
+          }
+          data.pq_cellprop = {
+            ...data.pq_cellprop,
+            axis_type: { ...this.propNoEdit }
+          }
+        })
+      }
       const op = {
         showTop: false,
         reactive: true,
@@ -54,6 +89,9 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: this.save.isManual() ? 2 : 4,
+        editModel: {
+          clicksToEdit: 1
+        },
         contextMenu: {
           on: true,
           items: [
@@ -88,26 +126,44 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           ]
         },
         change: (evt, ui) => {
+          // 何か変更があったら判定する
           for (const property of ui.updateList) {
             for (const key of Object.keys(property.newRow)) {
-              if (property.newRow[key] === true) {
-                const target = this.table_datas[i][property.rowIndx];
-                if (key === "isMyCalc") {
-                  target["isMzCalc"] = false;
+              if (key ==="axis_type") {
+                if (+property.newRow[key] === 1) {
+                  property.rowData["isMyCalc"] = property.rowData["isMCalc"]
+                  property.rowData["isVzCalc"] = property.rowData["isVCalc"]
+                  if (property.rowData["isMCalc"] || property.rowData["isVCalc"] ){
+                    property.rowData["isMzCalc"] = false;
+                    property.rowData["isVyCalc"] = false;
+                  }
+                }else{
+                  property.rowData["isMzCalc"] = property.rowData["isMCalc"]
+                  property.rowData["isVyCalc"] = property.rowData["isVCalc"]
+                  if (property.rowData["isMCalc"] || property.rowData["isVCalc"]) {
+                    property.rowData["isMyCalc"] = false;
+                    property.rowData["isVzCalc"] = false
+                  }
                 }
-                if (key === "isMzCalc") {
-                  target["isMyCalc"] = false;
+              }else{
+                const check = property.newRow[key]
+                if (key === "isMCalc") {
+                  if (+property.rowData["axis_type"] === 1) {
+                    property.rowData["isMyCalc"] = check;
+                  } else {
+                    property.rowData["isMzCalc"] = check;
+                  }
                 }
-                if (key === "isVyCalc") {
-                  target["isVzCalc"] = false;
-                }
-                if (key === "isVzCalc") {
-                  target["isVyCalc"] = false;
+                if (key === "isVCalc") {
+                  if (+property.rowData["axis_type"] === 1) {
+                    property.rowData["isVzCalc"] = check;
+                  } else {
+                    property.rowData["isVyCalc"] = check;
+                  }
                 }
               }
             }
           }
-          // 何か変更があったら判定する
           let flg = false;
           for (const datas of this.table_datas) {
             if (this.points.designPointChange(datas) === true) {
@@ -140,52 +196,25 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
-
+    this.checkForScrollbar();
     this.grid.refreshCell({
       rowIndx: 0,
       colIndx: 0,
     });
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     if (isManual) {
       // 断面力手入力モードの場合
       this.columnHeaders = [
         {
           title: "",
-          align: "left",
-          dataType: "string",
-          dataIndx: "m_no",
-          frozen: true,
-          sortable: false,
-          width: 70,
-          editable: false,
-          nodrag: true,
-          style: { 'background': '#373e45' },
-          styleHead: { 'background': '#373e45' }
-        },
-        {
-          title: this.translate.instant("design-points.p_name"),
-          dataType: "string",
-          dataIndx: "p_name",
-          frozen: true,
-          sortable: false,
-          width: 250,
-          nodrag: true,
-        },
-        // {
-        //   title: this.translate.instant("design-points.s_len"),
-        //   dataType: "float",
-        //   dataIndx: "La",
-        //   sortable: false,
-        //   width: 140,
-        // },
-      ];
-    } else {
-      // ピックアップファイルを使う場合
-      this.columnHeaders = [
-        {
-          title: this.translate.instant("design-points.m_no"),
           align: "left",
           dataType: "string",
           dataIndx: "m_no",
@@ -207,7 +236,8 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           editable: false,
           nodrag: true,
           style: { 'background': '#373e45' },
-          styleHead: { 'background': '#373e45' }
+          styleHead: { 'background': '#373e45' },
+          hidden:true,
         },
         {
           title: this.translate.instant("design-points.position"),
@@ -220,7 +250,8 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           editable: false,
           nodrag: true,
           style: { 'background': '#373e45' },
-          styleHead: { 'background': '#373e45' }
+          styleHead: { 'background': '#373e45' },
+          hidden: true
         },
         {
           title: this.translate.instant("design-points.p_name"),
@@ -229,161 +260,263 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
           frozen: true,
           sortable: false,
           width: 250,
+          editable: false,
           nodrag: true,
         },
+        {
+          title: this.translate.instant("design-points.upper_side"),
+          align: "center",
+          dataType: "bool",
+          dataIndx: "isUpperCalc",
+          type: "checkbox",
+          sortable: false,
+          width: 85,
+          nodrag: true,
+          editor: false,
+        },
+        {
+          title: this.translate.instant("design-points.lower_side"),
+          align: "center",
+          dataType: "bool",
+          dataIndx: "isLowerCalc",
+          type: "checkbox",
+          sortable: false,
+          width: 85,
+          nodrag: true,
+          editor: false,
+        },
+        {
+          title: this.translate.instant("design-points.check_target"),
+          align: "center",
+          dataIndx: "axis_type",
+          sortable: false,
+          width: 85,
+          nodrag: true,
+          cls: 'pq-drop-icon pq-side-icon',
+          editor: {
+            type: 'select',
+            options: this.optionsArray,
+            labelIndx: 'text',
+            valueIndx: 'id',
+          },
+          render: (ui) => {
+            return (this.optionsCheck[ui.cellData] || {}).text;
+          },
+          hidden:true
+        },
+        {
+          title: this.translate.instant("design-points.b_check"),
+          align: "center",
+          dataType: "bool",
+          dataIndx: "isMCalc",
+          type: "checkbox",
+          sortable: false,
+          width: 85,
+          nodrag: true,
+          editor: false,
+        },
+        {
+          title: this.translate.instant("design-points.s_check"),
+          align: "center",
+          dataType: "bool",
+          dataIndx: "isVCalc",
+          type: "checkbox",
+          sortable: false,
+          width: 85,
+          nodrag: true,
+          editor: false,
+        },
+        {
+          title: this.translate.instant("design-points.t_check"),
+          align: "center",
+          dataType: "bool",
+          dataIndx: "isMtCalc",
+          type: "checkbox",
+          sortable: false,
+          width: 85,
+          nodrag: true,
+          editor: false,
+        }
       ];
-      if (this.save.is3DPickUp()) {
-        // 3次元ピックアップファイルの場合
-        this.columnHeaders.push(
-          {
-            title: this.translate.instant("design-points.b_check"),
-            align: "center",
-            colModel: [
-              {
-                title: this.translate.instant("design-points.y_around"),
-                align: "center",
-                dataType: "bool",
-                dataIndx: "isMyCalc",
-                type: "checkbox",
-                sortable: false,
-                width: 120,
-                nodrag: true,
-              },
-              {
-                title: this.translate.instant("design-points.z_around"),
-                align: "center",
-                dataType: "bool",
-                dataIndx: "isMzCalc",
-                type: "checkbox",
-                sortable: false,
-                width: 120,
-                nodrag: true,
-              },
-            ],
-            nodrag: true,
-          },
-          {
-            title: this.translate.instant("design-points.s_check"),
-            align: "center",
-            colModel: [
-              {
-                title: this.translate.instant("design-points.y_direction"),
-                align: "center",
-                dataType: "bool",
-                dataIndx: "isVyCalc",
-                type: "checkbox",
-                sortable: false,
-                width: 120,
-                nodrag: true,
-              },
-              {
-                title: this.translate.instant("design-points.z_direction"),
-                align: "center",
-                dataType: "bool",
-                dataIndx: "isVzCalc",
-                type: "checkbox",
-                sortable: false,
-                width: 120,
-                nodrag: true,
-              },
-            ],
-            nodrag: true,
-          },
-          {
-            title: this.translate.instant("design-points.t_check"),
-            align: "center",
-            dataType: "bool",
-            dataIndx: "isMtCalc",
-            type: "checkbox",
-            sortable: false,
-            width: 120,
-            nodrag: true,
-          }
-        );
-      } else {
-        // 2次元ピックアップファイルの場合
-        this.columnHeaders.push(
-          {
-            title: this.translate.instant("design-points.b_check"),
-            align: "center",
-            dataType: "bool",
-            dataIndx: "isMzCalc",
-            type: "checkbox",
-            sortable: false,
-            width: 120,
-            nodrag: true,
-          },
-          {
-            title: this.translate.instant("design-points.s_check"),
-            align: "center",
-            dataType: "bool",
-            dataIndx: "isVyCalc",
-            type: "checkbox",
-            sortable: false,
-            width: 120,
-            nodrag: true,
-          }
-        );
-      }
-      // this.columnHeaders.push({
-      //   title: this.translate.instant("design-points.s_len"),
-      //   dataType: "float",
-      //   dataIndx: "La",
-      //   sortable: false,
-      //   width: 140,
-      // });
+  } else {
+  this.columnHeaders=[
+    {
+      title: this.translate.instant("design-points.m_no"),
+      align: "left",
+      dataType: "string",
+      dataIndx: "m_no",
+      frozen: true,
+      sortable: false,
+      width: 70,
+      editable: false,
+      nodrag: true,
+      style: { 'background': '#373e45' },
+      styleHead: { 'background': '#373e45' }
+    },
+    {
+      title: this.translate.instant("design-points.p_id"),
+      dataType: "string",
+      dataIndx: "p_id",
+      frozen: true,
+      sortable: false,
+      width: 85,
+      editable: false,
+      nodrag: true,
+      style: { 'background': '#373e45' },
+      styleHead: { 'background': '#373e45' }
+    },
+    {
+      title: this.translate.instant("design-points.position"),
+      dataType: "float",
+      format: "#.000",
+      dataIndx: "position",
+      frozen: true,
+      sortable: false,
+      width: 110,
+      editable: false,
+      nodrag: true,
+      style: { 'background': '#373e45' },
+      styleHead: { 'background': '#373e45' }
+    },
+    {
+      title: this.translate.instant("design-points.p_name"),
+      dataType: "string",
+      dataIndx: "p_name",
+      frozen: true,
+      sortable: false,
+      width: 250,
+      nodrag: true,
+    },
+    {
+      title: this.translate.instant("design-points.upper_side"),
+      align: "center",
+      dataType: "bool",
+      dataIndx: "isUpperCalc",
+      type: "checkbox",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      editor: false,
+    },
+    {
+      title: this.translate.instant("design-points.lower_side"),
+      align: "center",
+      dataType: "bool",
+      dataIndx: "isLowerCalc",
+      type: "checkbox",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      editor: false,
+    },
+    {
+      title: this.translate.instant("design-points.check_target"),
+      align: "center",
+      dataIndx: "axis_type",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      cls: 'pq-drop-icon pq-side-icon',
+      editor: {
+        type: 'select',
+        options: this.optionsArray,
+        labelIndx: 'text',
+        valueIndx: 'id',
+      },
+      render: (ui) => {
+        return (this.optionsCheck[ui.cellData] || {}).text;
+      },
+    },
+    {
+      title: this.translate.instant("design-points.b_check"),
+      align: "center",
+      dataType: "bool",
+      dataIndx: "isMCalc",
+      type: "checkbox",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      editor: false,
+    },
+    {
+      title: this.translate.instant("design-points.s_check"),
+      align: "center",
+      dataType: "bool",
+      dataIndx: "isVCalc",
+      type: "checkbox",
+      sortable: false,
+      width: 85,
+      nodrag: true,
+      editor: false,
     }
+  ];
+  if (this.save.is3DPickUp()) {
+    this.columnHeaders.push(
+      {
+        title: this.translate.instant("design-points.t_check"),
+        align: "center",
+        dataType: "bool",
+        dataIndx: "isMtCalc",
+        type: "checkbox",
+        sortable: false,
+        width: 85,
+        nodrag: true,
+        editor: false,
+      }
+    )
+  }
+}
   }
 
-  ngOnDestroy() {
-    this.saveData();
-  }
+ngOnDestroy() {
+  this.saveData();
+}
 
   public saveData(): void {
-    const a = [];
-    for (const g of this.table_datas) {
-      for (const p of g) {
-        a.push(p);
-      }
-    }
-    if (this.save.isManual()) {
-      this.points.setSaveData(a);
-    } else {
-      this.points.setTableColumns(a);
-    }
+  const a = [];
+  for (const g of this.table_datas) {
+  for (const p of g) {
+    a.push(p);
+  }
+}
+if (this.save.isManual()) {
+  this.points.setSaveData(a,false,true);
+} else {
+  this.points.setTableColumns(a, this.save.is3DPickUp(), this.save.isManual());
+}
   }
 
   // 表の高さを計算する
   private tableHeight(): number {
-    let containerHeight = window.innerHeight;
-    containerHeight -= 230;
-    return containerHeight;
-  }
+  let containerHeight = window.innerHeight;
+  containerHeight -= 230;
+  return containerHeight;
+}
 
   public activePageChenge(id: number): void {
-    this.activeButtons(id);
+  this.activeButtons(id);
 
-    this.options = this.option_list[id];
-    this.grid.options = this.options;
-    this.grid.refreshDataAndView();
-  }
+  this.options = this.option_list[id];
+  this.grid.options = this.options;
+  this.grid.refreshDataAndView();
+}
 
   // アクティブになっているボタンを全て非アクティブにする
   private activeButtons(id: number) {
-    for (let i = 0; i <= this.table_datas.length; i++) {
-      const data = document.getElementById("pos" + i);
-      if (data != null) {
-        if (i === id) {
-          data.classList.add("is-active");
-        } else if (data.classList.contains("is-active")) {
-          data.classList.remove("is-active");
-        }
+  for (let i = 0; i <= this.table_datas.length; i++) {
+    const data = document.getElementById("pos" + i);
+    if (data != null) {
+      if (i === id) {
+        data.classList.add("is-active");
+      } else if (data.classList.contains("is-active")) {
+        data.classList.remove("is-active");
       }
     }
   }
+}
 
   // タブのヘッダ名
   public getGroupeName(i: number): string {
-    return this.groupe_name[i];
-  }
+  return this.groupe_name[i];
+}
 }

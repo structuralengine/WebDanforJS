@@ -27,8 +27,10 @@ export class DataHelperModule {
   //Yes/Noのダイアログを表示する
   public async confirm(message: string): Promise<boolean> {
     if (this.electronService.isElectron) {
-      return window.confirm(message);
-    } else {
+      var r = await this.electronService.ipcRenderer.sendSync('alertConfirm', message);
+      return r === 0;
+    } 
+    else {
       const modalRef = this.modalService.open(AlertDialogComponent, {
         centered: true,
         backdrop: true,

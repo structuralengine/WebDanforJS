@@ -25,6 +25,7 @@
     padding: 20px 10px;
     border-radius: 4px;
     background: #fff;
+    z-index: 10;
 
     &::before {
         content: "";
@@ -35,8 +36,7 @@
 }
 
 #crack-table {
-    top: 32px;
-    left: 24.4%;
+    top: 32px;   
 }
 
 #safety-table {

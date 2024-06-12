@@ -65,6 +65,8 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     private menuService: MenuService,
   ) {
     // this.auth = getAuth();
+
+    this.calc.updateMemberGroupSelection(); //refresh member_group_selection in Cal
   }
 
   ngOnInit() {
@@ -74,22 +76,22 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     this.print_summary_table_checked = this.calc.print_selected.print_summary_table_checked;
     this.print_safety_ratio_checked = this.calc.print_selected.print_safety_ratio_checked;
 
-    this.calculate_moment_checked = true;
-    this.calculate_shear_force_checked = true;
+    this.calculate_moment_checked = this.calc.print_selected.calculate_moment_checked;
+    this.calculate_shear_force_checked = this.calc.print_selected.calculate_shear_force;
     if (this.menuService.selectedRoad == true) {
 
       this.calculate_torsional_moment_checked = false;
     } else {
-      this.calculate_torsional_moment_checked = true;
+      this.calculate_torsional_moment_checked = this.calc.print_selected.calculate_torsional_moment;
     }
 
     this.consider_moment_checked = true;
 
     this.table_datas = new Array();
-    for (const data of this.calc.getColumnData()) {
+    for (const data of this.calc.print_selected.member_group_selection) {
       this.table_datas.push({
-        'calc_checked': data.checked,
-        'g_name': data.g_name
+        'calc_checked': data.Checked,
+        'g_name': data.GroupName
       });
     }
     this.handleCheck()
@@ -103,12 +105,21 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     this.calc.print_selected.print_calculate_checked = this.print_calculate_checked;
     this.calc.print_selected.print_section_force_checked = this.print_section_force_checked;
     this.calc.print_selected.print_summary_table_checked = this.print_summary_table_checked;
+    this.calc.print_selected.print_safety_ratio_checked = this.print_safety_ratio_checked;
 
     this.calc.print_selected.calculate_moment_checked = this.calculate_moment_checked;
     this.calc.print_selected.calculate_shear_force = this.calculate_shear_force_checked;
     this.calc.print_selected.calculate_torsional_moment = this.calculate_torsional_moment_checked;
 
     this.calc.setColumnData(this.table_datas);
+
+    //clear and set again
+    this.calc.print_selected.member_group_selection = new Array();
+    for (var i = 0; this.table_datas.length > i; i++)
+      this.calc.print_selected.member_group_selection.push({
+        GroupName: this.table_datas[i].g_name,
+        Checked: this.table_datas[i].calc_checked
+      });
   }
 
   // 計算開始
@@ -295,6 +306,11 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
       ui_data['calc']['print_calculate_checked'] = true;
       url = environment.prevURL;
     }
+    ui_data['calc']['print_calculate_checked'] = this.print_calculate_checked;
+    ui_data['calc']['print_safety_ratio_checked'] = this.print_safety_ratio_checked;
+    ui_data['calc']['print_section_force_checked'] = this.print_section_force_checked;
+    ui_data['calc']['print_summary_table_checked'] = false;
+    console.log("pdf summary", ui_data)
     this.http
       .post(url, ui_data, {
         headers: new HttpHeaders({
@@ -327,13 +343,13 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   }
 
   changeButton(el: any) {
-    if (el.target.checked && el.target.id !== "print_safety_ratio")
-      this.print_safety_ratio_checked = false;
-    else if (el.target.checked && el.target.id === "print_safety_ratio") {
-      this.print_calculate_checked = false;
-      this.print_section_force_checked = false;
-      this.consider_moment_checked = false;
-    }
+    // if (el.target.checked && el.target.id !== "print_safety_ratio")
+    //   this.print_safety_ratio_checked = false;
+    // else if (el.target.checked && el.target.id === "print_safety_ratio") {
+    //   this.print_calculate_checked = false;
+    //   this.print_section_force_checked = false;
+    //   this.consider_moment_checked = false;
+    // }
   }
 
   downloadSummaryFun4() {
@@ -357,9 +373,11 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
       });
 
     ui_data["member_group_selection"] = column_data;
-    ui_data['calc']['print_calculate_checked'] = true;
+    ui_data['calc']['print_calculate_checked'] = false;
+    ui_data['calc']['print_safety_ratio_checked'] = false;
+    ui_data['calc']['print_section_force_checked'] = false;
+    ui_data['calc']['print_summary_table_checked'] = true;
     console.log(JSON.stringify(ui_data));
-
     const url_summary = environment.printURL;
     this.http
       .post(url_summary, ui_data, {

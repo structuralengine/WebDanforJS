@@ -1,8 +1,8 @@
 <div class="barArea">
   <div class="c-subNavArea">
     <nav>
-      <ul class="c-subNavArea__nav">
-        <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i">
+      <ul #subNavArea class="c-subNavArea__nav" [ngClass]="{'has-scrollbar': hasScrollbar, 'no-scrollbar': !hasScrollbar}">
+        <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i" >
           <a (click)="activePageChenge(i)" id="bar{{i}}" class="c-subNavArea__navItemTitle">
             <span>{{getGroupeName(i)}}</span>
           </a>
@@ -10,11 +10,9 @@
       </ul>
     </nav>
     <div class="tabArea">
-      <ul *ngIf="!bars.is_review" class="tab-select-items">
-        <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_ax'}"
-          (click)="setActiveTab('rebar_ax')" translate>bars.rebar_ax</li>
-        <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_sh'}"
-          (click)="setActiveTab('rebar_sh')" translate>bars.rebar_sh</li>
+      <ul class="tab-select-items">
+        <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_ax'}" (click)="setActiveTab('rebar_ax')" translate>bars.rebar_ax</li>
+        <li class="tab-select-item" [ngClass]="{'is-active': activeTab === 'rebar_sh'}" (click)="setActiveTab('rebar_sh')" translate>bars.rebar_sh</li>
       </ul>
       <button *ngIf="!bars.is_review" class="preview-button" (click)="preview()" translate>bars.preview_mode</button>
     </div>
@@ -28,3 +26,4 @@
     <app-preview-rebar [rebar]="rebar"></app-preview-rebar>
   </div>
 </ng-template>
+

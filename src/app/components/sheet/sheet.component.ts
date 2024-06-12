@@ -5,6 +5,10 @@ import pq from 'pqgrid';
 //import few localization files for this demo.
 import 'pqgrid/localize/pq-localize-en.js';
 import 'pqgrid/localize/pq-localize-ja.js';
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
+
+import { SaveDataService } from 'src/app/providers/save-data.service';
+import { LanguagesService } from 'src/app/providers/languages.service';
 
 @Component({
   selector: 'app-sheet',
@@ -16,18 +20,26 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   @ViewChild('pqgrid') div: ElementRef;
   @Input() options: any;
   grid: pq.gridT.instance = null;
-
+  
   isMemberQuestionActive = false;
   isCrackQuestionActive = false;
   isSafetyQuestionActive = false;
   public colsShow: any[] = new Array();
-
+  isCtrlShiftPressed = false; // Flag to track Ctrl + Shift key combination
+  checkShow:boolean=false;
+  tableTag:any
+  constructor(
+    public save: SaveDataService,
+    public basic: InputBasicInformationService,
+    public language: LanguagesService
+    ){   
+  }
   @HostListener('document:mouseover', ['$event'])
   toggleActive(event: Event) {
     const elements = [
-      { iconId: '#member-question', tableId: '#member-table', activeProp: 'isMemberQuestionActive' },
-      { iconId: '#crack-question', tableId: '#crack-table', activeProp: 'isCrackQuestionActive' },
-      { iconId: '#safety-question', tableId: '#safety-table', activeProp: 'isSafetyQuestionActive' }
+      { iconId: '#member-question', id:"member-table",tableId: '#member-table', activeProp: 'isMemberQuestionActive' },
+      { iconId: '#crack-question', id:"crack-table",tableId: '#crack-table', activeProp: 'isCrackQuestionActive' },
+      { iconId: '#safety-question', id:"safety-table",tableId: '#safety-table', activeProp: 'isSafetyQuestionActive' }
     ];
 
     for (let element of elements) {
@@ -35,22 +47,50 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  handleElementActivation(element: any, event: Event) {
+  handleElementActivation(element: any, event: any) {
     const elQAIcon = window.document.querySelector(element.iconId);
     const elTable = window.document.querySelector(element.tableId);
     const grandEl = elQAIcon?.parentElement?.parentElement;
 
     this[element.activeProp] = grandEl?.classList.contains('active') || false;
-
     if (grandEl?.contains(event.target as Node)) {
       grandEl.classList.add('active');
+      if(this.checkShow){
+        return
+      }
+      this.tableTag = document.getElementById(element.id); 
+      if (this[element.activeProp]){
+        this.checkShow=true;      
+        
+       if(element.id === "crack-table"){     
+        let manual = !this.save.isManual()? 420 : 310;       
+        let leftStyle = `${event.x - manual}`;          
+        if(this.save.isManual()){
+          if (+leftStyle > 220 || +leftStyle < 156) leftStyle = "220";
+        }else{
+          if(this.language.browserLang == 'en')        
+            leftStyle = +leftStyle < 285 ? "285" : leftStyle
+          else
+            leftStyle = +leftStyle < 320 ? "324" : leftStyle
+        }                         
+        this.tableTag.style.left = `${leftStyle}px`                   
+       }
+      }else{
+        this.checkShow=false
+      }
+      
     } else if (elTable.contains(event.target as Node) && this[element.activeProp]) {
     } else {
       grandEl?.classList.remove('active');
+      if (this.tableTag?.style?.display === "block") {
+        this.checkShow = true;
+      } else {
+        this.checkShow = false
+      }
     }
   }
 
-  private createGrid() {
+  private createGrid() {   
     this.options.beforeCellKeyDown = (evt, ui) => {
       const mov = 1;
       // Enterで下に移動
@@ -182,7 +222,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
       }
       //key tab
       if (evt.keyCode === 9) {
-        if (evt.shiftKey){
+        if (evt.shiftKey) {
           if (!(ui.rowIndx === 0 && ui.colIndx === 0)) {
             const indexCrr = this.colsShow.indexOf(ui.colIndx);
             let colPre = this.colsShow[indexCrr - 1];
@@ -203,8 +243,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
             }
           }
         }
-        else
-        {
+        else {
           const indexCrr = this.colsShow.indexOf(ui.colIndx);
           let colNext = this.colsShow[indexCrr + 1];
           if (indexCrr === this.colsShow.length - 1) {
@@ -227,6 +266,11 @@ export class SheetComponent implements AfterViewInit, OnChanges {
       return true;
     }
     this.grid = pq.grid(this.div.nativeElement, this.options);
+    this.grid.Columns().alter(() => {
+      this.grid.option('rowSpanHead', true)
+    })
+    this.grid.option('fillHandle', 'all');
+    this.grid.option("autofill", true);
   }
 
   ngOnChanges(obj: SimpleChanges) {
@@ -240,8 +284,61 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit() {
     this.createGrid();
     this.setColsShow();
+    this.div.nativeElement.addEventListener('wheel', this.onMouseWheel.bind(this));
+    this.div.nativeElement.addEventListener('keydown', this.onKeyDown.bind(this));
+    this.div.nativeElement.addEventListener('keyup', this.onKeyUp.bind(this));
+  }
+  // ctrl+Shift,and mouse wheel
+  onKeyDown(event: KeyboardEvent) {
+    if (event.ctrlKey && event.shiftKey) {
+      this.isCtrlShiftPressed = true;
+      event.preventDefault(); // Prevent the default behavior of the mouse wheel
+    }
   }
 
+  onKeyUp(event: KeyboardEvent) {
+    if (!event.ctrlKey || !event.shiftKey) {
+      this.isCtrlShiftPressed = false;
+    }
+  }
+
+  onMouseWheel(event: WheelEvent) {
+    if (event.ctrlKey ) {
+      event.preventDefault(); // Prevent the default behavior of the mouse wheel
+      if(event.shiftKey){
+        // debugger
+        event.preventDefault();
+        const scrollAmount = 20; // Adjust the scroll amount as per your requirement
+        let elementChildren = this.div.nativeElement;
+        let element = document.getElementsByClassName("pq-cont-right")
+  
+        if (event.deltaY > 0) {
+             for (let i = 0; i < element.length; i++) {
+            let elemento = element[i];
+            elemento.scrollLeft += scrollAmount;
+        }
+          
+            elementChildren.scrollLeft += scrollAmount;
+
+        } else if (event.deltaY < 0) {
+         // Scroll up
+         for (let i = 0; i < element.length; i++) {
+          let elemento = element[i];
+          elemento.scrollLeft -= scrollAmount;
+        }
+        }
+      }
+
+    }
+  }
+
+  scrollLeft() {
+    // Implement logic to scroll left within your table
+  }
+
+  scrollRight() {
+    // Implement logic to scroll right within your table
+  }
   refreshDataAndView() {
     if (this.grid === null) {
       return;
@@ -253,6 +350,14 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     if (this.grid === null) {
       return;
     }
+    this.grid.refresh();
+  }
+
+  refreshCM() {
+    if (this.grid === null) {
+      return;
+    }
+    this.grid.refreshCM()
     this.grid.refresh();
   }
 

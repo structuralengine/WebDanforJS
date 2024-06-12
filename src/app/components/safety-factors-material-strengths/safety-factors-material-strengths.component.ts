@@ -1,10 +1,14 @@
-import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, AfterViewInit, ChangeDetectorRef,ElementRef } from '@angular/core';
 import { InputSafetyFactorsMaterialStrengthsService } from './safety-factors-material-strengths.service'
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
 import { InputMembersService } from '../members/members.service';
 import { visitAll } from '@angular/compiler';
+import { SaveDataService } from "../../providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
+import { MenuService } from '../menu/menu.service';
+import { Subscription } from 'rxjs';
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
 
 @Component({
   selector: 'app-safety-factors-material-strengths',
@@ -14,8 +18,17 @@ import { TranslateService } from "@ngx-translate/core";
 export class SafetyFactorsMaterialStrengthsComponent
   implements OnInit, OnDestroy, AfterViewInit {
   public arrayAxis: any[]
-  public consider_moment_checked: boolean;
+  public arrayAxisForce: any = {}
+  public consider_moment_checked: boolean = true;  
+  public not_consider_moment_checked: boolean = false;
+  public used : boolean = true;
+  public opt_max_min: boolean = false;
+  public opt_tens_only:boolean = false;
+  public opt_no_for_v: boolean = false;
   public groupMem: any;
+  public groupId: any;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+  hasScrollbar: boolean = false;
   // 安全係数
   @ViewChild('grid1') grid1: SheetComponent;
   public options1: pq.gridT.options;
@@ -60,20 +73,62 @@ export class SafetyFactorsMaterialStrengthsComponent
   // タブのヘッダ名
   private current_index: number;
   private groupe_list: any[];
-  public groupe_name: string[];
-
+  public groupe_name: any[];
+  public options ={
+    0: { text: this.translate.instant("safety-factors-material-strengths.av") },
+    1: { text: "SD295" },
+    2: { text: "SD345" },
+    3: { text: "SD390" },
+    4: { text: "SD490" }
+  }
+  public optionsArray = [
+    { id: "0", text: this.translate.instant("safety-factors-material-strengths.av") },
+    { id: "1", text: "SD295" },
+    { id: "2", text: "SD345" },
+    { id: "3", text: "SD390" },
+    { id: "4", text: "SD490" }
+  ];
+  public styleEdit = { "color": "#FFFFFF" }
+  public styleNoEdit = { "pointer-events": "none", "color": "#999C9F" }
+  public propEdit = { edit: true, }
+  public propNoEdit = { edit: false, }
+  public considerMomentChecked: boolean ;
+  public showOption: boolean = true;
+  checkedRadioValue: number;
+  private checkedRadioSubscription: Subscription;
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private members: InputMembersService,
     private translate: TranslateService,
     private cdref: ChangeDetectorRef,
-  ) { this.members.checkGroupNo();}
-
+    private save: SaveDataService,
+    private menuService: MenuService,
+    private basic: InputBasicInformationService
+  ) { 
+    this.members.checkGroupNo();
+    this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(value => {
+      this.checkedRadioValue = value;
+      if(this.checkedRadioValue > 3 ){
+        this.opt_no_for_v = true
+      }
+    });
+  }
+  public isManual(): boolean {
+    return this.save.isManual();
+  }
   ngOnInit() {
+    this.checkedRadioValue = this.basic.get_specification2();
     this.setTitle();
-
     const safety = this.safety.getTableColumns();
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
+    if(safety.axisforce_condition !== undefined){
+      this.arrayAxisForce = {...safety.axisforce_condition}
+      let arrayKey = Object.keys(this.arrayAxisForce)
+      this.groupId= arrayKey[0]
+    }else{
+      this.arrayAxisForce = {}
+    }
+    // this.arrayAxisForce = safety.axisforce_condition !== undefined ? safety.axisforce_condition : new Array();
     this.groupe_list = safety.groupe_list;
     this.groupe_name = new Array();
     // 配列を作成
@@ -84,12 +139,16 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.table5_datas = new Array();      // 鉄骨材料
     this.pile_factor_list = new Array();  // 杭の施工条件
 
+
+    if(safety.groupe_list.length > 0){
+      this.groupId = safety.groupe_list[0][0].g_id
+    }
     // 入力項目を作成
     for (let i = 0; i < safety.groupe_list.length; i++) {
       const groupe = safety.groupe_list[i];
       const first = groupe[0];
       const id = first.g_id;
-      this.groupe_name.push(this.members.getGroupeName(i));
+      this.groupe_name.push({ name: this.members.getGroupeName(i) ,id});
       
       // 安全係数
       const bar = [], steel = [];
@@ -129,13 +188,14 @@ export class SafetyFactorsMaterialStrengthsComponent
           const cur = current[k];
           const k1 = "fsy" + (i + 1);
           const k2 = "fsu" + (i + 1);
-          target[k1] = cur.fsy;
-          target[k2] = cur.fsu;
+          target[k1] = cur.fsy === undefined ? null : cur.fsy;
+          target[k2] = cur.fsu === undefined ? null : cur.fsu;
         }
         table2.push(target);
       }
       this.table2_datas.push(table2);
-
+      
+      this.handleSetSelect(this.table2_datas[i], id)
 
       // 鉄骨材料
       const s1 = safety.material_steel[id][0]; // t16以下
@@ -222,7 +282,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
       });
       this.option2_list.push({
-        width: 550,
+        width: 756,
         height: 200,
         showTop: false,
         reactive: true,
@@ -232,6 +292,9 @@ export class SafetyFactorsMaterialStrengthsComponent
         colModel: this.columnHeaders2,
         dataModel: { data: this.table2_datas[i] },
         freezeCols: 1,
+        editModel: {
+          clicksToEdit: 1
+        },
         contextMenu: {
           on: true,
           items: [
@@ -265,6 +328,14 @@ export class SafetyFactorsMaterialStrengthsComponent
             }
           ]
         },
+        change: (evt, ui) => {
+          let key = Object.keys(ui.updateList[0].newRow)
+          if (key.length > 0 && key[0].includes("options")){
+            let number = key[0].split("options")[1];
+            let newData = ui.updateList[0].rowData
+            this.handleSelect(newData, +number, ui)
+          }
+        }
       });
       this.option3_list.push({
         width: 550,
@@ -403,10 +474,20 @@ export class SafetyFactorsMaterialStrengthsComponent
       });
     }
     this.groupe_name.map((data: any) => {     
-      if(this.arrayAxis.length < this.groupe_name.length)    
-        this.arrayAxis.push({id: data, consider_moment_checked: false})
+      if(this.arrayAxis.length < this.groupe_name.length) 
+        this.arrayAxis.push({id: data.name, consider_moment_checked: false})
     })  
-    this.groupMem = this.arrayAxis[0].id;
+
+    this.groupe_name.map((data: any) => {     
+      if(this.arrayAxisForce.length < this.groupe_name.length) 
+        this.arrayAxisForce.push({
+          id: data.name, 
+          used: this.used,
+          opt_no_for_v: this.opt_no_for_v,
+          opt_max_min: this.opt_max_min,
+          opt_tens_only: this.opt_tens_only
+        })
+    })  
     this.current_index = 0;
     this.options1 = this.option1_list[0];
     this.options2 = this.option2_list[0];
@@ -416,21 +497,46 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.options6 = this.pile_factor_list[0];
     this.pile_factor_select_id = this.getPileFactorSelectId();
     this.safety.arrayAxis = this.arrayAxis;
+    this.safety.axisforce_condition = this.arrayAxisForce;    
   }
 
   ngAfterViewInit() {
+    this.checkForScrollbar();
     this.activeButtons(0);
     this.setActiveTab(this.activeTab);
-   
+    
+    let dataOfTab = this.arrayAxisForce[this.groupId];
+    if(dataOfTab != undefined){
+      this.used = dataOfTab.used
+      this.opt_no_for_v = dataOfTab.opt_no_for_v
+      this.opt_max_min = dataOfTab.opt_max_min
+      this.opt_tens_only = dataOfTab.opt_tens_only
+    }
+  }
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
   }
   ngAfterContentChecked() {
-    this.arrayAxis.map((data: any)=>{
-      if(data.id === this.groupMem){
-        this.consider_moment_checked = data.consider_moment_checked
-      }
-    })
+    // this.arrayAxis.map((data: any)=>{
+    //   if(data.id === this.groupMem){
+    //     this.consider_moment_checked = data.consider_moment_checked
+    //   }
+    // })
+    // this.arrayAxisForce. map((data: any)=>{
+    //   if(data.id === this.groupMem){
+    //     this.used = data.used,
+    //     this.opt_no_for_v= data.opt_no_for_v,
+    //     this.opt_max_min= data.opt_max_min,
+    //     this.opt_tens_only= data.opt_tens_only
+    //   }
+    // })
     this.cdref.detectChanges();
  }
+ 
   private setTitle(): void {
     this.columnHeaders1 = [
       { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' } },
@@ -477,6 +583,41 @@ export class SafetyFactorsMaterialStrengthsComponent
     // 鉄筋材料強度
     this.columnHeaders2 = [
       { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' } },
+      {
+        title: this.translate.instant("safety-factors-material-strengths.rbmt"),
+        align: 'center', colModel: [
+          {
+            title: this.translate.instant("safety-factors-material-strengths.d25"),
+            dataIndx: 'options1', sortable: false, width: 112, nodrag: true, paste: false, 
+            cls: 'pq-drop-icon pq-side-icon',
+            editor:{
+              type: 'select',
+              options:this.optionsArray,
+              labelIndx: 'text',
+              valueIndx: 'id',
+            },
+            render: (ui) => {
+              return (this.options[ui.cellData] || {}).text;
+            }, 
+          },
+          
+          {
+            title: this.translate.instant("safety-factors-material-strengths.d29"),
+            dataIndx: 'options2', sortable: false, width: 112, nodrag: true, paste: false, 
+            cls: 'pq-drop-icon pq-side-icon',
+            editor: {
+              type: 'select',
+              options: this.optionsArray,
+              labelIndx: 'text',
+              valueIndx: 'id',
+            }, 
+            render: (ui) => {
+              return (this.options[ui.cellData] || {}).text;
+            },
+          }
+        ],
+        nodrag: true,
+      },
       {
         title: this.translate.instant("safety-factors-material-strengths.ys"),
         align: 'center', colModel: [
@@ -532,6 +673,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
   ngOnDestroy(): void {
     this.saveData();
+    this.checkedRadioSubscription.unsubscribe();
   }
   public saveData(): void {
     const safety_factor = {};
@@ -565,14 +707,14 @@ export class SafetyFactorsMaterialStrengthsComponent
       // 鉄筋材料
       const bar = this.table2_datas[i];
       material_bar[id] = [{
-        tensionBar: { fsy: bar[0].fsy1, fsu: bar[0].fsu1 },
-        sidebar: { fsy: bar[1].fsy1, fsu: bar[1].fsu1 },
-        stirrup: { fsy: bar[2].fsy1, fsu: bar[2].fsu1 }
+        tensionBar: { id:+bar[0].options1, fsy: bar[0].fsy1, fsu: bar[0].fsu1 },
+        sidebar: { id: +bar[1].options1, fsy: bar[1].fsy1, fsu: bar[1].fsu1 },
+        stirrup: { id: +bar[2].options1, fsy: bar[2].fsy1, fsu: bar[2].fsu1 }
       },
       {
-        tensionBar: { fsy: bar[0].fsy2, fsu: bar[0].fsu2 },
-        sidebar: { fsy: bar[1].fsy2, fsu: bar[1].fsu2 },
-        stirrup: { fsy: bar[2].fsy2, fsu: bar[2].fsu2 }
+        tensionBar: { id: +bar[0].options2, fsy: bar[0].fsy2, fsu: bar[0].fsu2 },
+        sidebar: { id: +bar[1].options2, fsy: bar[1].fsy2, fsu: bar[1].fsu2 },
+        stirrup: { id: +bar[2].options2, fsy: bar[2].fsy2, fsu: bar[2].fsu2 }
       }];
 
       // 鉄骨材料
@@ -614,6 +756,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       pile_factor
     })
     this.safety.arrayAxis = this.arrayAxis
+    this.safety.axisforce_condition = this.arrayAxisForce
   }
 
   // 杭の施工条件を変更を処理する関数
@@ -633,19 +776,32 @@ export class SafetyFactorsMaterialStrengthsComponent
   }
 
   public activePageChenge(id: number, group: any): void {
-    this.groupMem=group;
+    this.groupMem=group.name;
+    this.groupId=group.id;
     this.activeButtons(id);
     this.current_index = id;    
-    this.arrayAxis.map((data: any)=>{
-      if(data.id === group){
-        this.consider_moment_checked = data.consider_moment_checked
-      }
-    })
+    // this.arrayAxis.map((data: any)=>{
+    //   if(data.id === group.name){
+    //     this.consider_moment_checked = data.consider_moment_checked
+    //   }
+    // })
+   
+    let dataOfTab = this.arrayAxisForce[group.id];
+    this.used = dataOfTab.used
+      this.opt_no_for_v = dataOfTab.opt_no_for_v
+      this.opt_max_min = dataOfTab.opt_max_min
+      this.opt_tens_only = dataOfTab.opt_tens_only
+ 
+          this.consider_moment_checked  =  this.used
+          this.not_consider_moment_checked = !this.used
+      
+    this.considerMomentChecked = !this.used;
     this.options1 = this.option1_list[id];
     this.grid1.options = this.options1;
     this.grid1.refreshDataAndView();
 
     this.options2 = this.option2_list[id];
+    this.handleSetSelect(this.options2.dataModel.data, group.id)
     this.grid2.options = this.options2;
     this.grid2.refreshDataAndView();
 
@@ -683,12 +839,174 @@ export class SafetyFactorsMaterialStrengthsComponent
   public setActiveTab(tab: string) {
     this.activeTab = tab;
   }
-  changeButton(el: any) {
-    this.arrayAxis.forEach((data)=>{
-      if(data.id === this.groupMem){
-        data.consider_moment_checked = el.target.checked
+  changeButton(el: any) {   
+    
+    if (el.target.checked && el.target.id !== "not_consider"){
+      this.showOption= true;
+      this.used= true;     
+      this.not_consider_moment_checked = false;
+      this.considerMomentChecked =false;
+    }      
+    else if (el.target.checked && el.target.id === "not_consider") {      
+      this.consider_moment_checked = false;
+      this.used= false;
+      this.opt_max_min= false;
+      this.opt_tens_only = false;
+      this.opt_no_for_v= false;
+      this.considerMomentChecked =true;
+    }
+    if(this.groupId != undefined){
+      let data = this.arrayAxisForce[this.groupId];
+        data.used = this.used,
+        data.opt_no_for_v = this.opt_no_for_v,
+        data.opt_max_min= this.opt_max_min,
+        data.opt_tens_only= this.opt_tens_only
+    }
+  }
+  changeOption(el: any){
+    switch(el.target.id){
+      case "1":
+        this.opt_max_min = el.target.checked
+        break;
+      case "2":
+        this.opt_tens_only = el.target.checked
+        break;
+      case "3":
+        this.opt_no_for_v = el.target.checked
+        break;
+    }
+    let data = this.arrayAxisForce[this.groupId];
+        data.used = this.used,
+        data.opt_no_for_v = this.opt_no_for_v,
+        data.opt_max_min= this.opt_max_min,
+        data.opt_tens_only= this.opt_tens_only
+    this.safety.arrayAxis = this.arrayAxisForce;   
+  }
+  notConsider(e:any){
+    this.considerMomentChecked =true;
+    this.used= false;
+    this.opt_max_min= false;
+    this.opt_tens_only = false;
+    this.opt_no_for_v= false;
+  }
+  handleSetSelect(dataTable:any,id:any){
+    const safety = this.safety.getTableColumns();
+    const fx = safety.material_bar[id];
+    dataTable.forEach((data: any) => {
+      this.setEdit(data, true)
+      for (let i = 0; i < fx.length; i++) {
+        const k1 = "fsy" + (i + 1);
+        const k2 = "fsu" + (i + 1);
+        data[`options${i + 1}`] = 0;
+        if (data[k1] === null && data[k2] === null) {
+          data[`options${i + 1}`] = "2"
+          data[k1] = 345
+          data[k2] = 490
+        }
+        if (data[k1] === 295 && data[k2] === 440 || data[k1] === 295 && data[k2] === null || data[k1] === null && data[k2] === 440) {
+          data[`options${i + 1}`] = "1"
+          this.setEdit(data, false, k1,k2)
+          data[k1] = 295
+          data[k2] = 440
+        }
+        if (data[k1] === 345 && data[k2] === 490 || data[k1] === 345 && data[k2] === null || data[k1] === null && data[k2] === 490) {
+          data[`options${i + 1}`] = "2"
+          this.setEdit(data, false, k1,k2)
+          data[k1] = 345
+          data[k2] = 490
+        }
+        if (data[k1] === 390 && data[k2] === 560 || data[k1] === 390 && data[k2] === null || data[k1] === null && data[k2] === 560) {
+          data[`options${i + 1}`] = "3"
+          this.setEdit(data, false, k1,k2)
+          data[k1] = 390
+          data[k2] = 560
+        }
+        if (data[k1] === 490 && data[k2] === 620 || data[k1] === 490 && data[k2] === null || data[k1] === null && data[k2] === 620) {
+          data[`options${i + 1}`] = "4"
+          this.setEdit(data, false, k1,k2)
+          data[k1] = 490
+          data[k2] = 620
+        }
+        if (+data[`options${i + 1}`] === 0) {
+          if (data[k1] === null) {
+            data[k1] = 0
+          }
+          if (data[k2] === null) {
+            data[k2] = 0
+          }
+        }
       }
-    })
-    this.safety.arrayAxis = this.arrayAxis;
+    }) 
+       
+  }
+  setEdit(data:any, checkEdit:boolean, k1?:any,k2?:any){
+    if (checkEdit){
+      data.pq_cellstyle = {
+        fsy1: { ...this.styleEdit },
+        fsy2: { ...this.styleEdit },
+        fsu1: { ...this.styleEdit },
+        fsu2: { ...this.styleEdit }
+      }
+      data.pq_cellprop = {
+        fsy1: { ...this.propEdit },
+        fsy2: { ...this.propEdit },
+        fsu1: { ...this.propEdit },
+        fsu2: { ...this.propEdit }
+      }
+    }else{ 
+      data.pq_cellstyle = {
+        ...data.pq_cellstyle,
+        [k1]: { ...this.styleNoEdit },
+        [k2]: { ...this.styleNoEdit },
+      }
+      data.pq_cellprop = {
+        ...data.pq_cellprop,
+        [k1]: { ...this.propNoEdit },
+        [k2]: { ...this.propNoEdit },
+      }
+    }
+  }
+  handleSelect(newData: any, numberCell:any,ui:any){
+    let fsy = "fsy" + numberCell
+    let fsu = "fsu" + numberCell
+    if (+ui.updateList[0].newRow[`options${numberCell}`] === 0) {
+      newData.pq_cellstyle = {
+        ...newData.pq_cellstyle,
+        [fsy]: { ...this.styleEdit },
+        [fsu]: { ...this.styleEdit },
+      }
+      newData.pq_cellprop = {
+        ...newData.pq_cellprop,
+        [fsy]: { ...this.propEdit },
+        [fsu]: { ...this.propEdit },
+      }
+    } else {
+      newData.pq_cellstyle = {
+        ...newData.pq_cellstyle,
+        [fsy]: { ...this.styleNoEdit },
+        [fsu]: { ...this.styleNoEdit },
+      }
+      newData.pq_cellprop = {
+        ...newData.pq_cellprop,
+        [fsy]: { ...this.propNoEdit },
+        [fsu]: { ...this.propNoEdit },
+      }
+      if (+ui.updateList[0].newRow[`options${numberCell}`] === 1) {
+        newData[fsy] = 295
+        newData[fsu] = 440
+      }
+      if (+ui.updateList[0].newRow[`options${numberCell}`] === 2) {
+        newData[fsy] = 345
+        newData[fsu] = 490
+      }
+      if (+ui.updateList[0].newRow[`options${numberCell}`] === 3) {
+        newData[fsy] = 390
+        newData[fsu] = 560
+      }
+      if (+ui.updateList[0].newRow[`options${numberCell}`] === 4) {
+        newData[fsy] = 490
+        newData[fsu] = 620
+      }
+    }
   }
 }

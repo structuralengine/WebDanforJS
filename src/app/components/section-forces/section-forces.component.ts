@@ -75,6 +75,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   public groupActive: any[];
   public toggleStatusPick: { [key: string]: boolean } = {};
   public toggleStatusShear: { [key: string]: boolean } = {};
+  public idTagPage:number=0;
 
   ngOnInit() {
     this.selectedRoad = this.menu.selectedRoad;
@@ -90,7 +91,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       this.setKeyGroupsRoad()
     }
     this.initTable ();
-
+    
     // let currentLang = this.translate.currentLang;
     // switch (currentLang) {
     //   case "en": {
@@ -226,9 +227,15 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     {
       this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
     }
-    for (const group of this.bendingColGroupKeys) {
-      this.toggleStatus[group] = true;
+    const toggleStatusService:any = this.force.getToggleStatus();
+    if(Object.keys(toggleStatusService).length>0){
+      this.toggleStatus = toggleStatusService
+    }else{
+      for (const group of this.bendingColGroupKeys) {
+        this.toggleStatus[group] = true;
+      }
     }
+    
 
     // データを登録する
     this.ROWS_COUNT = this.rowsCount();
@@ -302,6 +309,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       rowIndx: 0,
       colIndx: 0,
     });
+    this.activePageChenge(0)
   }
 
   private setKeyGroupsRoad(){
@@ -433,6 +441,9 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.grid.grid.getColModel().forEach((column, index) => {
       if (index >= start && index <= end) {
         column.hidden = !this.toggleStatus[group];
+        if((index===5 || index===6)&& this.idTagPage===0 && (this.basic.get_specification1()===0 || this.basic.get_specification1()===1)){
+          column.hidden =true
+        }
       }
     });
     if(this.selectedRoad)
@@ -450,6 +461,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         this.options.colModel = this.columnHeaders1;
       }
     }
+    this.saveDataCol();
     this.grid.refreshDataAndView();
     this.grid.setColsShow();
   }
@@ -492,7 +504,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
   public saveData(): void {
     this.force.setTableColumns(this.table_datas);
-
+    
   }
 
   public saveDataCol() {
@@ -519,7 +531,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       this.groupActive = [];
     }
     this.setColGroupsAndKeys(id);
-
+    this.idTagPage=id
     if (id === 0) {
       this.options.colModel = this.columnHeaders1;
     } else if (id === 1) {
@@ -536,6 +548,9 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       )) {
         if (index >= start && index <= end) {
           column.hidden = !this.toggleStatus[group];
+        }
+        if((index===5 || index===6)&& id===0 && (this.basic.get_specification1()===0 || this.basic.get_specification1()===1)){
+          column.hidden =true
         }
       }
     });

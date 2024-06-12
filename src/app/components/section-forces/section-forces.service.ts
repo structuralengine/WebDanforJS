@@ -37,7 +37,7 @@ export class InputSectionForcesService {
       pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
     }
     else
-      pushIds = [0, 2, 5, 6, 7, 8];
+      pushIds = [0, 3, 5, 6, 7, 8];
     return this.createColumnHeaders(
       pickup_moment,
       pushIds,
@@ -150,15 +150,27 @@ export class InputSectionForcesService {
         //If it cannot be translated, it will still return itself
         // const [mainTitle, subTitle] = data.title.split(" ");
         const [mainTitle, subTitle] = this.translate.instant(data.title).split(" ");
+        let title:string=subTitle;
+        let checkHidden= false;
+        if(keyPrefix==="Md"){
+          if(this.translate.instant(data.title) === this.translate.instant("basic-information.d_stress")){
+            title=this.translate.instant("basic-information.study_edge_str")
+          }
+          if(this.translate.instant(data.title) === this.translate.instant("basic-information.pl_d")){
+            title=this.translate.instant("basic-information.per_act")
+          }
+          if(data.id===2 && this.translate.instant(data.title)=== this.translate.instant("basic-information.safe_limit")){
+            checkHidden= true
+          }
+        }
         if (pushIds.includes(data.id)) {
           if (currentHead) {
             result.push(currentHead);
           }
           currentHead = this.createNewHeader(mainTitle);
         }
-  
         const key = keyPrefix + data.id;
-        currentHead.colModel.push(this.createSubColumn(subTitle, key, keyPrefix));
+        currentHead.colModel.push(this.createSubColumn(title, key, keyPrefix,checkHidden));
       }
     }
 
@@ -181,13 +193,15 @@ export class InputSectionForcesService {
   private createSubColumn(
     subTitle: string,
     key: string,
-    keyPrefix: string
+    keyPrefix: string,
+    checkHidden?:boolean
   ): object {
     const baseConfig = {
       title: subTitle,
       align: "center",
       colModel: [],
       nodrag: true,
+      hidden:checkHidden
     };
 
     switch (keyPrefix) {
@@ -346,7 +360,8 @@ export class InputSectionForcesService {
 
   // ファイル
   public setTableColumns(table_datas: any[]) {
-    this.clear();
+    // this.clear();
+    this.force = new Array();
     for (const data of table_datas) {
       const new_colum = this.default_column(data.index);
       let flg = false;
@@ -380,5 +395,8 @@ export class InputSectionForcesService {
 
   public setCelCols(toggleStatus: any){
      this.toggleStatus = toggleStatus;
+  }
+  public getToggleStatus(){
+    return this.toggleStatus
   }
 }

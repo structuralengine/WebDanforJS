@@ -3,11 +3,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { LanguagesService } from 'src/app/providers/languages.service';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
-import { forEach } from 'jszip';
-import { parse } from 'path';
-import { toDouble } from 'igniteui-angular-core';
-import { publicDecrypt } from 'crypto';
-import { log } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +12,28 @@ export class InputMembersService {
   // 部材情報
   private member_list: any[];
   private langs: string[] = ["en", "ja"];
-  private shape_names: any =
+  // private shape_names: any =
+  //   [
+  //     [],
+  //     ["1", 'RC-矩形'],
+  //     ["2", 'RC-T形'],
+  //     ["3", 'RC-円形'],
+  //     ["4", 'RC-小判']
+  //   ];
+
+  private shape_names_new: any =
     [
       [],
       ["1", 'RC-矩形'],
       ["2", 'RC-T形'],
       ["3", 'RC-円形'],
-      ["4", 'RC-小判']
+      ["4", 'RC-円環'],
+      ["5", 'RC-縦小判形'],
+      ["6", 'RC-横小判形']
     ];
 
   private lang_shape_names: any = {};
+  private lang_shape_names_new: any = {};
 
   constructor(private translate: TranslateService,
     private helper: DataHelperModule,
@@ -37,17 +44,35 @@ export class InputMembersService {
 
     for (const lang of this.langs) {
       this.translate.getTranslation(lang).subscribe((obj) => {
-        this.shape_names[1].push(obj.members.rectangle.trim());
-        this.shape_names[2].push(obj.members.t_shape.trim());
-        this.shape_names[3].push(obj.members.r_shape.trim());
-        this.shape_names[4].push(obj.members.oval.trim());
+        // this.shape_names[1].push(obj.members.rectangle.trim());
+        // this.shape_names[2].push(obj.members.t_shape.trim());
+        // this.shape_names[3].push(obj.members.r_shape.trim());
+        // this.shape_names[4].push(obj.members.oval.trim());
 
-        this.lang_shape_names[lang] = [];
-        this.lang_shape_names[lang].push("");
-        this.lang_shape_names[lang].push(obj.members.rectangle.trim());
-        this.lang_shape_names[lang].push(obj.members.t_shape.trim());
-        this.lang_shape_names[lang].push(obj.members.r_shape.trim());
-        this.lang_shape_names[lang].push(obj.members.oval.trim());
+        // this.lang_shape_names[lang] = [];
+        // this.lang_shape_names[lang].push("");
+        // this.lang_shape_names[lang].push(obj.members.rectangle.trim());
+        // this.lang_shape_names[lang].push(obj.members.t_shape.trim());
+        // this.lang_shape_names[lang].push(obj.members.r_shape.trim());
+        // this.lang_shape_names[lang].push(obj.members.oval.trim());
+
+
+        //new
+        this.shape_names_new[1].push(obj.members.rectangle.trim());
+        this.shape_names_new[2].push(obj.members.t_shape.trim());
+        this.shape_names_new[3].push(obj.members.c_circle.trim());
+        this.shape_names_new[4].push(obj.members.ring.trim());
+        this.shape_names_new[5].push(obj.members.v_oval.trim());
+        this.shape_names_new[6].push(obj.members.h_oval.trim());
+
+        this.lang_shape_names_new[lang] = [];
+        this.lang_shape_names_new[lang].push("");
+        this.lang_shape_names_new[lang].push(obj.members.rectangle.trim());
+        this.lang_shape_names_new[lang].push(obj.members.t_shape.trim());
+        this.lang_shape_names_new[lang].push(obj.members.c_circle.trim());
+        this.lang_shape_names_new[lang].push(obj.members.ring.trim());
+        this.lang_shape_names_new[lang].push(obj.members.h_oval.trim());
+        this.lang_shape_names_new[lang].push(obj.members.v_oval.trim());
       });
     }
   }
@@ -74,13 +99,15 @@ export class InputMembersService {
       g_no: null,
       g_id: '',
       g_name: '',
-      g_type: undefined, //set g-Type == undefined
+      // g_type: undefined, //set g-Type == undefined
       shape: 0,
       B: null,
       H: null,
       Bt: null,
       t: null,
-      n: null
+      n: null,
+      c_type: 1,
+      vo_type: 2
     };
   }
 
@@ -104,11 +131,12 @@ export class InputMembersService {
       this.member_list.push(result);
     }
 
-    if (typeof(result.shape) === 'number') {
-      result.shape = this.getShapeDispFromShapeID(Number(result.shape));
-    }else {
-      result.shape = this.getShapeDispFromShapeID(this.getShapeIDFromUserInput(result.shape));
-    }
+    // if (typeof(result.shape) === 'number') {
+    //   result.shape = this.getShapeDispFromShapeID(Number(result.shape));
+    // }else {
+    //   result.shape = this.getShapeDispFromShapeID(this.getShapeIDFromUserInput(result.shape));
+    // }
+    result.shape = this.getShapeDispFromMember(result);
     return result;
   }
 
@@ -122,6 +150,9 @@ export class InputMembersService {
   }
 
   public getData(m_no: number) {
+    return this.member_list.find((item) => item.m_no === m_no);
+  }
+  public getDataMem(m_no: number) {
     return this.member_list.find((item) => item.m_no === m_no);
   }
 
@@ -180,7 +211,6 @@ export class InputMembersService {
             if (k in column)
               def[k] = column[k];
           }
-
           def.shape = this.getShapeIDFromUserInput(def.shape);
 
           this.member_list.push(def)
@@ -232,20 +262,77 @@ export class InputMembersService {
     return this.lang_shape_names[this.translate.currentLang][shape_id];
   }
 
+  //new version: New shapes are displayed but the data is still saved as before
+  public getShapeDispFromMember(member: any, keyShapeId?: number) {
+    if (this.lang_shape_names_new.length <= member.shape)
+      return 0;
+
+    //check if user enter new_shapeId : keyShapeId. If not, it will be read from the file
+    if(!keyShapeId)
+      {
+      switch (Number(member.shape)) {
+        case 1:
+        case 2:
+          return this.lang_shape_names_new[this.translate.currentLang][member.shape];
+        case 3:
+          //(Shape of wdj is "3" and both B and H have values in them.) -  ring
+          if (member.H != null && member.B != null)
+            return this.lang_shape_names_new[this.translate.currentLang][4];
+
+          //(Shape of wdj is "3" and only one of B and H has a value.) - circle
+          else
+            return this.lang_shape_names_new[this.translate.currentLang][3];
+        case 4:
+          //(Shape of wdj is “4“ and H > B.) - Vertical Oval
+          if (Number(member.H) > Number(member.B))
+            return this.lang_shape_names_new[this.translate.currentLang][6];
+
+          //(Shape of wdj is “4“ and B > H.)
+          else
+            return this.lang_shape_names_new[this.translate.currentLang][5];
+        default:
+          return "";
+      };
+    }
+    else
+      return this.lang_shape_names_new[this.translate.currentLang][keyShapeId];
+  }
+
+  // get new shapeId from input user
+  public shapeIdFromKey(key: string): number {
+    if (key === undefined || key === null)
+      return 0;
+    if (typeof key != 'string')
+      key = String(key);
+    let key_ = key.trim();
+    for (let shape_id = 1; 6 >= shape_id; shape_id++) {
+      if (-1 != this.shape_names_new[shape_id].indexOf(key_))
+        return shape_id;
+    }
+    return 0;
+  }
+
   // 入力された文字列から形状IDを返す
   public getShapeIDFromUserInput(key: string): number {
-
     if (key === undefined || key === null)
       return 0;
     if (typeof key != 'string')
       key = String(key);
     let key_ = key.trim();
 
-    for (let shape_id = 1; 4 >= shape_id; shape_id++) {
-      if (-1 != this.shape_names[shape_id].indexOf(key_))
+    //get new_shapeId and check to return old_shapeId
+    const shape_id = this.shapeIdFromKey(key_);
+    switch (shape_id) {
+      case 1:
+      case 2:
         return shape_id;
-    }
-
+      case 3:
+      case 4:
+        return 3; //3: Round - Circle
+      case 5:
+      case 6:
+        return 4; //4: Oval
+    };
     return 0;
   }
 
@@ -424,58 +511,68 @@ export class InputMembersService {
     for (const m of members) {
       const def = this.default_member(m.m_no);
       for (const k of Object.keys(def)) {
+        if (k === "c_type" && m["c_type"] === null) {
+          m["c_type"] = 1
+        }
+        if (k === "vo_type" && m["vo_type"] === null) {
+          m["vo_type"] = 2
+        }
         if (k in m) {
           def[k] = m[k];
         }
       }
-      this.setGType(def, m.g_type);
+      // this.setGType(def, m.g_type);
+      // this.setGType(def);
       this.member_list.push(def)
     }
   }
 
 
   //Set for g_type in member
-  public setGTypeForMembers() {
-    this.member_list.forEach(m => {
-      this.setGType(m);
-    })
-    //console.log(this.member_list);
-  }
+  // public setGTypeForMembers() {
+  //   if (this.member_list && this.member_list.length > 0) {
+  //     this.member_list.forEach((m) => {
+  //       this.setGType(m);
+  //     });
+  //   }
+  // }
 
   //Set for g_type in member
-  public setGType(member: any, gType?: any) {
-    if (member.g_id === undefined || member.g_id === "blank"){
-      member.g_type = null;
-      return;
-    }
-    if (gType === undefined || gType === null) {
-      const conditions_list = this.basicService.conditions_list;
-      var jr003 = conditions_list.find(e => e.id === "JR-003");
-      var jr005 = conditions_list.find(e => e.id === "JR-005");
-      // Circle
-      if (member.shape === 3) {
-        if (jr003.selected === false && jr005.selected === true) member.g_type = 1;
-        if (jr003.selected === true && jr005.selected === false) member.g_type = 2;
-        if (jr003.selected === false && jr005.selected === false) member.g_type = 3;
-      }
+  // public setGType(member: any, gType?: any) {
+  //   if (member.g_id === undefined || member.g_id === "blank"){
+  //     member.g_type = null;
+  //     return;
+  //   }
+  //   if (gType === undefined || gType === null) {
+  //     const conditions_list = this.basicService.conditions_list;
+  //     var jr003 = conditions_list.find(e => e.id === "JR-003");
+  //     var jr005 = conditions_list.find(e => e.id === "JR-005");
+  //     // Circle
+  //     if (member.shape === 3) {
+  //       if (jr003.selected === false && jr005.selected === true) member.g_type = 1;
+  //       if (jr003.selected === true && jr005.selected === false) member.g_type = 2;
+  //       if (jr003.selected === false && jr005.selected === false) member.g_type = 3;
+  //     }
 
-      // rectangle or t-shape
-      if (member.shape === 1 || member.shape === 2) {
-        member.g_type = null;
-      }
-      // oval
-      if (member.shape === 4) {
-        member.g_type = 1;
-      }
-    }
-    else {
-      member.g_type = gType;
-    }
-  }
+  //     // rectangle or t-shape
+  //     if (member.shape === 1 || member.shape === 2) {
+  //       member.g_type = null;
+  //     }
+  //     // oval
+  //     if (member.shape === 4) {
+  //       member.g_type = 1;
+  //     }
+  //   }
+  //   else {
+  //     member.g_type = gType;
+  //   }
+  // }
 
   public checkHideDesignCondition(members: any[]) {
     //true -> hide; false ->  show
-    let filterMembers = members.filter(member => member.shape === 3 && "g_type" in member);
+    let filterMembers = members.filter(member => member.shape === 3
+      // && "g_type" in member
+    );
     if (filterMembers == undefined || filterMembers.length === 0) return false;
     //check has multi group
     let gNos = filterMembers.map(member => member.g_id);
@@ -487,8 +584,9 @@ export class InputMembersService {
     let firstElement = filterMembers[0];
     filterMembers.forEach((val, i) => {
       if (i > 0 &&
-        val.g_no !== firstElement.g_no &&
-        val.g_type !== firstElement.g_type) {
+        val.g_no !== firstElement.g_no
+        // &&val.g_type !== firstElement.g_type
+      ) {
         hide = true
         return;
       }

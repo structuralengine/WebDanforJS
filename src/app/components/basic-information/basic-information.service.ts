@@ -1,4 +1,3 @@
-import { forEach } from 'jszip';
 import { Injectable } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from "@ngx-translate/core";
@@ -18,10 +17,12 @@ export class InputBasicInformationService {
 
   // 仕様 に関する変数
   public specification2_list: any[];
+  public prevSpecification2: Object;
 
   // 設計条件
   public conditions_list: any[];
 
+  public removeData:any;
   constructor(
     private helper: DataHelperModule,
     private translate: TranslateService,
@@ -30,16 +31,17 @@ export class InputBasicInformationService {
     this.clear();
   }
   public clear(): void {
-    this.pickup_moment = new Array();
-    this.pickup_shear_force = new Array();
-    this.pickup_torsional_moment = new Array();
-
-    this.specification1_list = new Array();
-    this.specification2_list = new Array();
+    this.pickup_moment = [];
+    this.pickup_shear_force = [];
+    this.pickup_torsional_moment = [];
+    
+    // this.specification1_list = new Array();
+    //this.specification2_list = new Array();
+    this.prevSpecification2 = {};
     this.conditions_list = new Array();
 
-    this.specification1_list = this.default_specification1();
-    this.set_default_pickup();
+    this.specification1_list = this.default_specification1(); //set value specification1_list
+    this.set_default_pickup(); //have set value specification2_list
   }
 
   private default_specification1(): any {
@@ -77,7 +79,12 @@ export class InputBasicInformationService {
   private set_default_pickup(): void {
     const sp1 = this.get_specification1();
     const sp2 = this.get_specification2();
-
+    if (this.removeData && sp1===2){
+      let index = this.pickup_moment.findIndex((data) => data.id === 2)
+      if ( index === -1) {
+        this.pickup_moment.splice(2, 0, this.removeData);
+      }
+    }
     // 曲げモーメントテーブル
     const keys_moment = this.default_pickup_moment(sp1, sp2);
     // 古い入力があれば no の入力を 保持
@@ -122,6 +129,9 @@ export class InputBasicInformationService {
     this.conditions_list = this.default_conditions(sp1);
   }
 
+  public setPreSpecification2(id: number, data: any) {
+    this.prevSpecification2[id] = data;
+  }
   // 曲げモーメントテーブルの初期値
   private default_pickup_moment(
     specification1: number,
@@ -705,7 +715,7 @@ export class InputBasicInformationService {
           {
             id: "JR-001",
             title: this.translate.instant("basic-information.limit100"),
-            selected: true,
+            selected: false,
           },
           {
             id: "JR-003",
@@ -773,11 +783,11 @@ export class InputBasicInformationService {
   }
 
   public get_specification2(): number {
+    if(!this.specification2_list || this.specification2_list.length === 0) return -1;
     const sp = this.specification2_list.find(
       (value) => value.selected === true
     );
-    const id = sp !== undefined ? sp.id : -1;
-    return id;
+    return sp !== undefined ? sp.id : -1;
   }
   // public set_specification1(index: number): any {
   public set_specification1(id: number): any {
@@ -830,6 +840,7 @@ export class InputBasicInformationService {
     this.setDefault();
 
     const sp2: number = this.get_specification2();
+    this.setPreSpecification2(sp1, this.specification2_list)
 
     this.pickup_moment = this.default_pickup_moment(sp1, sp2);
     for (let i = 0; i < basic.pickup_moment.length; i++) {
@@ -883,16 +894,7 @@ export class InputBasicInformationService {
 
     // this.conditions_list = basic.conditions_list;
     const conditions = basic.conditions_list;
-
-    //find jr001 and set true
-    conditions.map((item) => {
-      if (item.id.toUpperCase() === "JR-001") {
-        item.selected = true
-      }
-    });
-
-    //find jr-005 add or update
-    let jr005 = conditions.find((item) => item.id.toUpperCase() === "JR-005");
+    let jr005 = conditions.find((item) => item.id === "JR-005");
     if(jr005 !== null && jr005 !== undefined){
       this.updateTitleCondition(conditions);
     }
@@ -917,6 +919,11 @@ export class InputBasicInformationService {
   public setPickUpData() {}
 
   public getSaveData(): any {
+    let indexJR4 = this.conditions_list.findIndex((data)=>data.id==="JR-004")
+    if (indexJR4 !==-1){
+      this.conditions_list.splice(indexJR4,1)
+    }
+    console.log("this.conditions_list",this.conditions_list)
     return {
       pickup_moment: this.pickup_moment,
       pickup_shear_force: this.pickup_shear_force,
@@ -972,7 +979,9 @@ export class InputBasicInformationService {
       specs.forEach(item => {
         switch(item.id) {
           case 0:
-            item.title = this.translate.instant("basic-information.jr_com");
+            // item.title = this.translate.instant("basic-information.jr_com");
+            //sync old title to new title
+            item.title = this.translate.instant("basic-information.jr_standard");
             break;
           case 1:
             item.title = this.translate.instant("basic-information.trans");

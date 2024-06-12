@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit,ElementRef } from '@angular/core';
 import { InputFatiguesService } from './fatigues.service';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { SheetComponent } from '../sheet/sheet.component';
@@ -20,6 +20,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   public service_life: number;
 
   @ViewChild('grid') grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+  hasScrollbar: boolean = false;
   public options: pq.gridT.options;
   public activeTab: string = 'for_b';
 
@@ -111,9 +113,16 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
+    this.checkForScrollbar();
     this.setActiveTab(this.activeTab);
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     if (isManual) {
       // 断面力手入力モードの場合
@@ -144,7 +153,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         align: 'center', dataType: 'float', dataIndx: 'bh', editable: false, frozen: true, sortable: false, width: 85, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
       },
       {
-        title: this.translate.instant("fatigues.position"),
+        title: this.translate.instant("fatigues.position_"),
         align: 'center', dataType: 'string', dataIndx: 'design_point_id', editable: false, frozen: true, sortable: false, width: 40, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
       },
       {

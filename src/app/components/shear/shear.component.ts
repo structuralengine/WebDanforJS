@@ -1,5 +1,5 @@
 import { Menu } from "electron";
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewChild,ElementRef } from "@angular/core";
 import { SheetComponent } from "../sheet/sheet.component";
 import pq from "pqgrid";
 import { SaveDataService } from "src/app/providers/save-data.service";
@@ -11,6 +11,7 @@ import { InputMembersService } from "../members/members.service";
 import { InputSafetyFactorsMaterialStrengthsService } from "../safety-factors-material-strengths/safety-factors-material-strengths.service";
 import { MenuService } from "../menu/menu.service";
 import { InputMaterialStrengthVerificationConditionService } from "../material-strength-verification-conditions/material-strength-verification-conditions.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-shear",
@@ -19,6 +20,8 @@ import { InputMaterialStrengthVerificationConditionService } from "../material-s
 })
 export class ShearComponent implements OnInit {
   @ViewChild("grid") grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+  hasScrollbar: boolean = false;
   public options: pq.gridT.options;
   public isSubstructure: boolean = false;
   public isRoad: boolean = false;
@@ -47,6 +50,7 @@ export class ShearComponent implements OnInit {
     L : { ...this.propTrue},
   }
   public groupe_name: string[];
+  public refreshSubscription: Subscription;
 
   // public isSubstructure: boolean = false;
   // public isRoad: boolean = false;
@@ -101,6 +105,19 @@ export class ShearComponent implements OnInit {
           data.pq_cellstyle = this.styleShead;
           data.pq_cellprop=this.propShaded1
         }
+        if(data.La===undefined){
+          data.La=null
+        }
+        if (data.La!==null && data.La<0){
+          const speci2 = this.basic.get_specification2();
+          const speci1 = this.basic.get_specification1();
+          data.La = Math.abs(data.La)
+          if ((speci1 === 0 || speci1 === 1) && (speci2 === 0 || speci2 === 1)) {
+            let fixed_end = data.fixed_end
+            if (fixed_end === null || !fixed_end)
+              data.fixed_end = true
+          }
+        }
       });
 
       const op = {
@@ -146,7 +163,7 @@ export class ShearComponent implements OnInit {
             },
           ],
         },
-        change(evt, ui) {
+        change:(evt, ui)=> {
           const style = {
             "pointer-events": "none",
             background:
@@ -181,7 +198,31 @@ export class ShearComponent implements OnInit {
             ui.updateList[0].rowData.pq_cellprop= propShaded2;
 
           }
-          console.log(ui.updateList[0].newRow.fixed_end ,"ui.updateList[0].newRow.fixed_end");
+          let keyChange = Object.keys(ui.updateList[0].newRow)
+          if (keyChange[0]=="La"){
+            let newData = ui.updateList[0].newRow.La
+            if (newData!==null && newData<0){
+              const speci2 = this.basic.get_specification2();
+              const speci1 = this.basic.get_specification1();
+              ui.updateList[0].newRow.La = Math.abs(ui.updateList[0].newRow.La)
+              ui.updateList[0].rowData.La = Math.abs(ui.updateList[0].rowData.La)
+              if ((speci1 === 0 || speci1 === 1 ) && (speci2 === 0 || speci2 === 1)) {
+                let fixed_end = ui.updateList[0].rowData.fixed_end
+                if (fixed_end ===null || !fixed_end)
+                  ui.updateList[0].rowData.fixed_end= true
+              }
+            }
+          }
+        },
+        editorKeyPress: (evt, ui) => {
+          if (evt.key === "-") {
+            return false;
+          }
+        },
+        cellKeyDown: (evt, ui)=>{
+          if (evt.key === "-") {
+            return false;
+          }
         },
       };
       this.option_list.push(op);
@@ -195,9 +236,20 @@ export class ShearComponent implements OnInit {
     }
   }
   ngAfterViewInit() {
+    this.checkForScrollbar();
     this.activeButtons(0);
+    this.refreshSubscription=  this.shear.refreshTable$.subscribe(()=>{
+      this.saveData();
+      this.onInitData();
+    })
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     if (!this.isRoad) {
       if (isManual) {
@@ -275,7 +327,7 @@ export class ShearComponent implements OnInit {
       // 令和5年 RC標準
       const speci1 = this.basic.get_specification1();
       const speci2 = this.basic.get_specification2();
-      if (speci1 === 0 && (speci2 === 3 || speci2 === 4)) {
+      if (speci1 === 0 && (speci2 === 3 || speci2 === 4 || speci2 == 0|| speci2 == 1 )) {
         this.columnHeaders.push(
           {
             title: this.translate.instant("shear-strength.fixed_end"),
@@ -287,15 +339,19 @@ export class ShearComponent implements OnInit {
             width: 100,
             nodrag: true,
           },
-          {
-            title: this.translate.instant("shear-strength.m_len"),
-            dataType: "float",
-            dataIndx: "L",
-            frozen: true,
-            width: 150,
-            nodrag: true,
-          }
         );
+        if (speci2 === 3 || speci2 === 4){
+          this.columnHeaders.push(
+            {
+              title: this.translate.instant("shear-strength.m_len"),
+              dataType: "float",
+              dataIndx: "L",
+              frozen: true,
+              width: 150,
+              nodrag: true,
+            }
+          )
+        }
       }
     } else {
       if (isManual) {
@@ -409,6 +465,7 @@ export class ShearComponent implements OnInit {
 
   ngOnDestroy() {
     this.saveData();
+    this.refreshSubscription?.unsubscribe()
   }
 
   //Set show following component type is "Substructure"
