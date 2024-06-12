@@ -85,6 +85,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     private member: InputMembersService
   ) {
     this.members.checkGroupNo();
+    this.bars.is_review = false;
   }
   @HostListener("document:click", ["$event"])
   public mouseClick(event: any) {
@@ -244,6 +245,10 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
           }
+          let colIndex = this.save.isManual() ? 5 : 6
+          if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex) {
+            this.preview();
+          }
           this.removeScene()
           // if(this.bars.is_review){
 
@@ -319,6 +324,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     // 共通する項目
+    let colIndex = this.save.isManual() ? 5 : 6;
+    const displayPreviewText = this.translate.instant("bars.display_preview");
     if (this.menuService.selectedRoad) {
       this.beamHeaders.push(
         {
@@ -355,6 +362,15 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
+              render : function (ui) {
+                console.log('col', colIndex)
+                if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+                  return {
+                    text: displayPreviewText,
+                    cls: 'display-preview-button',
+                  }
+                }
+              }
             },
             {
               title: this.translate.instant("bars.number"),
@@ -492,6 +508,15 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
+              render : function (ui) {
+                console.log('col', colIndex)
+                if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+                  return {
+                    text: displayPreviewText,
+                    cls: 'display-preview-button',
+                  }
+                }
+              }
             },
             {
               title: this.translate.instant("bars.number"),
