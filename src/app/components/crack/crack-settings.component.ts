@@ -199,7 +199,6 @@ export class CrackSettingsComponent
 
           // Get the starting index from which to update the array
           let startIndex = ui.updateList[0].rowIndx + 1;
-          debugger
           let sKey = this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
           if(this.lstItemEdited.indexOf(sKey) === -1) { 
             this.lstItemEdited.push(
@@ -210,7 +209,6 @@ export class CrackSettingsComponent
           // Loop through each item in the array starting from startIndex and assign properties from currentObj
           for (let i = startIndex;i < this.table_datas[this.idTab].length;i++) 
           {
-            debugger
             const item = this.table_datas[this.idTab][i];
             if(item[col] === currentObj[col]){
               item.pq_cellstyle = { ...item.pq_cellstyle };
