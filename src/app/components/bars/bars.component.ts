@@ -509,7 +509,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
               render : function (ui) {
-                console.log('col', colIndex)
                 if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
                   return {
                     text: displayPreviewText,

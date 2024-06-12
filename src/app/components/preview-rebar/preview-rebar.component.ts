@@ -47,57 +47,102 @@ export class PreviewRebarComponent implements OnInit {
       let calPoint = this.rebar.selectedCalPoint; 
       const member = this.members.getData(calPoint.m_no)
       console.log('member', member)
+      console.log('calPoint', calPoint)
+      
       var axialRebarData = [];
       var stirrupData = [];
       var calPointListData = [];
       this.typeView = this.rebar.typeView
       console.log("typeview", this.typeView)
-      //Upper Side Rebar
-      // if (this.hasRebar(calPoint.rebar1)) {
-        const upperRebar = calPoint.rebar1;
-        axialRebarData.push({
-          rebar_type: this.translate.instant("preview_rebar.upper_side"),
-          rebar_dia: upperRebar.rebar_dia,
-          num: upperRebar.rebar_n,
-          distance_top: upperRebar.rebar_cover,
-          side_cover: upperRebar.rebar_ss
-        })
-      // }
 
-      // Lateral Rebar Data
-      const lateralRebalTop = calPoint.sidebar1;
-      const lateralRebalBottom = calPoint.sidebar2;
-      for (let i = 1; i <= lateralRebalTop.side_n; i++) {
+      const upperside = this.translate.instant("preview_rebar.upper_side");
+      const lowerside = this.translate.instant("preview_rebar.lower_side");
+      const lateral = this.translate.instant("preview_rebar.lateral_rebar");
+
+      // new data
+      for (let i = 0; i < calPoint.rebar0.length; i++) {
+        let rebar = calPoint.rebar0[i];
+        let rebar_type = "";
+        switch (rebar.rebar_type) {
+          case 0: 
+            rebar_type = upperside;
+            break;
+          case 1: 
+            rebar_type = lowerside;
+            break;
+          case 2: 
+            rebar_type = upperside;
+            break;
+          case 3: 
+            rebar_type = lowerside;
+            break;
+          case 4: 
+            rebar_type = lateral;
+            break;
+          case 5: 
+            rebar_type = lateral;
+            break;
+          case 6: 
+            rebar_type = lateral;
+            break;
+          case 7: 
+            rebar_type = lowerside; // todo: change when have correct data
+            break;
+        }
         axialRebarData.push({
-          rebar_type: this.translate.instant("preview_rebar.lateral_rebar"),
-          rebar_dia: lateralRebalTop.side_dia,
-          num: 2,
-          distance_top: lateralRebalTop.side_cover * i,
-          side_cover: lateralRebalTop.side_ss
+          rebar_type: rebar_type,
+          rebar_dia: rebar.dia,
+          num: rebar.quantity,
+          distance_top: rebar.dist_top,
+          side_cover: rebar.dist_side
         })
       }
+      // //Upper Side Rebar
+      // // if (this.hasRebar(calPoint.rebar1)) {
+      //   const upperRebar = calPoint.rebar1;
+      //   axialRebarData.push({
+      //     rebar_type: this.translate.instant("preview_rebar.upper_side"),
+      //     rebar_dia: upperRebar.rebar_dia,
+      //     num: upperRebar.rebar_n,
+      //     distance_top: upperRebar.rebar_cover,
+      //     side_cover: upperRebar.rebar_ss
+      //   })
+      // // }
 
-      for (let i = 1; i <= lateralRebalBottom.side_n; i++) {
-        axialRebarData.push({
-          rebar_type: this.translate.instant("preview_rebar.lateral_rebar"),
-          rebar_dia: lateralRebalBottom.side_dia,
-          num: 2,
-          distance_top: calPoint.h - lateralRebalBottom.side_cover * i,
-          side_cover: lateralRebalBottom.side_ss
-        })
-      }
-
-      // Lower Side Rebar
-      // if (this.hasRebar(calPoint.rebar2)) {
-        const lowerRebar = calPoint.rebar2;
-        axialRebarData.push({
-          rebar_type: this.translate.instant("preview_rebar.lower_side"),
-          rebar_dia: lowerRebar.rebar_dia,
-          num: lowerRebar.rebar_n,
-          distance_top: calPoint.h - lowerRebar.rebar_cover,
-          side_cover: lowerRebar.rebar_ss
-        })
+      // // Lateral Rebar Data
+      // const lateralRebalTop = calPoint.sidebar1;
+      // const lateralRebalBottom = calPoint.sidebar2;
+      // for (let i = 1; i <= lateralRebalTop.side_n; i++) {
+      //   axialRebarData.push({
+      //     rebar_type: this.translate.instant("preview_rebar.lateral_rebar"),
+      //     rebar_dia: lateralRebalTop.side_dia,
+      //     num: 2,
+      //     distance_top: lateralRebalTop.side_cover * i,
+      //     side_cover: lateralRebalTop.side_ss
+      //   })
       // }
+
+      // for (let i = 1; i <= lateralRebalBottom.side_n; i++) {
+      //   axialRebarData.push({
+      //     rebar_type: this.translate.instant("preview_rebar.lateral_rebar"),
+      //     rebar_dia: lateralRebalBottom.side_dia,
+      //     num: 2,
+      //     distance_top: calPoint.h - lateralRebalBottom.side_cover * i,
+      //     side_cover: lateralRebalBottom.side_ss
+      //   })
+      // }
+
+      // // Lower Side Rebar
+      // // if (this.hasRebar(calPoint.rebar2)) {
+      //   const lowerRebar = calPoint.rebar2;
+      //   axialRebarData.push({
+      //     rebar_type: this.translate.instant("preview_rebar.lower_side"),
+      //     rebar_dia: lowerRebar.rebar_dia,
+      //     num: lowerRebar.rebar_n,
+      //     distance_top: calPoint.h - lowerRebar.rebar_cover,
+      //     side_cover: lowerRebar.rebar_ss
+      //   })
+      // // }
 
       // Stirrup Data
       const stirrup = calPoint.stirrup;
