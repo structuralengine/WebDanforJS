@@ -293,6 +293,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   private setTitle(isManual: boolean): void {
     this.beamHeaders = [];
+    const displayPreviewText = this.translate.instant("bars.display_preview");
     if (isManual) {
       // 断面力手入力モードの場合
       this.beamHeaders = [
@@ -492,6 +493,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
+              render: function (ui) {
+                if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === 6) {
+                  return {
+                    text: displayPreviewText,
+                    cls: 'display-preview-button',
+                  }
+                }
+              }
             },
             {
               title: this.translate.instant("bars.number"),
