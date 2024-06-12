@@ -16,6 +16,7 @@ import { CalculationPrintComponent } from './components/calculation-print/calcul
 import { CrackSettingsComponent } from './components/crack/crack-settings.component';
 import { ShearComponent } from './components/shear/shear.component';
 import { MaterialStrengthVerificationConditionComponent } from './components/material-strength-verification-conditions/material-strength-verification-conditions.component';
+import { PreviewRebarComponent } from './components/preview-rebar/preview-rebar.component';
 
 
 const routes: Routes = [
@@ -34,6 +35,8 @@ const routes: Routes = [
 //    { path: 'result-viewer', component: ResultViewerComponent },
     { path: 'blank-page', component: BlankPageComponent },
     {path: 'material-strength-verification-conditions', component: MaterialStrengthVerificationConditionComponent},
+    { path: 'preview', outlet: 'previewOutlet', component: PreviewRebarComponent }
+
 ];
 
 @NgModule({

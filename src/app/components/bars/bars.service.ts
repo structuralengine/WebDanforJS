@@ -12,9 +12,10 @@ export class InputBarsService {
   public refreshShowHidden$ = new BehaviorSubject<any>({});
 
   // 鉄筋情報
-  private bar_list: any[];
+  public bar_list: any[];
   private jp_rebar_List: any[];
   private ph_rebar_List: any[];
+  public is_review: boolean
 
   constructor(
     private helper: DataHelperModule,
@@ -154,6 +155,8 @@ export class InputBarsService {
       index: id,
       haunch_M: null,
       haunch_V: null,
+      input_mode:0,
+      rebar0: [],
       rebar1: this.default_rebar(top),
       rebar2: this.default_rebar(under),
       sidebar1: this.default_sidebar(),
@@ -246,6 +249,8 @@ export class InputBarsService {
           column1['p_name'] = data['p_name'];
           column1['bh'] = data['b'];
           column1['haunch_height'] = data['haunch_M'];
+          column1['input_mode'] = data['input_mode'];
+          column1['rebar0'] = data['rebar0'];
 
           column1['design_point_id'] = data['rebar1'].title;
           column1['rebar_dia'] = data['rebar1'].rebar_dia;
@@ -384,6 +389,17 @@ export class InputBarsService {
     return result;
   }
 
+  public getDataPreview(index: number) {
+    let result = null;
+
+    const bar_list = JSON.parse(
+      JSON.stringify({
+        temp: this.bar_list,
+      })
+    ).temp;
+    result = bar_list.find(x => x.index === index)
+    return result;
+  }
 
   public setTableColumns(table_datas: any[]) {
 
@@ -402,6 +418,8 @@ export class InputBarsService {
       b.h = column2.bh;
       b.haunch_M = column1.haunch_height;
       b.haunch_V = column2.haunch_height;
+      b.input_mode = column1.input_mode
+      b.rebar0 = column1.rebar0
 
       b.rebar1.title = column1.design_point_id;
       b.rebar1.rebar_dia = column1.rebar_dia;

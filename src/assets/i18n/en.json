@@ -204,7 +204,10 @@
         "angle":"Angle\n(°)",
         "process":"Process",
         "tp":"Top position\n(mm)",
-        "tp_side":"Top position side cover"
+        "tp_side": "Top position side cover",
+        "preview_mode": "Preview Mode",
+        "display_preview": "Display in Preview mode",
+        "table_mode": "Table Mode"
     },
     "steels":{
         "m_no":"Member\nNo",
@@ -610,5 +613,24 @@
         "HorizontalOval": "Horizontal Oval",
         "VerticalOval": "Vertical Oval",
         "CircleRing": "Circle・Ring"
-    }    
+    },
+     "preview_rebar": {
+        "axial_rebar": "Axial Rebar",
+        "rebar_type": "Rebar Type",
+        "rebar_dia" : "Reinforcing bar diameter (mm)",
+        "num": "Number",
+        "dis_top": "Distance from top (Rebar core) (mm)",
+        "side_cover": "Side Core Cover (mm)",
+        "upper_side": "Upper side tensile",
+        "lower_side": "Lower side tensile",
+        "lateral_rebar": "Lateral rebar",
+        "stirrup": "Stirrup",
+        "interval": "Interval (mm)",
+        "p_title": "Calculated point list",
+        "p_subtitle": "(Select calculation points to input rebars)",
+        "no": "Member No",
+        "pos" : "Position (m)",
+        "p_name": "Calculated point name",
+        "haunch": "Haunch height (mm)"
+    }   
 }

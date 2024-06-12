@@ -10,6 +10,8 @@ import { data } from 'jquery';
 import { log } from 'console';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
 import { Subscription } from 'rxjs';
+import { SceneService } from '../three/scene.service';
+import { ThreeNodeService } from '../three/geometry/three-node.service';
 
 @Component({
   selector: 'app-bars',
@@ -22,13 +24,16 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
   public options: pq.gridT.options;
   public activeTab: string = 'rebar_ax';
-  hasScrollbar: boolean = false;
+  public hasScrollbar: boolean = false;
+  public click_review: boolean
+  public calPoint: any
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
   private beamHeaders: object[] = new Array();
   // private columnHeaders: object[] = new Array();
   // private pileHeaders: object[] = new Array();
-
+  public rebar: any;
+  public rebarList: any[];
   public table_datas: any[];
   // タブのヘッダ名
   public groupe_name: string[];
@@ -70,11 +75,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private members: InputMembersService,
-    private bars: InputBarsService,
+    public bars: InputBarsService,
     private save: SaveDataService,
     private translate: TranslateService,
     private menuService: MenuService,
-    private basic: InputBasicInformationService
+    private basic: InputBasicInformationService,
+    private threeNode: ThreeNodeService,
+    private scene: SceneService,
+    private member: InputMembersService
   ) {
     this.members.checkGroupNo();
   }
@@ -114,6 +122,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }
       })
+      this.table_datas[i].push({}, {})
       const op = {
         showTop: false,
         reactive: true,
@@ -124,6 +133,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.beamHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: (this.save.isManual()) ? 3 : 4,
+        mergeCells: (this.save.isManual()) ? [{ r1: this.table_datas[i].length - 2, c1: 5, rc: 2, cc: 10 }] : [{ r1: this.table_datas[i].length - 2, c1: 6, rc: 2, cc: 10 }],
         contextMenu: {
           on: true,
           items: [
@@ -173,8 +183,86 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
               }
             }
+            let m_no = ui.updateList[0].rowData.m_no
+            let index = ui.updateList[0].rowData.index;
+            let rowIndex = ui.updateList[0].rowIndx
+            if (rowIndex % 2 != 0) {
+              const data_index = this.table_datas[i][rowIndex - 1];
+              m_no = data_index.m_no;
+              index = data_index.index
+            }
+            if (m_no != null && m_no != undefined) {
+              this.bars.setTableColumns(this.table_datas[i])
+              let data = this.bars.getDataPreview(index);
+              this.threeNode.memNo = m_no;
+              this.threeNode.dataNode = data;
+
+            }
+            this.removeScene()
+            // this.threeNode.createDrawingLine()
+            // this.threeNode.createDemoOval()
+            this.threeNode.createDemoCircleRing()
           }
-        }
+        },
+        cellClick: (evt, ui) => {
+          if (ui.rowIndx !== this.options.mergeCells[0].r1) {
+            if (ui.rowIndx % 2 === 0) {
+              this.threeNode.type = "Vertical"
+            } else {
+              this.threeNode.type = "Horizontal"
+            }
+            // if (ui.rowIndx % 2 === 0 ) {
+            //   this.threeNode.type = "Circle"
+            // } else {
+            //   this.threeNode.type = "Ring"
+            // } 
+            let m_no = ui.rowData.m_no;
+            const rowData = ui.rowData
+            let index = ui.rowData.index;
+            if (ui.rowIndx % 2 != 0) {
+              const data_index = this.table_datas[i][ui.rowIndx - 1];
+              m_no = data_index.m_no;
+              index = data_index.index
+            }
+            if (m_no != null && m_no != undefined) {
+              this.bars.setTableColumns(this.table_datas[i])
+              let data = this.bars.getDataPreview(index);
+              const member = this.member.getTableColumns(m_no);
+              this.rebar = {
+                rebarList: this.bars.bar_list,
+                selectedCalPoint: data,
+                typeView: member.shape
+              }
+              this.threeNode.memNo = m_no;
+              this.threeNode.dataNode = data;
+              this.threeNode.dataRebar = this.rebar
+
+              this.calPoint = {
+                m_no: member.m_no,
+                shape: member.shape,
+                p_name: data.p_name
+              }
+            }
+          }
+          this.removeScene()
+          // if(this.bars.is_review){
+
+          //   // this.threeNode.createDrawingLine()
+          //   // this.threeNode.createDemoOval()
+          //   this.threeNode.createDemoTShape()
+          //  }
+          //  let colIndex = this.save.isManual() ? 5 : 6
+          //  if (
+          //   ui.rowIndx === this.options.mergeCells[0].r1 
+          //   && ui.colIndx === colIndex
+          // ) {
+          //   this.preview()
+          //   this.removeScene()
+          //   this.threeNode.createDemoTShape()
+          //   // this.threeNode.createDemoOval()
+          //   // this.threeNode.createDemoCircleRing()
+          //  }
+        },
       };
       this.option_list.push(op);
     }
@@ -537,7 +625,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.setTitle(this.save.isManual());
     // this.option_list[id].colModel = this.beamHeaders
     this.activeButtons(id);
-
+    this.bars.is_review = false;
+    this.rebar = {}
     this.options = this.option_list[id];
     this.grid.options = this.options;
     this.setActiveTab(this.activeTab);
@@ -673,5 +762,42 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     this.grid.refreshCM()
     this.grid.refreshDataAndView();
+  }
+  public preview(): void {
+    this.removeScene();
+    this.bars.is_review = !this.bars.is_review;
+  }
+  public removeScene() {
+    let index = []
+    if (this.scene.scene.children.length > 0) {
+      for (let i = 0; i < this.scene.scene.children.length; i++) {
+        let name = this.scene.scene.children[i].name;
+        let type = this.scene.scene.children[i].type;
+        if (type === "Mesh" || type === "Line" || name === "node") {
+          index.push(i)
+        }
+        if (type === "Object3D") {
+          this.scene.scene.children[i].children = []
+        }
+      }
+      index.sort((a, b) => b - a)
+      index.forEach(index => {
+        if (index >= 0 && index < this.scene.scene.children.length) {
+          this.scene.scene.children.splice(index, 1)
+        }
+      })
+
+    }
+    // for (let i = this.threeNode.nodeList.children.length - 1; i >= 0; i--) {
+
+
+    //     const target = this.threeNode.nodeList.children[i];
+    //     while (target.children.length > 0) {
+    //       const object = target.children[0];
+    //       object.parent.remove(object);
+    //     }
+    //     this.threeNode.nodeList.children.splice(i, 1);
+
+    // }
   }
 }

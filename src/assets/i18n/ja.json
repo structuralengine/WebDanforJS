@@ -204,7 +204,10 @@
         "angle":"角度\n(°)",
         "process":"処理",
         "tp":"上端位置\n(mm)",
-        "tp_side":"上端位置\n/側芯かぶり"
+        "tp_side": "上端位置\n/側かぶり",
+        "preview_mode": "プレビューモード",
+        "display_preview": "プレビューモードで表示",
+        "table_mode": "表モードで表示"
     },
     "steels":{
         "m_no":"部材\n番号",
@@ -610,5 +613,24 @@
         "HorizontalOval": "横小判形状",
         "VerticalOval": "縦小判形状",
         "CircleRing": "円形・円環"
+    },
+    "preview_rebar": {
+        "axial_rebar": "軸方向鉄筋",
+        "rebar_type": "鉄筋種別",
+        "rebar_dia": "鉄筋径 (mm)",
+        "num": "本数",
+        "dis_top": "上縁からの距離 （鉄筋芯）(mm)",
+        "side_cover": "側方芯かぶり (mm)",
+        "upper_side": "上側引張",
+        "lower_side": "下側引張",
+        "lateral_rebar": "側方鉄筋",
+        "stirrup": "スターラップ",
+        "interval": "間隔 (mm)",
+        "p_title": "算出点リスト",
+        "p_subtitle": "（鉄筋を入力する算出点を選択）",
+        "no": "部材番号",
+        "pos": "位置(m)",
+        "p_name": "算出点名",
+        "haunch": "ハンチ高(mm)"
     }
 }
