@@ -223,3 +223,35 @@ body {
 .activeQ svg #cls-2{ 
     fill: #00C95F!important;
 }
+ .pq-grid-cell.pq-side-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }
+.pq-grid-cell.pq-side-icon>div {
+    background-color: #222222;
+    width: 96%;
+    border-radius: 4px;
+}
+
+ .pq-grid-cell.pq-drop-icon>div:before {
+    content: "";
+    background-image: url("../src/assets/icons/icon-arrow.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: right;
+    width: 10px;
+    height: 10px;
+    background-position-y: 4px;
+ }
+ .material-strength,
+ .design-points {
+    div.pq-editor-outer {
+     background: #222222 !important;
+     select.pq-editor-focus{
+        option{
+        background-color: #222222;
+        }
+     }
+    }
+ }

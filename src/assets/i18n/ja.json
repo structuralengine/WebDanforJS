@@ -15,7 +15,8 @@
         "fail":"ファイルを開くことに失敗しました, status:",
         "open":"を開いてください！",
         "NewWindow":"新しいウィンドウ",
-        "contact":"お問い合わせ"
+        "contact":"お問い合わせ",
+        "message_ver":"現バージョンのWebDanは道路（β版）に対応しておりません"
     },
     "login-dialog":{
         "createAccount":"ユーザー登録がお済みでない方はこちらから",
@@ -174,7 +175,10 @@
         "y_around":"y軸周り",
         "z_around":"z軸周り",
         "y_direction":"y軸方向",
-        "z_direction":"z軸方向"
+        "z_direction":"z軸方向",
+        "check_target":"計算対象軸",
+        "upper_side": "上側引張照査",
+        "lower_side": "下側引張照査"
     },
     "bars":{
         "m_no":"部材\n番号",
@@ -325,7 +329,7 @@
         "cs":"圧縮強度",
         "as":"付着強度",
         "young":"ヤング係数",
-        "rebar_ax":"軸方向鉄筋",
+        "rebar_ax":"軸方向鉄筋（折曲げ鉄筋含む）",
         "rebar_la":"側方向鉄筋",
         "stirrup":"スターラップ",
         "tys":"引張降伏強度",
@@ -340,7 +344,7 @@
         "ys":"降伏強度\n(N/mm2)",
         "d25":"D25以下",
         "d29":"D29以上",
-        "dts":"設計引張強度\n(N/mm2)",
+        "dts":"引張強度\n(N/mm2)",
         "d_u":"耐久性, 使用性",
         "safe_ff":"安全性 （疲労破壊）",
         "safe_d":"安全性 （破壊）",
@@ -352,7 +356,9 @@
         "muddy_less":"泥水比重1.04以下",
         "natural_less":"自然泥水, 泥水比重1.10以下",
         "bentonite":"ベントナイト泥水",
-        "aerial":"気中施工"
+        "aerial":"気中施工",
+        "rbmt": "鉄筋材種",
+        "av":"任意値"
     },
     "calculation-print":{
         "dc":"設計条件",
@@ -360,8 +366,12 @@
         "p_check":"性能照査",
         "safety_ratio":"安全率一覧表",
         "check":"照査",
-        "axis_maxmin":"軸力 最大最小",
+        "axis_maxmin":"軸力の考慮",
         "consider":"考慮する",
+        "notconsider":"考慮しない",
+        "option1":"軸力最大最小も考慮する",
+        "option2":"引張（マイナス）のみ考慮",
+        "option3":"せん断耐力におけるβn算定時のMudは軸力を考慮しない",
         "bend":"曲げ",
         "shear":"せん断",
         "twist":"ねじり",
@@ -370,7 +380,8 @@
         "preparing":"印刷中...",
         "p_login":"ログインしてください。",
         "download":"総括表ダウンロード",
-        "downloading":"ダウンロード中"
+        "downloading":"ダウンロード中",
+        "judgement": "検討結果一覧表"
     },
     "section-force-list":{
         "m_no":"部材\n番号",

@@ -61,6 +61,8 @@
               menu.saveFile
             </button>
             <button
+              class="save-file"
+              [class.active-save]="user.userProfile"
               *ngIf="electronService.isElectron"
               ngbDropdownItem
               (click)="overWrite()"
@@ -92,8 +94,8 @@
         </div>
       </li>
     </ul>
-     <!-- 仕様・条件 セクション -->
-     <section>
+    <!-- 仕様・条件 セクション -->
+    <section>
       <div class="ml-16">
         <a
           class="menu-btn control-btn"
@@ -127,7 +129,8 @@
               class="d-flex"
               [ngClass]="{
                 'spec-rdo-active': item.selected,
-                'spec-rdo': !item.selected
+                'spec-rdo': !item.selected,
+                'hidden': item.id === 2
               }"
             >
               <input
@@ -161,7 +164,7 @@
               [ngClass]="{
                 'spec-rdo-active': specification2_select_id === item.id,
                 'spec-rdo': specification2_select_id !== item.id,
-                'disabled' : item.id === 5 || item.id === 7
+                disabled: item.id === 5 || item.id === 7
               }"
             >
               <input
@@ -171,12 +174,14 @@
                 [(ngModel)]="specification2_select_id"
                 [value]="item.id"
                 [checked]="item.selected"
-                (change)="setSpecification2(item.id)" 
-                [disabled]="(item.id === 5 || item.id === 7) ? true : false"
+                (change)="setSpecification2(item.id)"
+                [disabled]="item.id === 5 || item.id === 7 ? true : false"
               />
-              <label class="form-check-label" for="specification2{{ item.id }}">{{
-                item.title | translate
-              }}</label>
+              <label
+                class="form-check-label"
+                for="specification2{{ item.id }}"
+                >{{ item.title | translate }}</label
+              >
             </div>
           </ng-container>
         </div>
@@ -184,8 +189,33 @@
         <!-- 設計条件 セクション -->
         <div class="mega-menu2">
           <p class="topic" translate>basic-information.dc</p>
-          <ng-container *ngFor="let item of conditions_list; index as i">
-            <!--  -->
+          <ng-container *ngIf="firstCondition">
+            <div
+              class="d-flex"
+              *ngIf="!(hideDCJ3_J5 && firstCondition.selected)"
+              [ngClass]="{
+                'cond-chk-active': firstCondition.selected,
+                'cond-chk': !firstCondition.selected
+              }"
+            >
+              <!-- <label class="checkbox-container" for="conditions0">
+                <input
+                  type="checkbox"
+                  name="conditions0"
+                  id="conditions0"
+                  [(ngModel)]="firstCondition.selected"
+                  [value]="firstCondition.id"
+                  [checked]="firstCondition.selected"
+                  class="checkbox-input"
+                  (ngModelChange)="changeDesignCondition(firstCondition)"
+                />
+                <span translate class="checkbox-parts title">{{
+                  firstCondition.title | translate
+                }}</span>
+              </label> -->
+            </div>
+          </ng-container>
+          <!-- <ng-container *ngFor="let item of conditions_list; index as i">
             <div
               *ngIf="!(hideDCJ3_J5 && (i === 1 || i === 2))"
               class="d-flex"
@@ -210,13 +240,13 @@
                 }}</span>
               </label>
             </div>
-          </ng-container>
+          </ng-container> -->
           <ng-container *ngIf="menuService.selectedRoad === false">
             <!-- 耐用年数 セクション -->
             <div class="d-flex service-life">
               <p translate>fatigues.durable</p>
               <input
-                *ngIf="translate.currentLang=== 'en'"
+                *ngIf="translate.currentLang === 'en'"
                 placeholder="Example: 100"
                 id="T"
                 name="T"
@@ -225,7 +255,7 @@
                 (change)="changeInput()"
               />
               <input
-                *ngIf="translate.currentLang=== 'ja'"
+                *ngIf="translate.currentLang === 'ja'"
                 placeholder="例: 100"
                 id="T"
                 name="T"
@@ -275,6 +305,7 @@
   <ng-template #file>
     <div class="file-layout">
       <svg
+        *ngIf="showIcon"
         width="13"
         height="16"
         viewBox="0 0 13 16"
@@ -360,12 +391,26 @@
         </li>
         <li>
           <a (click)="handelClickChat()">
-              <svg xmlns="http://www.w3.org/2000/svg" class="svg-icon" style="width: 16px; height: 16px; vertical-align: middle; fill: white; overflow: hidden;" viewBox="0 0 1024 1024" version="1.1">
-                  <path d="M704 704h-46.2a348.16 348.16 0 0 1-291.6 0H320A256 256 0 0 0 64 960a64 64 0 0 0 64 64h768a64 64 0 0 0 64-64 256 256 0 0 0-256-256zM160 448a32 32 0 0 0 32-32v-32c0-176.44 143.56-320 320-320s320 143.56 320 320v32a160.18 160.18 0 0 1-160 160h-64a64 64 0 0 0-64-64h-64a64 64 0 0 0 0 128h192a224.28 224.28 0 0 0 224-224v-32C896 172.26 723.74 0 512 0S128 172.26 128 384v32a32 32 0 0 0 32 32z m320 0h64a128 128 0 0 1 110.82 64H672a96.1 96.1 0 0 0 96-96v-32a256 256 0 0 0-512 0c0 80.84 38.2 152 96.7 198.94-0.12-2.34-0.7-4.56-0.7-6.94a128.14 128.14 0 0 1 128-128z"/>
-                </svg>
-              <div translate class="menu-item">menu.contact</div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="svg-icon"
+              style="
+                width: 16px;
+                height: 16px;
+                vertical-align: middle;
+                fill: white;
+                overflow: hidden;
+              "
+              viewBox="0 0 1024 1024"
+              version="1.1"
+            >
+              <path
+                d="M704 704h-46.2a348.16 348.16 0 0 1-291.6 0H320A256 256 0 0 0 64 960a64 64 0 0 0 64 64h768a64 64 0 0 0 64-64 256 256 0 0 0-256-256zM160 448a32 32 0 0 0 32-32v-32c0-176.44 143.56-320 320-320s320 143.56 320 320v32a160.18 160.18 0 0 1-160 160h-64a64 64 0 0 0-64-64h-64a64 64 0 0 0 0 128h192a224.28 224.28 0 0 0 224-224v-32C896 172.26 723.74 0 512 0S128 172.26 128 384v32a32 32 0 0 0 32 32z m320 0h64a128 128 0 0 1 110.82 64H672a96.1 96.1 0 0 0 96-96v-32a256 256 0 0 0-512 0c0 80.84 38.2 152 96.7 198.94-0.12-2.34-0.7-4.56-0.7-6.94a128.14 128.14 0 0 1 128-128z"
+              />
+            </svg>
+            <div translate class="menu-item">menu.contact</div>
           </a>
-      </li>
+        </li>
       </ul>
     </div>
     <span class="hr-2"></span>

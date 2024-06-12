@@ -22,6 +22,7 @@ export class InputBasicInformationService {
   // 設計条件
   public conditions_list: any[];
 
+  public removeData:any;
   constructor(
     private helper: DataHelperModule,
     private translate: TranslateService,
@@ -33,7 +34,7 @@ export class InputBasicInformationService {
     this.pickup_moment = [];
     this.pickup_shear_force = [];
     this.pickup_torsional_moment = [];
-
+    
     // this.specification1_list = new Array();
     //this.specification2_list = new Array();
     this.prevSpecification2 = {};
@@ -78,7 +79,12 @@ export class InputBasicInformationService {
   private set_default_pickup(): void {
     const sp1 = this.get_specification1();
     const sp2 = this.get_specification2();
-
+    if (this.removeData && sp1===2){
+      let index = this.pickup_moment.findIndex((data) => data.id === 2)
+      if ( index === -1) {
+        this.pickup_moment.splice(2, 0, this.removeData);
+      }
+    }
     // 曲げモーメントテーブル
     const keys_moment = this.default_pickup_moment(sp1, sp2);
     // 古い入力があれば no の入力を 保持
@@ -709,7 +715,7 @@ export class InputBasicInformationService {
           {
             id: "JR-001",
             title: this.translate.instant("basic-information.limit100"),
-            selected: true,
+            selected: false,
           },
           {
             id: "JR-003",
@@ -913,6 +919,11 @@ export class InputBasicInformationService {
   public setPickUpData() {}
 
   public getSaveData(): any {
+    let indexJR4 = this.conditions_list.findIndex((data)=>data.id==="JR-004")
+    if (indexJR4 !==-1){
+      this.conditions_list.splice(indexJR4,1)
+    }
+    console.log("this.conditions_list",this.conditions_list)
     return {
       pickup_moment: this.pickup_moment,
       pickup_shear_force: this.pickup_shear_force,
