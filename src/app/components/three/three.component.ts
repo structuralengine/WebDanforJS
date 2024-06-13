@@ -8,7 +8,7 @@ import { ThreeNodeService } from './geometry/three-node.service';
   styleUrls: ['./three.component.scss']
 })
 export class ThreeComponent implements OnInit {
-  @Input('typeView') typeView: string;
+  @Input('typeView') typeView: number;
   @ViewChild("myCanvas", { static: true }) private canvasRef: ElementRef;
   private get canvas(): HTMLCanvasElement {
     return this.canvasRef.nativeElement;
@@ -38,19 +38,35 @@ export class ThreeComponent implements OnInit {
 
   ngOnInit() {
     switch(this.typeView){
-      case "T shape": {
+      case 1: {
+        this.node.createDemoRectangle();
+        break;
+      }
+      case 2: {
         this.node.createDemoTShape();
         break;
       }
-      case "Rectangle": {
-        this.node.createDemoRectangle();
+      case 3: {
+        this.node.createDemoCircleRing();
+        break;
+      }
+      case 4: {
+        this.node.createDemoCircleRing();
+        break;
+      }
+      case 5: {
+        this.node.createDemoOval();
+        break;
+      }
+      case 6: {
+        this.node.createDemoOval();
         break;
       }
     }   
     this.node.onInit();
   }
   ngAfterViewInit(): void {
-    if (this.typeView !== 'preview') {
+    if (this.typeView !== 0) {
       this.scene.OnInit(
         this.getAspectRatio(),
         this.canvas,
