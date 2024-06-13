@@ -27,7 +27,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   private beamHeaders: object[] = new Array();
   // private columnHeaders: object[] = new Array();
   // private pileHeaders: object[] = new Array();
+  public lstItemEdited: string[];
 
+  public colAutoInputs = ["rebar_dia", "rebar_cover", "rebar_lines", "rebar_n", "rebar_space", "rebar_ss"];
   public table_datas: any[];
   public idTab: number;
   // タブのヘッダ名
@@ -65,47 +67,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     stirrup_n:{...this.textStyle2},
     stirrup_ss:{...this.textStyle2},
   };
-  //
-  public cell1 = {
-    rebar_dia: { ...this.textStyle2 }
-    };
-    public cell2 = {
-    rebar_cover: { ...this.textStyle2 }
-    };
-    public cell3 = {
-    rebar_lines: { ...this.textStyle2 }
-    };
-    public cell4 = {
-    rebar_n: { ...this.textStyle2 }
-    };
-    public cell5 = {
-    rebar_space: { ...this.textStyle2 }
-    };
-    public cell6 = {
-    rebar_ss: { ...this.textStyle2 }
-    };
-    public cell7 = {
-    side_cover: { ...this.textStyle2 }
-    };
-    public cell8 = {
-    side_dia: { ...this.textStyle2 }
-    };
-    public cell9 = {
-    side_n: { ...this.textStyle2 }
-    };
-    public cell10 = {
-    side_ss: { ...this.textStyle2 }
-    };
-    public cell11 = {
-    stirrup_dia: { ...this.textStyle2 }
-    };
-    public cell12 = {
-    stirrup_n: { ...this.textStyle2 }
-    };
-    public cell13 = {
-    stirrup_ss: { ...this.textStyle2 }
-    };
-  //
+  
   public styleShaded1:any =   { 
     haunch_height : { ...this.style},
     side_dia: { ...this.style},
@@ -175,46 +137,21 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     };
   }
   ngOnInit() {
+    this.lstItemEdited = [];
     this.setTitle(this.save.isManual());
     this.table_datas = this.bars.getTableColumns();
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
-      // const rowData = this.table_datas[i];
-      // for (let j = 0; j < rowData.length - 1; j++) {
-      //   const rowData = this.table_datas[i];
-      //   for (let j = 0; j < rowData.length; j++) {
-      //       const currentCell = rowData[j];
-      //       if (j < rowData.length - 2) {
-      //           const nextCell = rowData[j + 2];
-      //           if (
-      //             JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia) &&
-      //             JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover) &&
-      //             JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines) &&
-      //             JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_n) &&
-      //             JSON.stringify(currentCell.rebar_space) === JSON.stringify(nextCell.rebar_space) &&
-      //             JSON.stringify(currentCell.rebar_ss) === JSON.stringify(nextCell.rebar_ss) 
-      //         ) {
-      //           currentCell.pq_cellstyle = { ...this.rowStyle };
-      //           // currentCell.pq_cellprop={};
-      //           } else {
-      //             currentCell.pq_cellstyle = { ...this.rowStyle2 };
-      //             // currentCell.pq_cellprop={};
-      //           }
-      //       } else {
-      //         currentCell.pq_cellstyle = { ...this.rowStyle };
-      //         // currentCell.pq_cellprop={};
-      //       }
+      
+      // this.table_datas[i].forEach((data:any,index:any)=>{
+      //  if(this.activeTab==="rebar_ax"){
+      //   if(index % 2!==0){
+      //     data.pq_cellstyle={...data.pq_cellstyle,...this.styleShaded1};
+      //     data.pq_cellprop={...data.pq_cellprop,...this.propShaded1}
       //   }
-      // }
-      this.table_datas[i].forEach((data:any,index:any)=>{
-       if(this.activeTab==="rebar_ax"){
-        if(index % 2!==0){
-          data.pq_cellstyle={...data.pq_cellstyle,...this.styleShaded1};
-          data.pq_cellprop={...data.pq_cellprop,...this.propShaded1}
-        }
-       }
-      })
+      //  }
+      // });
       const op = {
         showTop: false,
         reactive: true,
@@ -262,122 +199,43 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           // var currentObj = ui.updateList[0].newRow;
           // let nextObj = this.table_datas[this.idTab][ui.updateList[0].rowIndx + 2];
           // Object.assign(nextObj,currentObj);
-
+          if (ui.source === "edit") {
           var currentObj = ui.updateList[0].newRow;
-
+          var col = Object.keys(ui.updateList[0].newRow)[0];
+          
           // Get the starting index from which to update the array
-          let startIndex = ui.updateList[0].rowIndx + 1;
-
+          let startIndex = ui.updateList[0].rowIndx + 2;
+          let sKey = this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
+          if (this.lstItemEdited.indexOf(sKey) === -1) {
+            this.lstItemEdited.push(sKey);
+          }
           // Loop through each item in the array starting from startIndex and assign properties from currentObj
-          for (let i = startIndex; i < this.table_datas[this.idTab].length; i++) {
-            
-            // Merge currentObj properties into each item
-            if ((i - startIndex) % 2 === 0) {
-              continue;
-            }
+          for (let i = startIndex; i < this.table_datas[this.idTab].length; i += 2) {
             const item = this.table_datas[this.idTab][i];
-
-            // Check if the item has the pq_cellstyle property and if it has any property with "color": "white"
-            const itemHasPqCellStyleWithWhiteColor = item.hasOwnProperty('pq_cellstyle') && Object.values(item.pq_cellstyle).some((obj:any) => obj.color === "white");
-            // If the item has pq_cellstyle with "color": "white", skip the assignment
-            if (itemHasPqCellStyleWithWhiteColor) {
+            if ((item[col] === null) || (item[col] === currentObj[col])) {
+              item.pq_cellstyle = { ...item.pq_cellstyle };
+              item.pq_cellstyle[`${col}`] = { color: "gray" };
+            } else {
+              if (
+                this.lstItemEdited.filter(
+                  (x) => x === this.idTab + "-" + i + "-" + col
+                ).length > 0
+              ) {
                 break;
+              }
             }
             Object.assign(this.table_datas[this.idTab][i], currentObj);
           }
-          if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-            const keys = Object.keys(ui.updateList[0].newRow);
 
-            keys.forEach((key) => {
-              switch (key) {
-                case "rebar_dia":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell1,
-                  };
-                  break;
-                case "rebar_cover":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell2,
-                  };
-                  break;
-                case "rebar_lines":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell3,
-                  };
-                  break;
-                case "rebar_n":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell4,
-                  };
-                  break;
-                case "rebar_space":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell5,
-                  };
-                  break;
-                case "rebar_ss":
-                  ui.updateList[i].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell6,
-                  };
-                  break;
-                case "side_dia":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell8,
-                  };
-                  break;
-                case "side_cover":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell7,
-                  };
-                  break;
-                case "side_n":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell9,
-                  };
-                  break;
-                case "side_ss":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell10,
-                  };
-                  break;
-                case "stirrup_dia":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell11,
-                  };
-                  break;
-                case "stirrup_n":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell12,
-                  };
-                  break;
-                case "stirrup_ss":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell13,
-                  };
-                  break;
-                default:
-                  console.log(`Key ${key} is not recognized`);
-                  break;
-              }
-            });
-            // ui.updateList[i].rowData.pq_cellstyle = {...ui.updateList[i].rowData.pq_cellstyle,...this.rowStyle2}
-            // ui.updateList[i].rowData.userChanged = true;
-            // this.grid.refreshDataAndView();
-            // this.saveData();
+          if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+            ui.updateList[0].rowData.pq_cellstyle = {
+              ...ui.updateList[0].rowData.pq_cellstyle,
+            };
+            ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+              color: "white",
+            };
           }
+
           for (const property of ui.updateList) {
             for (const key of Object.keys(property.newRow)) {
               const old = property.oldRow[key];
@@ -398,7 +256,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
           }
-        },
+        }
+      }
       };
       this.option_list.push(op);
     }
@@ -792,41 +651,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
 
-      // 
-      for (let j = 0; j < rowData.length; j++) {
-        const currentCell = rowData[j];
-        Object.keys(currentCell).forEach(key => {
-          if (currentCell[key] === null && nonNullValues[key] && nonNullValues[key].length > 0) {
-            currentCell[key] = nonNullValues[key][0];
-          }
-        });
-      }
-      for (let j = 0; j < rowData.length - 1; j++) {
-        const rowData = this.table_datas[i];
-        for (let j = 0; j < rowData.length; j++) {
-            const currentCell = rowData[j];
-            if (j < rowData.length - 2) {
-                const nextCell = rowData[j + 2];
-                if (
-                  JSON.stringify(currentCell.rebar_dia) === JSON.stringify(nextCell.rebar_dia) &&
-                  JSON.stringify(currentCell.rebar_cover) === JSON.stringify(nextCell.rebar_cover) &&
-                  JSON.stringify(currentCell.rebar_lines) === JSON.stringify(nextCell.rebar_lines) &&
-                  JSON.stringify(currentCell.rebar_n) === JSON.stringify(nextCell.rebar_n) &&
-                  JSON.stringify(currentCell.rebar_space) === JSON.stringify(nextCell.rebar_space) &&
-                  JSON.stringify(currentCell.rebar_ss) === JSON.stringify(nextCell.rebar_ss) 
-              ) {
-                currentCell.pq_cellstyle = { ...this.rowStyle };
-                // currentCell.pq_cellprop={};
-                } else {
-                  currentCell.pq_cellstyle = { ...this.rowStyle2 };
-                  // currentCell.pq_cellprop={};
-                }
-            } else {
-              currentCell.pq_cellstyle = { ...this.rowStyle };
-              // currentCell.pq_cellprop={};
-            }
-        }
-      }
+      this.loadAutoInputData(rowData, i);
+      
       this.table_datas[i].forEach((data:any,index:any)=>{
         // data.pq_cellstyle={...this.rowStyle};
         // data.pq_cellprop={};
@@ -909,6 +735,53 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.grid.refreshCM()
     this.grid.refreshDataAndView();
+  }
+
+  private loadAutoInputData(rowData : any, indexTab : any){
+    for (let j = 0; j < rowData.length; j += 2) {
+      let currentCell = rowData[j];
+      if (j === 0 || j === 1) {
+        currentCell.pq_cellstyle = this.rowStyle2;
+        continue;
+      } else {
+        currentCell.pq_cellstyle = this.rowStyle;
+        var prevRow = rowData[j - 2];
+        const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
+        keys.forEach((key) => {
+          if (
+            JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
+          ) {
+            currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+            currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+            this.lstItemEdited.push(
+              indexTab + "-" + j + "-" + key
+            );
+          }
+        });
+      }
+    }
+    for (let j = 1; j < rowData.length; j += 2) {
+      let currentCell = rowData[j];
+      if (j === 0 || j === 1) {
+        currentCell.pq_cellstyle = this.rowStyle2;
+        continue;
+      } else {
+        currentCell.pq_cellstyle = this.rowStyle;
+        var prevRow = rowData[j - 2];
+        const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
+        keys.forEach((key) => {
+          if (
+            JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
+          ) {
+            currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+            currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+            this.lstItemEdited.push(
+              indexTab + "-" + j + "-" + key
+            );
+          }
+        });
+      }
+    }
   }
 
   private loadHeaderRoad(tab: string) {

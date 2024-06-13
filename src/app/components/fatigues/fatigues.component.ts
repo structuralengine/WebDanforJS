@@ -32,6 +32,11 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = new Array();
   public idTab: number;
+  public lstItemEdited: string[];
+  public colAutoInputs = ["M_SA", "M_NA06", "M_NA12", "M_NB06", "M_NB12", "M_SB"
+  , "V_A", "V_B", "V_NA06", "V_NA12", "V_NB06"
+  , "V_NB12", "V_SA", "V_SB"
+  ];
 
   public table_datas: any[];
   // タブのヘッダ名
@@ -164,6 +169,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
+    this.lstItemEdited = [];
     const fatigues = this.fatigues.getSaveData();
 
     this.train_A_count = fatigues.train_A_count;
@@ -207,47 +213,6 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
               currentCell[key] = nonNullValues[key][0];
             }
           });
-        }
-        for (let j = 0; j < rowData.length; j++) {
-          const currentCell = rowData[j];
-          if (j < rowData.length - 2) {
-            const nextCell = rowData[j + 2];
-            if (
-              JSON.stringify(currentCell.M_SA) ===
-                JSON.stringify(nextCell.M_SA) &&
-              JSON.stringify(currentCell.M_NA06) ===
-                JSON.stringify(nextCell.M_NA06) &&
-              JSON.stringify(currentCell.M_NA12) ===
-                JSON.stringify(nextCell.M_NA12) &&
-              JSON.stringify(currentCell.M_NB06) ===
-                JSON.stringify(nextCell.M_NB06) &&
-              JSON.stringify(currentCell.M_NB12) ===
-                JSON.stringify(nextCell.M_NB12) &&
-              JSON.stringify(currentCell.M_SB) ===
-                JSON.stringify(nextCell.M_SB) &&
-              JSON.stringify(currentCell.V_A) ===
-                JSON.stringify(nextCell.V_A) &&
-              JSON.stringify(currentCell.V_B) ===
-                JSON.stringify(nextCell.V_B) &&
-              JSON.stringify(currentCell.V_NA06) ===
-                JSON.stringify(nextCell.V_NA06) &&
-              JSON.stringify(currentCell.V_NA12) ===
-                JSON.stringify(nextCell.V_NA12) &&
-              JSON.stringify(currentCell.V_NB06) ===
-                JSON.stringify(nextCell.V_NB06) &&
-              JSON.stringify(currentCell.V_NB12) ===
-                JSON.stringify(nextCell.V_NB12) &&
-              JSON.stringify(currentCell.V_SA) ===
-                JSON.stringify(nextCell.V_SA) &&
-              JSON.stringify(currentCell.V_SB) === JSON.stringify(nextCell.V_SB)
-            ) {
-              currentCell.pq_cellstyle = this.rowStyle;
-            } else {
-              currentCell.pq_cellstyle = this.rowStyle2;
-            }
-          } else {
-            currentCell.pq_cellstyle = this.rowStyle; // Xử lý trường hợp cuối cùng
-          }
         }
       }
       const op = {
@@ -301,174 +266,42 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           // Object.assign(nextObj, currentObj);
           // Extract the current object to be copied
           // Extract the current object to be copied
+          if (ui.source === "edit") {
           var currentObj = ui.updateList[0].newRow;
+          var col = Object.keys(ui.updateList[0].newRow)[0];
 
           // Get the starting index from which to update the array
-          let startIndex = ui.updateList[0].rowIndx + 1;
-
+          let startIndex = ui.updateList[0].rowIndx + 2;
+          let sKey = this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
+          if (this.lstItemEdited.indexOf(sKey) === -1) {
+            this.lstItemEdited.push(sKey);
+          }
           // Loop through each item in the array starting from startIndex and assign properties from currentObj
-          for (let i = startIndex; i < this.table_datas[this.idTab].length; i++) {
-            // Merge currentObj properties into each item
-            if ((i - startIndex) % 2 === 0) {
-              continue;
-            }
+          for (let i = startIndex; i < this.table_datas[this.idTab].length; i += 2) {
             const item = this.table_datas[this.idTab][i];
-
-            // Check if the item has the pq_cellstyle property and if it has any property with "color": "white"
-            const itemHasPqCellStyleWithWhiteColor = item.hasOwnProperty('pq_cellstyle') && Object.values(item.pq_cellstyle).some((obj:any) => obj.color === "white");
-            // If the item has pq_cellstyle with "color": "white", skip the assignment
-            if (itemHasPqCellStyleWithWhiteColor) {
+            if ((item[col] === null) || (item[col] === currentObj[col])) {
+              item.pq_cellstyle = { ...item.pq_cellstyle };
+              item.pq_cellstyle[`${col}`] = { color: "gray" };
+            } else {
+              if (
+                this.lstItemEdited.filter(
+                  (x) => x === this.idTab + "-" + i + "-" + col
+                ).length > 0
+              ) {
                 break;
+              }
             }
-            // Merge currentObj properties into each item
             Object.assign(this.table_datas[this.idTab][i], currentObj);
           }
           if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-            const keys = Object.keys(ui.updateList[0].newRow);
-            keys.forEach((key) => {
-              switch (key) {
-                case "M_A":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell1,
-                  };
-                  break;
-                case "M_B":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell2,
-                  };
-                  break;
-                case "M_Class":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell3,
-                  };
-                  break;
-                case "M_NA06":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell4,
-                  };
-                  break;
-                case "M_NB06":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell5,
-                  };
-                  break;
-                case "M_NA12":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell6,
-                  };
-                  break;
-                case "M_NB12":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell7,
-                  };
-                  break;
-                case "M_SA":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell8,
-                  };
-                  break;
-                case "M_SB":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell9,
-                  };
-                  break;
-                case "M_r1_1":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell10,
-                  };
-                  break;
-                case "M_r1_3":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell11,
-                  };
-                  break;
-                case "M_weld":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell12,
-                  };
-                  break;
-                case "V_A":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell13,
-                  };
-                  break;
-                case "V_B":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell14,
-                  };
-                  break;
-                case "V_NA06":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell15,
-                  };
-                  break;
-                case "V_NA12":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell16,
-                  };
-                  break;
-                case "V_NB06":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell17,
-                  };
-                  break;
-                case "V_NB12":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell18,
-                  };
-                  break;
-                case "V_SA":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell19,
-                  };
-                  break;
-                case "V_SB":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell20,
-                  };
-                  break;
-                case "V_r1_2":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell21,
-                  };
-                  break;
-                case "V_r1_3":
-                  ui.updateList[0].rowData.pq_cellstyle = {
-                    ...ui.updateList[0].rowData.pq_cellstyle,
-                    ...this.cell22,
-                  };
-                  break;
-                default:
-                  console.log(`Key ${key} is not recognized`);
-                  break;
-              }
-            });
-            // ui.updateList[i].rowData.pq_cellstyle = this.rowStyle2
-            // ui.updateList[i].rowData.userChanged = true;
-            // this.grid.refreshDataAndView();
-            // this.saveData();
+            ui.updateList[0].rowData.pq_cellstyle = {
+              ...ui.updateList[0].rowData.pq_cellstyle,
+            };
+            ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+              color: "white",
+            };
           }
+        }
         },
       };
       this.option_list.push(op);
@@ -901,7 +734,10 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         manual: { start: 13, end: 24 },
       },
     };
-
+    for (let i = 0; i < this.table_datas.length; i++) {
+      const rowData = this.table_datas[i];
+      this.loadAutoInputData(rowData, i);
+    }
     const mode = this.save.isManual() ? "manual" : "default";
     const tabType = cellIndexMap[tab] || cellIndexMap["default"];
     const { start, end } = tabType[mode];
@@ -917,5 +753,52 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.grid.refreshDataAndView();
+  }
+
+  private loadAutoInputData(rowData : any, indexTab : any){
+    for (let j = 0; j < rowData.length; j += 2) {
+      let currentCell = rowData[j];
+      if (j === 0 || j === 1) {
+        currentCell.pq_cellstyle = this.rowStyle2;
+        continue;
+      } else {
+        currentCell.pq_cellstyle = this.rowStyle;
+        var prevRow = rowData[j - 2];
+        const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
+        keys.forEach((key) => {
+          if (
+            JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
+          ) {
+            currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+            currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+            this.lstItemEdited.push(
+              indexTab + "-" + j + "-" + key
+            );
+          }
+        });
+      }
+    }
+    for (let j = 1; j < rowData.length; j += 2) {
+      let currentCell = rowData[j];
+      if (j === 0 || j === 1) {
+        currentCell.pq_cellstyle = this.rowStyle2;
+        continue;
+      } else {
+        currentCell.pq_cellstyle = this.rowStyle;
+        var prevRow = rowData[j - 2];
+        const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
+        keys.forEach((key) => {
+          if (
+            JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
+          ) {
+            currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+            currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+            this.lstItemEdited.push(
+              indexTab + "-" + j + "-" + key
+            );
+          }
+        });
+      }
+    }
   }
 }

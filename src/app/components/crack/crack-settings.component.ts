@@ -83,7 +83,7 @@ export class CrackSettingsComponent
   }
 
   ngOnInit() {
-    this.lstItemEdited = []
+    this.lstItemEdited = [];
     this.setTitle(this.save.isManual());
     this.table_datas = this.crack.getTableColumns();
     this.checkedRadioValue = this.menuService.getCheckedRadio();
@@ -194,43 +194,50 @@ export class CrackSettingsComponent
 
           // Object.assign(nextObj, currentObj);
           // Extract the current object to be copied
-          var currentObj = ui.updateList[0].newRow;
-          var col = Object.keys(ui.updateList[0].newRow)[0];
+          if (ui.source === "edit") {
+            var currentObj = ui.updateList[0].newRow;
+            var col = Object.keys(ui.updateList[0].newRow)[0];
 
-          // Get the starting index from which to update the array
-          let startIndex = ui.updateList[0].rowIndx + 1;
-          let sKey = this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
-          if(this.lstItemEdited.indexOf(sKey) === -1) { 
-            this.lstItemEdited.push(
-              sKey
-            );
-          }
-          
-          // Loop through each item in the array starting from startIndex and assign properties from currentObj
-          for (let i = startIndex;i < this.table_datas[this.idTab].length;i++) 
-          {
-            const item = this.table_datas[this.idTab][i];
-            if(item[col] === currentObj[col]){
-              item.pq_cellstyle = { ...item.pq_cellstyle };
-              item.pq_cellstyle[`${col}`] = { color: "gray" }
+            // Get the starting index from which to update the array
+            let startIndex = ui.updateList[0].rowIndx + 1;
+            let sKey = this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
+            if (this.lstItemEdited.indexOf(sKey) === -1) {
+              this.lstItemEdited.push(sKey);
             }
-            else
-            {
-              if (this.lstItemEdited.filter((x) => x === this.idTab + "-" + i + "-" + col).length > 0
-              ) {
-              
-                break;
+
+            // Loop through each item in the array starting from startIndex and assign properties from currentObj
+            for (
+              let i = startIndex;
+              i < this.table_datas[this.idTab].length;
+              i++
+            ) {
+              const item = this.table_datas[this.idTab][i];
+              if ((item[col] === null) || (item[col] === currentObj[col])) {
+                item.pq_cellstyle = { ...item.pq_cellstyle };
+                item.pq_cellstyle[`${col}`] = { color: "gray" };
+              } else {
+                if (
+                  this.lstItemEdited.filter(
+                    (x) => x === this.idTab + "-" + i + "-" + col
+                  ).length > 0
+                ) {
+                  break;
+                }
               }
+              // Merge currentObj properties into each item
+              Object.assign(this.table_datas[this.idTab][i], currentObj);
             }
-            // Merge currentObj properties into each item
-            Object.assign(this.table_datas[this.idTab][i], currentObj);
-          }
 
-          if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-            ui.updateList[0].rowData.pq_cellstyle = { ...ui.updateList[0].rowData.pq_cellstyle };
-            ui.updateList[0].rowData.pq_cellstyle[`${col}`] = { color: "white" }
+            if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+              ui.updateList[0].rowData.pq_cellstyle = {
+                ...ui.updateList[0].rowData.pq_cellstyle,
+              };
+              ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                color: "white",
+              };
+            }
           }
-        },
+        }
       };
       this.option_list.push(op);
     }
