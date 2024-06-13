@@ -148,8 +148,8 @@ export class InputBarsService {
   }
 
   private default(id: number): any {
-    const top = this.translate.instant("crack-settings.top");
-    const under = this.translate.instant("crack-settings.under");
+    const top = this.translate.instant("section-force-list.Top");
+    const under = this.translate.instant("section-force-list.Under");
     return {
       index: id,
       haunch_M: null,
