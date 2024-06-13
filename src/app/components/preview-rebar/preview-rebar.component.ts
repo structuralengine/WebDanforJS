@@ -24,6 +24,30 @@ export class PreviewRebarComponent implements OnInit {
   private calculatedPointHeaders: object[] = new Array();
   private table_datas: any[];
   public typeView: any
+  public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
+  public styleShaded1 = {
+    distance_edge: {...this.style} // todo: change to Distance from the outer edge of the semicircle（Rebar core）(mm)
+  }
+  public styleShaded2 = {
+    distance_top : {...this.style},
+    side_cover : {...this.style}
+  }
+  public styleShaded3 = {
+    haunch : {...this.style}
+  }
+
+  public prop = { edit: false, show: false }
+  public propShaded1 = {
+    rebar_dia: {...this.prop}
+  }
+  public propShaded2 = {
+    distance_top : {...this.prop},
+    side_cover : {...this.prop}
+  }
+  public propShaded3 = {
+    haunch : {...this.prop}
+  }
+
   @Input() rebar: any
   @ViewChild('calPointGrid') grid: SheetComponent;
   constructor(
@@ -52,7 +76,7 @@ export class PreviewRebarComponent implements OnInit {
       var axialRebarData = [];
       var stirrupData = [];
       var calPointListData = [];
-      this.typeView = this.rebar.typeView
+      this.typeView = member.shape
       console.log("typeview", this.typeView)
 
       const upperside = this.translate.instant("preview_rebar.upper_side");
@@ -60,89 +84,47 @@ export class PreviewRebarComponent implements OnInit {
       const lateral = this.translate.instant("preview_rebar.lateral_rebar");
 
       // new data
-      for (let i = 0; i < calPoint.rebar0.length; i++) {
-        let rebar = calPoint.rebar0[i];
-        let rebar_type = "";
-        switch (rebar.rebar_type) {
-          case 0: 
-            rebar_type = upperside;
-            break;
-          case 1: 
-            rebar_type = lowerside;
-            break;
-          case 2: 
-            rebar_type = upperside;
-            break;
-          case 3: 
-            rebar_type = lowerside;
-            break;
-          case 4: 
-            rebar_type = lateral;
-            break;
-          case 5: 
-            rebar_type = lateral;
-            break;
-          case 6: 
-            rebar_type = lateral;
-            break;
-          case 7: 
-            rebar_type = lowerside; // todo: change when have correct data
-            break;
+      if (calPoint.rebar0.length > 0)  {
+        for (let i = 0; i < calPoint.rebar0.length; i++) {
+          let rebar = calPoint.rebar0[i];
+          let rebar_type = "";
+          switch (rebar.rebar_type) {
+            case 0: 
+              rebar_type = upperside;
+              break;
+            case 1: 
+              rebar_type = lowerside;
+              break;
+            case 2: 
+              rebar_type = upperside;
+              break;
+            case 3: 
+              rebar_type = lowerside;
+              break;
+            case 4: 
+              rebar_type = lateral;
+              break;
+            case 5: 
+              rebar_type = lateral;
+              break;
+            case 6: 
+              rebar_type = lateral;
+              break;
+            case 7: 
+              rebar_type = lowerside; // todo: change when have correct data
+              break;
+          }
+          axialRebarData.push({
+            rebar_type: rebar_type,
+            rebar_dia: rebar.dia,
+            num: rebar.quantity,
+            distance_top: rebar.dist_top,
+            side_cover: rebar.dist_side
+          })
         }
-        axialRebarData.push({
-          rebar_type: rebar_type,
-          rebar_dia: rebar.dia,
-          num: rebar.quantity,
-          distance_top: rebar.dist_top,
-          side_cover: rebar.dist_side
-        })
       }
-      // //Upper Side Rebar
-      // // if (this.hasRebar(calPoint.rebar1)) {
-      //   const upperRebar = calPoint.rebar1;
-      //   axialRebarData.push({
-      //     rebar_type: this.translate.instant("preview_rebar.upper_side"),
-      //     rebar_dia: upperRebar.rebar_dia,
-      //     num: upperRebar.rebar_n,
-      //     distance_top: upperRebar.rebar_cover,
-      //     side_cover: upperRebar.rebar_ss
-      //   })
-      // // }
 
-      // // Lateral Rebar Data
-      // const lateralRebalTop = calPoint.sidebar1;
-      // const lateralRebalBottom = calPoint.sidebar2;
-      // for (let i = 1; i <= lateralRebalTop.side_n; i++) {
-      //   axialRebarData.push({
-      //     rebar_type: this.translate.instant("preview_rebar.lateral_rebar"),
-      //     rebar_dia: lateralRebalTop.side_dia,
-      //     num: 2,
-      //     distance_top: lateralRebalTop.side_cover * i,
-      //     side_cover: lateralRebalTop.side_ss
-      //   })
-      // }
-
-      // for (let i = 1; i <= lateralRebalBottom.side_n; i++) {
-      //   axialRebarData.push({
-      //     rebar_type: this.translate.instant("preview_rebar.lateral_rebar"),
-      //     rebar_dia: lateralRebalBottom.side_dia,
-      //     num: 2,
-      //     distance_top: calPoint.h - lateralRebalBottom.side_cover * i,
-      //     side_cover: lateralRebalBottom.side_ss
-      //   })
-      // }
-
-      // // Lower Side Rebar
-      // // if (this.hasRebar(calPoint.rebar2)) {
-      //   const lowerRebar = calPoint.rebar2;
-      //   axialRebarData.push({
-      //     rebar_type: this.translate.instant("preview_rebar.lower_side"),
-      //     rebar_dia: lowerRebar.rebar_dia,
-      //     num: lowerRebar.rebar_n,
-      //     distance_top: calPoint.h - lowerRebar.rebar_cover,
-      //     side_cover: lowerRebar.rebar_ss
-      //   })
-      // // }
+      
 
       // Stirrup Data
       const stirrup = calPoint.stirrup;
@@ -186,8 +168,38 @@ export class PreviewRebarComponent implements OnInit {
           }
         }
       }
-    }
+      axialRebarData.forEach((data: any)=> {
+        if (this.typeView === 5) {
+          if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+            data.pq_cellstyle = this.styleShaded2;
+            data.pq_cellprop = this.propShaded2;
+          } else if (data.rebar_type === lateral) {
+            data.pq_cellstyle = this.styleShaded1;
+            data.pq_cellprop = this.propShaded1;
+          } 
+        } else if (this.typeView === 6) {
+            if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+              data.pq_cellstyle = this.styleShaded1;
+              data.pq_cellprop = this.propShaded1;
+            } else if (data.rebar_type === lateral) {
+              data.pq_cellstyle = this.styleShaded2;
+              data.pq_cellprop = this.propShaded2;
+            } 
+        } 
+      })
 
+      calPointListData.forEach((data: any)=> {
+        if (this.typeView === 3 || 
+          this.typeView === 4 || 
+          this.typeView === 5 || 
+          this.typeView === 6
+        ) {
+          data.pq_cellstyle = this.styleShaded3;
+          data.pq_cellprop = this.propShaded3;
+        } 
+      })
+    }
+ 
     this.setAxialHeaders();
     this.setStirrupHeader();
     this.setCalculatedPointHeader();
@@ -300,76 +312,190 @@ export class PreviewRebarComponent implements OnInit {
     const rebar_type = this.translate.instant("preview_rebar.rebar_type");
     const rebar_dia = this.translate.instant("preview_rebar.rebar_dia");
     const number = this.translate.instant("preview_rebar.num");
+    const dist_edge = "Distance from the outer edge of the semicircle（Rebar core）(mm)";
+    const dist_perimeter = "Distance from the outer perimeter（Rebar core）(mm)";
+
     const distance_top = this.translate.instant("preview_rebar.dis_top");
     const side_cover = this.translate.instant("preview_rebar.side_cover");
-
+    
     const rebar_type_options = [upper_side, lower_side, lateral_rebar];
     const rebar_dia_options = [10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
 
-    this.axialHeaders.push(
-      {
-        title: rebar_type,
-        width: this.setColumnWidth(rebar_type), align: 'center',
-        dataIndx: 'rebar_type',
-        editable: false, sortable: false, nodrag: true, resizable: false,
-        render: function (ui) {
-          var cellData = ui.cellData;
-          var options = rebar_type_options;
-          var selectBoxHtml = '<select>';
-
-          options.forEach(function (option) {
-            var selected = (option === cellData) ? 'selected' : '';
-            selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
-          });
-          selectBoxHtml += '</select>';
-
-          return {
-            text: selectBoxHtml,
-            cls: 'pq-select-box'
-          }
+    if (this.typeView === 1 || this.typeView === 2) {
+      this.axialHeaders.push(
+        {
+          title: rebar_type,
+          width: this.setColumnWidth(rebar_type), align: 'center',
+          dataIndx: 'rebar_type',
+          editable: false, sortable: false, nodrag: true, resizable: false,
+          render: function (ui) {
+            var cellData = ui.cellData;
+            var options = rebar_type_options;
+            var selectBoxHtml = '<select>';
+  
+            options.forEach(function (option) {
+              var selected = (option === cellData) ? 'selected' : '';
+              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
+            });
+            selectBoxHtml += '</select>';
+  
+            return {
+              text: selectBoxHtml,
+              cls: 'pq-select-box'
+            }
+          },
         },
-      },
-      {
-        title: rebar_dia,
-        width: this.setColumnWidth(rebar_dia), align: 'center',
-        dataIndx: 'rebar_dia',
-        editable: false, sortable: false, nodrag: true, resizable: false,
-        render: function (ui) {
-          var cellData = ui.cellData;
-          var options = rebar_dia_options;
-          var selectBoxHtml = '<select>';
-
-          options.forEach(function (option) {
-            var selected = (option === cellData) ? 'selected' : '';
-            selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
-          });
-          selectBoxHtml += '</select>';
-
-          return {
-            text: selectBoxHtml,
-            cls: 'pq-select-box'
-          }
+        {
+          title: rebar_dia,
+          width: this.setColumnWidth(rebar_dia), align: 'center',
+          dataIndx: 'rebar_dia',
+          editable: false, sortable: false, nodrag: true, resizable: false,
+          render: function (ui) {
+            var cellData = ui.cellData;
+            var options = rebar_dia_options;
+            var selectBoxHtml = '<select>';
+  
+            options.forEach(function (option) {
+              var selected = (option === cellData) ? 'selected' : '';
+              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
+            });
+            selectBoxHtml += '</select>';
+  
+            return {
+              text: selectBoxHtml,
+              cls: 'pq-select-box'
+            }
+          },
         },
-      },
-      {
-        title: number,
-        width: 70, halign: 'center', align: 'right',
-        dataType: 'integer', dataIndx: 'num', format: "#.000",
-        editable: true, sortable: false, nodrag: true, resizable: false,
-      },
-      {
-        title: distance_top,
-        width: 120, halign: 'center', align: 'right',
-        dataType: 'integer', dataIndx: 'distance_top', format: "#.0",
-        editable: true, sortable: false, nodrag: true, resizable: false,
-      },
-      {
-        title: side_cover,
-        width: this.setColumnWidth(side_cover), halign: 'center', align: 'right',
-        dataType: 'integer', dataIndx: 'side_cover', format: "#.0",
-        editable: true, sortable: false, nodrag: true, resizable: false,
-      },
-    )
+        {
+          title: number,
+          width: 70, halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'num', format: "#.000",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+        {
+          title: distance_top,
+          width: 120, halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'distance_top', format: "#.0",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+        {
+          title: side_cover,
+          width: this.setColumnWidth(side_cover), halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'side_cover', format: "#.0",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+      )
+    } else if (this.typeView === 5 || this.typeView === 6) {
+      this.axialHeaders.push(
+        {
+          title: rebar_type,
+          width: this.setColumnWidth(rebar_type), align: 'center',
+          dataIndx: 'rebar_type',
+          editable: false, sortable: false, nodrag: true, resizable: false,
+          render: function (ui) {
+            var cellData = ui.cellData;
+            var options = rebar_type_options;
+            var selectBoxHtml = '<select>';
+  
+            options.forEach(function (option) {
+              var selected = (option === cellData) ? 'selected' : '';
+              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
+            });
+            selectBoxHtml += '</select>';
+  
+            return {
+              text: selectBoxHtml,
+              cls: 'pq-select-box'
+            }
+          },
+        },
+        {
+          title: rebar_dia,
+          width: this.setColumnWidth(rebar_dia), align: 'center',
+          dataIndx: 'rebar_dia',
+          editable: false, sortable: false, nodrag: true, resizable: false,
+          render: function (ui) {
+            var cellData = ui.cellData;
+            var options = rebar_dia_options;
+            var selectBoxHtml = '<select>';
+  
+            options.forEach(function (option) {
+              var selected = (option === cellData) ? 'selected' : '';
+              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
+            });
+            selectBoxHtml += '</select>';
+  
+            return {
+              text: selectBoxHtml,
+              cls: 'pq-select-box'
+            }
+          },
+        },
+        {
+          title: number,
+          width: 70, halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'num', format: "#.000",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+        {
+          title: dist_edge,
+          width: 120, halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'distance_edge', format: "#.0",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+        {
+          title: distance_top,
+          width: 120, halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'distance_top', format: "#.0",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+        {
+          title: side_cover,
+          width: this.setColumnWidth(side_cover), halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'side_cover', format: "#.0",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+      )
+    } else if (this.typeView === 3 || this.typeView === 4) {
+      this.axialHeaders.push(
+        {
+          title: rebar_dia,
+          width: this.setColumnWidth(rebar_dia), align: 'center',
+          dataIndx: 'rebar_dia',
+          editable: false, sortable: false, nodrag: true, resizable: false,
+          render: function (ui) {
+            var cellData = ui.cellData;
+            var options = rebar_dia_options;
+            var selectBoxHtml = '<select>';
+  
+            options.forEach(function (option) {
+              var selected = (option === cellData) ? 'selected' : '';
+              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
+            });
+            selectBoxHtml += '</select>';
+  
+            return {
+              text: selectBoxHtml,
+              cls: 'pq-select-box'
+            }
+          },
+        },
+        {
+          title: number,
+          width: 70, halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'num', format: "#.000",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+        {
+          title: dist_perimeter,
+          width: 120, halign: 'center', align: 'right',
+          dataType: 'integer', dataIndx: 'distance_edge', format: "#.0",
+          editable: true, sortable: false, nodrag: true, resizable: false,
+        },
+      )
+    }
+    
   }
 
   private setStirrupHeader(): void {
