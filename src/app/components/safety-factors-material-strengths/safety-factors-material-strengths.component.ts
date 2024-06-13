@@ -99,23 +99,23 @@ export class SafetyFactorsMaterialStrengthsComponent
     {id: "3", text: "全周鉄筋" },
   ]
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
-  public styleShaded1: any = {
-    V_rbv: { ...this.style },
-    T_rbt: { ...this.style }
-  }
+  // public styleShaded1: any = {
+  //   V_rbv: { ...this.style },
+  //   T_rbt: { ...this.style }
+  // }
   public styleEdit = { "color": "#FFFFFF" }
   public styleColor = { "color": "gray" }
-  public colorGray ={
-    M_rc: { ...this.styleColor },
-    M_rs: { ...this.styleColor }, 
-    M_rbs: { ...this.styleColor },
-    V_rc: { ...this.styleColor },
-    V_rs: { ...this.styleColor },
-    V_rbc: { ...this.styleColor },
-    V_rbs: { ...this.styleColor },
-    V_rbv: { ...this.style },
-    T_rbt: { ...this.style },
-  }
+  // public colorGray ={
+  //   M_rc: { ...this.styleColor },
+  //   M_rs: { ...this.styleColor }, 
+  //   M_rbs: { ...this.styleColor },
+  //   V_rc: { ...this.styleColor },
+  //   V_rs: { ...this.styleColor },
+  //   V_rbc: { ...this.styleColor },
+  //   V_rbs: { ...this.styleColor },
+  //   V_rbv: { ...this.style },
+  //   T_rbt: { ...this.style },
+  // }
   public styleNoEdit = { "pointer-events": "none", "color": "#999C9F" }
   public propEdit = { edit: true, }
   public propNoEdit = { edit: false, }
@@ -147,20 +147,9 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.checkedRadioValue = this.basic.get_specification2();
     this.setTitle();
     const safety = this.safety.getTableColumns();
-    console.log("tessttt" ,safety );
+  
     this.arrayAxis = this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
-    for(const key in  safety.safety_factor){
-      if (safety.safety_factor.hasOwnProperty(key)) {
-        const items = safety.safety_factor[key];
-        for (const item of items) {
-          if (item.isDefault) {
-            console.log(item);
-            item.pq_cellstyle = this.colorGray;
-            // action(item);
-          }
-        }
-      }
-    }
+    this.applyStylesToItems(safety.safety_factor);
     if(safety.axisforce_condition !== undefined){
       this.arrayAxisForce = {...safety.axisforce_condition}
       let arrayKey = Object.keys(this.arrayAxisForce)
@@ -201,13 +190,16 @@ export class SafetyFactorsMaterialStrengthsComponent
           M_rc: col.M_rc, M_rs: col.M_rs, M_rbs: col.M_rbs,
           V_rc: col.V_rc, V_rs: col.V_rs, V_rbc: col.V_rbc, V_rbs: col.V_rbs, V_rbv: col.V_rbv,
           T_rbt: col.T_rbt,
-          ri: col.ri, range: col.range
+          ri: col.ri, range: col.range,
+          pq_cellstyle: col.pq_cellstyle,
+          isDefault: col.isDefault
         });
         steel.push({
           id: col.id, title: col.title,
           S_rs: col.S_rs, S_rb: col.S_rb
         });
       }
+      console.log("bar",bar);
       this.table1_datas.push(bar);
       this.table4_datas.push(steel);
 
@@ -568,7 +560,42 @@ export class SafetyFactorsMaterialStrengthsComponent
     // })
     this.cdref.detectChanges();
  }
- 
+ private applyStylesToItems(safetyFactor: any) {
+  for (const key in safetyFactor) {
+    if (safetyFactor.hasOwnProperty(key)) {
+      const items = safetyFactor[key];
+      for (const item of items) {
+        if (item.isDefault) {
+          console.log(item);
+
+          // Khởi tạo pq_cellstyle nếu chưa tồn tại
+          if (!item.pq_cellstyle) {
+            item.pq_cellstyle = {};
+          }
+
+          // Áp dụng styleColor cho các thuộc tính có giá trị không phải là null và không phải là title
+          for (const prop in item) {
+            if (item.hasOwnProperty(prop) && item[prop] !== null && prop !== 'title') {
+              item.pq_cellstyle[prop] = { ...this.styleColor };
+            }
+          }
+
+          // Áp dụng style đặc biệt cho các thuộc tính
+          if (item.V_rbv === null) {
+            item.pq_cellstyle.V_rbv = { ...this.style };
+          }
+          if (item.T_rbt === null) {
+            item.pq_cellstyle.T_rbt = { ...this.style };
+          }
+
+          // Bạn có thể thực hiện các hành động khác trên item nếu cần
+          // action(item);
+        }
+      }
+      return items
+    }
+  }
+}
   private setTitle(): void {
     this.columnHeaders1 = [
       
