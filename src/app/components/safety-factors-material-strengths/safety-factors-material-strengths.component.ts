@@ -577,7 +577,7 @@ export class SafetyFactorsMaterialStrengthsComponent
  }
  private applyStylesToItems(safetyFactor: any) {
  
-  // Biến để chứa tất cả các items sau khi đã xử lý
+  // 
   let allProcessedItems = [];
 
   for (const key in safetyFactor) {
@@ -586,19 +586,19 @@ export class SafetyFactorsMaterialStrengthsComponent
       let previousItem: any = null;
 
       for (const item of items) {
-        // Kiểm tra và khởi tạo `pq_cellstyle` nếu chưa tồn tại
+        // 
         if (!item.pq_cellstyle) {
           item.pq_cellstyle = {};
         }
 
-        // Áp dụng kiểu dáng cho các thuộc tính của item ngoại trừ 'title'
+        // 
         for (const prop in item) {
           if (item.hasOwnProperty(prop) && item[prop] !== null && prop !== 'title' && prop !== 'range') {
             item.pq_cellstyle[prop] = { ...this.styleColor };
           }
         }
 
-        // Áp dụng kiểu dáng đặc biệt nếu thuộc tính là null
+        // 
         if (item.V_rbv === null) {
           item.pq_cellstyle.V_rbv = { ...this.style };
         }
@@ -606,14 +606,14 @@ export class SafetyFactorsMaterialStrengthsComponent
           item.pq_cellstyle.T_rbt = { ...this.style };
         }
 
-        // Kiểm tra và áp dụng `this.styleColorWhite` nếu giá trị item sau khác item trước
+        // 
         if (previousItem) {
           for (const prop in item) {
             if (item.hasOwnProperty(prop) && prop !== 'title'&& prop !== 'range') {
               if (item[prop] !== previousItem[prop]) {
                 item.pq_cellstyle[prop] = { ...this.styleColorWhite };
               }
-              // Đảm bảo không ghi đè kiểu dáng đặc biệt nếu giá trị null
+              // 
               if (item[prop] === null && prop === 'V_rbv') {
                 item.pq_cellstyle.V_rbv = { ...this.style };
               }
@@ -624,16 +624,16 @@ export class SafetyFactorsMaterialStrengthsComponent
           }
         }
 
-        // Cập nhật previousItem cho lần lặp tiếp theo
+        // 
         previousItem = item;
       }
 
-      // Thêm các items đã xử lý vào mảng chứa kết quả cuối cùng
+      //
       allProcessedItems = allProcessedItems.concat(items);
     }
   }
 
-  // Trả về tất cả các items sau khi đã xử lý
+  // 
   return allProcessedItems;
 }
   private setTitle(): void {
