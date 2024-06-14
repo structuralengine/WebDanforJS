@@ -25,10 +25,12 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   public service_life: number;
 
   @ViewChild("grid") grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+  hasScrollbar: boolean = false;
   public options: pq.gridT.options;
   public activeTab: string = "for_b";
 
-  // データグリッドの設定変数
+  // �タグリッ�の設定変数
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = new Array();
   public idTab: number;
@@ -39,7 +41,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   public table_datas: any[];
-  // タブのヘッダ名
+  // タブ�ヘッダ�
   public groupe_name: string[];
   public textStyle = { color: "gray" };
   public textStyle2 = { color: "white" };
@@ -179,7 +181,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setTitle(this.save.isManual());
 
     this.table_datas = this.fatigues.getTableColumns();
-    // グリッドの設定
+    // グリッ�の設�
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
       const rowData = this.table_datas[i];
@@ -309,7 +311,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[0];
     this.idTab = 0;
 
-    // タブのタイトルとなる
+    // タブ�タイトルとな�
     this.groupe_name = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
       this.groupe_name.push(this.fatigues.getGroupeName(i));
@@ -318,12 +320,19 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.activeButtons(0);
+    this.checkForScrollbar();
     this.setActiveTab(this.activeTab);
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     if (isManual) {
-      // 断面力手入力モードの場合
+      // 断面力手入力モード�場�
       this.columnHeaders = [
         {
           title: "",
@@ -370,7 +379,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       ];
     }
 
-    // 共通する項目
+    // 共通する雮
     this.columnHeaders.push(
       {
         title: this.translate.instant("fatigues.p_name"),
@@ -524,8 +533,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
             nodrag: true,
           },
 
-          // Hidden when finish WebDan の SRC構造の対応 #27
-          // 戻す場合は303行目以降も対応の事
+          // Hidden when finish WebDan の SRC構�の対�#27
+          // 戻す�合�303行目以降も対応��
           // {
           //   title: this.translate.instant("fatigues.s_grade"),
           //   align: 'center', dataType: 'string', dataIndx: 'M_Class', sortable: false, width: 50, nodrag: true,
@@ -688,7 +697,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  // 表の高さを計算する
+  // 表の高さを計算す�
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
     containerHeight -= 230;
@@ -703,7 +712,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.refreshDataAndView();
   }
 
-  // アクティブになっているボタンを全て非アクティブにする
+  // アクヂ�ブになってあ�ボタンを�て非アクヂ�ブにする
   private activeButtons(id: number) {
     for (let i = 0; i <= this.table_datas.length; i++) {
       const data = document.getElementById("fig" + i);
@@ -722,8 +731,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let FIXED_CELLS_COUNT = this.save.isManual() ? 3 : 4;
 
-    // SRC対応用にfor_bのendから2列引いた
-    // SRC再表示後はendに2列分足すこと。
+    // SRC対応用にfor_bのendから2列引い�
+    // SRC再表示後�endに2列�足すこと�
     const cellIndexMap = {
       for_b: {
         default: { start: 5, end: 13 },

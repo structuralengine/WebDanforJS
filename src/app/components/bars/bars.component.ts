@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, HostListener,ElementRef } from '@angular/core';
 import { InputBarsService } from './bars.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import { SaveDataService } from 'src/app/providers/save-data.service';
@@ -19,9 +19,10 @@ import { Subscription } from 'rxjs';
 export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('grid') grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
   public options: pq.gridT.options;
   public activeTab: string = 'rebar_ax';
-
+  hasScrollbar: boolean = false;
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
   private beamHeaders: object[] = new Array();
@@ -274,15 +275,23 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.groupe_name.push(this.bars.getGroupeName(i));
     }
   }
+ 
 
   ngAfterViewInit() {
+    this.checkForScrollbar();
     this.activeButtons(0);
     this.setActiveTab(this.activeTab);
     this.refreshSubscription = this.bars.refreshShowHidden$.subscribe(() => {
       this.handleShowHiddenCol()
     })
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     this.beamHeaders = [];
     if (isManual) {

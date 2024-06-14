@@ -25,15 +25,17 @@ export class CrackSettingsComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
   @ViewChild("grid") grid: SheetComponent;
-  public options: pq.gridT.options;
 
-  // データグリッドの設定変数
+  public options: pq.gridT.options;
+  hasScrollbar: boolean = false;
+
+  // �タグリッ�の設定変数
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = new Array();
 
   public table_datas: any[];
   public idTab: number;
-  // タブのヘッダ名
+  // タブ�ヘッダ�
   public groupe_name: string[];
   public refreshSubscription: Subscription;
 
@@ -77,7 +79,7 @@ export class CrackSettingsComponent
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(
       (value) => {
         this.checkedRadioValue = value;
-        // Thực hiện các hành động cần thiết sau khi nhận giá trị mới
+        // Thực hiện các h�nh động cần thiết sau khi nhận giá tr�mới
       }
     );
   }
@@ -87,7 +89,7 @@ export class CrackSettingsComponent
     this.setTitle(this.save.isManual());
     this.table_datas = this.crack.getTableColumns();
     this.checkedRadioValue = this.menuService.getCheckedRadio();
-    // グリッドの設定
+    // グリッ�の設�
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
       const rowData = this.table_datas[i];
@@ -244,7 +246,7 @@ export class CrackSettingsComponent
     this.options = this.option_list[0];
     this.idTab = 0;
 
-    // タブのタイトルとなる
+    // タブ�タイトルとな�
     this.groupe_name = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
       this.groupe_name.push(this.crack.getGroupeName(i));
@@ -252,15 +254,23 @@ export class CrackSettingsComponent
   }
 
   ngAfterViewInit() {
+    this.checkForScrollbar();
+
     this.activeButtons(0);
     this.refreshSubscription = this.crack.refreshTitle$.subscribe(() => {
       this.changeTitle();
     });
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     if (isManual) {
-      // 断面力手入力モードの場合
+      // 断面力手入力モード�場�
       this.columnHeaders = [
         {
           title: "",
@@ -307,7 +317,7 @@ export class CrackSettingsComponent
       ];
     }
 
-    // 共通する項目
+    // 共通する雮
     this.columnHeaders.push(
       {
         title: this.translate.instant("crack-settings.p_name"),
@@ -432,12 +442,12 @@ export class CrackSettingsComponent
       }
     );
 
-    // 鉄道運輸機構の場合
+    // 鉁�運輸機構�場�
     const speci1 = this.basic.get_specification1();
     const speci2 = this.basic.get_specification2();
-    //( 鉄道    &&  運輸機構 ) or フィリピン の場合
+    //( 鉁�    &&  運輸機�) or フィリピン の場�
     if ((speci1 == 0 && speci2 === 1) || speci1 == 1) {
-      // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
+      // 縁応力度が制限値以�場合でも�び割れ幂�計算するフラグ
       this.columnHeaders.push({
         title: this.translate.instant("crack-settings.JRTT05"),
         align: "center",
@@ -488,7 +498,7 @@ export class CrackSettingsComponent
     this.crack.setTableColumns(a);
   }
 
-  // 表の高さを計算する
+  // 表の高さを計算す�
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
     containerHeight -= 230;
@@ -510,7 +520,7 @@ export class CrackSettingsComponent
     this.grid.options = this.options;
     this.grid.refreshCM();
   }
-  // アクティブになっているボタンを全て非アクティブにする
+  // アクヂ�ブになってあ�ボタンを�て非アクヂ�ブにする
   private activeButtons(id: number) {
     for (let i = 0; i <= this.table_datas.length; i++) {
       const data = document.getElementById("crk" + i);
