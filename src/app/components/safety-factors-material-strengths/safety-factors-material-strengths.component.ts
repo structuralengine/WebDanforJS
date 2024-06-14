@@ -576,8 +576,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.cdref.detectChanges();
  }
  private applyStylesToItems(safetyFactor: any) {
-  console.log("safety", safetyFactor);
-
+ 
   // Biến để chứa tất cả các items sau khi đã xử lý
   let allProcessedItems = [];
 
@@ -610,8 +609,17 @@ export class SafetyFactorsMaterialStrengthsComponent
         // Kiểm tra và áp dụng `this.styleColorWhite` nếu giá trị item sau khác item trước
         if (previousItem) {
           for (const prop in item) {
-            if (item.hasOwnProperty(prop) && prop !== 'title' && item[prop] !== previousItem[prop]) {
-              item.pq_cellstyle[prop] = { ...this.styleColorWhite };
+            if (item.hasOwnProperty(prop) && prop !== 'title') {
+              if (item[prop] !== previousItem[prop]) {
+                item.pq_cellstyle[prop] = { ...this.styleColorWhite };
+              }
+              // Đảm bảo không ghi đè kiểu dáng đặc biệt nếu giá trị null
+              if (item[prop] === null && prop === 'V_rbv') {
+                item.pq_cellstyle.V_rbv = { ...this.style };
+              }
+              if (item[prop] === null && prop === 'T_rbt') {
+                item.pq_cellstyle.T_rbt = { ...this.style };
+              }
             }
           }
         }
