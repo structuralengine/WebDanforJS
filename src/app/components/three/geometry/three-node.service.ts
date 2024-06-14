@@ -148,7 +148,8 @@ export class ThreeNodeService {
       mesh.rotation.y = 0.5 * Math.PI + Math.atan2(length, 0);
     }
     const div = document.createElement("div");
-    div.className = "label";
+    div.className = "label_theerjs";
+    div.id = "labelId";
     div.textContent = `${title}`;
     switch (style) {
       case 0:
@@ -264,12 +265,16 @@ export class ThreeNodeService {
         z: 0
       }
     }
-
-    this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(t * this.scale), true, 6, 4, 1);
+    if(h !== t){
+      this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(t * this.scale), true, 6, 4, 1);
+    }    
     this.drawLineDim(jsonData["1"], jsonData["4"], 0, Math.round(h * this.scale), true, 8, 1, 4);
-
+    
     this.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 1, 4);
-    this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 3, 0, 9);
+    if(b != bt){
+      this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 3, 0, 9);
+    }
+    
     console.log("jsondata", jsonData)
 
     // dimenstions for rebar_type = 0
@@ -285,7 +290,7 @@ export class ThreeNodeService {
       const dist_top = rebar_type_0.dist_top / this.scale;
       const dist_side = rebar_type_0.dist_side / this.scale;
       const quantity = rebar_type_0.quantity;
-      const interval = rebar_type_0.interval ? rebar_type_0.interval / this.scale : (b - 2 * dist_side) / quantity - 1;
+      const interval =   (b - 2 * dist_side) / (quantity - 1);
       jsonData["rb_1"] = {
         x: -(x_start - n - dist_side),
         y: y_start - dist_top,
@@ -304,7 +309,9 @@ export class ThreeNodeService {
 
      
       this.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
+    if(quantity>1){
       this.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
+    }
     }
 
     // dimenstions for rebar_type = 1
@@ -321,7 +328,7 @@ export class ThreeNodeService {
         const dist_top2 = rebar_type_1.dist_top / this.scale;
         const dist_side2 = rebar_type_1.dist_side / this.scale;
         const quantity2 = rebar_type_1.quantity;
-        const interval2 = rebar_type_1.interval ? rebar_type_1.interval / this.scale : (b - 2 * dist_side2) / quantity2 - 1;
+        const interval2 = (b - 2 * dist_side2) / (quantity2 - 1);
         jsonData["rb_7"] = {
           x: -(x_start - n - dist_side2),
           y: -(y_start),
@@ -333,8 +340,10 @@ export class ThreeNodeService {
           z: 0
         }
         this.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);
-        this.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
-    }
+        if(quantity2>1){
+          this.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
+        }
+      }
 
     // dimenstions for rebar_type = 0 & 1
     const arr_gap01 = this.getArrGap(1,h)
@@ -390,8 +399,14 @@ export class ThreeNodeService {
     const arr_gap =[]
     const arr_dis_top=[]
     this.dataRebar.selectedCalPoint.rebar0.map((data) => {
-      if (data.rebar_type === 0 || data.rebar_type === type) {
-        arr_dis_top.push(data.dist_top / this.scale)
+      if(type ===1){
+        if (data.rebar_type === 0 || data.rebar_type === type) {
+          arr_dis_top.push(data.dist_top / this.scale)
+        }
+      }else{
+        if ( data.rebar_type === type) {
+          arr_dis_top.push(data.dist_top / this.scale)
+        }
       }
     })
     arr_dis_top.sort((a,b)=>a-b)
@@ -418,34 +433,32 @@ export class ThreeNodeService {
         dataPoint.push(data)
       }
     })
-    this.geometry = new THREE.SphereBufferGeometry(1)
+    
     dataPoint.map((data,index)=>{
+      this.geometry = new THREE.SphereBufferGeometry(data.dia/2/this.scale)
       let interval=0
       for (let i = 1; i <= data.quantity;i++){
         const mesh = new THREE.Mesh(this.geometry,
           new THREE.MeshBasicMaterial({ color: color }));
         mesh.name = 'node' + index + i;
-        mesh.position.x = bt / 2- n - data.dist_side / this.scale - interval / this.scale;
+        mesh.position.x = -(bt / 2- n - data.dist_side / this.scale - interval);
         mesh.position.y = h / 2 - data.dist_top / this.scale;
         mesh.position.z = 0;
         this.nodeList.children.push(mesh);
-        interval += data.interval
+        interval += (b - 2 * data.dist_side / this.scale) / (data.quantity - 1);
       }
     })
   }
   createDemoRectangle() {
     var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
     let memH = member['H'];
-    let memBt = member['Bt'];
     let memB = member['B'];
-    let memt = member['t'];
-    var arr = [memH, memBt, memB, memt];
+    var arr = [memH, memB];
     let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
     });
     this.scale = max_val / 88;
-    this.createRectangle(memH / this.scale, memB / this.scale, 0xb9b9b9)
-    //this.createLineRectangle(memH / this.scale, memB / this.scale, 20 / this.scale, 0x333D46)
+    this.createRectangle(memB / this.scale, memH / this.scale, 0xb9b9b9) 
     this.scene.render()
   }
   createRectangle(b: any, h: any, color: any) {
@@ -453,6 +466,11 @@ export class ThreeNodeService {
     const materialPlane = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
     const plane = new THREE.Mesh(geometry, materialPlane);
     plane.position.set(0, 0, 0);
+    this.convertToCoordinatesTShape(b, h, b, h);
+    this.drawPointTShape(b, h, b, h,0)
+    this.drawPointTShape(b, h, b, h, 4)
+    this.drawPointTShape(b, h, b, h, 1)
+
     this.scene.add(plane);
   }
   createLineRectangle(b: any, h: any, ranger: any, color: any,) {

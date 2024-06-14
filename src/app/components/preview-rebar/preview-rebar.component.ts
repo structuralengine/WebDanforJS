@@ -7,6 +7,8 @@ import { create } from 'domain';
 import { InputMembersService } from '../members/members.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import { ViewChild } from '@angular/core';
+import { ThreeNodeService } from '../three/geometry/three-node.service';
+import { SceneService } from '../three/scene.service';
 
 @Component({
   selector: 'app-preview-rebar',
@@ -22,7 +24,7 @@ export class PreviewRebarComponent implements OnInit {
   private axialHeaders: object[] = new Array();
   private stirrupHeaders: object[] = new Array();
   private calculatedPointHeaders: object[] = new Array();
-  private table_datas: any[];
+  private table_datas_axial: any[];
   public typeView: any
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
   public styleShaded1 = {
@@ -54,6 +56,8 @@ export class PreviewRebarComponent implements OnInit {
     public bars: InputBarsService,
     private translate: TranslateService,
     private members: InputMembersService,
+    private threeNode: ThreeNodeService,
+    private scene: SceneService,
   ) { }
 
   private hasRebar(obj: any): boolean {
@@ -72,7 +76,7 @@ export class PreviewRebarComponent implements OnInit {
       const member = this.members.getData(calPoint.m_no)
       console.log('member', member)
       console.log('calPoint', calPoint)
-      
+      this.table_datas_axial = new Array();
       var axialRebarData = [];
       var stirrupData = [];
       var calPointListData = [];
@@ -119,12 +123,13 @@ export class PreviewRebarComponent implements OnInit {
             rebar_dia: rebar.dia,
             num: rebar.quantity,
             distance_top: rebar.dist_top,
-            side_cover: rebar.dist_side
-          })
+            side_cover: rebar.dist_side,
+            interval: rebar.interval
+          })        
         }
       }
 
-      
+      this.table_datas_axial.push(axialRebarData);
 
       // Stirrup Data
       const stirrup = calPoint.stirrup;
@@ -221,8 +226,66 @@ export class PreviewRebarComponent implements OnInit {
       },
       colModel: this.axialHeaders,
       dataModel: { data: axialRebarData },
+      change: (event, ui) => {
+        for (const property of ui.updateList) {
+          for (const key of Object.keys(property.newRow)) {
+            const old = property.oldRow[key];
+            if (property.newRow[key] == null) {
+              continue; // 削除した場合 何もしない
+            }
+            if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
+              // 鉄筋径の規格以外は入力させない
+              const value0 = this.bars.matchBarSize(property.newRow[key]);
+              const j = property.rowIndx;
+              if (value0 === null) {
+                this.table_datas_axial[j][key] = old;
+              }
+            }
+          }         
+          
+          let table_data_bar = this.rebar.table_data
+          let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
+          if(indexBar !== -1){
+            console.log(this.table_datas_axial);
+            let newRebar0= this.setRebar0(this.table_datas_axial)
+            table_data_bar[indexBar].rebar0=newRebar0          
+            this.bars.setTableColumns(table_data_bar)  
+            this.rebar.selectedCalPoint.rebar0 = newRebar0;
+          }
+          // this.bars.setTableColumns(this.table_datas_axial)      
+          this.threeNode.dataRebar = this.rebar  
+          this.removeScene();
+          this.scene.render();
+          switch(this.typeView){
+            case 1: {
+              this.threeNode.createDemoRectangle();
+              break;
+            }
+            case 2: {
+              this.threeNode.createDemoTShape();
+              break;
+            }
+            case 3: {
+              this.threeNode.createDemoCircleRing();
+              break;
+            }
+            case 4: {
+              this.threeNode.createDemoCircleRing();
+              break;
+            }
+            case 5: {
+              this.threeNode.createDemoOval();
+              break;
+            }
+            case 6: {
+              this.threeNode.createDemoOval();
+              break;
+            }
+          }   
+        }
+      }
     }
-
+    
     const stirrupOption = {
       width: 'flex',
       maxWidth: 290,
@@ -267,7 +330,60 @@ export class PreviewRebarComponent implements OnInit {
     this.stirrupOptions = stirrupOption;
     this.calculatedPointOptions = calculatedPointOption;
   }
+  private setRebar0(table_data){
+    const upperside = this.translate.instant("preview_rebar.upper_side");
+    const lowerside = this.translate.instant("preview_rebar.lower_side");
+    const lateral = this.translate.instant("preview_rebar.lateral_rebar");
+    let dataNew= new Array();
+    table_data[0].map((data)=>{
+      const b = {rebar_type: 0,
+                  dia: 0,
+                  quantity: 0,
+                  dist_top: 0,
+                  dist_side: 0,
+                  interval:0
+                }; 
 
+      switch (data.rebar_type) {
+        case upperside: 
+          if(this.typeView ===  1 || this.typeView === 2 || this.typeView === 5)
+            b.rebar_type = 0;
+          else if(this.typeView === 6){
+            b.rebar_type = 2;
+          }
+          break;
+        case lowerside: 
+          if(this.typeView ===  1 || this.typeView === 2 || this.typeView === 5)
+            b.rebar_type = 1;
+          else if(this.typeView === 6){
+            b.rebar_type = 3;
+          }
+          break;
+        case lateral: 
+          if(this.typeView ===  1 || this.typeView === 2)
+            b.rebar_type = 4;
+          else if(this.typeView === 5){
+            b.rebar_type = 5;
+          }
+          else if(this.typeView === 6){
+            b.rebar_type = 6;
+          }
+          break; 
+        default:
+          b.rebar_type = 7;
+          break     
+      }
+          b.dist_top= data.distance_top          
+          b.dia= data.rebar_dia
+          b.quantity= data.num
+          b.dist_side= data.side_cover
+          b.interval=data.interval
+
+          dataNew.push(b)
+    })
+
+    return dataNew
+  }
   private clearFocus(calPointListData : any) {
     calPointListData.forEach(row => {
       row.pq_rowcls = ""; 
@@ -614,5 +730,30 @@ export class PreviewRebarComponent implements OnInit {
 
   private back(): void {
     this.bars.is_review = !this.bars.is_review;
+  }
+  public removeScene() {
+    let index = []
+    if (this.scene.scene.children.length > 0) {
+      for (let i = 0; i < this.scene.scene.children.length; i++) {
+        let name = this.scene.scene.children[i].name;
+        let type = this.scene.scene.children[i].type;
+        if (type === "Mesh" || type === "Line" || name === "node") {
+          index.push(i)
+        }
+        if (type === "Object3D") {
+          this.scene.scene.children[i].children = []
+        }
+      }
+      index.sort((a, b) => b - a)
+      index.forEach(index => {
+        if (index >= 0 && index < this.scene.scene.children.length) {
+          this.scene.scene.children.splice(index, 1)
+        }
+      })
+
+    }
+    console.log("sence", this.scene.scene.children)
+    let toRemove: any = Array.from(document.getElementsByClassName("label_theerjs"));
+    toRemove.map((e)=> e.remove());    
   }
 }

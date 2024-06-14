@@ -232,7 +232,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               this.rebar = {
                 rebarList: this.bars.bar_list,
                 selectedCalPoint: data,
-                typeView: member.shape
+                typeView: member.shape,
+                table_data: this.table_datas[i]
               }
               this.threeNode.memNo = m_no;
               this.threeNode.dataNode = data;
