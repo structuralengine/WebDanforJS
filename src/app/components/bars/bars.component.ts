@@ -196,10 +196,34 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
         },
         change: (evt, ui) => {
+          let checkDiameter : any = false;
+          for (const property of ui.updateList) {
+            for (const key of Object.keys(property.newRow)) {
+              const old = property.oldRow[key];
+              if (property.newRow[key] == null) {
+                continue; // 削除した場合 何もしない
+              }
+              if (
+                key === "rebar_dia" ||
+                key === "side_dia" ||
+                key === "stirrup_dia"
+              ) {
+                // 鉄筋径の規格以外は入力させない
+                const value0 = this.bars.matchBarSize(property.newRow[key]);
+                const j = property.rowIndx;
+                checkDiameter = false;
+                if (value0 === null) {
+                  checkDiameter = true;
+                  this.table_datas[i][j][key] = old;
+                }
+              }
+            }
+          }
+
           // var currentObj = ui.updateList[0].newRow;
           // let nextObj = this.table_datas[this.idTab][ui.updateList[0].rowIndx + 2];
           // Object.assign(nextObj,currentObj);
-          if (ui.source === "edit") {
+          if (ui.source === "edit" && checkDiameter === false) {
           var currentObj = ui.updateList[0].newRow;
           var col = Object.keys(ui.updateList[0].newRow)[0];
           
@@ -236,26 +260,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             };
           }
 
-          for (const property of ui.updateList) {
-            for (const key of Object.keys(property.newRow)) {
-              const old = property.oldRow[key];
-              if (property.newRow[key] == null) {
-                continue; // 削除した場合 何もしない
-              }
-              if (
-                key === "rebar_dia" ||
-                key === "side_dia" ||
-                key === "stirrup_dia"
-              ) {
-                // 鉄筋径の規格以外は入力させない
-                const value0 = this.bars.matchBarSize(property.newRow[key]);
-                const j = property.rowIndx;
-                if (value0 === null) {
-                  this.table_datas[i][j][key] = old;
-                }
-              }
-            }
-          }
+          
         }
       }
       };
