@@ -4,6 +4,7 @@ import {
   OnDestroy,
   ViewChild,
   AfterViewInit,
+  ElementRef,
 } from "@angular/core";
 import { InputFatiguesService } from "./fatigues.service";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
@@ -30,7 +31,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   public options: pq.gridT.options;
   public activeTab: string = "for_b";
 
-  // �タグリッ�の設定変数
+  // �タグリッ�の設定変数
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = new Array();
   public idTab: number;
@@ -41,7 +42,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   ];
 
   public table_datas: any[];
-  // タブ�ヘッダ�
+  // タブ�ヘッダ�
   public groupe_name: string[];
   public textStyle = { color: "gray" };
   public textStyle2 = { color: "white" };
@@ -94,73 +95,6 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     V_r1_3: { ...this.textStyle2 },
   };
   //
-  public cell1 = {
-    M_A: { ...this.textStyle2 },
-  };
-  public cell2 = {
-    M_B: { ...this.textStyle2 },
-  };
-  public cell3 = {
-    M_Class: { ...this.textStyle2 },
-  };
-  public cell4 = {
-    M_NA06: { ...this.textStyle2 },
-  };
-  public cell5 = {
-    M_NB06: { ...this.textStyle2 },
-  };
-  public cell6 = {
-    M_NA12: { ...this.textStyle2 },
-  };
-  public cell7 = {
-    M_NB12: { ...this.textStyle2 },
-  };
-  public cell8 = {
-    M_SA: { ...this.textStyle2 },
-  };
-  public cell9 = {
-    M_SB: { ...this.textStyle2 },
-  };
-  public cell10 = {
-    M_r1_1: { ...this.textStyle2 },
-  };
-  public cell11 = {
-    M_r1_3: { ...this.textStyle2 },
-  };
-  public cell12 = {
-    M_weld: { ...this.textStyle2 },
-  };
-  public cell13 = {
-    V_A: { ...this.textStyle2 },
-  };
-  public cell14 = {
-    V_B: { ...this.textStyle2 },
-  };
-  public cell15 = {
-    V_NA06: { ...this.textStyle2 },
-  };
-  public cell16 = {
-    V_NA12: { ...this.textStyle2 },
-  };
-  public cell17 = {
-    V_NB06: { ...this.textStyle2 },
-  };
-  public cell18 = {
-    V_NB12: { ...this.textStyle2 },
-  };
-  public cell19 = {
-    V_SA: { ...this.textStyle2 },
-  };
-  public cell20 = {
-    V_SB: { ...this.textStyle2 },
-  };
-  public cell21 = {
-    V_r1_2: { ...this.textStyle2 },
-  };
-  public cell22 = {
-    V_r1_3: { ...this.textStyle2 },
-  };
-  //
   constructor(
     private fatigues: InputFatiguesService,
     private save: SaveDataService,
@@ -181,7 +115,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setTitle(this.save.isManual());
 
     this.table_datas = this.fatigues.getTableColumns();
-    // グリッ�の設�
+    // グリッ�の設�
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
       const rowData = this.table_datas[i];
@@ -311,7 +245,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[0];
     this.idTab = 0;
 
-    // タブ�タイトルとな�
+    // タブ�タイトルとな�
     this.groupe_name = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
       this.groupe_name.push(this.fatigues.getGroupeName(i));
@@ -332,7 +266,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   private setTitle(isManual: boolean): void {
     if (isManual) {
-      // 断面力手入力モード�場�
+      // 断面力手入力モード�場�
       this.columnHeaders = [
         {
           title: "",
@@ -533,8 +467,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
             nodrag: true,
           },
 
-          // Hidden when finish WebDan の SRC構�の対�#27
-          // 戻す�合�303行目以降も対応��
+          // Hidden when finish WebDan の SRC構�の対�#27
+          // 戻す�合�303行目以降も対応��
           // {
           //   title: this.translate.instant("fatigues.s_grade"),
           //   align: 'center', dataType: 'string', dataIndx: 'M_Class', sortable: false, width: 50, nodrag: true,
@@ -697,7 +631,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  // 表の高さを計算す�
+  // 表の高さを計算す�
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
     containerHeight -= 230;
@@ -712,7 +646,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.refreshDataAndView();
   }
 
-  // アクヂ�ブになってあ�ボタンを�て非アクヂ�ブにする
+  // アクヂ�ブになってあ�ボタンを�て非アクヂ�ブにする
   private activeButtons(id: number) {
     for (let i = 0; i <= this.table_datas.length; i++) {
       const data = document.getElementById("fig" + i);
@@ -731,8 +665,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
     let FIXED_CELLS_COUNT = this.save.isManual() ? 3 : 4;
 
-    // SRC対応用にfor_bのendから2列引い�
-    // SRC再表示後�endに2列�足すこと�
+    // SRC対応用にfor_bのendから2列引い�
+    // SRC再表示後�endに2列�足すこと�
     const cellIndexMap = {
       for_b: {
         default: { start: 5, end: 13 },
