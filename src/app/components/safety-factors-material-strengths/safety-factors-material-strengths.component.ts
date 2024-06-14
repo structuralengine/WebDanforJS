@@ -192,14 +192,14 @@ export class SafetyFactorsMaterialStrengthsComponent
           T_rbt: col.T_rbt,
           ri: col.ri, range: col.range,
           pq_cellstyle: col.pq_cellstyle,
-          isDefault: col.isDefault
+          isDefault: col.isDefault,
+          NoCalc:col.NoCalc,
         });
         steel.push({
           id: col.id, title: col.title,
           S_rs: col.S_rs, S_rb: col.S_rb
         });
       }
-      console.log("bar",bar);
       this.table1_datas.push(bar);
       this.table4_datas.push(steel);
 
@@ -565,32 +565,24 @@ export class SafetyFactorsMaterialStrengthsComponent
     if (safetyFactor.hasOwnProperty(key)) {
       const items = safetyFactor[key];
       for (const item of items) {
-        if (item.isDefault) {
-          console.log(item);
-
-          // Khởi tạo pq_cellstyle nếu chưa tồn tại
+        // if (item.isDefault) {
+ 
           if (!item.pq_cellstyle) {
             item.pq_cellstyle = {};
           }
-
-          // Áp dụng styleColor cho các thuộc tính có giá trị không phải là null và không phải là title
           for (const prop in item) {
             if (item.hasOwnProperty(prop) && item[prop] !== null && prop !== 'title') {
               item.pq_cellstyle[prop] = { ...this.styleColor };
             }
           }
 
-          // Áp dụng style đặc biệt cho các thuộc tính
           if (item.V_rbv === null) {
             item.pq_cellstyle.V_rbv = { ...this.style };
           }
           if (item.T_rbt === null) {
             item.pq_cellstyle.T_rbt = { ...this.style };
           }
-
-          // Bạn có thể thực hiện các hành động khác trên item nếu cần
-          // action(item);
-        }
+        // }
       }
       return items
     }
@@ -601,11 +593,10 @@ export class SafetyFactorsMaterialStrengthsComponent
       
       { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' } },
       {
-        // title: this.translate.instant("shear-strength.fixed_end"),
-        titles: "new check",
+        title: this.translate.instant("safety-factors-material-strengths.execute"),
         align: "center",
         dataType: "bool",
-        // dataIndx: "fixed_end",
+        dataIndx: "NoCalc",
         type: "checkbox",
         sortable: false,
         width: 70,
@@ -614,30 +605,52 @@ export class SafetyFactorsMaterialStrengthsComponent
       {
         title: this.translate.instant("safety-factors-material-strengths.b_safe"),
         align: 'center', colModel: [
-          { title: 'γc', dataType: 'float', 'format': '#.00', dataIndx: 'M_rc', sortable: false, width: 70, nodrag: true, },
-          { title: 'γs', dataType: 'float', 'format': '#.00', dataIndx: 'M_rs', sortable: false, width: 70, nodrag: true, },
-          { title: 'γbs', dataType: 'float', 'format': '#.00', dataIndx: 'M_rbs', sortable: false, width: 70, nodrag: true, }
+          {
+            title: this.translate.instant("safety-factors-material-strengths.material_coefficient"),
+            align: 'center', colModel: [
+            { title: this.translate.instant("safety-factors-material-strengths.γc_safe"), dataType: 'float', 'format': '#.00', dataIndx: 'M_rc', sortable: false, width: 70, nodrag: true, },
+            { title: this.translate.instant("safety-factors-material-strengths.γs_safe"), dataType: 'float', 'format': '#.00', dataIndx: 'M_rs', sortable: false, width: 70, nodrag: true, },
+            ]
+          },
+          {
+            title: this.translate.instant("safety-factors-material-strengths.member_coefficient_γb"),
+            align: 'center', colModel: [
+              { title: this.translate.instant("safety-factors-material-strengths.γbs"), dataType: 'float', 'format': '#.00', dataIndx: 'M_rbs', sortable: false, width: 70, nodrag: true, }
+            ]
+          }
         ],
         nodrag: true,
       },
       {
         title: this.translate.instant("safety-factors-material-strengths.s_safe"),
         align: 'center', colModel: [
-          { title: 'γc', dataType: 'float', 'format': '#.00', dataIndx: 'V_rc', sortable: false, width: 70, nodrag: true, },
-          { title: 'γs', dataType: 'float', 'format': '#.00', dataIndx: 'V_rs', sortable: false, width: 70, nodrag: true, },
-          { title: 'γbc', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbc', sortable: false, width: 70, nodrag: true, },
-          { title: 'γbs', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbs', sortable: false, width: 70, nodrag: true, },
-          { title: 'γbd', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbv', sortable: false, width: 70, nodrag: true, }
+           {
+              title: this.translate.instant("safety-factors-material-strengths.t_safe1"),
+              align: 'center', colModel: [
+                { title:  this.translate.instant("safety-factors-material-strengths.γc_safe"), dataType: 'float', 'format': '#.00', dataIndx: 'V_rc', sortable: false, width: 70, nodrag: true, },
+                { title: this.translate.instant("safety-factors-material-strengths.γs_safe"), dataType: 'float', 'format': '#.00', dataIndx: 'V_rs', sortable: false, width: 70, nodrag: true, },
+              ],
+              nodrag: true,
+          },
+          {
+            title: this.translate.instant("safety-factors-material-strengths.t_safe2"),
+            align: 'center', colModel: [
+              { title: 'Vcd, Vod,Vwcd', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbc', sortable: false, width: 70, nodrag: true, },
+              { title: 'Vcd, Vod,Vwcd', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbs', sortable: false, width: 70, nodrag: true, },
+              { title: 'Vdd', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbv', sortable: false, width: 70, nodrag: true, },
+              { title: 'Mtcd, Mtyd,Mtcud', dataType: 'float', 'format': '#.00', dataIndx: 'T_rbt', sortable: false, width: 70, nodrag: true, }
+            ],
+            nodrag: true,
+          },
         ],
         nodrag: true,
       },
-      {
-        title: this.translate.instant("safety-factors-material-strengths.t_safe"),
-        align: 'center', colModel: [
-          { title: 'γbt', dataType: 'float', 'format': '#.00', dataIndx: 'T_rbt', sortable: false, width: 70, nodrag: true, }
-        ],
-        nodrag: true,
-      },
+      // {
+      //   title: this.translate.instant("safety-factors-material-strengths.t_safe"),
+      //   align: 'center', colModel: [
+      //   ],
+      //   nodrag: true,
+      // },
       {
         title: this.translate.instant("safety-factors-material-strengths.γi"),
         dataType: 'float', 'format': '#.00', dataIndx: 'ri', sortable: false, width: 70, nodrag: true,
@@ -780,7 +793,8 @@ export class SafetyFactorsMaterialStrengthsComponent
           V_rc: bar.V_rc, V_rs: bar.V_rs, V_rbc: bar.V_rbc, V_rbs: bar.V_rbs, V_rbv: bar.V_rbv,
           T_rbt: bar.T_rbt,
           ri: bar.ri, range: bar.range,
-          S_rs: steel.S_rs, S_rb: steel.S_rb
+          S_rs: steel.S_rs, S_rb: steel.S_rb,
+          NoCalc : bar.NoCalc,
         })
       }
       safety_factor[id] = factor;
@@ -828,7 +842,6 @@ export class SafetyFactorsMaterialStrengthsComponent
       // 杭の施工条件
       pile_factor[id] = this.pile_factor_list[i];
     }
-
     this.safety.setTableColumns({
       safety_factor,
       material_bar,
