@@ -105,6 +105,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   // }
   public styleEdit = { "color": "#FFFFFF" }
   public styleColor = { "color": "gray" }
+  public styleColorWhite  = { "color": "white" }
   // public colorGray ={
   //   M_rc: { ...this.styleColor },
   //   M_rs: { ...this.styleColor }, 
@@ -575,32 +576,57 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.cdref.detectChanges();
  }
  private applyStylesToItems(safetyFactor: any) {
+  console.log("safety", safetyFactor);
+
+  // Biến để chứa tất cả các items sau khi đã xử lý
+  let allProcessedItems = [];
+
   for (const key in safetyFactor) {
     if (safetyFactor.hasOwnProperty(key)) {
       const items = safetyFactor[key];
+      let previousItem: any = null;
+
       for (const item of items) {
-        // if (item.isDefault) {
- 
-          if (!item.pq_cellstyle) {
-            item.pq_cellstyle = {};
+        // Kiểm tra và khởi tạo `pq_cellstyle` nếu chưa tồn tại
+        if (!item.pq_cellstyle) {
+          item.pq_cellstyle = {};
+        }
+
+        // Áp dụng kiểu dáng cho các thuộc tính của item ngoại trừ 'title'
+        for (const prop in item) {
+          if (item.hasOwnProperty(prop) && item[prop] !== null && prop !== 'title') {
+            item.pq_cellstyle[prop] = { ...this.styleColor };
           }
+        }
+
+        // Áp dụng kiểu dáng đặc biệt nếu thuộc tính là null
+        if (item.V_rbv === null) {
+          item.pq_cellstyle.V_rbv = { ...this.style };
+        }
+        if (item.T_rbt === null) {
+          item.pq_cellstyle.T_rbt = { ...this.style };
+        }
+
+        // Kiểm tra và áp dụng `this.styleColorWhite` nếu giá trị item sau khác item trước
+        if (previousItem) {
           for (const prop in item) {
-            if (item.hasOwnProperty(prop) && item[prop] !== null && prop !== 'title') {
-              item.pq_cellstyle[prop] = { ...this.styleColor };
+            if (item.hasOwnProperty(prop) && prop !== 'title' && item[prop] !== previousItem[prop]) {
+              item.pq_cellstyle[prop] = { ...this.styleColorWhite };
             }
           }
+        }
 
-          if (item.V_rbv === null) {
-            item.pq_cellstyle.V_rbv = { ...this.style };
-          }
-          if (item.T_rbt === null) {
-            item.pq_cellstyle.T_rbt = { ...this.style };
-          }
-        // }
+        // Cập nhật previousItem cho lần lặp tiếp theo
+        previousItem = item;
       }
-      return items
+
+      // Thêm các items đã xử lý vào mảng chứa kết quả cuối cùng
+      allProcessedItems = allProcessedItems.concat(items);
     }
   }
+
+  // Trả về tất cả các items sau khi đã xử lý
+  return allProcessedItems;
 }
   private setTitle(): void {
     this.columnHeaders1 = [
