@@ -593,7 +593,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
         // Áp dụng kiểu dáng cho các thuộc tính của item ngoại trừ 'title'
         for (const prop in item) {
-          if (item.hasOwnProperty(prop) && item[prop] !== null && prop !== 'title') {
+          if (item.hasOwnProperty(prop) && item[prop] !== null && prop !== 'title' && prop !== 'range') {
             item.pq_cellstyle[prop] = { ...this.styleColor };
           }
         }
@@ -609,7 +609,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         // Kiểm tra và áp dụng `this.styleColorWhite` nếu giá trị item sau khác item trước
         if (previousItem) {
           for (const prop in item) {
-            if (item.hasOwnProperty(prop) && prop !== 'title') {
+            if (item.hasOwnProperty(prop) && prop !== 'title'&& prop !== 'range') {
               if (item[prop] !== previousItem[prop]) {
                 item.pq_cellstyle[prop] = { ...this.styleColorWhite };
               }
