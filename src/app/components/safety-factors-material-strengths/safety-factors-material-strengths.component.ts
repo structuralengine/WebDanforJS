@@ -267,6 +267,9 @@ export class SafetyFactorsMaterialStrengthsComponent
       // 杭の施工条件
       this.pile_factor_list.push(safety.pile_factor[id]);
 
+
+      
+
       // グリッドの設定
       this.option1_list.push({
         width: 1100,
@@ -311,6 +314,17 @@ export class SafetyFactorsMaterialStrengthsComponent
               }
             }
           ]
+        },
+        change(evt, ui) {
+          var col = Object.keys(ui.updateList[0].newRow)[0];
+          if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "white",
+                  };
+                }
         },
       });
       this.option2_list.push({
