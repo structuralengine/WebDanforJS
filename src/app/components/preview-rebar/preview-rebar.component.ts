@@ -737,7 +737,7 @@ export class PreviewRebarComponent implements OnInit {
       for (let i = 0; i < this.scene.scene.children.length; i++) {
         let name = this.scene.scene.children[i].name;
         let type = this.scene.scene.children[i].type;
-        if (type === "Mesh" || type === "Line" || name === "node") {
+        if (type === "Mesh" || type === "Line" || name === "node" || type == "LineSegments") {
           index.push(i)
         }
         if (type === "Object3D") {

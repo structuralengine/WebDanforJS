@@ -368,8 +368,7 @@ export class ThreeNodeService {
     }
 
     // dimenstions for rebar_type = 4
-    const arr_gap04 = this.getArrGap(4,h)
-    console.log("arr_gap4", arr_gap04)
+    const arr_gap04 = this.getArrGap(4,h)  
     //draw line rebar_type = 4
     jsonData["1.1"] = {
       x: x_start - n,
@@ -393,7 +392,28 @@ export class ThreeNodeService {
       }    
 
     }
-
+    let dist_side_min = 0;
+    console.log("arr4", arr_gap04[0]);
+    console.log('scale', this.scale)
+    this.dataRebar.selectedCalPoint.rebar0.map((data) =>{    
+      if(data.rebar_type == 4){
+        console.log("data4", data)
+      } 
+      if(data.rebar_type === 4 && data.dist_top  === Math.round(arr_gap04[0] * this.scale)){               
+        dist_side_min = data.dist_side/this.scale;
+      }
+    })
+    jsonData["rb_4"] = {
+      x: x_start - n,
+      y: y_start  - arr_gap04[0],
+      z:0
+    }
+    jsonData["2.1"] = {
+      x: x_start - n - dist_side_min,
+      y: y_start - arr_gap04[0],
+      z:0
+    }
+    this.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 1, Math.round(dist_side_min * this.scale), false, 6, 2, 0);
   }
   getArrGap(type:number,h:any){
     const arr_gap =[]
@@ -574,15 +594,23 @@ export class ThreeNodeService {
   }
 
   createDemoOval() {
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
+    let memH = member['H'];
+    let memB = member['B'];
+    var arr = [memH, memB];
+    let max_val = arr.reduce(function (accumulator, element) {
+      return (accumulator > element) ? accumulator : element
+    });
+    this.scale = max_val / 88;
     if (this.type === "Vertical") {
-      this.createOval(450 / this.scale, 900 / this.scale, 0xb9b9b9, this.type);
-      this.createLineOval(450 / this.scale, 900 / this.scale, 10 / this.scale, 0x333D46, this.type)
-      this.createLineDashedOval(450 / this.scale, 900 / this.scale, 20 / this.scale, 0x333D46, this.type)
+      this.createOval(memB / this.scale, memH / this.scale, 0xb9b9b9, this.type);
+      this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
+      this.createLineDashedOval(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46, this.type)
     } else {
-      this.createOval(900 / this.scale, 450 / this.scale, 0xb9b9b9, this.type)
-      this.createLineOval(900 / this.scale, 450 / this.scale, 10 / this.scale, 0x333D46, this.type)
-      this.createLineDashedOval(900 / this.scale, 450 / this.scale, 20 / this.scale, 0x333D46, this.type)
-    }
+      this.createOval(memB / this.scale, memB / this.scale, 0xb9b9b9, this.type)
+      this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
+      this.createLineDashedOval(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46, this.type)
+    }   
     this.scene.render()
   }
   createOval(b: any, h: any, color: any, type) {
@@ -606,7 +634,7 @@ export class ThreeNodeService {
     }
     const plane = new THREE.Mesh(geometry, materialPlane);
     plane.position.set(0, 0, 0);
-
+    this.convertToCoordinatesOval(b, h);
     this.scene.add(plane);
     this.scene.add(circleGeometry1);
     this.scene.add(circleGeometry2);
@@ -685,6 +713,24 @@ export class ThreeNodeService {
     this.scene.add(line1)
     this.scene.add(line2)
   }
+  convertToCoordinatesOval(b: any, h: any) {
+    let jsonData: object = {};
+    const x_start = b / 2;
+    const y_start = h / 2
+    if (b != 0 && h != 0) {
+      jsonData["1"] = {
+        x: 0,
+        y: y_start,
+        z: 0
+      }
+      jsonData["2"] = {
+        x: 0,
+        y: -y_start,
+        z: 0
+      }      
+    }
+    this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, x_start + 6, 4, 1);
+  }
   createLineDashedOval(b: any, h: any, range: any, color: any, type) {
     const material = new THREE.LineBasicMaterial({ color: color })
     const materialLine = new THREE.LineDashedMaterial({ color: color, dashSize: 1.5, gapSize: 1.5 })
@@ -749,7 +795,7 @@ export class ThreeNodeService {
 
       points4 = curve4.getPoints(100);
       ellipse4 = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(points4), material);
-
+      
       this.scene.add(ellipse2)
       this.scene.add(ellipse4)
     } else {
