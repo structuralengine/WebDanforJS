@@ -32,14 +32,14 @@ export class InputCrackSettingsService {
       con_u: 1,
       con_l: 1,
       con_s: 1,
-      vis_u: 450,
-      vis_l: 450,
+      vis_u: false,
+      vis_l: false,
       ecsd_u: 450,
       ecsd_l: 450,
       kr: 0.85,
       k4: 0.5,
       JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
-      extend: 0.3
+      wlimit: 0.35
     };
   }
 
@@ -69,7 +69,7 @@ export class InputCrackSettingsService {
           data.g_name = pos.g_name;
           data.p_name = pos.p_name;
           data.g_id = member.g_id;
-          data.extend = 0.3;
+          data.wlimit = data.wlimit;
           table_groupe.push(data);
           count++;
         }
@@ -116,7 +116,7 @@ export class InputCrackSettingsService {
       }
       // 当該入力行より上の行
       let endFlg = true;
-      const check_list = ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'k4', 'JRTT05','extend'];
+      const check_list = ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'k4', 'JRTT05','wlimit'];
       for (const key of check_list){
         if (result[key] == null && key in data) {
           result[key] = this.helper.toNumber(data[key]);
@@ -150,7 +150,7 @@ export class InputCrackSettingsService {
       b.kr =     column.kr;
       b.k4 =     column.k4;
       b.JRTT05 = column.JRTT05;
-      b.extend = 0.3;
+      b.wlimit = column.wlimit;
       this.crack_list.push(b);
     }
 
@@ -185,7 +185,7 @@ export class InputCrackSettingsService {
       }
       if (value.k4 == undefined) {
         let flag: boolean = true;
-        for (const key of ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'JRTT05', 'extend']) {
+        for (const key of ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'JRTT05', 'wlimit']) {
           if (value[key] === null || value[key] == null) {
             flag = false;
             break;

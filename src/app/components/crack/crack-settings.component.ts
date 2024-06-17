@@ -40,7 +40,7 @@ export class CrackSettingsComponent
   public groupe_name: string[];
   public refreshSubscription: Subscription;
 
-  public colAutoInputs = ["con_s", "con_l", "con_u", "ecsd_l", "kr", "k4", "extend", "ecsd_u"];
+  public colAutoInputs = ["con_s", "con_l", "con_u", "ecsd_l", "kr", "k4", "wlimit", "ecsd_u"];
   public textStyle = { color: "gray" };
   public textStyle2 = { color: "white" };
 
@@ -53,7 +53,7 @@ export class CrackSettingsComponent
     "ecsd_u": { ...this.textStyle },
     "kr": { ...this.textStyle },
     "k4": { ...this.textStyle },
-    "extend": { ...this.textStyle },
+    "wlimit": { ...this.textStyle },
   };
   public rowStyle2 = {
     con_s: { ...this.textStyle2 },
@@ -63,7 +63,7 @@ export class CrackSettingsComponent
     ecsd_u: { ...this.textStyle2 },
     kr: { ...this.textStyle2 },
     k4: { ...this.textStyle2 },
-    extend: { ...this.textStyle },
+    wlimit: { ...this.textStyle },
   };
   checkedRadioValue: number;
   private checkedRadioSubscription: Subscription;
@@ -80,7 +80,7 @@ export class CrackSettingsComponent
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(
       (value) => {
         this.checkedRadioValue = value;
-        // Thực hiện các h�nh động cần thiết sau khi nhận giá tr�mới
+        
       }
     );
   }
@@ -197,7 +197,7 @@ export class CrackSettingsComponent
 
           // Object.assign(nextObj, currentObj);
           // Extract the current object to be copied
-          if (ui.source === "edit") {
+          if (ui.source === "edit" || ui.source === "paste") {
             var currentObj = ui.updateList[0].newRow;
             var col = Object.keys(ui.updateList[0].newRow)[0];
 
@@ -408,7 +408,7 @@ export class CrackSettingsComponent
         title: this.translate.instant("crack-settings.k4"),
         align: "center",
         dataType: "float",
-        format: "#.0",
+        format: "#.00",
         dataIndx: "k4",
         sortable: false,
         width: 70,
@@ -467,11 +467,11 @@ export class CrackSettingsComponent
       this.checkedRadioValue === undefined
     ) {
       this.columnHeaders.push({
-        title: this.translate.instant("crack-settings.extend"),
+        title: this.translate.instant("crack-settings.wlimit"),
         align: "center",
         dataType: "float",
-        dataIndx: "extend",
-        format: "#.0",
+        dataIndx: "wlimit",
+        format: "#.00",
         sortable: false,
         width: 70,
         nodrag: true,

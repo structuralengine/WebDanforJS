@@ -649,16 +649,16 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
           nodrag: true,
         },
-        {
-          title: this.translate.instant("bars.process"),
-          align: "center",
-          dataType: "bool",
-          dataIndx: "enable",
-          type: "checkbox",
-          sortable: false,
-          width: 40,
-          nodrag: true,
-        }
+        // {
+        //   title: this.translate.instant("bars.process"),
+        //   align: "center",
+        //   dataType: "bool",
+        //   dataIndx: "enable",
+        //   type: "checkbox",
+        //   sortable: false,
+        //   width: 40,
+        //   nodrag: true,
+        // }
       );
     } else {
       this.beamHeaders.push(
@@ -911,16 +911,16 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
           nodrag: true,
         },
-        {
-          title: this.translate.instant("bars.process"),
-          align: "center",
-          dataType: "bool",
-          dataIndx: "enable",
-          type: "checkbox",
-          sortable: false,
-          width: 40,
-          nodrag: true,
-        }
+        // {
+        //   title: this.translate.instant("bars.process"),
+        //   align: "center",
+        //   dataType: "bool",
+        //   dataIndx: "enable",
+        //   type: "checkbox",
+        //   sortable: false,
+        //   width: 40,
+        //   nodrag: true,
+        // }
       );
     }
   }

@@ -202,7 +202,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           // Object.assign(nextObj, currentObj);
           // Extract the current object to be copied
           // Extract the current object to be copied
-          if (ui.source === "edit") {
+          if (ui.source === "edit" || ui.source === "paste") {
           var currentObj = ui.updateList[0].newRow;
           var col = Object.keys(ui.updateList[0].newRow)[0];
 
@@ -590,15 +590,15 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
                 width: 60,
                 nodrag: true,
               },
-              {
-                title: this.translate.instant("fatigues.fold"),
-                dataType: "float",
-                format: "#.0",
-                dataIndx: "V_r1_3",
-                sortable: false,
-                width: 60,
-                nodrag: true,
-              },
+              // {
+              //   title: this.translate.instant("fatigues.fold"),
+              //   dataType: "float",
+              //   format: "#.0",
+              //   dataIndx: "V_r1_3",
+              //   sortable: false,
+              //   width: 60,
+              //   nodrag: true,
+              // },
             ],
             nodrag: true,
           },
