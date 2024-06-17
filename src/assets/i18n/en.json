@@ -332,7 +332,7 @@
         "member_coefficient_γb": "Member coefficient γb",
         "γc_safe":"Concrete γc",
         "γs_safe":"Steel γs",
-        "γbs":"Mud, Mydfrd",
+        "γbs":"Mud, Myd,frd",
         "s_safe":"Safety factor for shear and torsion check",
         "t_safe1":"Material coefficient",
         "t_safe2":"Member coefficient γb",
