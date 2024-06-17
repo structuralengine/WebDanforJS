@@ -35,6 +35,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public rebar: any;
   public rebarList: any[];
   public table_datas: any[];
+  public table_data: any;
   // タブのヘッダ名
   public groupe_name: string[];
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
@@ -229,11 +230,12 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               this.bars.setTableColumns(this.table_datas[i])
               let data = this.bars.getDataPreview(index);
               const member = this.member.getTableColumns(m_no);
+              this.table_data = this.table_datas[i]
               this.rebar = {
                 rebarList: this.bars.bar_list,
                 selectedCalPoint: data,
                 typeView: member.shape,
-                table_data: this.table_datas[i]
+                table_data: this.table_data 
               }
               this.threeNode.memNo = m_no;
               this.threeNode.dataNode = data;
@@ -289,6 +291,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.refreshSubscription = this.bars.refreshShowHidden$.subscribe(() => {
       this.handleShowHiddenCol()
     })
+    this.preview()
   }
   private checkForScrollbar() {
     // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
@@ -652,6 +655,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.activeButtons(id);
     this.bars.is_review = false;
     this.rebar = {}
+    this.table_data = this.table_datas[id]
     this.options = this.option_list[id];
     this.grid.options = this.options;
     this.setActiveTab(this.activeTab);
@@ -790,7 +794,26 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   public preview(): void {
     this.removeScene();
-    this.bars.is_review = !this.bars.is_review;
+    if (!this.bars.is_review) {
+      this.bars.is_review = !this.bars.is_review;
+    }
+    if (Object.keys(this.rebar).length === 0) {
+      this.bars.setTableColumns(this.table_data)
+      for (let i = 0; i < this.bars.bar_list.length; i++) {
+        let rebar = this.bars.bar_list[i];
+        if (rebar.rebar0.length > 0) {
+          this.rebar = {
+            rebarList: this.bars.bar_list,
+            selectedCalPoint: rebar,
+            table_data: this.table_data,
+          }
+          this.threeNode.memNo = rebar.m_no;
+          this.threeNode.dataNode = rebar;
+          this.threeNode.dataRebar = this.rebar
+          break;
+        }
+      }
+    }
   }
   public removeScene() {
     let index = []
