@@ -301,7 +301,7 @@
         "do_not":"コンクリートが負担できるせん断に軸方向力による効果を期待しない"
     },
     "safety-factors-material-strengths":{
-        "execute": "照査を 実行 しない",
+        "execute": "照査を実行しない",
         "rsb_con":"鉄筋・コンクリート",
         "safe":"安全係数",
         "rsb_arr":"考慮する鉄筋範囲",

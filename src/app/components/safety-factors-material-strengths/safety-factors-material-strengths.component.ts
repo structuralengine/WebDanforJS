@@ -317,6 +317,14 @@ export class SafetyFactorsMaterialStrengthsComponent
           ]
         },
         change(evt, ui) {
+          // Iterate through each key in newRow
+            for (let key in ui.updateList[0].newRow) {
+              // Check if the value in newRow is 0
+              if (ui.updateList[0].newRow[key] === 0) {
+                  // Assign the value from oldRow to rowData
+                  ui.updateList[0].rowData[key] = ui.updateList[0].oldRow[key];
+              }
+          }
           var col = Object.keys(ui.updateList[0].newRow)[0];
           if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
                   ui.updateList[0].rowData.pq_cellstyle = {
@@ -684,7 +692,7 @@ export class SafetyFactorsMaterialStrengthsComponent
             title: this.translate.instant("safety-factors-material-strengths.t_safe2"),
             align: 'center', colModel: [
               { title: 'Vcd, Vod,Vwcd', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbc', sortable: false, width: 70, nodrag: true, },
-              { title: 'Vcd, Vod,Vwcd', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbs', sortable: false, width: 70, nodrag: true, },
+              { title: 'Vsd frd', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbs', sortable: false, width: 70, nodrag: true, },
               { title: 'Vdd', dataType: 'float', 'format': '#.00', dataIndx: 'V_rbv', sortable: false, width: 70, nodrag: true, },
               { title: 'Mtcd, Mtyd,Mtcud', dataType: 'float', 'format': '#.00', dataIndx: 'T_rbt', sortable: false, width: 70, nodrag: true, }
             ],
