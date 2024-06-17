@@ -3,6 +3,7 @@ import { InputMembersService } from '../../members/members.service';
 import { SceneService } from '../scene.service';
 import * as THREE from 'three';
 import { CSS2DObject } from "../libs/CSS2DRenderer.js";
+import { TranslateService } from '@ngx-translate/core';
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +20,8 @@ export class ThreeNodeService {
   public type: any
   constructor(
     private memmber: InputMembersService,
-    private scene: SceneService
+    private scene: SceneService,
+    private translate: TranslateService,
   ) {
     this.memNo = 0;
     this.dataNode = new Array();
@@ -976,5 +978,32 @@ export class ThreeNodeService {
     }   
     this.drawLineDim(jsonData["1"], jsonData["2"], 1, Math.round(b * this.scale), false, x_start, 20, 10);
 
+  }
+
+  showMessage() {
+    const div = document.createElement("div");
+    let mesh = new THREE.Mesh();
+    const message1 = this.translate.instant("preview_rebar.message1")
+    const message2 = this.translate.instant("preview_rebar.message2")
+
+    div.style.textAlign = 'center';
+    div.style.color = '#00C95F';
+    div.style.fontSize = '16px';
+    div.style.font = 'Noto Sans JP';
+    
+    const message1Div = document.createElement("div");
+    message1Div.textContent = message1;
+    div.appendChild(message1Div);
+
+    const message2Div = document.createElement("div");
+    message2Div.textContent = message2;
+    div.appendChild(message2Div);
+
+    const label = new CSS2DObject(div);
+    label.position.set(0, 15, 0);
+    label.name = "font";
+    label.visible = true;
+    mesh.add(label);
+    this.scene.add(mesh);
   }
 }

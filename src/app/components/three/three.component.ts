@@ -62,6 +62,10 @@ export class ThreeComponent implements OnInit {
       //   this.node.createDemoOval();
       //   break;
       // }
+      default: {
+        this.node.showMessage();
+        break;
+      }
     }   
     this.node.onInit();
   }
