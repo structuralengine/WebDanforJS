@@ -46,10 +46,10 @@ export class ThreeComponent implements OnInit {
         this.node.createDemoTShape();
         break;
       }
-      // case 3: {
-      //   this.node.createDemoCircleRing();
-      //   break;
-      // }
+      case 3: {
+        this.node.createDemoCircleRing();
+        break;
+      }
       // case 4: {
       //   this.node.createDemoCircleRing();
       //   break;

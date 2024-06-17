@@ -78,8 +78,8 @@ export class ThreeNodeService {
     var length = this.getLength(i, j);
     if (vertical) {
       let pointHors = [];
-      px = x > 0 ? x + distance : x - distance;
-      py = px > 0 ? px + lenDim : px - lenDim;
+      px = x >= 0 ? x + distance : x - distance;
+      py = px >= 0 ? px + lenDim : px - lenDim;
       pointHors.push(new THREE.Vector3(px, y, 0));
       pointHors.push(new THREE.Vector3(py, y, 0));
       const line = new THREE.Line(
@@ -99,8 +99,8 @@ export class ThreeNodeService {
 
     } else {
       let pointHors = [];
-      px = y > 0 ? y + distance : y - distance;
-      py = px > 0 ? px + lenDim : px - lenDim;     
+      px = y >= 0 ? y + distance : y - distance;
+      py = px >= 0 ? px + lenDim : px - lenDim;     
       if(ni.x === x && ni.y === ymin && !check){
         check = true;
         pointHors.push(new THREE.Vector3(x, ni.y, 0));
@@ -607,7 +607,7 @@ export class ThreeNodeService {
       this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46, this.type)
     } else {
-      this.createOval(memB / this.scale, memB / this.scale, 0xb9b9b9, this.type)
+      this.createOval(memB / this.scale, memH / this.scale, 0xb9b9b9, this.type)
       this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46, this.type)
     }   
@@ -727,9 +727,21 @@ export class ThreeNodeService {
         x: 0,
         y: -y_start,
         z: 0
+      }  
+      jsonData["3"] = {
+        x: x_start,
+        y: y_start - x_start/2,
+        z: 0
+      } 
+      jsonData["4"] = {
+        x: -x_start,
+        y: y_start - x_start/2,
+        z: 0
       }      
     }
-    this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, x_start + 6, 4, 1);
+    this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, x_start + 10, 4, 1);
+    this.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(b * this.scale), false, y_start / 2 + 2, 8, 1);
+
   }
   createLineDashedOval(b: any, h: any, range: any, color: any, type) {
     const material = new THREE.LineBasicMaterial({ color: color })
@@ -846,13 +858,21 @@ export class ThreeNodeService {
   }
 
   createDemoCircleRing() {
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
+    let memH = member['H'];
+    let memB = member['B'];
+    var arr = [memH, memB];
+    let max_val = arr.reduce(function (accumulator, element) {
+      return (accumulator > element) ? accumulator : element
+    });
+    this.scale = max_val / 88;
     if (this.type === "Circle") {
-      this.createCircleRing(0xb9b9b9, this.type, 750 / this.scale)
+      this.createCircleRing(0xb9b9b9, this.type, memB / this.scale)
     } else {
-      this.createCircleRing(0xb9b9b9, this.type, 750 / this.scale, 250 / this.scale)
+      this.createCircleRing(0xb9b9b9, this.type, memB / this.scale, memH / this.scale)
     }
-    this.createLineCircleRing(0x333D46, 50 / this.scale, 750 / this.scale)
-    this.createLineDashCircleRing(0x333D46, 60 / this.scale, 110 / this.scale, 750 / this.scale)
+    this.createLineCircleRing(0x333D46, 50 / this.scale, memB / this.scale)
+    this.createLineDashCircleRing(0x333D46, 60 / this.scale, 110 / this.scale, memB / this.scale)
   }
   createCircleRing(color: any, type: any, b: any, h?: any,) {
     const material = new THREE.MeshBasicMaterial({ color: color });
@@ -866,6 +886,8 @@ export class ThreeNodeService {
     }
     mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(0, 0, 0);
+    console.log("b + h", b, h);
+    this.convertToCoordinatesCircleRing(b, h)
     this.scene.add(mesh);
   }
   createLineCircleRing(color: any, range: any, b: any) {
@@ -925,5 +947,34 @@ export class ThreeNodeService {
 
     this.scene.add(ellipse1)
     this.scene.add(ellipse2)
+  }
+  convertToCoordinatesCircleRing(b: any, h: any) {
+    let jsonData: object = {};
+    const x_start = b / 2;
+    const y_start = h / 2
+    if (b != 0) {
+      jsonData["1"] = {
+        x: x_start,
+        y: 0,
+        z: 0
+      }
+      jsonData["2"] = {
+        x: -x_start,
+        y: 0,
+        z: 0
+      }  
+      // jsonData["3"] = {
+      //   x: x_start,
+      //   y: y_start - x_start/2,
+      //   z: 0
+      // } 
+      // jsonData["4"] = {
+      //   x: -x_start,
+      //   y: y_start - x_start/2,
+      //   z: 0
+      // }      
+    }   
+    this.drawLineDim(jsonData["1"], jsonData["2"], 1, Math.round(b * this.scale), false, x_start, 20, 10);
+
   }
 }
