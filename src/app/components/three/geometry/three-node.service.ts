@@ -1059,25 +1059,25 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
   return { x, y, z };
 }
   createDemoCircleRing() {
-    // var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
-    // let memH = member['H'];
-    // let memB = member['B'];
+    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
+    let memH = member['H'];
+    let memB = member['B'];
     
-    // fix data
-    this.dataRebar.selectedCalPoint.rebar0 = [ 
-      {
-        rebar_type: 7,
-        dia: 32,
-        quantity: 6,
-        dist_side: 100,
-      },
-      {
-        rebar_type: 7,
-        dia: 19,
-        quantity: 10,
-        dist_side: 200,
-      }
-    ]
+    // // fix data
+    // this.dataRebar.selectedCalPoint.rebar0 = [ 
+    //   {
+    //     rebar_type: 7,
+    //     dia: 32,
+    //     quantity: 6,
+    //     dist_side: 100,
+    //   },
+    //   {
+    //     rebar_type: 7,
+    //     dia: 19,
+    //     quantity: 10,
+    //     dist_side: 200,
+    //   }
+    // ]
     let arr_rebar_type_7 = []
     this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
       if (data.rebar_type === 7) {
@@ -1088,8 +1088,8 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
     const rebar_type_7_0 = arr_rebar_type_7[0];
     const rebar_type_7_1 = arr_rebar_type_7[1];
 
-    let memH = 250;
-    let memB = 900;
+    // let memH = 250;
+    // let memB = 900;
 
     var arr = [memH, memB];
     let max_val = arr.reduce(function (accumulator, element) {

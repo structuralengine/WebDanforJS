@@ -795,7 +795,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.refreshDataAndView();
   }
   public preview(): void {
-    this.rebar = {}
+    // this.rebar = {}
     this.removeScene();
     if (!this.bars.is_review) {
       this.bars.is_review = !this.bars.is_review;
