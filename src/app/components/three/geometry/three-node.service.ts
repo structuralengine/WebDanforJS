@@ -54,7 +54,7 @@ export class ThreeNodeService {
     let i = JSON.parse(JSON.stringify(ni));
     let j = JSON.parse(JSON.stringify(nj));
     if (vertical) {
-      if (Math.abs(i.x) > Math.abs(j.x)) {
+      if (Math.abs(i.x) >= Math.abs(j.x)) {
         xmin = j.x
         j.x = i.x
       }
@@ -63,7 +63,7 @@ export class ThreeNodeService {
         i.x = j.x
       }
       x = i.x;
-      y = j.y > i.y ? j.y : i.y
+      y = j.y >= i.y ? j.y : i.y
     } else {
       if (i.y > j.y) {
         ymin = j.y
@@ -142,7 +142,7 @@ export class ThreeNodeService {
     );
     mesh.name = "member" + 2;
 
-    if (vertical) {
+    if (vertical) {      
       mesh.position.set(px + lenDim - distanceDim, y - length / 2, 0);
     } else {
       mesh.position.set(x - length / 2, (px + py) / 2 + distanceDim, 0);
@@ -311,9 +311,9 @@ export class ThreeNodeService {
 
      
       this.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
-    if(quantity>1){
-      this.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
-    }
+      if(quantity>1){
+        this.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
+      }
     }
 
     // dimenstions for rebar_type = 1
@@ -641,6 +641,7 @@ export class ThreeNodeService {
       this.drawPointOval(b, h, 2, type)
       this.drawPointOval(b, h, 3, type)
       this.drawPointOval(b, h, 6, type)
+      this.convertToCoordinatesVericalOval(b, h);
     } else {
       geometry = new THREE.PlaneGeometry(Math.abs(h - b), h);
       circleGeometry1 = new THREE.Mesh(new THREE.CircleGeometry(h / 2, 100, Math.PI / 2, Math.PI), materialCircle);
@@ -650,10 +651,11 @@ export class ThreeNodeService {
       this.drawPointOval(b, h, 0, type)
       this.drawPointOval(b, h, 1, type)
       this.drawPointOval(b, h, 5, type)
+      this.convertToCoordinatesHorizontalOval(b, h);
     }
     const plane = new THREE.Mesh(geometry, materialPlane);
     plane.position.set(0, 0, 0);
-    this.convertToCoordinatesOval(b, h);
+    
     this.scene.add(plane);
     this.scene.add(circleGeometry1);
     this.scene.add(circleGeometry2);
@@ -734,7 +736,7 @@ export class ThreeNodeService {
     this.scene.add(line1)
     this.scene.add(line2)
   }
-  convertToCoordinatesOval(b: any, h: any) {
+  convertToCoordinatesVericalOval(b: any, h: any) {
     let jsonData: object = {};
     const x_start = b / 2;
     const y_start = h / 2
@@ -761,8 +763,134 @@ export class ThreeNodeService {
       }      
     }
     this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, x_start + 10, 4, 1);
-    this.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(b * this.scale), false, y_start / 2 + 2, 8, 1);
+    this.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(b * this.scale), false, y_start / 2 - 2, 8, -1);
+    
+    //rebar type 2 , 3;
+    let arr_rebar_type2 = [];
+    this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
+      if (data.rebar_type === 2 || data.rebar_type === 3) {
+        arr_rebar_type2.push(data)
+      }
+    })
+    arr_rebar_type2.sort((a, b) => a.dist_top - b.dist_top)
+    let start_cover = 0;
+    
+    arr_rebar_type2.map((data, index) => {
+      const cover = data.cover / this.scale;     
+      jsonData[`rb2_${index}`] = {
+        x: -2,
+        y: y_start - cover,
+        z: 0
+      }    
+      if(index == 0)  
+        this.drawLineDim(jsonData["1"], jsonData[`rb2_${0}`], 0, Math.round(cover * this.scale), true, x_start + 10, (x_start + 10)* 2 - 5, 1);   
+      else 
+        this.drawLineDim(jsonData[`rb2_${index-1}`], jsonData[`rb2_${index}`], 0, Math.round(cover * this.scale - start_cover), true, x_start + 10, (x_start + 10)* 2 - 5, 1);      
+      
+      if(index == arr_rebar_type2.length - 1)
+        this.drawLineDim(jsonData["2"], jsonData[`rb2_${index}`], 0, Math.round(h*this.scale - cover * this.scale), true, x_start + 10, (x_start + 10)* 2 - 5, 1); 
+      start_cover = cover * this.scale;
+      console.log(jsonData)
+    })
+  }
+  convertToCoordinatesHorizontalOval(b: any, h: any) {
+    let jsonData: object = {};
+    const x_start = b / 2;
+    const y_start = h / 2
+    if (b != 0 && h != 0) {
+      jsonData["1"] = {
+        x: 3*x_start/4,
+        y: y_start,
+        z: 0
+      }
+      jsonData["2"] = {
+        x: 3*x_start/4,
+        y: -y_start,
+        z: 0
+      }  
+      jsonData["3"] = {
+        x: x_start,
+        y: 3*y_start / 4,
+        z: 0
+      } 
+      jsonData["4"] = {
+        x: -x_start,
+        y: 3*y_start / 4,
+        z: 0
+      }      
+    }
+    this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, x_start / 2 , 3, 0);
+    this.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(b * this.scale), false, y_start , 7, 0);
+    
+     // dimenstions for rebar_type = 0
+     let arr_rebar_type_0 = []
+     this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
+       if (data.rebar_type === 0) {
+         arr_rebar_type_0.push(data)
+       }
+     })
+     arr_rebar_type_0.sort((a, b) => a.dist_top - b.dist_top)
+     const rebar_type_0 = arr_rebar_type_0[0];
+     if (rebar_type_0 != undefined) {
+       const dist_top = rebar_type_0.dist_top / this.scale;
+       const dist_side = rebar_type_0.dist_side / this.scale;
+       const quantity = rebar_type_0.quantity;
+       const interval =   (b - 2 * dist_side) / (quantity - 1);
+       jsonData["rb0_1"] = {
+         x: -(x_start/2),
+         y: y_start + 2,
+         z: 0
+       }
+       jsonData["rb0_2"] = {
+         x: -(x_start/2) + dist_top,
+         y: y_start + 2,
+         z: 0
+       }
+       jsonData["rb0_3"] = {
+         x: -(x_start/2) + dist_top + interval,
+         y: y_start + 2,
+         z: 0
+       }
+      
+       this.drawLineDim(jsonData["rb0_2"], jsonData["rb0_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
+       if(quantity>1){
+         this.drawLineDim(jsonData["rb0_2"], jsonData["rb0_3"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
+       }
+     }
+     let arr_rebar_type_1 = []
+    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
+      if (data.rebar_type === 1) {
+        arr_rebar_type_1.push(data)
+      }
+    })
+    arr_rebar_type_1.sort((a, b) => b.dist_top - a.dist_top)
+    const rebar_type_1 = arr_rebar_type_1[0];
 
+    if (rebar_type_1 != undefined) {
+        const dist_top2 = rebar_type_1.dist_top / this.scale;
+        const dist_side2 = rebar_type_1.dist_side / this.scale;
+        const quantity2 = rebar_type_1.quantity;
+        const interval2 = (b - 2 * dist_side2) / (quantity2 - 1);
+        jsonData["rb1_1"] = {
+          x: -(x_start/2),
+          y: -(y_start + 2),
+          z: 0
+        }
+        jsonData["rb1_2"] = {
+          x: -(x_start/2 - dist_side2),
+          y: -(y_start + 2),
+          z: 0
+        }
+        jsonData["rb1_3"] = {
+          x: -(x_start/2  - dist_side2 - interval2),
+          y: -(y_start+2),
+          z: 0
+        }
+        this.drawLineDim(jsonData["rb1_1"], jsonData["rb1_2"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);
+        if(quantity2>1){
+          this.drawLineDim(jsonData["rb1_2"], jsonData["rb1_3"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
+        }
+      }
   }
   createArcDashedOVal(b: any, h: any, range: any, color: any, type, rebarType:any){
     const material = new THREE.LineBasicMaterial({ color: color })
@@ -1047,17 +1175,7 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
         x: -x_start,
         y: 0,
         z: 0
-      }  
-      // jsonData["3"] = {
-      //   x: x_start,
-      //   y: y_start - x_start/2,
-      //   z: 0
-      // } 
-      // jsonData["4"] = {
-      //   x: -x_start,
-      //   y: y_start - x_start/2,
-      //   z: 0
-      // }      
+      } 
     }   
     this.drawLineDim(jsonData["1"], jsonData["2"], 1, Math.round(b * this.scale), false, x_start, 20, 10);
 
