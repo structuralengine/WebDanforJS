@@ -90,7 +90,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       var stirrupData = [];
       var calPointListData = [];
       this.typeView = member.shape
-
+      // // test
+      // this.typeView = 3;
       const upperside = this.translate.instant("preview_rebar.upper_side");
       const lowerside = this.translate.instant("preview_rebar.lower_side");
       const lateral = this.translate.instant("preview_rebar.lateral_rebar");
@@ -478,7 +479,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     
     const rebar_type_options = [upper_side, lower_side, lateral_rebar];
     const rebar_dia_options = [10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
-    console.log("type view",this.typeView)
+
     if (this.typeView === 1 || this.typeView === 2 || this.typeView === "") {
       this.axialHeaders.push(
         {
@@ -544,7 +545,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
       )
-    } else if (this.typeView === 5 || this.typeView === 6) {
+    } else if (this.typeView === 4) {
       this.axialHeaders.push(
         {
           title: rebar_type,
@@ -615,7 +616,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
       )
-    } else if (this.typeView === 3 || this.typeView === 4) {
+    } else if (this.typeView === 3) {
       this.axialHeaders.push(
         {
           title: rebar_dia,
