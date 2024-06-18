@@ -599,7 +599,7 @@ export class ThreeNodeService {
     this.type = memB < memH ? "Vertical" : "Horizontal"
     if (this.type === "Vertical") {
       this.createOval(memB / this.scale, memH / this.scale, 0xb9b9b9, this.type);
-      this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
+      // this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
       this.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if (data.rebar_type === 2 || data.rebar_type === 3) {
@@ -608,7 +608,7 @@ export class ThreeNodeService {
       })
     } else {
       this.createOval(memB / this.scale, memH / this.scale, 0xb9b9b9, this.type)
-      this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
+      // this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
       this.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if (data.rebar_type === 5) {
@@ -1149,7 +1149,7 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
     } else {
       this.createCircleRing(0xb9b9b9, this.type, memB / this.scale, memH / this.scale)
     }
-    this.createLineCircleRing(0x333D46, 50 / this.scale, memB / this.scale)
+    // this.createLineCircleRing(0x333D46, 50 / this.scale, memB / this.scale)
     this.createLineDashCircleRing(0x333D46, rebar_type_7_0.dist_side / this.scale, rebar_type_7_1.dist_side / this.scale, memB / this.scale)
     this.drawPointCircleShape(memB, 7)
     this.scene.render()
