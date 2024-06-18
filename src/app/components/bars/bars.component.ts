@@ -367,7 +367,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
               render : function (ui) {
-                console.log('col', colIndex)
                 if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
                   return {
                     text: displayPreviewText,
@@ -790,7 +789,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.grid.getColModel().forEach((column, index) => {
       if (column.dataIndx === "tan" && this.activeTab === "rebar_ax") {
         column.hidden = this.basic.get_specification2() !== 3 && this.basic.get_specification2() !== 4 ? false : true
-        console.log("column", column)
       }
     });
     this.grid.refreshCM()

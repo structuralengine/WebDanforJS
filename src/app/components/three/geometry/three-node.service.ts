@@ -182,9 +182,7 @@ export class ThreeNodeService {
   }
   
   createDemoTShape() {
-    console.log("rebar", this.dataRebar);
     var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
-    console.log(member)
     let memH = member['H'];
     let memBt = member['Bt'];
     let memB = member['B'];
@@ -276,8 +274,6 @@ export class ThreeNodeService {
     if(b != bt){
       this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 3, 0, 9);
     }
-    
-    console.log("jsondata", jsonData)
 
     // dimenstions for rebar_type = 0
     let arr_rebar_type_0 = []
@@ -349,7 +345,6 @@ export class ThreeNodeService {
 
     // dimenstions for rebar_type = 0 & 1
     const arr_gap01 = this.getArrGap(1,h)
-    console.log("arr_gap", arr_gap01)
     //draw line rebar_type = 1
     if (arr_gap01.length >0){  
       let y = 0;
@@ -395,11 +390,8 @@ export class ThreeNodeService {
 
     }
     let dist_side_min = 0;
-    console.log("arr4", arr_gap04[0]);
-    console.log('scale', this.scale)
     this.dataRebar.selectedCalPoint.rebar0.map((data) =>{    
       if(data.rebar_type == 4){
-        console.log("data4", data)
       } 
       if(data.rebar_type === 4 && data.dist_top  === Math.round(arr_gap04[0] * this.scale)){               
         dist_side_min = data.dist_side/this.scale;
@@ -790,7 +782,6 @@ export class ThreeNodeService {
       if(index == arr_rebar_type2.length - 1)
         this.drawLineDim(jsonData["2"], jsonData[`rb2_${index}`], 0, Math.round(h*this.scale - cover * this.scale), true, x_start + 10, (x_start + 10)* 2 - 5, 1); 
       start_cover = cover * this.scale;
-      console.log(jsonData)
     })
   }
   convertToCoordinatesHorizontalOval(b: any, h: any) {
@@ -1060,9 +1051,6 @@ export class ThreeNodeService {
         }
       }
     })
-    
-    console.log("nodeList", this.nodeList)
-    console.log("b, h", b,h)
   }
 public getPointOnCircle(centerX, centerY, radius, angle) {
   const x = centerX + radius * Math.cos(angle);
@@ -1072,7 +1060,6 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
 }
   createDemoCircleRing() {
     // var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
-    // console.log("member ring", member)
     // let memH = member['H'];
     // let memB = member['B'];
     
@@ -1132,7 +1119,6 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
     }
     mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(0, 0, 0);
-    console.log("b + h", b, h);
     this.convertToCoordinatesCircleRing(b, h)
     this.scene.add(mesh);
   }

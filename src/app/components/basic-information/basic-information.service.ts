@@ -923,7 +923,6 @@ export class InputBasicInformationService {
     if (indexJR4 !==-1){
       this.conditions_list.splice(indexJR4,1)
     }
-    console.log("this.conditions_list",this.conditions_list)
     return {
       pickup_moment: this.pickup_moment,
       pickup_shear_force: this.pickup_shear_force,

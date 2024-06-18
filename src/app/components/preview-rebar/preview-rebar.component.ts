@@ -83,8 +83,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     if (Object.keys(this.rebar).length != 0) {
       let calPoint = this.rebar.selectedCalPoint; 
       const member = this.members.getData(calPoint.m_no)
-      console.log('member', member)
-      console.log('calPoint', calPoint)
       this.table_datas_axial = new Array();
       var axialRebarData = [];
       var stirrupData = [];
@@ -254,7 +252,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           let table_data_bar = this.rebar.table_data
           let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
           if(indexBar !== -1){
-            console.log(this.table_datas_axial);
             let newRebar0= this.setRebar0(this.table_datas_axial)
             table_data_bar[indexBar].rebar0=newRebar0          
             this.bars.setTableColumns(table_data_bar)  
@@ -326,7 +323,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       // selectionModel: { type: 'row', mode: 'single' },
       rowClick: (evt, ui) => {
         this.clearFocus(calPointListData);
-        console.log(ui.rowData)
         ui.rowData.pq_rowcls = "pq-state-select ui-state-highlight";
         this.grid.refreshDataAndView();
 
@@ -797,7 +793,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       })
 
     }
-    console.log("sence", this.scene.scene.children)
     let toRemove: any = Array.from(document.getElementsByClassName("label_theerjs"));
     toRemove.map((e)=> e.remove());    
   }
