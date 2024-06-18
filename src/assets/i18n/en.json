@@ -631,6 +631,8 @@
         "no": "Member No",
         "pos" : "Position (m)",
         "p_name": "Calculated point name",
-        "haunch": "Haunch height (mm)"
+        "haunch": "Haunch height (mm)",
+        "message1" : "The rebar arrangement for this calculated point is entered in table mode.",
+        "message2" : "Please check it in table mode."
     }   
 }

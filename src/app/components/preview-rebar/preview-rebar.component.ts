@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import pq from 'pqgrid';
 import { TranslateService } from "@ngx-translate/core";
 import { NONE_TYPE } from '@angular/compiler';
@@ -15,7 +15,7 @@ import { SceneService } from '../three/scene.service';
   templateUrl: './preview-rebar.component.html',
   styleUrls: ['./preview-rebar.component.scss']
 })
-export class PreviewRebarComponent implements OnInit {
+export class PreviewRebarComponent implements OnInit, OnChanges {
   public axialRebarOptions: pq.gridT.options;
   public stirrupOptions: pq.gridT.options;
   public calculatedPointOptions: pq.gridT.options;
@@ -52,6 +52,7 @@ export class PreviewRebarComponent implements OnInit {
 
   @Input() rebar: any
   @ViewChild('calPointGrid') grid: SheetComponent;
+  
   constructor(
     public bars: InputBarsService,
     private translate: TranslateService,
@@ -60,17 +61,25 @@ export class PreviewRebarComponent implements OnInit {
     private scene: SceneService,
   ) { }
 
-  private hasRebar(obj: any): boolean {
-    for (const key in obj) {
-      if (key.startsWith("rebar_") && obj[key] === null) {
-        return false;
+  ngOnChanges(obj: SimpleChanges): void {
+    if (Object.keys(obj.rebar.currentValue).length > 0 || obj.rebar.currentValue === undefined) {
+      this.rebar = {
+        rebarList: obj.rebar.currentValue.rebarList,
+        selectedCalPoint: obj.rebar.currentValue.selectedCalPoint,
+        table_data: obj.rebar.currentValue.table_data
       }
+    } else {
+      this.rebar = {};
+      this.typeView = ""
     }
-    return true;
+    this.displayPreview();
   }
 
-
   ngOnInit() {
+    this.displayPreview();
+  }
+
+  private displayPreview() {
     if (Object.keys(this.rebar).length != 0) {
       let calPoint = this.rebar.selectedCalPoint; 
       const member = this.members.getData(calPoint.m_no)
@@ -81,7 +90,6 @@ export class PreviewRebarComponent implements OnInit {
       var stirrupData = [];
       var calPointListData = [];
       this.typeView = member.shape
-      console.log("typeview", this.typeView)
 
       const upperside = this.translate.instant("preview_rebar.upper_side");
       const lowerside = this.translate.instant("preview_rebar.lower_side");
@@ -128,7 +136,6 @@ export class PreviewRebarComponent implements OnInit {
           })        
         }
       }
-
       this.table_datas_axial.push(axialRebarData);
 
       // Stirrup Data
@@ -174,7 +181,7 @@ export class PreviewRebarComponent implements OnInit {
         }
       }
       axialRebarData.forEach((data: any)=> {
-        if (this.typeView === 5) {
+        if (this.typeView === 5) { // fix typeview
           if (data.rebar_type === upperside || data.rebar_type === lowerside) {
             data.pq_cellstyle = this.styleShaded2;
             data.pq_cellprop = this.propShaded2;
@@ -325,11 +332,46 @@ export class PreviewRebarComponent implements OnInit {
       },
     }
 
-    this.option_list.push(axialRebarOption);
-    this.axialRebarOptions = this.option_list[0];
+    this.axialRebarOptions = axialRebarOption;
     this.stirrupOptions = stirrupOption;
     this.calculatedPointOptions = calculatedPointOption;
+
+    this.threeNode.dataRebar = this.rebar  
+    this.removeScene();
+    switch(this.typeView){
+      case 1: {
+        this.threeNode.createDemoRectangle();
+        break;
+      }
+      case 2: {
+        this.threeNode.createDemoTShape();
+        break;
+      }
+      case 3: {
+        this.threeNode.createDemoCircleRing();
+        break;
+      }
+      //  case 4: {
+      //    this.threeNode.createDemoCircleRing();
+      //    break;
+      //  }
+      case 4: {
+        this.threeNode.createDemoOval();
+        break;
+      }
+      //  case 6: {
+      //    this.threeNode.createDemoOval();
+      //    break;
+      //  }
+      default: 
+        this.threeNode.showMessage();
+        break;
+    }  
+    this.scene.render();
+
+    // this.grid.refreshDataAndView();
   }
+
   private setRebar0(table_data){
     const upperside = this.translate.instant("preview_rebar.upper_side");
     const lowerside = this.translate.instant("preview_rebar.lower_side");
@@ -436,8 +478,8 @@ export class PreviewRebarComponent implements OnInit {
     
     const rebar_type_options = [upper_side, lower_side, lateral_rebar];
     const rebar_dia_options = [10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
-
-    if (this.typeView === 1 || this.typeView === 2) {
+    console.log("type view",this.typeView)
+    if (this.typeView === 1 || this.typeView === 2 || this.typeView === "") {
       this.axialHeaders.push(
         {
           title: rebar_type,
@@ -611,7 +653,6 @@ export class PreviewRebarComponent implements OnInit {
         },
       )
     }
-    
   }
 
   private setStirrupHeader(): void {
@@ -668,19 +709,22 @@ export class PreviewRebarComponent implements OnInit {
     let rebarList = this.rebar.rebarList
     let m_no = 0;
     let cls = []
-    for (let i = 0; i < rebarList.length - 1; i++) {
-      if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no === m_no) {
-        cls.push("l-shape");
-      } else if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no !== m_no) {
-        cls.push("last-l-shape");
-      } else if (rebarList[i].m_no !== m_no && rebarList[i].m_no === rebarList[i + 1].m_no) {
-        cls.push("dot-line");
-        m_no = rebarList[i].m_no;
-      } else {
-        cls.push("dot");
-        m_no = rebarList[i].m_no;
+    if (rebarList) {
+      for (let i = 0; i < rebarList.length - 1; i++) {
+        if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no === m_no) {
+          cls.push("l-shape");
+        } else if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no !== m_no) {
+          cls.push("last-l-shape");
+        } else if (rebarList[i].m_no !== m_no && rebarList[i].m_no === rebarList[i + 1].m_no) {
+          cls.push("dot-line");
+          m_no = rebarList[i].m_no;
+        } else {
+          cls.push("dot");
+          m_no = rebarList[i].m_no;
+        }
       }
     }
+    
     this.calculatedPointHeaders.push(
       {
         title: "",

@@ -275,7 +275,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.option_list.push(op);
     }
     this.options = this.option_list[0];
-
+    this.table_data = this.table_datas[0]
     // タブのタイトルとなる
     this.groupe_name = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
@@ -653,13 +653,17 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.setTitle(this.save.isManual());
     // this.option_list[id].colModel = this.beamHeaders
     this.activeButtons(id);
-    this.bars.is_review = false;
     this.rebar = {}
     this.table_data = this.table_datas[id]
     this.options = this.option_list[id];
-    this.grid.options = this.options;
-    this.setActiveTab(this.activeTab);
-    this.grid.refreshDataAndView();
+
+    if (this.grid) {
+      this.grid.options = this.options;
+      this.setActiveTab(this.activeTab);
+      this.grid.refreshDataAndView();
+    } else {
+      this.preview()
+    }
   }
 
   // アクティブになっているボタンを全て非アクティブにする
@@ -793,6 +797,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.refreshDataAndView();
   }
   public preview(): void {
+    this.rebar = {}
     this.removeScene();
     if (!this.bars.is_review) {
       this.bars.is_review = !this.bars.is_review;
@@ -801,7 +806,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.bars.setTableColumns(this.table_data)
       for (let i = 0; i < this.bars.bar_list.length; i++) {
         let rebar = this.bars.bar_list[i];
-        if (rebar.rebar0.length > 0) {
+        if (rebar.rebar0 && rebar.rebar0.length > 0) {
           this.rebar = {
             rebarList: this.bars.bar_list,
             selectedCalPoint: rebar,
