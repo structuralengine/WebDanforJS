@@ -86,7 +86,7 @@ export class MenuComponent implements OnInit {
   public logs: string[] = [];
   public hideDCJ3_J5: boolean = false;
   public firstCondition: any;
-
+  public arg_wdj:string = null;
   constructor(
     private modalService: NgbModal,
     public menuService: MenuService,
@@ -127,6 +127,10 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    this.arg_wdj = this.electronService.ipcRenderer.sendSync("get-main-wdj");
+    if (this.arg_wdj !== null) {
+      this.open_electron();
+    } 
     if (this.conditions_list.length > 0) {
       this.firstCondition = this.conditions_list[0];
     } 

@@ -398,7 +398,8 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
 
           this.summary_data = new Uint8Array(byteNumbers);
           this.hasSummary = true;
-          const filename = `${Guid.create()}.xlsx`;
+          let date = this.formatDate("YYYYMMDD_hhmmss")
+          const filename = `WebDanSummary${date}.xlsx`;
           this._save_summary(filename);
         },
         (err) => {
@@ -429,7 +430,17 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     if (this.electronService.isElectron)
       this.electronService.ipcRenderer.sendSync('saveFileExcel', filename, this.summary_data);
     else {
-      window.open(fileURL, "_blank");
+      // window.open(fileURL, "_blank");
+      let a = document.createElement("a");
+      a.href = fileURL;
+      a.download = filename;
+      // Active event click in tag <a> to download
+      document.body.appendChild(a);
+      a.click();
+      // After download remove <a>
+      document.body.removeChild(a);
+      // revoke URL
+      URL.revokeObjectURL(fileURL);
     }
   }
 
@@ -497,5 +508,33 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
         break;
       }
     }
+  }
+  public formatDate(formatString: string): string {
+    var date = new Date();
+    const formatRules = {
+      yyyy: () => date.getFullYear().toString(),
+      YYYY: () => date.getFullYear().toString(),
+      yy: () => (date.getFullYear() % 100).toString().padStart(2, "0"),
+      YY: () => (date.getFullYear() % 100).toString().padStart(2, "0"),
+      MMMM: () => date.toLocaleString("default", { month: "long" }),
+      MMM: () => date.toLocaleString("default", { month: "short" }),
+      MM: () => String(date.getMonth() + 1).padStart(2, "0"),
+      dd: () => String(date.getDate()).padStart(2, "0"),
+      DD: () => String(date.getDate()).padStart(2, "0"),
+      HH: () => String(date.getHours()).padStart(2, "0"),
+      hh: () => String(date.getHours()).padStart(2, "0"),
+      mm: () => String(date.getMinutes()).padStart(2, "0"),
+      ss: () => String(date.getSeconds()).padStart(2, "0"),
+      a: () => (date.getHours() >= 12 ? "PM" : "AM"),
+    };
+
+    let formattedString = formatString;
+    for (const [pattern, formatter] of Object.entries(formatRules)) {
+      formattedString = formattedString.replace(
+        new RegExp(pattern, "g"),
+        formatter()
+      );
+    }
+    return formattedString;
   }
 }
