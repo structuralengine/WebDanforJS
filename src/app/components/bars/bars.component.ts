@@ -112,7 +112,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.setTitle(this.save.isManual());
     this.table_datas = this.bars.getTableColumns();
-
+    this.rebar = {};
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
