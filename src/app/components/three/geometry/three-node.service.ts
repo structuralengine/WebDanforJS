@@ -1071,31 +1071,64 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
   return { x, y, z };
 }
   createDemoCircleRing() {
-    var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
-    let memH = member['H'];
-    let memB = member['B'];
+    // var member = this.memmber.getData(this.dataRebar.selectedCalPoint.m_no);
+    // console.log("member ring", member)
+    // let memH = member['H'];
+    // let memB = member['B'];
+    
+    // fix data
+    this.dataRebar.selectedCalPoint.rebar0 = [ 
+      {
+        rebar_type: 7,
+        dia: 32,
+        quantity: 6,
+        dist_side: 100,
+      },
+      {
+        rebar_type: 7,
+        dia: 19,
+        quantity: 10,
+        dist_side: 200,
+      }
+    ]
+    let arr_rebar_type_7 = []
+    this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
+      if (data.rebar_type === 7) {
+        arr_rebar_type_7.push(data)
+      }
+    })
+    arr_rebar_type_7.sort((a, b) => a.dist_top - b.dist_top)
+    const rebar_type_7_0 = arr_rebar_type_7[0];
+    const rebar_type_7_1 = arr_rebar_type_7[1];
+
+    let memH = 250;
+    let memB = 900;
+
     var arr = [memH, memB];
     let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
     });
     this.scale = max_val / 88;
-    if (this.type === "Circle") {
+    if (memH === 0) {
       this.createCircleRing(0xb9b9b9, this.type, memB / this.scale)
     } else {
       this.createCircleRing(0xb9b9b9, this.type, memB / this.scale, memH / this.scale)
     }
     this.createLineCircleRing(0x333D46, 50 / this.scale, memB / this.scale)
-    this.createLineDashCircleRing(0x333D46, 60 / this.scale, 110 / this.scale, memB / this.scale)
+    this.createLineDashCircleRing(0x333D46, rebar_type_7_0.dist_side / this.scale, rebar_type_7_1.dist_side / this.scale, memB / this.scale)
+    this.drawPointCircleShape(memB, 7)
+    this.scene.render()
+
   }
   createCircleRing(color: any, type: any, b: any, h?: any,) {
     const material = new THREE.MeshBasicMaterial({ color: color });
     let geometry;
     let mesh
 
-    if (type === "Circle") {
-      geometry = new THREE.CircleGeometry(b / 2, 100)
-    } else {
+    if (h > 0) {
       geometry = new THREE.RingGeometry(h / 2, b / 2, 100)
+    } else {
+      geometry = new THREE.CircleGeometry(b / 2, 100)
     }
     mesh = new THREE.Mesh(geometry, material);
     mesh.position.set(0, 0, 0);
@@ -1144,7 +1177,7 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
     );
     curve2 = new THREE.EllipseCurve(
       0, 0,
-      Math.abs(b / 2 - range1 - range2), Math.abs(b / 2 - range1 - range2),
+      Math.abs(b / 2 - range2), Math.abs(b / 2 - range2),
       0, 2 * Math.PI,
       false,
       0
@@ -1162,25 +1195,96 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
     this.scene.add(ellipse2)
   }
   convertToCoordinatesCircleRing(b: any, h: any) {
+    
     let jsonData: object = {};
     const x_start = b / 2;
-    const y_start = h / 2
+    const x1_start = h / 2
     if (b != 0) {
       jsonData["1"] = {
         x: x_start,
-        y: 0,
+        y: 20,
         z: 0
       }
       jsonData["2"] = {
         x: -x_start,
-        y: 0,
+        y: 20,
         z: 0
       } 
     }   
-    this.drawLineDim(jsonData["1"], jsonData["2"], 1, Math.round(b * this.scale), false, x_start, 20, 10);
+    if (h > 0) {
+      jsonData["1.1"] = {
+        x: x1_start,
+        y: 0,
+        z: 0,
+      }
+      jsonData["2.1"] = {
+        x: -x1_start,
+        y: 0,
+        z: 0,
+      }
+      this.drawLineDim(jsonData["1.1"], jsonData["2.1"], 1, Math.round(h * this.scale), false, 5, 0, 0);
+    }
 
+    // Line dim for rebar0
+    let arr_rebar_type_7 = []
+    this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
+      if (data.rebar_type === 7) {
+        arr_rebar_type_7.push(data)
+      }
+    })
+    arr_rebar_type_7.sort((a, b) => a.dist_top - b.dist_top)
+    const rebar_type_7_0 = arr_rebar_type_7[0];
+    const rebar_type_7_1 = arr_rebar_type_7[1];
+    let dist_side1 = rebar_type_7_0.dist_side / this.scale
+    let dist_side2 = rebar_type_7_1.dist_side / this.scale
+    jsonData["3"] = {
+      x: x_start,
+      y: 0,
+      z: 0,
+    }
+    jsonData["4"] = {
+      x: x_start - dist_side1,
+      y: 0,
+      z: 0,
+    }
+    jsonData["5"] = {
+      x: x_start - dist_side2,
+      y: 0,
+      z: 0,
+    }
+    this.drawLineDim(jsonData["1"], jsonData["2"], 1, Math.round(b * this.scale), false, x_start * 2 / 3 , 12, 0);
+    this.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(rebar_type_7_0.dist_side), false, x_start, -20, -1);
+    this.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(rebar_type_7_1.dist_side - rebar_type_7_0.dist_side), false, x_start, -20, -1);
+    
   }
+  drawPointCircleShape(b: any, type: any){
+    let dataPoint = []
+    let color = 0x000000
 
+    this.dataRebar.selectedCalPoint.rebar0.map((data) => {
+      if (data.rebar_type === type) {
+        dataPoint.push(data)
+      }
+    })
+
+    dataPoint.map((data,index)=>{
+      let geometry = new THREE.SphereBufferGeometry(data.dia / 2 / this.scale)
+      for (let i = 0; i < data.quantity ;i++){
+        const mesh = new THREE.Mesh(
+          geometry,
+          new THREE.MeshBasicMaterial({ color: color })
+        );
+        let interval = 0
+        let angle = 2 * Math.PI / data.quantity
+        mesh.name = 'node' + index + i;
+        mesh.position.x = (b / 2 - data.dist_side) * Math.sin(angle*i )  / this.scale;
+        mesh.position.y = (b / 2 - data.dist_side) * Math.cos(angle*i) /  this.scale;
+        mesh.position.z = 0;
+        interval += Math.PI * (b - 2 * data.dist_side) / data.quantity
+        this.nodeList.children.push(mesh);
+      }
+    })
+  }
   showMessage() {
     const div = document.createElement("div");
     let mesh = new THREE.Mesh();
