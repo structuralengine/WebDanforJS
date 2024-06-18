@@ -276,7 +276,9 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   ngOnChanges(obj: SimpleChanges) {
     if (!obj.options.firstChange) {
       //grid is destroyed and recreated only when whole options object is changed to new reference.
-      this.grid.destroy();
+      if (this.grid) {
+        this.grid.destroy();
+      }
       this.createGrid();
     }
   }

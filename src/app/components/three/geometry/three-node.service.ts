@@ -1106,6 +1106,7 @@ export class ThreeNodeService {
     const message1 = this.translate.instant("preview_rebar.message1")
     const message2 = this.translate.instant("preview_rebar.message2")
 
+    div.className = "label_theerjs";
     div.style.textAlign = 'center';
     div.style.color = '#00C95F';
     div.style.fontSize = '16px';
