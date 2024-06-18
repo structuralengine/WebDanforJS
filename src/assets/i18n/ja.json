@@ -332,7 +332,7 @@
         "member_coefficient_γb": "部材係数γb",
         "γc_safe":"ｺﾝｸﾘｰﾄ γc",
         "γs_safe":"鋼材 γs",
-        "γbs":"Mud, Mydfrd",
+        "γbs":"Mud, Myd,frd",
         "s_safe":"せん断・ねじり照査用安全係数",
         "t_safe1":"材料係数",
         "t_safe2":"部材係数γb",

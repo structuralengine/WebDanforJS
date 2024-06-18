@@ -317,7 +317,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
       // グリッドの設定
       this.option1_list.push({
-        width: 1580,
+        width: 1650,
         height: 280,
         showTop: false,
         reactive: true,
@@ -785,7 +785,7 @@ export class SafetyFactorsMaterialStrengthsComponent
               "safety-factors-material-strengths.member_coefficient_γb"
             ),
             align: "center",
-            width: 150,
+            width: 100,
             colModel: [
               {
                 title: this.translate.instant(
@@ -795,7 +795,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                 format: "#.00",
                 dataIndx: "M_rbs",
                 sortable: false,
-                width: 150,
+                width: 100,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
@@ -834,7 +834,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                 format: "#.00",
                 dataIndx: "V_rc",
                 sortable: false,
-                width: 100,
+                width: 80,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
@@ -850,7 +850,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                 format: "#.00",
                 dataIndx: "V_rs",
                 sortable: false,
-                width: 70,
+                width: 80,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
@@ -873,12 +873,12 @@ export class SafetyFactorsMaterialStrengthsComponent
             align: "center",
             colModel: [
               {
-                title: "Vcd, Vod,Vwcd",
+                title: "Vcd,Vod,Vwcd",
                 dataType: "float",
                 format: "#.00",
                 dataIndx: "V_rbc",
                 sortable: false,
-                width: 70,
+                width: 100,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
@@ -887,12 +887,12 @@ export class SafetyFactorsMaterialStrengthsComponent
                 },
               },
               {
-                title: "Vsd frd",
+                title: "Vsd,frd",
                 dataType: "float",
                 format: "#.00",
                 dataIndx: "V_rbs",
                 sortable: false,
-                width: 70,
+                width: 100,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
@@ -906,7 +906,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                 format: "#.00",
                 dataIndx: "V_rbv",
                 sortable: false,
-                width: 70,
+                width: 100,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
@@ -915,12 +915,12 @@ export class SafetyFactorsMaterialStrengthsComponent
                 },
               },
               {
-                title: "Mtcd, Mtyd,Mtcud",
+                title: "Mtcd,Mtyd,Mtcud",
                 dataType: "float",
                 format: "#.00",
                 dataIndx: "T_rbt",
                 sortable: false,
-                width: 70,
+                width: 100,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
