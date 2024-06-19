@@ -53,7 +53,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
 
   @Input() rebar: any
   @ViewChild('calPointGrid') grid: SheetComponent;
-  
+  @ViewChild('axialGrid') axialGrid : SheetComponent;
   constructor(
     public bars: InputBarsService,
     private translate: TranslateService,
@@ -303,28 +303,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             this.rebar.selectedCalPoint.rebar0 = newRebar0;
           }
           // this.bars.setTableColumns(this.table_datas_axial)      
-          this.threeNode.dataRebar = this.rebar  
-          this.removeScene();
-          this.scene.render();
-          switch(this.typeView){
-            case 1: {
-              this.threeNode.createDemoRectangle();
-              break;
-            }
-            case 2: {
-              this.threeNode.createDemoTShape();
-              break;
-            }
-            case 3: {
-              this.threeNode.createDemoCircleRing();
-              break;
-            }
-            case 4: {
-              this.threeNode.createDemoOval();
-              break;
-            }
-
-          }   
+          this.drawPreview();
         }
       }
     }
@@ -358,12 +337,26 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       },
       colModel: this.calculatedPointHeaders,
       dataModel: { data: calPointListData },
-      // selectionModel: { type: 'row', mode: 'single' },
       rowClick: (evt, ui) => {
         this.clearFocus(calPointListData);
         ui.rowData.pq_rowcls = "pq-state-select ui-state-highlight";
         this.grid.refreshDataAndView();
+        this.member = this.members.getData(ui.rowData.no)
+        this.typeView = this.member.shape
 
+        for (let rebar of this.rebar.rebarList) {
+          if (rebar.p_name === ui.rowData.p_name) {
+            // update axial table
+            this.updateAxialRebarTable(rebar);
+            this.axialGrid.refreshDataAndView();
+            // TODO: update stirrup table
+
+            // change preview
+            this.rebar.selectedCalPoint = rebar
+            this.drawPreview();
+            break;
+          }
+        }
       },
     }
 
@@ -405,6 +398,220 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     this.scene.render();
 
     // this.grid.refreshDataAndView();
+  }
+
+  private updateAxialRebarTable(newRebar : any) {
+    const upperside = this.translate.instant("preview_rebar.upper_side");
+    const lowerside = this.translate.instant("preview_rebar.lower_side");
+    const lateral = this.translate.instant("preview_rebar.lateral_rebar");
+
+    var axialRebarData = [];
+    this.table_datas_axial = []
+    if (newRebar.rebar0.length > 0)  {
+      for (let i = 0; i < newRebar.rebar0.length; i++) {
+        let rebar = newRebar.rebar0[i];
+        let rebar_type = "";
+        switch (rebar.rebar_type) {
+          case 0: 
+            rebar_type = upperside;
+            break;
+          case 1: 
+            rebar_type = lowerside;
+            break;
+          case 2: 
+            rebar_type = upperside;
+            break;
+          case 3: 
+            rebar_type = lowerside;
+            break;
+          case 4: 
+            rebar_type = lateral;
+            break;
+          case 5: 
+            rebar_type = lateral;
+            break;
+          case 6: 
+            rebar_type = lateral;
+            break;
+          case 7: 
+            rebar_type = lowerside; // todo: change when have correct data
+            break;
+        }
+        if (this.typeView === 1 || this.typeView === 2) {
+          axialRebarData.push({
+            rebar_type: rebar_type,
+            rebar_dia: rebar.dia,
+            num: rebar.quantity,
+            distance_top: rebar.dist_top,
+            side_cover: rebar.dist_side,
+            interval: rebar.interval
+          })  
+        } else if (this.typeView === 3) { 
+          axialRebarData.push({
+            rebar_dia: rebar.dia,
+            num: rebar.quantity,
+            distance_side: rebar.dist_side,
+          })  
+        } else  if (this.typeView === 4) {
+          if (this.member.B > this.member.H) {
+            if (rebar_type === upperside || rebar_type === lowerside) {
+              axialRebarData.push({
+                rebar_type: rebar_type,
+                rebar_dia: rebar.dia,
+                num: rebar.quantity,
+                distance_top: rebar.dist_top,
+                side_cover: rebar.dist_side
+              })  
+            } else {
+              axialRebarData.push({
+                rebar_type: rebar_type,
+                rebar_dia: rebar.dia,
+                num: rebar.quantity,
+                distance_side: rebar.cover,
+              })  
+            } 
+          } else {
+            if (rebar_type === upperside || rebar_type === lowerside) {
+              axialRebarData.push({
+                rebar_type: rebar_type,
+                rebar_dia: rebar.dia,
+                num: rebar.quantity,
+                distance_side: rebar.cover,
+
+              })  
+            } else {
+              axialRebarData.push({
+                rebar_type: rebar_type,
+                rebar_dia: rebar.dia,
+                num: rebar.quantity,
+                distance_top: rebar.dist_top,
+                side_cover: rebar.dist_side
+              })  
+            } 
+          }
+
+          axialRebarData.forEach((data: any)=> {
+            if (this.member.B < this.member.H) { 
+              if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+                data.pq_cellstyle = this.styleShaded2;
+                data.pq_cellprop = this.propShaded2;
+              } else if (data.rebar_type === lateral) {
+                data.pq_cellstyle = this.styleShaded1;
+                data.pq_cellprop = this.propShaded1;
+              } 
+            } else {
+              if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+                data.pq_cellstyle = this.styleShaded1;
+                data.pq_cellprop = this.propShaded1;
+              } else if (data.rebar_type === lateral) {
+                data.pq_cellstyle = this.styleShaded2;
+                data.pq_cellprop = this.propShaded2;
+              } 
+            } 
+          })
+        }
+      }
+    }
+    this.table_datas_axial.push(axialRebarData);
+    this.setAxialHeaders();
+    const axialRebarOption = {
+      width: 'flex',
+      maxWidth: 620,
+      height: 200,
+      showTop: false,
+      reactive: true,
+      sortable: false,
+      locale: "jp",
+      numberCell: {
+        show: true,
+        width: 24,
+        title: "",
+        resizable: false,
+        minWidth: 24,
+      },
+      colModel: this.axialHeaders,
+      dataModel: { data: axialRebarData },
+      change: (event, ui) => {
+        for (const property of ui.updateList) {
+          for (const key of Object.keys(property.newRow)) {
+            const old = property.oldRow[key];
+            if (property.newRow[key] == null) {
+              continue; // 削除した場合 何もしない
+            }
+            if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
+              // 鉄筋径の規格以外は入力させない
+              const value0 = this.bars.matchBarSize(property.newRow[key]);
+              const j = property.rowIndx;
+              if (value0 === null) {
+                this.table_datas_axial[j][key] = old;
+              }
+            }
+          }         
+          
+          let table_data_bar = this.rebar.table_data
+          let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
+          if(indexBar !== -1){
+            let newRebar0= this.setRebar0(this.table_datas_axial)
+            console.log("newBar", newRebar0)
+            table_data_bar[indexBar].rebar0=newRebar0          
+            this.bars.setTableColumns(table_data_bar)  
+            this.rebar.selectedCalPoint.rebar0 = newRebar0;
+          }
+          // this.bars.setTableColumns(this.table_datas_axial)      
+          console.log("this rebar change", this.rebar)
+          this.threeNode.dataRebar = this.rebar  
+          this.removeScene();
+          this.scene.render();
+          switch(this.typeView){
+            case 1: {
+              this.threeNode.createDemoRectangle();
+              break;
+            }
+            case 2: {
+              this.threeNode.createDemoTShape();
+              break;
+            }
+            case 3: {
+              this.threeNode.createDemoCircleRing();
+              break;
+            }
+            case 4: {
+              this.threeNode.createDemoOval();
+              break;
+            }
+
+          }   
+        }
+      }
+    }
+    this.axialRebarOptions = axialRebarOption;
+  }
+
+  private drawPreview() {
+    this.threeNode.dataRebar = this.rebar  
+    this.removeScene();
+    switch(this.typeView){
+      case 1: {
+        this.threeNode.createDemoRectangle();
+        break;
+      }
+      case 2: {
+        this.threeNode.createDemoTShape();
+        break;
+      }
+      case 3: {
+        this.threeNode.createDemoCircleRing();
+        break;
+      }
+      case 4: {
+        this.threeNode.createDemoOval();
+        break;
+      }
+      default: 
+        this.threeNode.showMessage();
+        break;
+    }  
+    this.scene.render();
   }
 
   private setRebar0(table_data){
