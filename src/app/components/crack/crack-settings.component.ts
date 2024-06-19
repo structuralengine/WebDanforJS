@@ -471,7 +471,7 @@ export class CrackSettingsComponent
         align: "center",
         dataType: "float",
         dataIndx: "wlimit",
-        format: "#.00",
+        format: "#.000",
         sortable: false,
         width: 70,
         nodrag: true,
