@@ -874,19 +874,19 @@ export class ThreeNodeService {
        const dist_top = rebar_type_0.dist_top / this.scale;
        const dist_side = rebar_type_0.dist_side / this.scale;
        const quantity = rebar_type_0.quantity;
-       const interval =   (b - 2 * dist_side) / (quantity - 1);
+       const interval =   (b - h - 2 * dist_side) / (quantity - 1);
        jsonData["rb0_1"] = {
-         x: -(x_start/2),
+         x: -(x_start - y_start),
          y: y_start + 2,
          z: 0
        }
        jsonData["rb0_2"] = {
-         x: -(x_start/2) + dist_top,
+         x: -(x_start - y_start - dist_side),
          y: y_start + 2,
          z: 0
        }
        jsonData["rb0_3"] = {
-         x: -(x_start/2) + dist_top + interval,
+         x: -(x_start - y_start - dist_side) + interval,
          y: y_start + 2,
          z: 0
        }
@@ -909,19 +909,19 @@ export class ThreeNodeService {
         const dist_top2 = rebar_type_1.dist_top / this.scale;
         const dist_side2 = rebar_type_1.dist_side / this.scale;
         const quantity2 = rebar_type_1.quantity;
-        const interval2 = (b - 2 * dist_side2) / (quantity2 - 1);
+        const interval2 = (b - h - 2 * dist_side2) / (quantity2 - 1);
         jsonData["rb1_1"] = {
-          x: -(x_start/2),
+          x: -(x_start - y_start),
           y: -(y_start + 2),
           z: 0
         }
         jsonData["rb1_2"] = {
-          x: -(x_start/2 - dist_side2),
+          x: -(x_start - y_start - dist_side2),
           y: -(y_start + 2),
           z: 0
         }
         jsonData["rb1_3"] = {
-          x: -(x_start/2  - dist_side2 - interval2),
+          x: -(x_start - y_start - dist_side2 - interval2),
           y: -(y_start+2),
           z: 0
         }
@@ -930,6 +930,58 @@ export class ThreeNodeService {
           this.drawLineDim(jsonData["rb1_2"], jsonData["rb1_3"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
         }
       }
+    let arr_rebar_type01 = [];
+    this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
+      if (data.rebar_type === 0 || data.rebar_type === 1) {
+        arr_rebar_type01.push(data)
+      }
+    })
+    arr_rebar_type01.sort((a, b) => a.dist_top - b.dist_top)
+    jsonData["rb6"] = {
+      x: -(x_start - y_start),
+      y: y_start,
+      z:0
+    }
+    if (arr_rebar_type01.length > 0) {    
+      for(let i = 0; i< arr_rebar_type01.length ; i++){  
+        const rebar_6 =  arr_rebar_type01[i];        
+        jsonData[`rb6_${i}`]= {
+          x: - (x_start - y_start),
+          y:   y_start -  rebar_6.dist_top/this.scale,
+          z: 0
+        }
+        if(i == 0)
+          this.drawLineDim(jsonData["rb6"], jsonData[`rb6_${i}`], 0, Math.round(rebar_6.dist_top), true, y_start*1.5,y_start*2.75, 0);
+        else
+          this.drawLineDim(jsonData[`rb6_${i - 1}`], jsonData[`rb6_${i}`], 0, Math.round(arr_rebar_type01[i].dist_top - arr_rebar_type01[i-1].dist_top), true, y_start*1.5, y_start*2.75, 0);    
+        
+        if(i == arr_rebar_type01.length - 1){
+          jsonData["rb6_end"] = {
+            x: - (x_start - y_start),
+            y: -(y_start),
+            z:0
+          }
+          this.drawLineDim(jsonData[`rb6_end`], jsonData[`rb6_${i}`], 0, Math.round(h * this.scale - rebar_6.dist_top), true, y_start*1.5, y_start*2.75, 0);  
+        }
+      }   
+    }
+    let dist_side_min;
+    this.dataRebar.selectedCalPoint.rebar0.map((data) =>{
+      if(data.rebar_type == 5){
+        dist_side_min = data;
+      }
+    });
+    jsonData["rb6_side1"] ={
+      x: x_start,
+      y: 0,
+      z: 0
+    }
+    jsonData["rb6_side2"] ={
+      x: x_start - dist_side_min.cover/this.scale,
+      y: 0,
+      z: 0
+    }
+    this.drawLineDim(jsonData["rb6_side1"], jsonData["rb6_side2"], 1, dist_side_min.cover, false, 6, 2, 0);
   }
   createArcDashedOVal(b: any, h: any, range: any, color: any, type, rebarType:any){
     const material = new THREE.LineBasicMaterial({ color: color })
