@@ -39,7 +39,7 @@ export class InputCrackSettingsService {
       kr: 0.85,
       k4: 0.5,
       JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
-      wlimit: 0.35
+      wlimit: 0.300
     };
   }
 

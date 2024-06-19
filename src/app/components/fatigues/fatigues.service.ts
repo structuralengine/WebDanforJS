@@ -63,8 +63,8 @@ export class InputFatiguesService {
     if (target === "Md") {
       result["r1_1"] = 1;
       result["r1_3"] = 1;
-      result["Class"] = 1;
-      result["weld"] = 1;
+      // result["Class"] = 1;
+      // result["weld"] = 1;
     } else {
       result["r1_2"] = 0.65;
       result["r1_3"] = 1.0;
@@ -246,6 +246,11 @@ export class InputFatiguesService {
       const f = this.default_fatigue(column1.index);
 
       //f.title1 = column1.design_point_id;
+      f.b= column1.bh;
+      f.g_name = column1.g_name;
+      f.m_no = column1.m_no;
+      f.p_name = column1.p_name;
+      f.h = column1.bh;
       f.M1.SA = column1.M_SA;
       f.M1.SB = column1.M_SB;
       f.M1.NA06 = column1.M_NA06;
@@ -256,8 +261,8 @@ export class InputFatiguesService {
       f.M1.B = column1.M_B;
       f.M1.r1_1 = column1.M_r1_1;
       f.M1.r1_3 = column1.M_r1_3;
-      f.M1.Class = column1.M_Class;
-      f.M1.weld = column1.M_weld;
+      // f.M1.Class = column1.M_Class;
+      // f.M1.weld = column1.M_weld;
 
       f.V1.SA = column1.V_SA;
       f.V1.SB = column1.V_SB;
@@ -281,8 +286,8 @@ export class InputFatiguesService {
       f.M2.B = column2.M_B;
       f.M2.r1_1 = column2.M_r1_1;
       f.M2.r1_3 = column2.M_r1_3;
-      f.M2.Class = column2.M_Class;
-      f.M2.weld = column2.M_weld;
+      // f.M2.Class = column2.M_Class;
+      // f.M2.weld = column2.M_weld;
 
       f.V2.SA = column2.V_SA;
       f.V2.SB = column2.V_SB;
