@@ -270,7 +270,7 @@ export class InputDesignPointsService {
   }
 
   // pick up ファイルをセットする関数
-  public setPickUpData(pickup_data: Object,mode:any) {
+  public setPickUpData(pickup_data: Object, mode: any, checkOpenDSD?:boolean) {
     const keys: string[] = Object.keys(pickup_data);
     const positions: any[] = pickup_data[keys[0]];
 
@@ -299,10 +299,12 @@ export class InputDesignPointsService {
             new_point["axis_type"] = 1
           }
           new_point["isMyCalc"] = false
-          new_point["isVyCalc"] = false
-          new_point["isMzCalc"] = false
           new_point["isVzCalc"] = false
           new_point["isMtCalc"] = false
+          if(!checkOpenDSD){
+            new_point["isVyCalc"] = false
+            new_point["isMzCalc"] = false
+          }
         }
       }
       // 部材長をセットする
