@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild,ElementRef, AfterViewInit } from '@angular/core';
 import pq from 'pqgrid';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { SaveDataService } from 'src/app/providers/save-data.service';
@@ -17,7 +17,10 @@ import { Subscription } from 'rxjs';
 export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('grid') grid: SheetComponent;
+  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+
   public options: pq.gridT.options;
+  hasScrollbar: boolean = false;
 
   // データグリッドの設定変数
   private option_list: pq.gridT.options[] = new Array();
@@ -102,12 +105,20 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   ngAfterViewInit() {
+    this.checkForScrollbar();
+
     this.activeButtons(0);
     this.refreshSubscription= this.crack.refreshTitle$.subscribe(()=>{
       this.changeTitle()
     })
   }
-
+  private checkForScrollbar() {
+    // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
+    if (this.subNavArea) {
+      const element = this.subNavArea.nativeElement;
+      this.hasScrollbar = element.scrollWidth > element.clientWidth;
+    }
+  }
   private setTitle(isManual: boolean): void {
     if (isManual) {
       // 断面力手入力モードの場合
