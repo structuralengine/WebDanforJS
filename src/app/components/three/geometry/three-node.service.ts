@@ -633,7 +633,7 @@ export class ThreeNodeService {
       this.drawPointOval(b, h, 2, type)
       this.drawPointOval(b, h, 3, type)
       this.drawPointOval(b, h, 6, type)
-      this.convertToCoordinatesVericalOval(b, h);
+      this.convertToCoordinatesVerticalOval(b, h);
     } else {
       geometry = new THREE.PlaneGeometry(Math.abs(h - b), h);
       circleGeometry1 = new THREE.Mesh(new THREE.CircleGeometry(h / 2, 100, Math.PI / 2, Math.PI), materialCircle);
@@ -728,7 +728,7 @@ export class ThreeNodeService {
     this.scene.add(line1)
     this.scene.add(line2)
   }
-  convertToCoordinatesVericalOval(b: any, h: any) {
+  convertToCoordinatesVerticalOval(b: any, h: any) {
     let jsonData: object = {};
     const x_start = b / 2;
     const y_start = h / 2
@@ -1038,9 +1038,6 @@ export class ThreeNodeService {
     dataPoint.map((data, index) => {
       this.geometry = new THREE.SphereBufferGeometry(data.dia / 2 / this.scale)
       let interval = 0
-      if (typeRebar===5){
-
-      }
       for (let i = 1; i <= data.quantity; i++) {
         const mesh = new THREE.Mesh(this.geometry,
           new THREE.MeshBasicMaterial({ color: color }));
