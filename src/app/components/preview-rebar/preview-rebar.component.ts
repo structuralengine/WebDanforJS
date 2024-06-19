@@ -13,7 +13,7 @@ import { SceneService } from '../three/scene.service';
 @Component({
   selector: 'app-preview-rebar',
   templateUrl: './preview-rebar.component.html',
-  styleUrls: ['./preview-rebar.component.scss']
+  styleUrls: ['./preview-rebar.component.scss', '../subNavArea.scss']
 })
 export class PreviewRebarComponent implements OnInit, OnChanges {
   public axialRebarOptions: pq.gridT.options;
@@ -25,6 +25,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private stirrupHeaders: object[] = new Array();
   private calculatedPointHeaders: object[] = new Array();
   private table_datas_axial: any[];
+  private table_datas_stirrup: any[];
+
   public typeView: any
   public member: any
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
@@ -77,7 +79,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.displayPreview();
+    this.displayPreview();    
   }
 
   private displayPreview() {
@@ -86,6 +88,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       const member = this.members.getData(calPoint.m_no)
       this.member = member;
       this.table_datas_axial = new Array();
+      this.table_datas_stirrup = new Array();
       var axialRebarData = [];
       var stirrupData = [];
       var calPointListData = [];
@@ -208,12 +211,12 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       const stirrup = calPoint.stirrup;
       if (stirrup) {
         stirrupData.push({
-          rebar_dia: stirrup.stirrup_dia,
+          rebar_dia: stirrup.stirrup_dia == null ? 10 : stirrup.stirrup_dia,
           num: stirrup.stirrup_n,
           interval: stirrup.stirrup_ss,
         })
       }
-      
+      this.table_datas_stirrup.push(stirrupData);      
       // Calculation Point List Data
       const calPointList = this.rebar.rebarList;
       let m_no = calPointList[0].m_no;
@@ -270,10 +273,14 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       locale: "jp",
       numberCell: {
         show: true,
-        width: 24,
-        title: "",
-        resizable: false,
-        minWidth: 24,
+        // width: 24,
+        // title: "",
+        // resizable: false,
+        // minWidth: 24,
+      },
+      freezeCols: 1,
+      editModel: {
+        clicksToEdit: 1
       },
       colModel: this.axialHeaders,
       dataModel: { data: axialRebarData },
@@ -318,10 +325,47 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       locale: "jp",
       numberCell: {
         show: false
+      },       
+      freezeCols: 1,
+      editModel: {
+        clicksToEdit: 1
       },
       colModel: this.stirrupHeaders,
       dataModel: { data: stirrupData },
-    }
+      change: (event, ui) => {
+        for (const property of ui.updateList) {
+          for (const key of Object.keys(property.newRow)) {
+            const old = property.oldRow[key];
+            if (property.newRow[key] == null) {
+              continue; // 削除した場合 何もしない
+            }
+            if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
+              // 鉄筋径の規格以外は入力させない
+              const value0 = this.bars.matchBarSize(property.newRow[key]);
+              const j = property.rowIndx;
+              if (value0 === null) {
+                this.table_datas_stirrup[j][key] = old;
+              }
+            }
+          }         
+          
+          let table_data_bar = this.rebar.table_data
+          let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
+          if(indexBar !== -1){
+            let newStirrup= this.setStrrup(this.table_datas_stirrup)
+            console.log(table_data_bar[indexBar])
+            table_data_bar[indexBar].stirrup=newStirrup   
+            table_data_bar[indexBar].stirrup_dia=newStirrup.stirrup_dia  
+            table_data_bar[indexBar].stirrup_n=newStirrup.stirrup_n 
+            table_data_bar[indexBar].stirrup_ss=newStirrup.stirrup_ss       
+            this.bars.setTableColumns(table_data_bar)  
+            this.rebar.selectedCalPoint.stirrup = newStirrup;
+          }
+          // this.bars.setTableColumns(this.table_datas_axial)      
+          this.drawPreview();
+        }
+      }
+    }   
 
     const calculatedPointOption = {
       width: 'flex',
@@ -362,8 +406,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
 
     this.axialRebarOptions = axialRebarOption;
     this.stirrupOptions = stirrupOption;
-    this.calculatedPointOptions = calculatedPointOption;
-
+    this.calculatedPointOptions = calculatedPointOption;    
     this.threeNode.dataRebar = this.rebar  
     this.removeScene();
     switch(this.typeView){
@@ -522,12 +565,16 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       reactive: true,
       sortable: false,
       locale: "jp",
+      freezeCols: 1,
+      editModel: {
+        clicksToEdit: 1
+      },
       numberCell: {
         show: true,
-        width: 24,
-        title: "",
-        resizable: false,
-        minWidth: 24,
+        // width: 24,
+        // title: "",
+        // resizable: false,
+        // minWidth: 24,
       },
       colModel: this.axialHeaders,
       dataModel: { data: axialRebarData },
@@ -691,7 +738,14 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       row.pq_cellcls = {}; 
     });
   }
-
+  private setStrrup(table_data){
+    var data = table_data[0][0]
+    var stirrup = this.bars.default_stirrup_bar()
+    stirrup.stirrup_dia = data.rebar_dia;
+    stirrup.stirrup_n = data.num;
+    stirrup.stirrup_ss = data.interval;
+    return stirrup;
+  }
   private setColumnWidth(column) {
     const isJapanese = /[\u3000-\u303F\u3040-\u309F\u30A0-\u30FF\uFF00-\uFFEF\u4E00-\u9FAF]/.test(column);
 
@@ -744,44 +798,29 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           title: rebar_type,
           width: this.setColumnWidth(rebar_type), align: 'center',
           dataIndx: 'rebar_type',
+          cls: 'pq-drop-icon pq-side-icon',
           editable: false, sortable: false, nodrag: true, resizable: false,
-          render: function (ui) {
-            var cellData = ui.cellData;
-            var options = rebar_type_options;
-            var selectBoxHtml = '<select>';
-  
-            options.forEach(function (option) {
-              var selected = (option === cellData) ? 'selected' : '';
-              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
-            });
-            selectBoxHtml += '</select>';
-  
-            return {
-              text: selectBoxHtml,
-              cls: 'pq-select-box'
-            }
+          editor: {
+            type: 'select',
+            options: rebar_type_options
+          },
+          render:  (ui) => {       
+            return rebar_type_options[ui.cellData] || {};
           },
         },
         {
           title: rebar_dia,
           width: this.setColumnWidth(rebar_dia), align: 'center',
           dataIndx: 'rebar_dia',
+          cls: 'pq-drop-icon pq-side-icon',
           editable: false, sortable: false, nodrag: true, resizable: false,
-          render: function (ui) {
-            var cellData = ui.cellData;
-            var options = rebar_dia_options;
-            var selectBoxHtml = '<select>';
-  
-            options.forEach(function (option) {
-              var selected = (option === cellData) ? 'selected' : '';
-              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
-            });
-            selectBoxHtml += '</select>';
-  
-            return {
-              text: selectBoxHtml,
-              cls: 'pq-select-box'
-            }
+          editor: {
+            type: 'select',
+            options: rebar_dia_options
+          },
+          render:  (ui) =>{
+       
+            return rebar_dia_options[ui.cellData] || {};
           },
         },
         {
@@ -809,44 +848,29 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           title: rebar_type,
           width: this.setColumnWidth(rebar_type), align: 'center',
           dataIndx: 'rebar_type',
+          cls: 'pq-drop-icon pq-side-icon',
           editable: false, sortable: false, nodrag: true, resizable: false,
-          render: function (ui) {
-            var cellData = ui.cellData;
-            var options = rebar_type_options;
-            var selectBoxHtml = '<select>';
-  
-            options.forEach(function (option) {
-              var selected = (option === cellData) ? 'selected' : '';
-              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
-            });
-            selectBoxHtml += '</select>';
-  
-            return {
-              text: selectBoxHtml,
-              cls: 'pq-select-box'
-            }
+          editor: {
+            type: 'select',
+            options: rebar_type_options
+          },
+          render:  (ui) =>{       
+            return rebar_type_options[ui.cellData] || {};
           },
         },
         {
           title: rebar_dia,
           width: this.setColumnWidth(rebar_dia), align: 'center',
           dataIndx: 'rebar_dia',
+          cls: 'pq-drop-icon pq-side-icon',
           editable: false, sortable: false, nodrag: true, resizable: false,
-          render: function (ui) {
-            var cellData = ui.cellData;
-            var options = rebar_dia_options;
-            var selectBoxHtml = '<select>';
-  
-            options.forEach(function (option) {
-              var selected = (option === cellData) ? 'selected' : '';
-              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
-            });
-            selectBoxHtml += '</select>';
-  
-            return {
-              text: selectBoxHtml,
-              cls: 'pq-select-box'
-            }
+          editor: {
+            type: 'select',
+            options: rebar_dia_options
+          },
+          render:  (ui) => {
+       
+            return rebar_dia_options[ui.cellData] || {};
           },
         },
         {
@@ -880,22 +904,14 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           title: rebar_dia,
           width: this.setColumnWidth(rebar_dia), align: 'center',
           dataIndx: 'rebar_dia',
+          cls: 'pq-drop-icon pq-side-icon',
           editable: false, sortable: false, nodrag: true, resizable: false,
-          render: function (ui) {
-            var cellData = ui.cellData;
-            var options = rebar_dia_options;
-            var selectBoxHtml = '<select>';
-  
-            options.forEach(function (option) {
-              var selected = (option === cellData) ? 'selected' : '';
-              selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
-            });
-            selectBoxHtml += '</select>';
-  
-            return {
-              text: selectBoxHtml,
-              cls: 'pq-select-box'
-            }
+          editor: {
+            type: 'select',
+            options: rebar_dia_options
+          },
+          render:  (ui) => {       
+            return rebar_dia_options[ui.cellData] || {};
           },
         },
         {
@@ -927,21 +943,13 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         width: this.setColumnWidth(rebar_dia),
         dataIndx: 'rebar_dia', align: 'center',
         editable: true, sortable: false, nodrag: true, resizable: false,
-        render: function (ui) {
-          var cellData = ui.cellData;
-          var options = rebar_dia_options;
-          var selectBoxHtml = '<select>';
-
-          options.forEach(function (option) {
-            var selected = (option === cellData) ? 'selected' : '';
-            selectBoxHtml += `<option value="${option}" ${selected}>${option}</option>`;
-          });
-          selectBoxHtml += '</select>';
-
-          return {
-            text: selectBoxHtml,
-            cls: 'pq-select-box'
-          }
+        cls: 'pq-drop-icon pq-side-icon',
+        editor: {
+          type: 'select',
+          options: rebar_dia_options
+        },
+        render:  (ui) =>{     
+          return rebar_dia_options[ui.cellData] || {};
         },
       },
       {
@@ -957,7 +965,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       },
     )
   }
-
   private setCalculatedPointHeader(): void {
     this.calculatedPointHeaders = [];
 

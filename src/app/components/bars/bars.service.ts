@@ -197,7 +197,13 @@ export class InputBarsService {
       stirrup_ss: null
     };
   }
-
+  public default_stirrup_bar(): any {
+    return {
+      stirrup_dia: null,
+      stirrup_n: null,
+      stirrup_ss: null
+    };
+  }
   private default_bend(): any {
     return {
       bending_dia: null,
