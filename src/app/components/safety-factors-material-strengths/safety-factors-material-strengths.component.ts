@@ -360,39 +360,30 @@ export class SafetyFactorsMaterialStrengthsComponent
           let defaultItem = self.default_factor.filter(x => x.id === ui.updateList[0].rowData.id)[0];
           for (let key in ui.updateList[0].newRow) {
             // Check if the value in newRow is 0
-            if (ui.updateList[0].newRow[key] === 0 || ui.updateList[0].newRow[key] === null) {
+            if (ui.updateList[0].newRow[key] === null) {
               // Assign the value from oldRow to rowData
               ui.updateList[0].rowData[key] = defaultItem[key];
+              ui.updateList[0].rowData.pq_cellstyle = {
+                ...ui.updateList[0].rowData.pq_cellstyle,
+              };
+              ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                color: "gray",
+              };
+            }
+            else if(ui.updateList[0].newRow[key] === 0){
+              ui.updateList[0].rowData[key] = ui.updateList[0].oldRow[key];
+            }
+            else{
+              if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                ui.updateList[0].rowData.pq_cellstyle = {
+                  ...ui.updateList[0].rowData.pq_cellstyle,
+                };
+                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                  color: "white",
+                };
+              }
             }
           }
-        if(ui.updateList[0].newRow[col] !== null &&  ui.updateList[0].newRow[col] !== 0){
-          if(ui.updateList[0].newRow[col] === defaultItem[col]){
-            ui.updateList[0].rowData.pq_cellstyle = {
-              ...ui.updateList[0].rowData.pq_cellstyle,
-            };
-            ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-              color: "gray",
-            };
-          } 
-          else if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-            ui.updateList[0].rowData.pq_cellstyle = {
-              ...ui.updateList[0].rowData.pq_cellstyle,
-            };
-            ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-              color: "white",
-            };
-          }
-        }
-        else
-        {
-          ui.updateList[0].rowData.pq_cellstyle = {
-            ...ui.updateList[0].rowData.pq_cellstyle,
-          };
-          ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-            color: "gray",
-          };
-        }
-          
         },
       });
       this.option2_list.push({
