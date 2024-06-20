@@ -92,7 +92,7 @@ export class SaveDataService {
   }
 
   // ピックアップファイルを読み込む
-  public readPickUpData(str: string, filename: string) {
+  public readPickUpData(str: string, filename: string, checkOpenDSD?:boolean) {
     try {
       const tmp = str.split("\n"); // 改行を区切り文字として行を要素とした配列を生成
       // 各行ごとにカンマで区切った文字列を要素とした二次元配列を生成
@@ -169,7 +169,7 @@ export class SaveDataService {
 
       this.basic.setPickUpData();
       this.members.setPickUpData(pickup1);
-      this.points.setPickUpData(pickup1,mode);
+      this.points.setPickUpData(pickup1, mode, checkOpenDSD);
       this.bars.setPickUpData();
       this.steel.setPickUpData();
       this.basic.setPickUpData();
