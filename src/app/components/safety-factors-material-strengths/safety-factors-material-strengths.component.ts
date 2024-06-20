@@ -361,15 +361,7 @@ export class SafetyFactorsMaterialStrengthsComponent
               // Assign the value from oldRow to rowData
               ui.updateList[0].rowData[key] = ui.updateList[0].oldRow[key];
             }
-            if (ui.updateList[0].newRow[key] === '' || ui.updateList[0].newRow[key] === null){
-               // Lấy dữ liệu mặc định từ this.safety.default_safety_factor() dựa trên key
-              const defaultValue = this.default_factor.find(item => item.title === key);
-              // Nếu có giá trị mặc định tương ứng
-              if (defaultValue) {
-                  // Gán giá trị của rowData[key] bằng giá trị từ mảng default_safety_factor
-                  ui.updateList[0].rowData[key] = defaultValue[key];
-              }
-            }
+          
           }
           var col = Object.keys(ui.updateList[0].newRow)[0];
           if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
