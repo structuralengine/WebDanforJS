@@ -374,7 +374,15 @@ export class SafetyFactorsMaterialStrengthsComponent
               ui.updateList[0].rowData[key] = ui.updateList[0].oldRow[key];
             }
             else{
-              if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+              if(ui.updateList[0].newRow[key] === defaultItem[key]){
+                ui.updateList[0].rowData.pq_cellstyle = {
+                  ...ui.updateList[0].rowData.pq_cellstyle,
+                };
+                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                  color: "gray",
+                };
+              }
+              else if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
                 ui.updateList[0].rowData.pq_cellstyle = {
                   ...ui.updateList[0].rowData.pq_cellstyle,
                 };
