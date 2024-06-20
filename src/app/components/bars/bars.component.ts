@@ -207,28 +207,25 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         cellClick: (evt, ui) => {
-          if (ui.rowIndx !== this.options.mergeCells[0].r1) {
-            if (ui.rowIndx % 2 === 0) {
-              this.threeNode.type = "Vertical"
-            } else {
-              this.threeNode.type = "Horizontal"
-            }
-            // if (ui.rowIndx % 2 === 0 ) {
-            //   this.threeNode.type = "Circle"
-            // } else {
-            //   this.threeNode.type = "Ring"
-            // } 
-            let m_no = ui.rowData.m_no;
-            const rowData = ui.rowData
+          if (ui.rowIndx !== this.options.mergeCells[0].r1) {           
+            let m_no = ui.rowData.m_no;           
             let index = ui.rowData.index;
+            let rowIndex = ui.rowIndx ;
             if (ui.rowIndx % 2 != 0) {
-              const data_index = this.table_datas[i][ui.rowIndx - 1];
-              m_no = data_index.m_no;
-              index = data_index.index
+              rowIndex--;
+              const data_index = this.table_datas[i][rowIndex];
+              m_no = data_index.m_no;         
+            }else{
+              while(m_no === "" || m_no == undefined ){
+                rowIndex--;
+                const data_index = this.table_datas[i][rowIndex];
+                m_no = data_index.m_no;                
+              }
             }
             if (m_no != null && m_no != undefined) {
               this.bars.setTableColumns(this.table_datas[i])
               let data = this.bars.getDataPreview(index);
+              data.m_no = m_no;
               const member = this.member.getTableColumns(m_no);
               this.table_data = this.table_datas[i]
               this.rebar = {
@@ -237,8 +234,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 typeView: member.shape,
                 table_data: this.table_data 
               }
-              this.threeNode.memNo = m_no;
-              this.threeNode.dataNode = data;
+              this.threeNode.memNo = m_no;    
               this.threeNode.dataRebar = this.rebar
 
               this.calPoint = {
@@ -253,23 +249,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             this.preview();
           }
           this.removeScene()
-          // if(this.bars.is_review){
-
-          //   // this.threeNode.createDrawingLine()
-          //   // this.threeNode.createDemoOval()
-          //   this.threeNode.createDemoTShape()
-          //  }
-          //  let colIndex = this.save.isManual() ? 5 : 6
-          //  if (
-          //   ui.rowIndx === this.options.mergeCells[0].r1 
-          //   && ui.colIndx === colIndex
-          // ) {
-          //   this.preview()
-          //   this.removeScene()
-          //   this.threeNode.createDemoTShape()
-          //   // this.threeNode.createDemoOval()
-          //   // this.threeNode.createDemoCircleRing()
-          //  }
         },
       };
       this.option_list.push(op);

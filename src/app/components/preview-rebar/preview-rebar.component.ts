@@ -82,9 +82,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     this.displayPreview();    
   }
 
-  private displayPreview() {
+  private displayPreview(newRebar? : any) {
     if (Object.keys(this.rebar).length != 0) {
-      let calPoint = this.rebar.selectedCalPoint; 
+      this.rebar.selectedCalPoint = newRebar !== undefined ? newRebar : this.rebar.selectedCalPoint;
+      let calPoint =  this.rebar.selectedCalPoint; 
       const member = this.members.getData(calPoint.m_no)
       this.member = member;
       this.table_datas_axial = new Array();
@@ -92,9 +93,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       var axialRebarData = [];
       var stirrupData = [];
       var calPointListData = [];
-      this.typeView = member.shape
-      // // test
-      // this.typeView = 3;
+      this.typeView = calPoint.rebar0.length > 0 ? member.shape  : "" 
       const upperside = this.translate.instant("preview_rebar.upper_side");
       const lowerside = this.translate.instant("preview_rebar.lower_side");
       const lateral = this.translate.instant("preview_rebar.lateral_rebar");
@@ -204,11 +203,11 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             })
           }
         }
-      }
+      }     
       this.table_datas_axial.push(axialRebarData);
 
       // Stirrup Data
-      const stirrup = calPoint.stirrup;
+      const stirrup = calPoint.rebar0.length >0 ?calPoint.stirrup: null;
       if (stirrup) {
         stirrupData.push({
           rebar_dia: stirrup.stirrup_dia == null ? 10 : stirrup.stirrup_dia,
@@ -216,7 +215,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           interval: stirrup.stirrup_ss,
         })
       }
-      this.table_datas_stirrup.push(stirrupData);      
+      this.table_datas_stirrup.push(calPoint.rebar0.length>0?calPoint.stirrup: []);      
       // Calculation Point List Data
       const calPointList = this.rebar.rebarList;
       let m_no = calPointList[0].m_no;
@@ -272,11 +271,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       sortable: false,
       locale: "jp",
       numberCell: {
-        show: true,
-        // width: 24,
-        // title: "",
-        // resizable: false,
-        // minWidth: 24,
+        show: true,       
       },
       freezeCols: 1,
       editModel: {
@@ -308,8 +303,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             table_data_bar[indexBar].rebar0=newRebar0          
             this.bars.setTableColumns(table_data_bar)  
             this.rebar.selectedCalPoint.rebar0 = newRebar0;
-          }
-          // this.bars.setTableColumns(this.table_datas_axial)      
+          }         
           this.drawPreview();
         }
       }
@@ -381,7 +375,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       },
       colModel: this.calculatedPointHeaders,
       dataModel: { data: calPointListData },
-      rowClick: (evt, ui) => {
+      cellClick: (evt, ui) => {
         this.clearFocus(calPointListData);
         ui.rowData.pq_rowcls = "pq-state-select ui-state-highlight";
         this.grid.refreshDataAndView();
@@ -389,14 +383,16 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         this.typeView = this.member.shape
 
         for (let rebar of this.rebar.rebarList) {
-          if (rebar.p_name === ui.rowData.p_name) {
-            // update axial table
-            this.updateAxialRebarTable(rebar);
-            this.axialGrid.refreshDataAndView();
-            // TODO: update stirrup table
-
-            // change preview
-            this.rebar.selectedCalPoint = rebar
+          if (rebar.p_name === ui.rowData.p_name) {          
+            if(rebar.rebar0.length === 0){
+              this.removeScene();  
+              this.typeView = ""                         
+            }else  {
+              this.rebar.selectedCalPoint = rebar  
+            }      
+            this.displayPreview(rebar); 
+            this.axialGrid.refreshDataAndView(); 
+            
             this.drawPreview();
             break;
           }
@@ -598,14 +594,11 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           let table_data_bar = this.rebar.table_data
           let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
           if(indexBar !== -1){
-            let newRebar0= this.setRebar0(this.table_datas_axial)
-            console.log("newBar", newRebar0)
+            let newRebar0= this.setRebar0(this.table_datas_axial)        
             table_data_bar[indexBar].rebar0=newRebar0          
             this.bars.setTableColumns(table_data_bar)  
             this.rebar.selectedCalPoint.rebar0 = newRebar0;
-          }
-          // this.bars.setTableColumns(this.table_datas_axial)      
-          console.log("this rebar change", this.rebar)
+          }        
           this.threeNode.dataRebar = this.rebar  
           this.removeScene();
           this.scene.render();
@@ -632,6 +625,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       }
     }
     this.axialRebarOptions = axialRebarOption;
+
+
   }
 
   private drawPreview() {
@@ -799,7 +794,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           width: this.setColumnWidth(rebar_type), align: 'center',
           dataIndx: 'rebar_type',
           cls: 'pq-drop-icon pq-side-icon',
-          editable: false, sortable: false, nodrag: true, resizable: false,
+          sortable: false, nodrag: true, resizable: false,
+          editable: true,
           editor: {
             type: 'select',
             options: rebar_type_options
@@ -813,7 +809,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           width: this.setColumnWidth(rebar_dia), align: 'center',
           dataIndx: 'rebar_dia',
           cls: 'pq-drop-icon pq-side-icon',
-          editable: false, sortable: false, nodrag: true, resizable: false,
+          editable: true, sortable: false, nodrag: true, resizable: false,
           editor: {
             type: 'select',
             options: rebar_dia_options
@@ -849,7 +845,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           width: this.setColumnWidth(rebar_type), align: 'center',
           dataIndx: 'rebar_type',
           cls: 'pq-drop-icon pq-side-icon',
-          editable: false, sortable: false, nodrag: true, resizable: false,
+          editable: true, sortable: false, nodrag: true, resizable: false,
           editor: {
             type: 'select',
             options: rebar_type_options
@@ -863,7 +859,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           width: this.setColumnWidth(rebar_dia), align: 'center',
           dataIndx: 'rebar_dia',
           cls: 'pq-drop-icon pq-side-icon',
-          editable: false, sortable: false, nodrag: true, resizable: false,
+          editable: true, sortable: false, nodrag: true, resizable: false,
           editor: {
             type: 'select',
             options: rebar_dia_options
@@ -905,7 +901,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           width: this.setColumnWidth(rebar_dia), align: 'center',
           dataIndx: 'rebar_dia',
           cls: 'pq-drop-icon pq-side-icon',
-          editable: false, sortable: false, nodrag: true, resizable: false,
+          editable: true, sortable: false, nodrag: true, resizable: false,
           editor: {
             type: 'select',
             options: rebar_dia_options

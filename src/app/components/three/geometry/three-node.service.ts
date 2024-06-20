@@ -192,8 +192,8 @@ export class ThreeNodeService {
       return (accumulator > element) ? accumulator : element
     });
     this.scale = max_val / 88;
-    let haucnch_M = this.dataRebar.selectedCalPoint.haucnch_M;
-    if (!!haucnch_M) memH = memH + haucnch_M;
+    let haunch_M = this.dataRebar.selectedCalPoint.haunch_M;
+    if (!!haunch_M) memH = memH + haunch_M;
     this.createTShape(memBt / this.scale, memH / this.scale, memB / this.scale, memt / this.scale, 0xb9b9b9)
     //this.createLineRectangle(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
