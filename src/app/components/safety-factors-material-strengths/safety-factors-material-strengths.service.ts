@@ -315,7 +315,6 @@ export class InputSafetyFactorsMaterialStrengthsService {
               if (key in old) {
                 // tmp[key] = old[key];
               tmp[key] = old[key] !== null ? old[key] : tmp[key]; 
-              tmp['isDefault'] = old[key] === null;
             }
               else
                 tmp[key] = null;

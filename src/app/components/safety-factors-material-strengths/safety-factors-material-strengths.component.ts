@@ -97,18 +97,18 @@ export class SafetyFactorsMaterialStrengthsComponent
   ];
   public range = {
     0: { text: this.translate.instant("safety-factors-material-strengths.av") },
-    1: { text: "引張鉄筋" },
-    2: { text: "引張＋圧縮" },
-    3: { text: "全周鉄筋" },
+    1: { text: this.translate.instant("safety-factors-material-strengths.rsb_ten") },
+    2: { text: this.translate.instant("safety-factors-material-strengths.ten_com") },
+    3: { text: this.translate.instant("safety-factors-material-strengths.all") },
   };
   public rangeArray = [
     {
       value: "0",
       text: this.translate.instant("safety-factors-material-strengths.av"),
     },
-    { id: "1", text: "引張鉄筋" },
-    { id: "2", text: "引張＋圧縮" },
-    { id: "3", text: "全周鉄筋" },
+    { id: "1", text: this.translate.instant("safety-factors-material-strengths.rsb_ten") },
+    { id: "2", text: this.translate.instant("safety-factors-material-strengths.ten_com") },
+    { id: "3", text: this.translate.instant("safety-factors-material-strengths.all") },
   ];
   public style = {
     "pointer-events": "none",
@@ -123,6 +123,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   public styleEdit = { color: "#FFFFFF" };
   public styleColor = { color: "gray" };
   public styleColorWhite = { color: "white" };
+  private default_factor: any;
   // public colorGray ={
   //   M_rc: { ...this.styleColor },
   //   M_rs: { ...this.styleColor },
@@ -167,10 +168,11 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.checkedRadioValue = this.basic.get_specification2();
     this.setTitle();
     const safety = this.safety.getTableColumns();
-    const default_factor =  this.safety.default_safety_factor()
+    this.default_factor = {};
+    this.default_factor =  [...this.safety.default_safety_factor()]
     this.arrayAxis =
       this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
-    this.applyStylesToItems(safety.safety_factor);
+    this.applyStylesToItems(safety.safety_factor, this.default_factor);
     if (safety.axisforce_condition !== undefined) {
       this.arrayAxisForce = { ...safety.axisforce_condition };
       let arrayKey = Object.keys(this.arrayAxisForce);
@@ -220,7 +222,6 @@ export class SafetyFactorsMaterialStrengthsComponent
           ri: col.ri,
           range: col.range,
           pq_cellstyle: col.pq_cellstyle,
-          isDefault: col.isDefault,
           NoCalc: col.NoCalc,
         });
         steel.push({
@@ -307,7 +308,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
       // 杭の施工条件
       this.pile_factor_list.push(safety.pile_factor[id]);
-
+      let self = this;
       // グリッドの設定
       this.option1_list.push({
         width: 1630,
@@ -355,16 +356,25 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
         change(evt, ui) {
           // Iterate through each key in newRow
+          var col = Object.keys(ui.updateList[0].newRow)[0];
+          let defaultItem = self.default_factor.filter(x => x.id === ui.updateList[0].rowData.id)[0];
           for (let key in ui.updateList[0].newRow) {
             // Check if the value in newRow is 0
-            if (ui.updateList[0].newRow[key] === 0) {
+            if (ui.updateList[0].newRow[key] === 0 || ui.updateList[0].newRow[key] === null) {
               // Assign the value from oldRow to rowData
-              ui.updateList[0].rowData[key] = ui.updateList[0].oldRow[key];
+              ui.updateList[0].rowData[key] = defaultItem[key];
             }
-          
           }
-          var col = Object.keys(ui.updateList[0].newRow)[0];
-          if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+        if(ui.updateList[0].newRow[col] !== null &&  ui.updateList[0].newRow[col] !== 0){
+          if(ui.updateList[0].newRow[col] === defaultItem[col]){
+            ui.updateList[0].rowData.pq_cellstyle = {
+              ...ui.updateList[0].rowData.pq_cellstyle,
+            };
+            ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+              color: "gray",
+            };
+          } 
+          else if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
             ui.updateList[0].rowData.pq_cellstyle = {
               ...ui.updateList[0].rowData.pq_cellstyle,
             };
@@ -372,6 +382,17 @@ export class SafetyFactorsMaterialStrengthsComponent
               color: "white",
             };
           }
+        }
+        else
+        {
+          ui.updateList[0].rowData.pq_cellstyle = {
+            ...ui.updateList[0].rowData.pq_cellstyle,
+          };
+          ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+            color: "gray",
+          };
+        }
+          
         },
       });
       this.option2_list.push({
@@ -629,10 +650,9 @@ export class SafetyFactorsMaterialStrengthsComponent
     // })
     this.cdref.detectChanges();
   }
-  private applyStylesToItems(safetyFactor: any) {
+  private applyStylesToItems(safetyFactor: any, default_factor: any) {
     //
     let allProcessedItems = [];
-
     for (const key in safetyFactor) {
       if (safetyFactor.hasOwnProperty(key)) {
         const items = safetyFactor[key];
@@ -640,6 +660,8 @@ export class SafetyFactorsMaterialStrengthsComponent
 
         for (const item of items) {
           //
+
+          let defaultItem = default_factor.filter(x => x.id === item.id)[0]
           if (!item.pq_cellstyle) {
             item.pq_cellstyle = {};
           }
@@ -652,7 +674,12 @@ export class SafetyFactorsMaterialStrengthsComponent
               prop !== "title" &&
               prop !== "range"
             ) {
-              item.pq_cellstyle[prop] = { ...this.styleColor };
+              if (item[prop] !== defaultItem[prop]) {
+                  item.pq_cellstyle[prop] = { ...this.styleColorWhite };
+              }
+              else{
+                item.pq_cellstyle[prop] = { ...this.styleColor };
+              }
             }
           }
 
@@ -664,30 +691,31 @@ export class SafetyFactorsMaterialStrengthsComponent
             item.pq_cellstyle.T_rbt = { ...this.style };
           }
 
-          //
-          if (previousItem) {
-            for (const prop in item) {
-              if (
-                item.hasOwnProperty(prop) &&
-                prop !== "title" &&
-                prop !== "range"
-              ) {
-                if (item[prop] !== previousItem[prop]) {
-                  item.pq_cellstyle[prop] = { ...this.styleColorWhite };
-                }
-                //
-                if (item[prop] === null && prop === "V_rbv") {
-                  item.pq_cellstyle.V_rbv = { ...this.style };
-                }
-                if (item[prop] === null && prop === "T_rbt") {
-                  item.pq_cellstyle.T_rbt = { ...this.style };
-                }
-              }
-            }
-          }
+          // //
+          // if (previousItem) {
+          //   for (const prop in item) {
+          //     if (
+          //       item.hasOwnProperty(prop) &&
+          //       prop !== "title" &&
+          //       prop !== "range"
+          //     ) {
+          //       debugger
+          //       // if (item[prop] !== previousItem[prop]) {
+          //       //   item.pq_cellstyle[prop] = { ...this.styleColorWhite };
+          //       // }
+          //       //
+          //       if (item[prop] === null && prop === "V_rbv") {
+          //         item.pq_cellstyle.V_rbv = { ...this.style };
+          //       }
+          //       if (item[prop] === null && prop === "T_rbt") {
+          //         item.pq_cellstyle.T_rbt = { ...this.style };
+          //       }
+          //     }
+          //   }
+          // }
 
-          //
-          previousItem = item;
+          // //
+          // previousItem = item;
         }
 
         //
