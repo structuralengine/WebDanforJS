@@ -206,21 +206,21 @@ export class SafetyFactorsMaterialStrengthsComponent
         steel = [];
       for (const col of safety.safety_factor[id]) {
         if (col.id === 8) continue; // 最小鉄筋量の安全係数は、編集しない
-
+        let defaultItem = this.default_factor.filter(x => x.id === col.id)[0];
         bar.push({
           id: col.id,
           title: col.title,
-          M_rc: col.M_rc,
-          M_rs: col.M_rs,
-          M_rbs: col.M_rbs,
-          V_rc: col.V_rc,
-          V_rs: col.V_rs,
-          V_rbc: col.V_rbc,
-          V_rbs: col.V_rbs,
-          V_rbv: col.V_rbv,
-          T_rbt: col.T_rbt,
-          ri: col.ri,
-          range: col.range,
+          M_rc: (col.M_rc === null || col.M_rc === 0) ? defaultItem.M_rc : col.M_rc,
+          M_rs: (col.M_rs === null || col.M_rs ===  0) ? defaultItem.M_rs : col.M_rs,
+          M_rbs: (col.M_rbs === null || col.M_rbs ===  0) ? defaultItem.M_rbs : col.M_rbs,
+          V_rc: (col.V_rc === null || col.V_rc ===  0) ? defaultItem.V_rc : col.V_rc,
+          V_rs: (col.V_rs === null || col.V_rs ===  0) ? defaultItem.V_rs : col.V_rs,
+          V_rbc: (col.V_rbc === null || col.V_rbc ===  0) ? defaultItem.V_rbc : col.V_rbc,
+          V_rbs: (col.V_rbs === null || col.V_rbs ===  0) ? defaultItem.V_rbs : col.V_rbs,
+          V_rbv: (col.V_rbv === null || col.V_rbv ===  0) ? defaultItem.V_rbv : col.V_rbv,
+          T_rbt: (col.T_rbt === null || col.T_rbt ===  0) ? defaultItem.T_rbt : col.T_rbt,
+          ri: (col.ri === null || col.ri ===  0) ? defaultItem.ri : col.ri,
+          range: (col.range === null || col.range ===  0) ? defaultItem.range : col.range,
           pq_cellstyle: col.pq_cellstyle,
           NoCalc: col.NoCalc,
         });
@@ -311,8 +311,8 @@ export class SafetyFactorsMaterialStrengthsComponent
       let self = this;
       // グリッドの設定
       this.option1_list.push({
-        width: 1630,
-        height: 280,
+        width: 1400,
+        height: 320,
         showTop: false,
         reactive: true,
         sortable: false,
@@ -650,7 +650,6 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.cdref.detectChanges();
   }
   private applyStylesToItems(safetyFactor: any, default_factor: any) {
-    //
     let allProcessedItems = [];
     for (const key in safetyFactor) {
       if (safetyFactor.hasOwnProperty(key)) {
@@ -658,18 +657,15 @@ export class SafetyFactorsMaterialStrengthsComponent
         let previousItem: any = null;
 
         for (const item of items) {
-          //
-
           let defaultItem = default_factor.filter(x => x.id === item.id)[0]
           if (!item.pq_cellstyle) {
             item.pq_cellstyle = {};
           }
-
-          //
           for (const prop in item) {
             if (
               item.hasOwnProperty(prop) &&
               item[prop] !== null &&
+              item[prop] !== 0 &&
               prop !== "title" &&
               prop !== "range"
             ) {
@@ -679,6 +675,9 @@ export class SafetyFactorsMaterialStrengthsComponent
               else{
                 item.pq_cellstyle[prop] = { ...this.styleColor };
               }
+            }
+            else{
+              item.pq_cellstyle[prop] = { ...this.styleColor };
             }
           }
 
@@ -735,7 +734,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         editable: false,
         frozen: true,
         sortable: false,
-        width: 250,
+        width: 200,
         nodrag: true,
         style: { background: "#373e45" },
         styleHead: { background: "#373e45" },
@@ -749,7 +748,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataIndx: "NoCalc",
         type: "checkbox",
         sortable: false,
-        width: 120,
+        width: 80,
         nodrag: true,
         styleHead: {
           'display': 'flex',
@@ -921,7 +920,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                 format: "#.00",
                 dataIndx: "V_rbs",
                 sortable: false,
-                width: 100,
+                width: 80,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
@@ -935,7 +934,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                 format: "#.00",
                 dataIndx: "V_rbv",
                 sortable: false,
-                width: 100,
+                width: 80,
                 nodrag: true,
                 styleHead: {
                   'display': 'flex',
@@ -985,7 +984,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         format: "#.00",
         dataIndx: "ri",
         sortable: false,
-        width: 150,
+        width: 100,
         nodrag: true,
         styleHead: {
           'display': 'flex',
@@ -1002,7 +1001,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         ,
         dataIndx: "range",
         sortable: false,
-        width: 240,
+        width: 150,
         nodrag: true,
         paste: false,
         styleHead: {
