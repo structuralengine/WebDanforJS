@@ -195,49 +195,53 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
         },
         change: (event, ui) => {
-          // var currentObj = ui.updateList[0].newRow;
-          // let nextObj =
-          //   this.table_datas[this.idTab][ui.updateList[0].rowIndx + 1];
-
-          // Object.assign(nextObj, currentObj);
-          // Extract the current object to be copied
-          // Extract the current object to be copied
           if (ui.source === "edit" || ui.source === "paste") {
-          var currentObj = ui.updateList[0].newRow;
-          var col = Object.keys(ui.updateList[0].newRow)[0];
-
-          // Get the starting index from which to update the array
-          let startIndex = ui.updateList[0].rowIndx + 2;
-          let sKey = this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
-          if (this.lstItemEdited.indexOf(sKey) === -1) {
-            this.lstItemEdited.push(sKey);
-          }
-          // Loop through each item in the array starting from startIndex and assign properties from currentObj
-          for (let i = startIndex; i < this.table_datas[this.idTab].length; i += 2) {
-            const item = this.table_datas[this.idTab][i];
-            if ((item[col] === null) || (item[col] === currentObj[col])) {
-              item.pq_cellstyle = { ...item.pq_cellstyle };
-              item.pq_cellstyle[`${col}`] = { color: "gray" };
+            var currentObj = ui.updateList[0].newRow;
+            var col = Object.keys(ui.updateList[0].newRow)[0];
+            if (ui.updateList[0].newRow[col] === null) {
+              this.handleDelete(ui);
             } else {
-              if (
-                this.lstItemEdited.filter(
-                  (x) => x === this.idTab + "-" + i + "-" + col
-                ).length > 0
+              // Get the starting index from which to update the array
+              let startIndex = ui.updateList[0].rowIndx + 2;
+              let sKey =
+                this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
+              if (this.lstItemEdited.indexOf(sKey) === -1) {
+                this.lstItemEdited.push(sKey);
+              }
+              // Loop through each item in the array starting from startIndex and assign properties from currentObj
+              for (
+                let i = startIndex;
+                i < this.table_datas[this.idTab].length;
+                i += 2
               ) {
-                break;
+                const item = this.table_datas[this.idTab][i];
+                if (item[col] === null || item[col] === currentObj[col]) {
+                  item.pq_cellstyle = { ...item.pq_cellstyle };
+                  item.pq_cellstyle[`${col}`] = { color: "gray" };
+                } else {
+                  if (
+                    this.lstItemEdited.filter(
+                      (x) => x === this.idTab + "-" + i + "-" + col
+                    ).length > 0
+                  ) {
+                    break;
+                  }
+                }
+                Object.assign(this.table_datas[this.idTab][i], currentObj);
+              }
+              if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                ui.updateList[0].rowData.pq_cellstyle = {
+                  ...ui.updateList[0].rowData.pq_cellstyle,
+                };
+                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                  color: "white",
+                };
               }
             }
-            Object.assign(this.table_datas[this.idTab][i], currentObj);
           }
-          if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-            ui.updateList[0].rowData.pq_cellstyle = {
-              ...ui.updateList[0].rowData.pq_cellstyle,
-            };
-            ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-              color: "white",
-            };
+          if (ui.source === "clear" || ui.source === "cut") {
+            this.handleDelete(ui);
           }
-        }
         },
       };
       this.option_list.push(op);
@@ -252,6 +256,80 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  private handleDelete(ui:any){
+    ui.updateList.forEach((item: any) => {
+      let i = item.rowIndx;
+      for (let key in item.newRow) {
+        this.removeItem(i, key);
+      }
+    });
+    let checkRowFirst = ui.updateList.filter(
+      (x) => x.rowIndx === 0 || x.rowIndx === 1
+    ).length;
+    if (checkRowFirst > 0) {
+      ui.updateList
+        .filter((x) => x.rowIndx === 0 || x.rowIndx === 1)
+        .forEach((item: any) => {
+          let nIndx = item.rowIndx + 2;
+          let whiteItem = this.table_datas[this.idTab][nIndx];
+          for (let key in item.newRow) {
+            whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
+            whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
+
+            let sKey = this.idTab + "-" + item.rowIndx + "-" + key;
+            if (this.lstItemEdited.indexOf(sKey) === -1) {
+              this.lstItemEdited.push(sKey);
+            }
+          }
+        });
+      let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0 && x.rowIndx !== 1);
+      this.handleDeleteSheet(listNotZero);
+    } else {
+      this.handleDeleteSheet(ui.updateList);
+    }
+  }
+
+  private handleDeleteSheet(dataList: any) {
+    dataList.forEach((item: any) => {
+      let rowIndx = item.rowIndx;
+      var prevItem = this.table_datas[this.idTab][rowIndx - 2];
+      for (let key in item.newRow) {
+        for (let i = rowIndx; i < this.table_datas[this.idTab].length; i += 2 ) {
+          const item = this.table_datas[this.idTab][i];
+          if (i === rowIndx) {
+            this.table_datas[this.idTab][i][key] = prevItem[key];
+            item.pq_cellstyle = { ...item.pq_cellstyle };
+            item.pq_cellstyle[`${key}`] = { color: "gray" };
+          } else {
+            if (
+              this.lstItemEdited.filter(
+                (x) => x === this.idTab + "-" + i + "-" + key
+              ).length > 0
+            ) {
+              if (this.table_datas[this.idTab][i][key] === prevItem[key]) {
+                item.pq_cellstyle = { ...item.pq_cellstyle };
+                item.pq_cellstyle[`${key}`] = { color: "gray" };
+              }
+              break;
+            }
+            this.table_datas[this.idTab][i][key] = prevItem[key];
+            item.pq_cellstyle = { ...item.pq_cellstyle };
+            item.pq_cellstyle[`${key}`] = { color: "gray" };
+          }
+        }
+      }
+    });
+  }
+
+  private removeItem(i: any, key: any) {
+    const index = this.lstItemEdited.indexOf(
+      this.idTab + "-" + i + "-" + key,
+      0
+    );
+    if (index > -1) {
+      this.lstItemEdited.splice(index, 1);
+    }
+  }
   ngAfterViewInit() {
     this.activeButtons(0);
     this.checkForScrollbar();
