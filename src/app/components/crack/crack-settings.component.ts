@@ -26,7 +26,7 @@ export class CrackSettingsComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
   @ViewChild("grid") grid: SheetComponent;
-  @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
+  @ViewChild("subNavArea", { static: false }) subNavArea: ElementRef;
   public options: pq.gridT.options;
   hasScrollbar: boolean = false;
 
@@ -40,20 +40,29 @@ export class CrackSettingsComponent
   public groupe_name: string[];
   public refreshSubscription: Subscription;
 
-  public colAutoInputs = ["con_s", "con_l", "con_u", "ecsd_l", "kr", "k4", "wlimit", "ecsd_u"];
+  public colAutoInputs = [
+    "con_s",
+    "con_l",
+    "con_u",
+    "ecsd_l",
+    "kr",
+    "k4",
+    "wlimit",
+    "ecsd_u",
+  ];
   public textStyle = { color: "gray" };
   public textStyle2 = { color: "white" };
 
   public lstItemEdited: string[];
   public rowStyle = {
-    "con_s": { ...this.textStyle },
-    "con_l": { ...this.textStyle },
-    "con_u": { ...this.textStyle },
-    "ecsd_l": { ...this.textStyle },
-    "ecsd_u": { ...this.textStyle },
-    "kr": { ...this.textStyle },
-    "k4": { ...this.textStyle },
-    "wlimit": { ...this.textStyle },
+    con_s: { ...this.textStyle },
+    con_l: { ...this.textStyle },
+    con_u: { ...this.textStyle },
+    ecsd_l: { ...this.textStyle },
+    ecsd_u: { ...this.textStyle },
+    kr: { ...this.textStyle },
+    k4: { ...this.textStyle },
+    wlimit: { ...this.textStyle },
   };
   public rowStyle2 = {
     con_s: { ...this.textStyle2 },
@@ -80,7 +89,6 @@ export class CrackSettingsComponent
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(
       (value) => {
         this.checkedRadioValue = value;
-        
       }
     );
   }
@@ -124,7 +132,7 @@ export class CrackSettingsComponent
         });
       }
       const rowDataTab = this.table_datas[i];
-      
+
       for (let j = 0; j < rowDataTab.length; j++) {
         let currentCell = rowData[j];
         if (j === 0) {
@@ -133,16 +141,16 @@ export class CrackSettingsComponent
         } else {
           currentCell.pq_cellstyle = this.rowStyle;
           var prevRow = rowData[j - 1];
-          const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
+          const keys = Object.keys(currentCell).filter(
+            (x) => this.colAutoInputs.filter((y) => y === x).length > 0
+          );
           keys.forEach((key) => {
             if (
               JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
             ) {
               currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
               currentCell.pq_cellstyle[`${key}`] = { color: "white" };
-              this.lstItemEdited.push(
-                i + "-" + j + "-" + key
-              );
+              this.lstItemEdited.push(i + "-" + j + "-" + key);
             }
           });
         }
@@ -200,47 +208,54 @@ export class CrackSettingsComponent
           if (ui.source === "edit" || ui.source === "paste") {
             var currentObj = ui.updateList[0].newRow;
             var col = Object.keys(ui.updateList[0].newRow)[0];
-
-            // Get the starting index from which to update the array
-            let startIndex = ui.updateList[0].rowIndx + 1;
-            let sKey = this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
-            if (this.lstItemEdited.indexOf(sKey) === -1) {
-              this.lstItemEdited.push(sKey);
-            }
-
-            // Loop through each item in the array starting from startIndex and assign properties from currentObj
-            for (
-              let i = startIndex;
-              i < this.table_datas[this.idTab].length;
-              i++
-            ) {
-              const item = this.table_datas[this.idTab][i];
-              if ((item[col] === null) || (item[col] === currentObj[col])) {
-                item.pq_cellstyle = { ...item.pq_cellstyle };
-                item.pq_cellstyle[`${col}`] = { color: "gray" };
-              } else {
-                if (
-                  this.lstItemEdited.filter(
-                    (x) => x === this.idTab + "-" + i + "-" + col
-                  ).length > 0
-                ) {
-                  break;
-                }
+            if (ui.updateList[0].newRow[col] === null) {
+              this.handleDelete(ui);
+            } else {
+              // Get the starting index from which to update the array
+              let startIndex = ui.updateList[0].rowIndx + 1;
+              let sKey =
+                this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
+              if (this.lstItemEdited.indexOf(sKey) === -1) {
+                this.lstItemEdited.push(sKey);
               }
-              // Merge currentObj properties into each item
-              Object.assign(this.table_datas[this.idTab][i], currentObj);
-            }
 
-            if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-              ui.updateList[0].rowData.pq_cellstyle = {
-                ...ui.updateList[0].rowData.pq_cellstyle,
-              };
-              ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-                color: "white",
-              };
+              // Loop through each item in the array starting from startIndex and assign properties from currentObj
+              for (
+                let i = startIndex;
+                i < this.table_datas[this.idTab].length;
+                i++
+              ) {
+                const item = this.table_datas[this.idTab][i];
+                if (item[col] === null || item[col] === currentObj[col]) {
+                  item.pq_cellstyle = { ...item.pq_cellstyle };
+                  item.pq_cellstyle[`${col}`] = { color: "gray" };
+                } else {
+                  if (
+                    this.lstItemEdited.filter(
+                      (x) => x === this.idTab + "-" + i + "-" + col
+                    ).length > 0
+                  ) {
+                    break;
+                  }
+                }
+                // Merge currentObj properties into each item
+                Object.assign(this.table_datas[this.idTab][i], currentObj);
+              }
+
+              if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                ui.updateList[0].rowData.pq_cellstyle = {
+                  ...ui.updateList[0].rowData.pq_cellstyle,
+                };
+                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                  color: "white",
+                };
+              }
             }
           }
-        }
+          if (ui.source === "clear" || ui.source === "cut") {
+            this.handleDelete(ui);
+          }
+        },
       };
       this.option_list.push(op);
     }
@@ -254,6 +269,78 @@ export class CrackSettingsComponent
     }
   }
 
+  private removeItem(i: any, key: any) {
+    const index = this.lstItemEdited.indexOf(
+      this.idTab + "-" + i + "-" + key,
+      0
+    );
+    if (index > -1) {
+      this.lstItemEdited.splice(index, 1);
+    }
+  }
+
+  private handleDelete(ui:any){
+    ui.updateList.forEach((item: any) => {
+      let i = item.rowIndx;
+      for (let key in item.newRow) {
+        this.removeItem(i, key);
+      }
+    });
+    let checkRowFirst = ui.updateList.filter(
+      (x) => x.rowIndx === 0
+    ).length;
+    if (checkRowFirst > 0) {
+      ui.updateList
+        .filter((x) => x.rowIndx === 0)
+        .forEach((item: any) => {
+          let whiteItem = this.table_datas[this.idTab][1];
+          for (let key in item.newRow) {
+            whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
+            whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
+
+            let sKey = this.idTab + "-" + item.rowIndx + "-" + key;
+            if (this.lstItemEdited.indexOf(sKey) === -1) {
+              this.lstItemEdited.push(sKey);
+            }
+          }
+        });
+      let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0);
+      this.handleDeleteSheet(listNotZero);
+    } else {
+      this.handleDeleteSheet(ui.updateList);
+    }
+  }
+  private handleDeleteSheet(dataList: any) {
+    dataList.forEach((item: any) => {
+      let rowIndx = item.rowIndx;
+      var prevItem = this.table_datas[this.idTab][rowIndx - 1];
+      for (let key in item.newRow) {
+        for (let i = rowIndx; i < this.table_datas[this.idTab].length; i++) {
+          const item = this.table_datas[this.idTab][i];
+          if (i === rowIndx) {
+            this.table_datas[this.idTab][i][key] = prevItem[key];
+            item.pq_cellstyle = { ...item.pq_cellstyle };
+            item.pq_cellstyle[`${key}`] = { color: "gray" };
+          } else {
+            if (
+              this.lstItemEdited.filter(
+                (x) => x === this.idTab + "-" + i + "-" + key
+              ).length > 0
+            ) {
+              if (this.table_datas[this.idTab][i][key] === prevItem[key]) {
+                item.pq_cellstyle = { ...item.pq_cellstyle };
+                item.pq_cellstyle[`${key}`] = { color: "gray" };
+              }
+              break;
+            }
+            this.table_datas[this.idTab][i][key] = prevItem[key];
+            item.pq_cellstyle = { ...item.pq_cellstyle };
+            item.pq_cellstyle[`${key}`] = { color: "gray" };
+          }
+        }
+      }
+    });
+  }
   ngAfterViewInit() {
     this.checkForScrollbar();
 
