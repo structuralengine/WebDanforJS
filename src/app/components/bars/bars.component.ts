@@ -774,7 +774,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.refreshDataAndView();
   }
   public preview(): void {
-    // this.rebar = {}
+    let m_no: any
     this.removeScene();
     if (!this.bars.is_review) {
       this.bars.is_review = !this.bars.is_review;
@@ -788,12 +788,13 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             rebarList: this.bars.bar_list,
             selectedCalPoint: rebar,
             table_data: this.table_data,
-          }
-          this.threeNode.memNo = rebar.m_no;
+          }          
+          rebar.m_no= m_no === undefined ? rebar.m_no : m_no;
           this.threeNode.dataNode = rebar;
           this.threeNode.dataRebar = this.rebar
           break;
         }
+        m_no = rebar.m_no;
       }
     }
   }

@@ -9,6 +9,7 @@ import { SheetComponent } from '../sheet/sheet.component';
 import { ViewChild } from '@angular/core';
 import { ThreeNodeService } from '../three/geometry/three-node.service';
 import { SceneService } from '../three/scene.service';
+import { data } from 'jquery';
 
 @Component({
   selector: 'app-preview-rebar',
@@ -138,7 +139,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         arrNew = [...arrUp, ...arrLa, ...arrLo]
         break;
       }    
-      default:         
+      default: 
+        arrNew = rebar0;        
         break;
     }  
     return arrNew;
@@ -199,25 +201,28 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             interval: rebar.interval,
             distance_side: rebar.dist_side,
           }) 
-          axialRebarData.forEach((data: any)=> {
-            if (member.B < member.H) { 
-              if (data.rebar_type === upperside || data.rebar_type === lowerside) {
-                data.pq_cellstyle = this.styleShaded2;
-                data.pq_cellprop = this.propShaded2;
-              } else if (data.rebar_type === lateral) {
-                data.pq_cellstyle = this.styleShaded1;
-                data.pq_cellprop = this.propShaded1;
+          if(this.typeView === 4){
+            axialRebarData.forEach((data: any)=> {
+              if (member.B < member.H) { 
+                if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+                  data.pq_cellstyle = this.styleShaded2;
+                  data.pq_cellprop = this.propShaded2;
+                } else if (data.rebar_type === lateral) {
+                  data.pq_cellstyle = this.styleShaded1;
+                  data.pq_cellprop = this.propShaded1;
+                } 
+              } else {
+                if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+                  data.pq_cellstyle = this.styleShaded1;
+                  data.pq_cellprop = this.propShaded1;
+                } else if (data.rebar_type === lateral) {
+                  data.pq_cellstyle = this.styleShaded2;
+                  data.pq_cellprop = this.propShaded2;
+                } 
               } 
-            } else {
-              if (data.rebar_type === upperside || data.rebar_type === lowerside) {
-                data.pq_cellstyle = this.styleShaded1;
-                data.pq_cellprop = this.propShaded1;
-              } else if (data.rebar_type === lateral) {
-                data.pq_cellstyle = this.styleShaded2;
-                data.pq_cellprop = this.propShaded2;
-              } 
-            } 
-          })
+            })
+          }
+          
         }
       }  
 
@@ -299,7 +304,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       dataModel: { data: axialRebarData},
       change: (event, ui) => {
         for (const property of ui.updateList) {
-          for (const key of Object.keys(property.newRow)) {
+          for (const key of Object.keys(property.newRow)) {           
+            if(key == "side_cover"){
+              property.newRow["distance_side"] = property.newRow[key]
+            };
             const old = property.oldRow[key];
             if (property.newRow[key] == null) {
               continue; // 削除した場合 何もしない
@@ -490,29 +498,37 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         dist_side: 0,                  
         interval:0
       }; 
-
+      b.dist_side = data.side_cover; 
       switch (data.rebar_type) {
         case upperside: 
-          if(this.typeView ===  1 || this.typeView === 2 )
-            b.rebar_type = 0;
+          if(this.typeView ===  1 || this.typeView === 2 ){            
+            b.rebar_type = 0;        
+           }           
           else if (this.typeView === 4){
             if (this.member.B < this.member.H) {
               b.rebar_type = 2;              
             } else {
               b.rebar_type = 0;
             }
-          } 
+          }else{
+            b.rebar_type = 7;
+            b.dist_side = data.distance_side; 
+          }
           break;
         case lowerside: 
-        if (this.typeView ===  1 || this.typeView === 2 )
-          b.rebar_type = 1;
-        else if(this.typeView === 4){
-          if (this.member.B < this.member.H) {
-            b.rebar_type = 3;            
-          } else {
+          if (this.typeView ===  1 || this.typeView === 2 )
             b.rebar_type = 1;
-          }
-        }
+          else if(this.typeView === 4){
+            if (this.member.B < this.member.H) {
+                b.rebar_type = 3;            
+            } else {
+                b.rebar_type = 1;
+            }
+            }
+          else{
+              b.rebar_type = 7;
+              b.dist_side = data.distance_side; 
+            }
           break;
         case lateral: 
           if(this.typeView ===  1 || this.typeView === 2)
@@ -524,15 +540,11 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
               b.rebar_type = 5;             
             }
           }
-          break; 
-        default:
-          b.rebar_type = 7;
-          break
+          break;        
       }
           b.dist_top= data.distance_top          
           b.dia= data.rebar_dia
-          b.quantity= data.num
-          b.dist_side = data.distance_side;        
+          b.quantity= data.num                
           b.interval=data.interval
 
           dataNew.push(b)
