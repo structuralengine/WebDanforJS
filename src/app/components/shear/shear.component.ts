@@ -101,10 +101,6 @@ export class ShearComponent implements OnInit {
 
     for (let i = 0; i < this.table_datas.length; i++) {
       this.table_datas[i].forEach((data: any, index: any) => {
-        if (data.L === null) {
-          data.pq_cellstyle = this.styleShead;
-          data.pq_cellprop=this.propShaded1
-        }
         if(data.La===undefined){
           data.La=null
         }
@@ -117,6 +113,10 @@ export class ShearComponent implements OnInit {
             if (fixed_end === null || !fixed_end)
               data.fixed_end = true
           }
+        }
+        if (data.L === null && !data.fixed_end) {
+          data.pq_cellstyle = this.styleShead;
+          data.pq_cellprop = this.propShaded1
         }
       });
 

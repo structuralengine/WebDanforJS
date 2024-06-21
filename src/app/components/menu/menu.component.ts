@@ -87,6 +87,8 @@ export class MenuComponent implements OnInit {
   public hideDCJ3_J5: boolean = false;
   public firstCondition: any;
 
+  public checkOpenDSD:boolean= false
+  public arg_wdj:string = null;
   constructor(
     private modalService: NgbModal,
     public menuService: MenuService,
@@ -127,6 +129,10 @@ export class MenuComponent implements OnInit {
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
     })
+    this.arg_wdj = this.electronService.ipcRenderer.sendSync("get-main-wdj");
+    if (this.arg_wdj !== null) {
+      this.open_electron();
+    } 
     if (this.conditions_list.length > 0) {
       this.firstCondition = this.conditions_list[0];
     } 
@@ -197,6 +203,7 @@ export class MenuComponent implements OnInit {
     if (isConfirm) {
       this.router.navigate(["/blank-page"]);
       this._renew();
+      this.checkOpenDSD = false
     }
   }
 
@@ -230,6 +237,7 @@ export class MenuComponent implements OnInit {
     setTimeout(() => {
       switch (this.helper.getExt(this.fileName)) {
         case "dsd":
+          this.checkOpenDSD = true
           const pik = this.dsdData.readDsdData(response.textB);
           this.open_done(modalRef);
           if (pik !== null) {
@@ -237,6 +245,7 @@ export class MenuComponent implements OnInit {
           }
           break;
         default:
+          this.checkOpenDSD = false
           if (this.save.checkVerFile(response.text)) {
             this.showIcon = false
             this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
@@ -265,6 +274,7 @@ export class MenuComponent implements OnInit {
       case "dsd":
         this.fileToBinary(file)
           .then((buff) => {
+            this.checkOpenDSD = true
             const pik = this.dsdData.readDsdData(buff);
             this.open_done(modalRef);
             if (pik !== null) {
@@ -278,6 +288,7 @@ export class MenuComponent implements OnInit {
       default:
         this.fileToText(file)
           .then((text) => {
+            this.checkOpenDSD = false
             //Check to hide design condition
             this.hideDCJ3_J5 = this.save.hideDC(text);
             
@@ -352,11 +363,11 @@ export class MenuComponent implements OnInit {
 
       this.fileToText(file)
         .then((text) => {
-          this.save.readPickUpData(text, file.name); // データを読み込む
+          this.save.readPickUpData(text, file.name, this.checkOpenDSD); // データを読み込む
           this.pickup_file_name = this.save.getPickupFilename();
           modalRef.close();
 
-
+          
         })
         .catch((err) => {
           modalRef.close();
