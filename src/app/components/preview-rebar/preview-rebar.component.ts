@@ -537,7 +537,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             if (this.member.B < this.member.H) {
               b.rebar_type = 6;              
             } else {
-              b.rebar_type = 5;             
+              b.rebar_type = 5;        
+              b.dist_side = data.distance_side;      
             }
           }
           break;        
