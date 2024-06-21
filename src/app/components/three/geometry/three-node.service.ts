@@ -603,7 +603,7 @@ export class ThreeNodeService {
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
       this.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if (data.rebar_type === 2 || data.rebar_type === 3) {
-          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.cover / this.scale, 0x333D46, this.type, data.rebar_type)
+          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_side / this.scale, 0x333D46, this.type, data.rebar_type)
         }
       })
     } else {
@@ -612,7 +612,7 @@ export class ThreeNodeService {
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
       this.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if (data.rebar_type === 5) {
-          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.cover / this.scale, 0x333D46, this.type, data.rebar_type)
+          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_side / this.scale, 0x333D46, this.type, data.rebar_type)
         }
       })
     }   
@@ -768,7 +768,7 @@ export class ThreeNodeService {
     let start_cover = 0;
     
     arr_rebar_type2.map((data, index) => {
-      const cover = data.cover / this.scale;     
+      const cover = data.dist_side / this.scale;     
       jsonData[`rb2_${index}`] = {
         x: -2,
         y: y_start - cover,
@@ -838,12 +838,12 @@ export class ThreeNodeService {
     const y_start = h / 2
     if (b != 0 && h != 0) {
       jsonData["1"] = {
-        x: 3*x_start/4,
+        x: x_start - y_start,
         y: y_start,
         z: 0
       }
       jsonData["2"] = {
-        x: 3*x_start/4,
+        x: x_start - y_start,
         y: -y_start,
         z: 0
       }  
@@ -858,8 +858,8 @@ export class ThreeNodeService {
         z: 0
       }      
     }
-    this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, x_start / 2 , 3, 0);
-    this.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(b * this.scale), false, y_start , 7, 0);
+    this.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, y_start*1.5, y_start/3.5, 0);
+    this.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(b * this.scale), false, y_start, y_start/2.5, 0);
     
      // dimenstions for rebar_type = 0
      let arr_rebar_type_0 = []
@@ -971,17 +971,20 @@ export class ThreeNodeService {
         dist_side_min = data;
       }
     });
-    jsonData["rb6_side1"] ={
-      x: x_start,
-      y: 0,
-      z: 0
+    if(dist_side_min != undefined){
+      jsonData["rb6_side1"] ={
+        x: x_start,
+        y: 0,
+        z: 0
+      }
+      jsonData["rb6_side2"] ={
+        x: x_start - dist_side_min.dist_side/this.scale,
+        y: 0,
+        z: 0
+      }
+      this.drawLineDim(jsonData["rb6_side1"], jsonData["rb6_side2"], 1, dist_side_min.dist_side, false, 6, 2, 0);
     }
-    jsonData["rb6_side2"] ={
-      x: x_start - dist_side_min.cover/this.scale,
-      y: 0,
-      z: 0
-    }
-    this.drawLineDim(jsonData["rb6_side1"], jsonData["rb6_side2"], 1, dist_side_min.cover, false, 6, 2, 0);
+    
   }
   createArcDashedOVal(b: any, h: any, range: any, color: any, type, rebarType:any){
     const material = new THREE.LineBasicMaterial({ color: color })
@@ -1088,7 +1091,7 @@ export class ThreeNodeService {
       }
     })
     dataPoint.map((data, index) => {
-      this.geometry = new THREE.SphereBufferGeometry(data.dia / 2 / this.scale)
+      this.geometry = new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
       let interval = 0
       for (let i = 1; i <= data.quantity; i++) {
         const mesh = new THREE.Mesh(this.geometry,
@@ -1106,7 +1109,7 @@ export class ThreeNodeService {
         if ((typeRebar === 2 || typeRebar === 3  ) && type === "Vertical") {
           mesh.name = typeRebar === 2 ? 'node2' + index + i : 'node3' + index + i;
           let centerY = typeRebar === 2 ? h / 2 - b / 2 : -(h / 2 - b / 2)
-          let radius = typeRebar === 2 ? b / 2 - data.cover / this.scale : data.cover / this.scale - (h - b / 2)
+          let radius = typeRebar === 2 ? b / 2 - data.dist_side / this.scale : data.dist_side / this.scale - (h - b / 2)
           let coordinate = this.getPointOnCircle(0, centerY, radius , interval);
           mesh.position.x = -coordinate.x;
           mesh.position.y = coordinate.y;
@@ -1131,7 +1134,7 @@ export class ThreeNodeService {
           mesh2.name = 'node5_2' + index + i 
           let centerX1 =  -(h / 2 - b / 2) 
           let centerX2 = h / 2 - b / 2
-          let radius = h / 2 - data.cover / this.scale 
+          let radius = h / 2 - data.dist_side / this.scale 
           let coordinate1 = this.getPointOnCircle(centerX1, 0, radius, interval - Math.PI / 2);
           let coordinate2 = this.getPointOnCircle(centerX2, 0, radius, interval + Math.PI / 2);
 
