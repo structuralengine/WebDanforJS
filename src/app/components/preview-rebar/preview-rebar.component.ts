@@ -199,25 +199,28 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             interval: rebar.interval,
             distance_side: rebar.dist_side,
           }) 
-          axialRebarData.forEach((data: any)=> {
-            if (member.B < member.H) { 
-              if (data.rebar_type === upperside || data.rebar_type === lowerside) {
-                data.pq_cellstyle = this.styleShaded2;
-                data.pq_cellprop = this.propShaded2;
-              } else if (data.rebar_type === lateral) {
-                data.pq_cellstyle = this.styleShaded1;
-                data.pq_cellprop = this.propShaded1;
+          if(this.typeView === 4){
+            axialRebarData.forEach((data: any)=> {
+              if (member.B < member.H) { 
+                if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+                  data.pq_cellstyle = this.styleShaded2;
+                  data.pq_cellprop = this.propShaded2;
+                } else if (data.rebar_type === lateral) {
+                  data.pq_cellstyle = this.styleShaded1;
+                  data.pq_cellprop = this.propShaded1;
+                } 
+              } else {
+                if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+                  data.pq_cellstyle = this.styleShaded1;
+                  data.pq_cellprop = this.propShaded1;
+                } else if (data.rebar_type === lateral) {
+                  data.pq_cellstyle = this.styleShaded2;
+                  data.pq_cellprop = this.propShaded2;
+                } 
               } 
-            } else {
-              if (data.rebar_type === upperside || data.rebar_type === lowerside) {
-                data.pq_cellstyle = this.styleShaded1;
-                data.pq_cellprop = this.propShaded1;
-              } else if (data.rebar_type === lateral) {
-                data.pq_cellstyle = this.styleShaded2;
-                data.pq_cellprop = this.propShaded2;
-              } 
-            } 
-          })
+            })
+          }
+          
         }
       }  
 
@@ -299,7 +302,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       dataModel: { data: axialRebarData},
       change: (event, ui) => {
         for (const property of ui.updateList) {
-          for (const key of Object.keys(property.newRow)) {
+          for (const key of Object.keys(property.newRow)) {           
+            if(key == "side_cover"){
+              property.newRow["distance_side"] = property.newRow[key]
+            };
             const old = property.oldRow[key];
             if (property.newRow[key] == null) {
               continue; // 削除した場合 何もしない
