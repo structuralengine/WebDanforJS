@@ -355,40 +355,46 @@ export class SafetyFactorsMaterialStrengthsComponent
           ],
         },
         change(evt, ui) {
-          // Iterate through each key in newRow
-          var col = Object.keys(ui.updateList[0].newRow)[0];
-          let defaultItem = self.default_factor.filter(x => x.id === ui.updateList[0].rowData.id)[0];
-          for (let key in ui.updateList[0].newRow) {
-            // Check if the value in newRow is 0
-            if (ui.updateList[0].newRow[key] === null) {
-              // Assign the value from oldRow to rowData
-              ui.updateList[0].rowData[key] = defaultItem[key];
-              ui.updateList[0].rowData.pq_cellstyle = {
-                ...ui.updateList[0].rowData.pq_cellstyle,
-              };
-              ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-                color: "gray",
-              };
-            }
-            else if(ui.updateList[0].newRow[key] === 0){
-              ui.updateList[0].rowData[key] = ui.updateList[0].oldRow[key];
-            }
-            else{
-              if(ui.updateList[0].newRow[key] === defaultItem[key]){
-                ui.updateList[0].rowData.pq_cellstyle = {
-                  ...ui.updateList[0].rowData.pq_cellstyle,
+          debugger
+          for (const updateItem of ui.updateList) {
+            let defaultItem = self.default_factor.filter(x => x.id === updateItem.rowData.id)[0];
+            for (let key in updateItem.newRow) {
+              const old = updateItem.oldRow[key];
+              if (old === null || old === undefined) {
+                updateItem.rowData[key] = null;
+                continue;
+              }
+              
+              if (updateItem.newRow[key] === null || updateItem.newRow[key] === undefined) {
+                // Assign the value from oldRow to rowData
+                updateItem.rowData[key] = defaultItem[key];
+                updateItem.rowData.pq_cellstyle = {
+                  ...updateItem.rowData.pq_cellstyle,
                 };
-                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                updateItem.rowData.pq_cellstyle[`${key}`] = {
                   color: "gray",
                 };
               }
-              else if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-                ui.updateList[0].rowData.pq_cellstyle = {
-                  ...ui.updateList[0].rowData.pq_cellstyle,
-                };
-                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-                  color: "white",
-                };
+              else if(updateItem.newRow[key] === 0){
+                updateItem.rowData[key] = updateItem.oldRow[key];
+              }
+              else{
+                if(updateItem.newRow[key] === defaultItem[key]){
+                  updateItem.rowData.pq_cellstyle = {
+                    ...updateItem.rowData.pq_cellstyle,
+                  };
+                  updateItem.rowData.pq_cellstyle[`${key}`] = {
+                    color: "gray",
+                  };
+                }
+                else if (updateItem.oldRow !== updateItem.newRow) {
+                  updateItem.rowData.pq_cellstyle = {
+                    ...updateItem.rowData.pq_cellstyle,
+                  };
+                  updateItem.rowData.pq_cellstyle[`${key}`] = {
+                    color: "white",
+                  };
+                }
               }
             }
           }
@@ -1001,7 +1007,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         ,
         dataIndx: "range",
         sortable: false,
-        width: 150,
+        width: 180,
         nodrag: true,
         paste: false,
         styleHead: {
