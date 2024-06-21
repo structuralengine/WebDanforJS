@@ -103,12 +103,12 @@ export class SafetyFactorsMaterialStrengthsComponent
   };
   public rangeArray = [
     {
-      value: "0",
+      value: 0,
       text: this.translate.instant("safety-factors-material-strengths.av"),
     },
-    { id: "1", text: this.translate.instant("safety-factors-material-strengths.rsb_ten") },
-    { id: "2", text: this.translate.instant("safety-factors-material-strengths.ten_com") },
-    { id: "3", text: this.translate.instant("safety-factors-material-strengths.all") },
+    { id: 1,value: 1, text: this.translate.instant("safety-factors-material-strengths.rsb_ten") },
+    { id: 2,value: 2, text: this.translate.instant("safety-factors-material-strengths.ten_com") },
+    { id: 3, value: 3,text: this.translate.instant("safety-factors-material-strengths.all") },
   ];
   public style = {
     "pointer-events": "none",
@@ -355,10 +355,13 @@ export class SafetyFactorsMaterialStrengthsComponent
           ],
         },
         change(evt, ui) {
-          debugger
           for (const updateItem of ui.updateList) {
             let defaultItem = self.default_factor.filter(x => x.id === updateItem.rowData.id)[0];
             for (let key in updateItem.newRow) {
+              if(key === "range"){
+                updateItem.newRow[key] = parseInt(updateItem.newRow[key]);
+                updateItem.rowData[key] = parseInt(updateItem.newRow[key]);
+              }
               const old = updateItem.oldRow[key];
               if (old === null || old === undefined) {
                 updateItem.rowData[key] = null;
@@ -669,11 +672,15 @@ export class SafetyFactorsMaterialStrengthsComponent
           }
           for (const prop in item) {
             if (
+              prop === "title"){
+                item.pq_cellstyle[prop] = { ...this.styleColorWhite };
+                continue;
+              }
+            if (
               item.hasOwnProperty(prop) &&
               item[prop] !== null &&
               item[prop] !== 0 &&
-              prop !== "title" &&
-              prop !== "range"
+              prop !== "title"
             ) {
               if (item[prop] !== defaultItem[prop]) {
                   item.pq_cellstyle[prop] = { ...this.styleColorWhite };
