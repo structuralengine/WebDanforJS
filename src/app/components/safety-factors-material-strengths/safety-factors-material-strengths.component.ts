@@ -695,10 +695,10 @@ export class SafetyFactorsMaterialStrengthsComponent
           }
 
           //
-          if (item.V_rbv === null) {
+          if (item.V_rbv === null && (item.id === 0 || item.id === 2)) {
             item.pq_cellstyle.V_rbv = { ...this.style };
           }
-          if (item.T_rbt === null) {
+          if (item.T_rbt === null && item.id === 2) {
             item.pq_cellstyle.T_rbt = { ...this.style };
           }
 
