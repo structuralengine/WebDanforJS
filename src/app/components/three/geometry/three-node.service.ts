@@ -603,7 +603,7 @@ export class ThreeNodeService {
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
       this.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if (data.rebar_type === 2 || data.rebar_type === 3) {
-          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_side / this.scale, 0x333D46, this.type, data.rebar_type)
+          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_top / this.scale, 0x333D46, this.type, data.rebar_type)
         }
       })
     } else {
@@ -612,7 +612,7 @@ export class ThreeNodeService {
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
       this.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if (data.rebar_type === 5) {
-          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_side / this.scale, 0x333D46, this.type, data.rebar_type)
+          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_top / this.scale, 0x333D46, this.type, data.rebar_type)
         }
       })
     }   
@@ -1006,7 +1006,7 @@ export class ThreeNodeService {
       if(rebarType==3){
         curve = new THREE.EllipseCurve(
           0, -Math.abs(h / 2 - b / 2),
-          Math.abs(range - (h - b / 2)), Math.abs(range - (h - b / 2)),
+          Math.abs(b / 2 - range), Math.abs(b / 2 - range),
           Math.PI, 2 * Math.PI,
           false,
           0
@@ -1109,17 +1109,13 @@ export class ThreeNodeService {
         if ((typeRebar === 2 || typeRebar === 3  ) && type === "Vertical") {
           mesh.name = typeRebar === 2 ? 'node2' + index + i : 'node3' + index + i;
           let centerY = typeRebar === 2 ? h / 2 - b / 2 : -(h / 2 - b / 2)
-          let radius = typeRebar === 2 ? b / 2 - data.dist_side / this.scale : data.dist_side / this.scale - (h - b / 2)
+          let radius = typeRebar === 2 ? b / 2 - data.dist_top / this.scale : -(b / 2 - data.dist_top / this.scale)
           let coordinate = this.getPointOnCircle(0, centerY, radius , interval);
           mesh.position.x = -coordinate.x;
           mesh.position.y = coordinate.y;
           mesh.position.z = coordinate.z;
           this.nodeList.children.push(mesh);
-          if(typeRebar===2){
-            interval += Math.PI / (data.quantity - 1) 
-          }else{
-            interval -= Math.PI / (data.quantity - 1) 
-          }
+          interval += Math.PI / (data.quantity - 1)
         }
         if ((typeRebar === 0 || typeRebar === 1) && type !== "Vertical") {
           mesh.name = typeRebar === 0 ? 'node0' + index + i : 'node1' + index + i;
