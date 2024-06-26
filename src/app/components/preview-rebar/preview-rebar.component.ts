@@ -520,7 +520,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             b.rebar_type = 1;
           else if(this.typeView === 4){
             if (this.member.B < this.member.H) {
-                b.rebar_type = 3;            
+                b.rebar_type = 3;      
+                b.dist_side = data.distance_side;               
+                data.distance_top = b.dist_side
             } else {
                 b.rebar_type = 1;
             }

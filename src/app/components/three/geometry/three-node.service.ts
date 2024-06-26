@@ -764,9 +764,10 @@ export class ThreeNodeService {
         arr_rebar_type2.push(data)
       }
       if(data.rebar_type === 3){
-        data.dist_top = h*this.scale -  data.dist_top
-        data.dist_side =  data.dist_top
-        arr_rebar_type2.push(data)
+        let dataCp = JSON.parse(JSON.stringify(data))
+        dataCp.dist_side = h * this.scale -  dataCp.dist_side   
+        dataCp.dist_top = h * this.scale -  dataCp.dist_top  
+        arr_rebar_type2.push(dataCp)
       }
     })
     arr_rebar_type2.sort((a, b) => a.dist_top - b.dist_top)
