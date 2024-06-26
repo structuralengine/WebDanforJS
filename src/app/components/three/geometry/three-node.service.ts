@@ -760,7 +760,12 @@ export class ThreeNodeService {
     //rebar type 2 , 3;
     let arr_rebar_type2 = [];
     this.dataRebar.selectedCalPoint.rebar0.map((data)=>{
-      if (data.rebar_type === 2 || data.rebar_type === 3) {
+      if (data.rebar_type === 2) {
+        arr_rebar_type2.push(data)
+      }
+      if(data.rebar_type === 3){
+        data.dist_top = h*this.scale -  data.dist_top
+        data.dist_side =  data.dist_top
         arr_rebar_type2.push(data)
       }
     })
