@@ -220,7 +220,7 @@ export class SafetyFactorsMaterialStrengthsComponent
           V_rbv: (col.V_rbv === null || col.V_rbv ===  0) ? defaultItem.V_rbv : col.V_rbv,
           T_rbt: (col.T_rbt === null || col.T_rbt ===  0) ? defaultItem.T_rbt : col.T_rbt,
           ri: (col.ri === null || col.ri ===  0) ? defaultItem.ri : col.ri,
-          range: (col.range === null || col.range ===  0) ? defaultItem.range : col.range,
+          range: parseInt((col.range === null || col.range ===  0) ? defaultItem.range : col.range),
           pq_cellstyle: col.pq_cellstyle,
           NoCalc: (col.NoCalc === null || col.NoCalc ===  0) ? defaultItem.NoCalc : col.NoCalc,
         });
@@ -311,7 +311,11 @@ export class SafetyFactorsMaterialStrengthsComponent
       let self = this;
       // グリッドの設定
       this.option1_list.push({
-        width: 1400,
+        width:'100%' ,
+        minWidth: 1150,
+        scrollModel: {
+          horizontal:true,
+        },
         height: 320,
         showTop: false,
         reactive: true,
@@ -1028,8 +1032,9 @@ export class SafetyFactorsMaterialStrengthsComponent
         // </svg></div>`
         ,
         dataIndx: "range",
+        dataType: "integer",
         sortable: false,
-        width: 180,
+        width: 160,
         nodrag: true,
         paste: false,
         styleHead: {
