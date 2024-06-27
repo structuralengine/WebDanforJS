@@ -33,7 +33,7 @@ export class CrackSettingsComponent
   // �タグリッ�の設定変数
   private option_list: pq.gridT.options[] = new Array();
   private columnHeaders: object[] = new Array();
-
+  public defaultCrack : any = {};
   public table_datas: any[];
   public idTab: number;
   // タブ�ヘッダ�
@@ -94,6 +94,8 @@ export class CrackSettingsComponent
   }
 
   ngOnInit() {
+    this.defaultCrack = {}
+    this.defaultCrack = this.crack.default_crack(0);
     this.lstItemEdited = [];
     this.setTitle(this.save.isManual());
     this.table_datas = this.crack.getTableColumns();
@@ -137,7 +139,19 @@ export class CrackSettingsComponent
         let currentCell = rowData[j];
         if (j === 0) {
           currentCell.pq_cellstyle = this.rowStyle;
-          continue;
+          let defaultCrack = this.crack.default_crack(i);
+          const keys = Object.keys(currentCell).filter(
+            (x) => this.colAutoInputs.filter((y) => y === x).length > 0
+          );
+          keys.forEach((key) => {
+            if (
+              JSON.stringify(currentCell[key]) !== JSON.stringify(defaultCrack[key])
+            ) {
+              currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+              currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+              this.lstItemEdited.push(i + "-" + j + "-" + key);
+            }
+          });
         } else {
           currentCell.pq_cellstyle = this.rowStyle;
           var prevRow = rowData[j - 1];
@@ -288,34 +302,40 @@ export class CrackSettingsComponent
         this.removeItem(i, key);
       }
     });
-    let checkRowFirst = ui.updateList.filter(
-      (x) => x.rowIndx === 0
-    ).length;
-    if (checkRowFirst > 0) {
-      ui.updateList
-        .filter((x) => x.rowIndx === 0)
-        .forEach((item: any) => {
-          let whiteItem = this.table_datas[this.idTab][1];
-          for (let key in item.newRow) {
-            whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
-            whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
+    // let checkRowFirst = ui.updateList.filter(
+    //   (x) => x.rowIndx === 0
+    // ).length;
+    // if (checkRowFirst > 0) {
+      // ui.updateList
+      //   // .filter((x) => x.rowIndx === 0)
+      //   .forEach((item: any) => {
+      //     let whiteItem = this.table_datas[this.idTab][1];
+      //     for (let key in item.newRow) {
+      //       whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
+      //       whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
 
-            let sKey = this.idTab + "-" + item.rowIndx + "-" + key;
-            if (this.lstItemEdited.indexOf(sKey) === -1) {
-              this.lstItemEdited.push(sKey);
-            }
-          }
-        });
-      let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0);
-      this.handleDeleteSheet(listNotZero);
-    } else {
-      this.handleDeleteSheet(ui.updateList);
-    }
+      //       let sKey = this.idTab + "-" + item.rowIndx + "-" + key;
+      //       if (this.lstItemEdited.indexOf(sKey) === -1) {
+      //         this.lstItemEdited.push(sKey);
+      //       }
+      //     }
+      //   });
+    //   let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0);
+    //   this.handleDeleteSheet(listNotZero);
+    // } else {
+       this.handleDeleteSheet(ui.updateList);
+    // }
   }
   private handleDeleteSheet(dataList: any) {
     dataList.forEach((item: any) => {
       let rowIndx = item.rowIndx;
-      var prevItem = this.table_datas[this.idTab][rowIndx - 1];
+      var prevItem = {};
+      if(rowIndx === 0){
+        prevItem = this.defaultCrack;
+      }else{
+        prevItem = this.table_datas[this.idTab][rowIndx - 1];
+      }
+      
       for (let key in item.newRow) {
         for (let i = rowIndx; i < this.table_datas[this.idTab].length; i++) {
           const item = this.table_datas[this.idTab][i];

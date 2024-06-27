@@ -44,6 +44,19 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     "rebar_n",
     "rebar_space",
     "rebar_ss",
+    "side_dia", 
+    "stirrup_dia", 
+    "bending_dia",
+    "side_cover",
+    "side_n",
+    "side_ss",
+    "stirrup_dia",
+    "stirrup_ss",
+    "stirrup_n",
+    "bending_dia",
+    "bending_n",
+    "bending_ss",
+    "bending_angle",
   ];
   public table_datas: any[];
   public idTab: number;
@@ -1167,7 +1180,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   private loadAutoInputData(rowData: any, indexTab: any) {
     for (let j = 0; j < rowData.length; j += 2) {
       let currentCell = rowData[j];
-      if (j === 0 || j === 1) {
+      if (j === 0) {
         currentCell.pq_cellstyle = this.rowStyle2;
         continue;
       } else {
@@ -1178,6 +1191,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         );
         keys.forEach((key) => {
           if (
+            JSON.stringify(currentCell[key]) === 'null'
+          ) {
+            currentCell[key] = prevRow[key];
+          }
+          else if (
             JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
@@ -1189,7 +1207,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     for (let j = 1; j < rowData.length; j += 2) {
       let currentCell = rowData[j];
-      if (j === 0 || j === 1) {
+      if (j === 1) {
         currentCell.pq_cellstyle = this.rowStyle2;
         continue;
       } else {
@@ -1200,6 +1218,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         );
         keys.forEach((key) => {
           if (
+            JSON.stringify(currentCell[key]) === 'null'
+          ) {
+            currentCell[key] = prevRow[key];
+          }
+          else if (
             JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };

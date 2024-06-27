@@ -24,7 +24,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   public train_A_count: number;
   public train_B_count: number;
   public service_life: number;
-
+  public defaultFatigue : any = {};
   @ViewChild("grid") grid: SheetComponent;
   @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
   hasScrollbar: boolean = false;
@@ -106,6 +106,9 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.lstItemEdited = [];
+    this.defaultFatigue = {};
+    this.defaultFatigue = this.fatigues.default_fatigue(0);
+    
     const fatigues = this.fatigues.getSaveData();
 
     this.train_A_count = fatigues.train_A_count;
@@ -265,36 +268,66 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         this.removeItem(i, key);
       }
     });
-    let checkRowFirst = ui.updateList.filter(
-      (x) => x.rowIndx === 0 || x.rowIndx === 1
-    ).length;
-    if (checkRowFirst > 0) {
-      ui.updateList
-        .filter((x) => x.rowIndx === 0 || x.rowIndx === 1)
-        .forEach((item: any) => {
-          let nIndx = item.rowIndx + 2;
-          let whiteItem = this.table_datas[this.idTab][nIndx];
-          for (let key in item.newRow) {
-            whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
-            whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
+    // let checkRowFirst = ui.updateList.filter(
+    //   (x) => x.rowIndx === 0 || x.rowIndx === 1
+    // ).length;
+    // if (checkRowFirst > 0) {
+    //   ui.updateList
+    //     .filter((x) => x.rowIndx === 0 || x.rowIndx === 1)
+    //     .forEach((item: any) => {
+    //       let nIndx = item.rowIndx + 2;
+    //       let whiteItem = this.table_datas[this.idTab][nIndx];
+    //       for (let key in item.newRow) {
+    //         whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
+    //         whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
 
-            let sKey = this.idTab + "-" + this.activeTab + "-" + item.rowIndx + "-" + key;
-            if (this.lstItemEdited.indexOf(sKey) === -1) {
-              this.lstItemEdited.push(sKey);
-            }
-          }
-        });
-      let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0 && x.rowIndx !== 1);
-      this.handleDeleteSheet(listNotZero);
-    } else {
+    //         let sKey = this.idTab + "-" + this.activeTab + "-" + item.rowIndx + "-" + key;
+    //         if (this.lstItemEdited.indexOf(sKey) === -1) {
+    //           this.lstItemEdited.push(sKey);
+    //         }
+    //       }
+    //     });
+    //   let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0 && x.rowIndx !== 1);
+    //   this.handleDeleteSheet(listNotZero);
+    // } else {
       this.handleDeleteSheet(ui.updateList);
-    }
+    // }
   }
 
   private handleDeleteSheet(dataList: any) {
     dataList.forEach((item: any) => {
       let rowIndx = item.rowIndx;
-      var prevItem = this.table_datas[this.idTab][rowIndx - 2];
+      var prevItem = {};
+      if(rowIndx === 0){
+        prevItem = this.defaultFatigue;
+        if(this.activeTab === "for_b"){
+          for (const k of Object.keys(this.defaultFatigue.M1)) {
+            prevItem["M_" + k] = this.defaultFatigue.M1[k];
+          }
+        }
+        if(this.activeTab === "for_s"){
+          for (const k of Object.keys(this.defaultFatigue.V1)) {
+            prevItem["V_" + k] = this.defaultFatigue.V1[k];
+          }
+        }
+      }
+      else if(rowIndx === 1){
+        prevItem = this.defaultFatigue;
+        if(this.activeTab === "for_b"){
+          for (const k of Object.keys(this.defaultFatigue.M2)) {
+            prevItem["M_" + k] = this.defaultFatigue.M2[k];
+          }
+        }
+        if(this.activeTab === "for_s"){
+          for (const k of Object.keys(this.defaultFatigue.V2)) {
+            prevItem["V_" + k] = this.defaultFatigue.V2[k];
+          }
+        }
+      }
+      else{
+        prevItem = this.table_datas[this.idTab][rowIndx - 2];
+      }
+
       for (let key in item.newRow) {
         for (let i = rowIndx; i < this.table_datas[this.idTab].length; i += 2 ) {
           const item = this.table_datas[this.idTab][i];
@@ -788,18 +821,48 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadAutoInputData(rowData : any, indexTab1 : any){
+    let defaultFatigue = this.fatigues.default_fatigue(this.idTab);
     for (let j = 0; j < rowData.length; j += 2) {
       let currentCell = rowData[j];
       if (j === 0) {
-        currentCell.pq_cellstyle = this.rowStyle2;
-        continue;
-      } else {
+        let prevItem = this.defaultFatigue;
+        if (this.activeTab === "for_b") {
+          for (const k of Object.keys(this.defaultFatigue.M1)) {
+            prevItem["M_" + k] = this.defaultFatigue.M1[k];
+          }
+        }
+        if (this.activeTab === "for_s") {
+          for (const k of Object.keys(this.defaultFatigue.V1)) {
+            prevItem["V_" + k] = this.defaultFatigue.V1[k];
+          }
+        }
+
         currentCell.pq_cellstyle = this.rowStyle;
-        var prevRow = {...rowData[j - 2]};
-        const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
+        const keys = Object.keys(currentCell).filter(
+          (x) => this.colAutoInputs.filter((y) => y === x).length > 0
+        );
         keys.forEach((key) => {
           if (
-            this.round(JSON.stringify(currentCell[key]),key) !== this.round(JSON.stringify(prevRow[key]),key)
+            JSON.stringify(currentCell[key]) !== JSON.stringify(prevItem[key])
+          ) {
+            currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+            currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+            let sKey = indexTab1 + "-" + this.activeTab + "-" + j + "-" + key;
+            if (this.lstItemEdited.indexOf(sKey) === -1) {
+              this.lstItemEdited.push(sKey);
+            }
+          }
+        });
+      } else {
+        currentCell.pq_cellstyle = this.rowStyle;
+        var prevRow = { ...rowData[j - 2] };
+        const keys = Object.keys(currentCell).filter(
+          (x) => this.colAutoInputs.filter((y) => y === x).length > 0
+        );
+        keys.forEach((key) => {
+          if (
+            this.round(JSON.stringify(currentCell[key]), key) !==
+            this.round(JSON.stringify(prevRow[key]), key)
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
             currentCell.pq_cellstyle[`${key}`] = { color: "white" };
@@ -814,8 +877,33 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let j = 1; j < rowData.length; j += 2) {
       let currentCell = rowData[j];
       if (j === 1) {
-        currentCell.pq_cellstyle = this.rowStyle2;
-        continue;
+        let prevItem = this.defaultFatigue;
+        if (this.activeTab === "for_b") {
+          for (const k of Object.keys(this.defaultFatigue.M2)) {
+            prevItem["M_" + k] = this.defaultFatigue.M2[k];
+          }
+        }
+        if (this.activeTab === "for_s") {
+          for (const k of Object.keys(this.defaultFatigue.V2)) {
+            prevItem["V_" + k] = this.defaultFatigue.V2[k];
+          }
+        }
+        currentCell.pq_cellstyle = this.rowStyle;
+        const keys = Object.keys(currentCell).filter(
+          (x) => this.colAutoInputs.filter((y) => y === x).length > 0
+        );
+        keys.forEach((key) => {
+          if (
+            JSON.stringify(currentCell[key]) !== JSON.stringify(prevItem[key])
+          ) {
+            currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+            currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+            let sKey = indexTab1 + "-" + this.activeTab + "-" + j + "-" + key;
+            if (this.lstItemEdited.indexOf(sKey) === -1) {
+              this.lstItemEdited.push(sKey);
+            }
+          }
+        });
       } else {
         currentCell.pq_cellstyle = this.rowStyle;
         var prevRow = {...rowData[j - 2]};
