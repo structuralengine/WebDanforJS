@@ -861,8 +861,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         );
         keys.forEach((key) => {
           if (
-            this.round(JSON.stringify(currentCell[key]), key) !==
-            this.round(JSON.stringify(prevRow[key]), key)
+            JSON.stringify(currentCell[key]) !==
+            JSON.stringify(prevRow[key])
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
             currentCell.pq_cellstyle[`${key}`] = { color: "white" };
@@ -910,7 +910,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
         keys.forEach((key) => {
           if (
-            this.round(JSON.stringify(currentCell[key]),key) !== this.round(JSON.stringify(prevRow[key]),key)
+            JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
             currentCell.pq_cellstyle[`${key}`] = { color: "white" };
