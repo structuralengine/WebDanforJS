@@ -291,6 +291,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (item[col] === null || item[col] === currentObj[col]) {
                   item.pq_cellstyle = { ...item.pq_cellstyle };
                   item.pq_cellstyle[`${col}`] = { color: "gray" };
+
+                  this.removeItem(i, col);
                 } else {
                   if (
                     this.lstItemEdited.filter(

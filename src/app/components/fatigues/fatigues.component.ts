@@ -218,6 +218,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (item[col] === null || item[col] === currentObj[col]) {
                   item.pq_cellstyle = { ...item.pq_cellstyle };
                   item.pq_cellstyle[`${col}`] = { color: "gray" };
+
+                  this.removeItem(i, col);
                 } else {
                   if (
                     this.lstItemEdited.filter(
@@ -334,6 +336,10 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.activeButtons(0);
     this.checkForScrollbar();
     this.setActiveTab(this.activeTab);
+    for (let i = 0; i < this.table_datas.length; i++) {
+      const rowData = this.table_datas[i];
+      this.loadAutoInputData(rowData, i);
+    }
   }
   private checkForScrollbar() {
     // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
@@ -755,10 +761,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         manual: { start: 13, end: 24 },
       },
     };
-    for (let i = 0; i < this.table_datas.length; i++) {
-      const rowData = this.table_datas[i];
-      this.loadAutoInputData(rowData, i);
-    }
+   
     const mode = this.save.isManual() ? "manual" : "default";
     const tabType = cellIndexMap[tab] || cellIndexMap["default"];
     const { start, end } = tabType[mode];
@@ -779,7 +782,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   private loadAutoInputData(rowData : any, indexTab : any){
     for (let j = 0; j < rowData.length; j += 2) {
       let currentCell = rowData[j];
-      if (j === 0 || j === 1) {
+      if (j === 0) {
         currentCell.pq_cellstyle = this.rowStyle2;
         continue;
       } else {
@@ -801,7 +804,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     for (let j = 1; j < rowData.length; j += 2) {
       let currentCell = rowData[j];
-      if (j === 0 || j === 1) {
+      if (j === 1) {
         currentCell.pq_cellstyle = this.rowStyle2;
         continue;
       } else {
@@ -821,5 +824,9 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
     }
+  }
+  private round(value, precision) {
+    var multiplier = Math.pow(10, precision || 0);
+    return Math.round(value * multiplier) / multiplier;
   }
 }

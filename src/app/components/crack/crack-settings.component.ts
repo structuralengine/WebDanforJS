@@ -136,7 +136,7 @@ export class CrackSettingsComponent
       for (let j = 0; j < rowDataTab.length; j++) {
         let currentCell = rowData[j];
         if (j === 0) {
-          currentCell.pq_cellstyle = this.rowStyle2;
+          currentCell.pq_cellstyle = this.rowStyle;
           continue;
         } else {
           currentCell.pq_cellstyle = this.rowStyle;
@@ -229,6 +229,8 @@ export class CrackSettingsComponent
                 if (item[col] === null || item[col] === currentObj[col]) {
                   item.pq_cellstyle = { ...item.pq_cellstyle };
                   item.pq_cellstyle[`${col}`] = { color: "gray" };
+
+                  this.removeItem(i, col);
                 } else {
                   if (
                     this.lstItemEdited.filter(
