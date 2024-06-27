@@ -350,36 +350,43 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         this.removeItem(i, key);
       }
     });
-    let checkRowFirst = ui.updateList.filter(
-      (x) => x.rowIndx === 0 || x.rowIndx === 1
-    ).length;
-    if (checkRowFirst > 0) {
-      ui.updateList
-        .filter((x) => x.rowIndx === 0 || x.rowIndx === 1)
-        .forEach((item: any) => {
-          let nIndx = item.rowIndx + 2;
-          let whiteItem = this.table_datas[this.idTab][nIndx];
-          for (let key in item.newRow) {
-            whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
-            whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
+    // let checkRowFirst = ui.updateList.filter(
+    //   (x) => x.rowIndx === 0 || x.rowIndx === 1
+    // ).length;
+    // if (checkRowFirst > 0) {
+    //   ui.updateList
+    //     .filter((x) => x.rowIndx === 0 || x.rowIndx === 1)
+    //     .forEach((item: any) => {
+    //       let nIndx = item.rowIndx + 2;
+    //       let whiteItem = this.table_datas[this.idTab][nIndx];
+    //       for (let key in item.newRow) {
+    //         whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
+    //         whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
 
-            let sKey = this.idTab + "-" + item.rowIndx + "-" + key;
-            if (this.lstItemEdited.indexOf(sKey) === -1) {
-              this.lstItemEdited.push(sKey);
-            }
-          }
-        });
-      let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0 && x.rowIndx !== 1);
-      this.handleDeleteSheet(listNotZero);
-    } else {
+    //         let sKey = this.idTab + "-" + item.rowIndx + "-" + key;
+    //         if (this.lstItemEdited.indexOf(sKey) === -1) {
+    //           this.lstItemEdited.push(sKey);
+    //         }
+    //       }
+    //     });
+    //   let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0 && x.rowIndx !== 1);
+    //   this.handleDeleteSheet(listNotZero);
+    // } else {
       this.handleDeleteSheet(ui.updateList);
-    }
+    // }
   }
 
   private handleDeleteSheet(dataList: any) {
     dataList.forEach((item: any) => {
       let rowIndx = item.rowIndx;
-      var prevItem = this.table_datas[this.idTab][rowIndx - 2];
+      var prevItem : any = {};
+      if(rowIndx === 0 || rowIndx === 1){
+        prevItem = this.bars.default_bars(0);
+      }
+      else{
+        prevItem = this.table_datas[this.idTab][rowIndx - 2];
+      }
+      
       for (let key in item.newRow) {
         for (let i = rowIndx; i < this.table_datas[this.idTab].length; i += 2 ) {
           const item = this.table_datas[this.idTab][i];

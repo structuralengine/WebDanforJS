@@ -136,7 +136,7 @@ export class InputBarsService {
 
 
   // 鉄筋情報
-  private default_bars(id: number): any {
+  public default_bars(id: number): any {
     const result = this.default(id);
     result['m_no'] = null;
     result['position'] = null;
