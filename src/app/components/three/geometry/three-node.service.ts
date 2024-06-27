@@ -807,11 +807,11 @@ export class ThreeNodeService {
         const rebar_6 =  arr_rebar_type6[i];        
         jsonData[`rb6_${i}`]= {
           x:  x_start + 3,
-          y:   y_start -  rebar_6.dist_top/this.scale,
+          y:   y_start - x_start - rebar_6.dist_top/this.scale,
           z: 0
         }
         if(i == 0)
-          this.drawLineDim(jsonData["rb6"], jsonData[`rb6_${i}`], 0, Math.round(rebar_6.dist_top - x_start * this.scale), true, 6, 2, 0);
+          this.drawLineDim(jsonData["rb6"], jsonData[`rb6_${i}`], 0, Math.round(rebar_6.dist_top), true, 6, 2, 0);
         else
           this.drawLineDim(jsonData[`rb6_${i - 1}`], jsonData[`rb6_${i}`], 0, Math.round(arr_rebar_type6[i].dist_top - arr_rebar_type6[i-1].dist_top), true, 6, 2, 0);    
         
@@ -821,7 +821,7 @@ export class ThreeNodeService {
             y: -(y_start - x_start),
             z:0
           }
-          this.drawLineDim(jsonData[`rb6_end`], jsonData[`rb6_${i}`], 0, Math.round(y_start * 2 * this.scale - rebar_6.dist_top - x_start*this.scale), true, 6, 2, 0);  
+          this.drawLineDim(jsonData[`rb6_end`], jsonData[`rb6_${i}`], 0, Math.round(y_start * 2 * this.scale - rebar_6.dist_top - x_start *2*this.scale), true, 6, 2, 0);  
         }
       }   
     }
@@ -1107,7 +1107,7 @@ export class ThreeNodeService {
         if (typeRebar === 6 && type === "Vertical") {
           mesh.name = 'node6' + index + i;
           mesh.position.x = -(b / 2 - data.dist_side / this.scale - interval);
-          mesh.position.y = h / 2 - data.dist_top / this.scale;
+          mesh.position.y = h / 2 - b / 2 - data.dist_top / this.scale;
           mesh.position.z = 0;
           this.nodeList.children.push(mesh);
           interval += (b - 2 * data.dist_side / this.scale) / (data.quantity - 1);
