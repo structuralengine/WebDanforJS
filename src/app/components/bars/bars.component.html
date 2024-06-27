@@ -21,6 +21,7 @@
 
 <div *ngIf="!bars.is_review; else tableView" class="c-sheetArea">
   <app-sheet #grid [options]="options"></app-sheet>
+  <app-modal-preview *ngIf="show" [element]="element" (closeModal)="handleClose($event)"></app-modal-preview>
 </div>
 <ng-template #tableView>
   <div class="previewArea">
