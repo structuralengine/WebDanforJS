@@ -38,7 +38,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   public lstItemEdited: string[];
   public colAutoInputs = ["M_SA", "M_NA06", "M_NA12", "M_NB06", "M_NB12", "M_SB"
   , "V_A", "V_B", "V_NA06", "V_NA12", "V_NB06"
-  , "V_NB12", "V_SA", "V_SB"
+  , "V_NB12", "V_SA", "V_SB", "V_r1_2", "V_r1_3", "M_A", "M_B", "M_r1_1"
   ];
 
   public table_datas: any[];
@@ -204,7 +204,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
               // Get the starting index from which to update the array
               let startIndex = ui.updateList[0].rowIndx + 2;
               let sKey =
-                this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
+                this.idTab + "-" + this.activeTab + "-" + ui.updateList[0].rowIndx + "-" + col;
               if (this.lstItemEdited.indexOf(sKey) === -1) {
                 this.lstItemEdited.push(sKey);
               }
@@ -223,7 +223,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
                 } else {
                   if (
                     this.lstItemEdited.filter(
-                      (x) => x === this.idTab + "-" + i + "-" + col
+                      (x) => x === this.idTab + "-" + this.activeTab + "-" + i + "-" + col
                     ).length > 0
                   ) {
                     break;
@@ -278,7 +278,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
             whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
             whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
 
-            let sKey = this.idTab + "-" + item.rowIndx + "-" + key;
+            let sKey = this.idTab + "-" + this.activeTab + "-" + item.rowIndx + "-" + key;
             if (this.lstItemEdited.indexOf(sKey) === -1) {
               this.lstItemEdited.push(sKey);
             }
@@ -305,7 +305,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           } else {
             if (
               this.lstItemEdited.filter(
-                (x) => x === this.idTab + "-" + i + "-" + key
+                (x) => x === this.idTab + "-" + this.activeTab + "-" + i + "-" + key
               ).length > 0
             ) {
               if (this.table_datas[this.idTab][i][key] === prevItem[key]) {
@@ -325,7 +325,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private removeItem(i: any, key: any) {
     const index = this.lstItemEdited.indexOf(
-      this.idTab + "-" + i + "-" + key,
+      this.idTab + "-" + this.activeTab + "-" + i + "-" + key,
       0
     );
     if (index > -1) {
@@ -336,10 +336,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.activeButtons(0);
     this.checkForScrollbar();
     this.setActiveTab(this.activeTab);
-    for (let i = 0; i < this.table_datas.length; i++) {
-      const rowData = this.table_datas[i];
-      this.loadAutoInputData(rowData, i);
-    }
+    
   }
   private checkForScrollbar() {
     // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
@@ -728,6 +725,11 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[id];
     this.grid.options = this.options;
     this.grid.refreshDataAndView();
+
+    for (let i = 0; i < this.table_datas.length; i++) {
+      const rowData = this.table_datas[i];
+      this.loadAutoInputData(rowData, i);
+    }
   }
 
   // アクヂ�ブになってあ�ボタンを�て非アクヂ�ブにする
@@ -746,7 +748,11 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public setActiveTab(tab: string) {
     this.activeTab = tab;
-
+  // for (let i = 0; i < this.table_datas.length; i++) {
+    const rowData = this.table_datas[this.idTab];
+    this.loadAutoInputData(rowData, this.idTab);
+  // }
+  console.log(this.table_datas);
     let FIXED_CELLS_COUNT = this.save.isManual() ? 3 : 4;
 
     // SRC対応用にfor_bのendから2列引い�
@@ -777,9 +783,11 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.grid.refreshDataAndView();
+
+  
   }
 
-  private loadAutoInputData(rowData : any, indexTab : any){
+  private loadAutoInputData(rowData : any, indexTab1 : any){
     for (let j = 0; j < rowData.length; j += 2) {
       let currentCell = rowData[j];
       if (j === 0) {
@@ -787,17 +795,18 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         continue;
       } else {
         currentCell.pq_cellstyle = this.rowStyle;
-        var prevRow = rowData[j - 2];
+        var prevRow = {...rowData[j - 2]};
         const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
         keys.forEach((key) => {
           if (
-            JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
+            this.round(JSON.stringify(currentCell[key]),key) !== this.round(JSON.stringify(prevRow[key]),key)
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
             currentCell.pq_cellstyle[`${key}`] = { color: "white" };
-            this.lstItemEdited.push(
-              indexTab + "-" + j + "-" + key
-            );
+            let sKey = indexTab1 + "-" + this.activeTab + "-" + j + "-" + key;
+            if (this.lstItemEdited.indexOf(sKey) === -1) {
+              this.lstItemEdited.push(sKey);
+            }
           }
         });
       }
@@ -809,23 +818,28 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         continue;
       } else {
         currentCell.pq_cellstyle = this.rowStyle;
-        var prevRow = rowData[j - 2];
+        var prevRow = {...rowData[j - 2]};
         const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
         keys.forEach((key) => {
           if (
-            JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
+            this.round(JSON.stringify(currentCell[key]),key) !== this.round(JSON.stringify(prevRow[key]),key)
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
             currentCell.pq_cellstyle[`${key}`] = { color: "white" };
-            this.lstItemEdited.push(
-              indexTab + "-" + j + "-" + key
-            );
+            let sKey = indexTab1 + "-" + this.activeTab + "-" + j + "-" + key;
+            if (this.lstItemEdited.indexOf(sKey) === -1) {
+              this.lstItemEdited.push(sKey);
+            }
           }
         });
       }
     }
   }
-  private round(value, precision) {
+  private lstTwo : any = ["M_NA06", "M_NB06", "M_NA12", "M_NB12", "V_r1_2", "V_r1_3"]
+  private round(value: any, key:any) {
+    let precision = 1
+    if(this.lstTwo.indexOf(key) > -1)
+      precision = 2;
     var multiplier = Math.pow(10, precision || 0);
     return Math.round(value * multiplier) / multiplier;
   }
