@@ -312,7 +312,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       // グリッドの設定
       this.option1_list.push({
         width:'100%' ,
-        minWidth: 1150,
+        minWidth: 1073,
         scrollModel: {
           horizontal:true,
         },
@@ -362,10 +362,15 @@ export class SafetyFactorsMaterialStrengthsComponent
           for (const updateItem of ui.updateList) {
             let defaultItem = self.default_factor.filter(x => x.id === updateItem.rowData.id)[0];
             for (let key in updateItem.newRow) {
+              if (key === "range" && ui.source === "clear") {
+                updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
+                updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
+              }
               if(key === "range"){
                 updateItem.newRow[key] = parseInt(updateItem.newRow[key]);
                 updateItem.rowData[key] = parseInt(updateItem.newRow[key]);
               }
+              
               const old = updateItem.oldRow[key];
               if (old === null || old === undefined) {
                 updateItem.rowData[key] = null;
@@ -751,7 +756,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         editable: false,
         frozen: true,
         sortable: false,
-        width: 200,
+        width: 190,
         nodrag: true,
         style: { background: "#373e45" },
         styleHead: { background: "#373e45" },
@@ -765,7 +770,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataIndx: "NoCalc",
         type: "checkbox",
         sortable: false,
-        width: 80,
+        width: 60,
         nodrag: true,
         styleHead: {
           'display': 'flex',
@@ -1034,7 +1039,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataIndx: "range",
         dataType: "integer",
         sortable: false,
-        width: 160,
+        width: 120,
         nodrag: true,
         paste: false,
         styleHead: {

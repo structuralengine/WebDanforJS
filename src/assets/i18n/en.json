@@ -301,13 +301,13 @@
         "do_not":"Do not except axial effect on shear forces that concrete can bear"
     },
     "safety-factors-material-strengths":{
-        "execute": "Don't excute check",
+        "execute": "Don't execute check",
         "rsb_con":"Reinforcing bar / Concrete",
         "safe":"Stability factor",
         "rsb_arr":"Reinforcement range to consider",
-        "rsb_ten":"Tensile reinforcement",
-        "ten_com":"Tension + Compression",
-        "all":"All-around rebar",
+        "rsb_ten":"Tens rebar",
+        "ten_com":"Tens and Comp",
+        "all":"All rebar",
         "r_mta":"Reinforcing bar material strength",
         "c_mta":"Concrete material strength",
         "steel":"Steel frame",
