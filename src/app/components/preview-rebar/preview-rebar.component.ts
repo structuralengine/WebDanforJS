@@ -79,10 +79,12 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       this.typeView = ""
     }
     this.displayPreview();
+    this.drawPreview()
   }
 
   ngOnInit() {
-    this.displayPreview();    
+    this.displayPreview();   
+    this.drawPreview()
   }
   private OrderByRebarType(rebar0: any){
     let arrUp: any[] = []
@@ -361,8 +363,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             this.rebar.selectedCalPoint.rebar0 = newRebar0;  
             this.displayPreview(this.rebar.selectedCalPoint);       
             this.axialGrid.refreshDataAndView();                 
-          }     
-          this.drawPreview();
+          }
+            this.drawPreview();
         }
       }
     }
@@ -495,32 +497,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     if(!changeCalPoint){
       this.calculatedPointOptions = calculatedPointOption; 
     }
-      
-    this.threeNode.dataRebar = this.rebar  
-    this.removeScene();
-    switch(this.typeView){
-      case 1: {
-        this.threeNode.createDemoRectangle();
-        break;
-      }
-      case 2: {
-        this.threeNode.createDemoTShape();
-        break;
-      }
-      case 3: {
-        this.threeNode.createDemoCircleRing();
-        break;
-      }     
-      case 4: {
-        this.threeNode.createDemoOval();
-        break;
-      }
-    
-      default: 
-        this.threeNode.showMessage();
-        break;
-    }  
-    this.scene.render();
   }  
   private drawPreview() {
     this.threeNode.dataRebar = this.rebar  
