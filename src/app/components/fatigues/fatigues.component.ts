@@ -206,6 +206,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
             } else {
               // Get the starting index from which to update the array
               let startIndex = ui.updateList[0].rowIndx + 2;
+              let rowIndex = ui.updateList[0].rowIndx;
               let sKey =
                 this.idTab + "-" + this.activeTab + "-" + ui.updateList[0].rowIndx + "-" + col;
               if (this.lstItemEdited.indexOf(sKey) === -1) {
@@ -234,14 +235,48 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
                 Object.assign(this.table_datas[this.idTab][i], currentObj);
               }
-              if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-                ui.updateList[0].rowData.pq_cellstyle = {
-                  ...ui.updateList[0].rowData.pq_cellstyle,
-                };
-                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-                  color: "white",
-                };
+
+              if(rowIndex > 1){
+                let prevItem = this.table_datas[this.idTab][rowIndex - 2];
+                if(prevItem[col] === currentObj[col]){
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "gray",
+                  };
+
+                  this.removeItem(rowIndex, col);
+                }
+                else{
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "white",
+                  };
+                }
               }
+              else 
+              {
+                if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "white",
+                  };
+                }
+              }
+
+              // if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+              //   ui.updateList[0].rowData.pq_cellstyle = {
+              //     ...ui.updateList[0].rowData.pq_cellstyle,
+              //   };
+              //   ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+              //     color: "white",
+              //   };
+              // }
             }
           }
           if (ui.source === "clear" || ui.source === "cut") {
@@ -785,7 +820,6 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     const rowData = this.table_datas[this.idTab];
     this.loadAutoInputData(rowData, this.idTab);
   // }
-  console.log(this.table_datas);
     let FIXED_CELLS_COUNT = this.save.isManual() ? 3 : 4;
 
     // SRC対応用にfor_bのendから2列引い�
@@ -816,7 +850,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     this.grid.refreshDataAndView();
-
+    this.grid.refreshCM();
   
   }
 

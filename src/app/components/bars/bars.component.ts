@@ -271,6 +271,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           ) {
             var currentObj = ui.updateList[0].newRow;
             var col = Object.keys(ui.updateList[0].newRow)[0];
+            let rowIndex = ui.updateList[0].rowIndx;
             if (ui.updateList[0].newRow[col] === null) {
               this.handleDelete(ui);
             } else {
@@ -317,14 +318,46 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
                 Object.assign(this.table_datas[this.idTab][i], currentObj);
               }
-              if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-                ui.updateList[0].rowData.pq_cellstyle = {
-                  ...ui.updateList[0].rowData.pq_cellstyle,
-                };
-                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-                  color: "white",
-                };
+              if(rowIndex > 1){
+                let prevItem = this.table_datas[this.idTab][rowIndex - 2];
+                if(prevItem[col] === currentObj[col]){
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "gray",
+                  };
+
+                  this.removeItem(rowIndex, col);
+                }
+                else{
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "white",
+                  };
+                }
               }
+              else 
+              {
+                if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "white",
+                  };
+                }
+              }
+              // if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+              //   ui.updateList[0].rowData.pq_cellstyle = {
+              //     ...ui.updateList[0].rowData.pq_cellstyle,
+              //   };
+              //   ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+              //     color: "white",
+              //   };
+              // }
             }
           }
           if (ui.source === "clear" || ui.source === "cut") {

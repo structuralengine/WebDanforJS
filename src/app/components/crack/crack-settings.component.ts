@@ -226,7 +226,8 @@ export class CrackSettingsComponent
               this.handleDelete(ui);
             } else {
               // Get the starting index from which to update the array
-              let startIndex = ui.updateList[0].rowIndx + 1;
+              let rowIndex = ui.updateList[0].rowIndx;
+              let startIndex = rowIndex + 1;
               let sKey =
                 this.idTab + "-" + ui.updateList[0].rowIndx + "-" + col;
               if (this.lstItemEdited.indexOf(sKey) === -1) {
@@ -240,6 +241,7 @@ export class CrackSettingsComponent
                 i++
               ) {
                 const item = this.table_datas[this.idTab][i];
+                
                 if (item[col] === null || item[col] === currentObj[col]) {
                   item.pq_cellstyle = { ...item.pq_cellstyle };
                   item.pq_cellstyle[`${col}`] = { color: "gray" };
@@ -258,13 +260,37 @@ export class CrackSettingsComponent
                 Object.assign(this.table_datas[this.idTab][i], currentObj);
               }
 
-              if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-                ui.updateList[0].rowData.pq_cellstyle = {
-                  ...ui.updateList[0].rowData.pq_cellstyle,
-                };
-                ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-                  color: "white",
-                };
+              if(rowIndex > 0){
+                let prevItem = this.table_datas[this.idTab][rowIndex - 1];
+                if(prevItem[col] === currentObj[col]){
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "gray",
+                  };
+
+                  this.removeItem(rowIndex, col);
+                }
+                else{
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "white",
+                  };
+                }
+              }
+              else 
+              {
+                if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "white",
+                  };
+                }
               }
             }
           }
