@@ -27,7 +27,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private calculatedPointHeaders: object[] = new Array();
   private table_datas_axial: any[];
   private table_datas_stirrup: any[];
-
+  private table_datas_cal_point: any[];
   public typeView: any
   public member: any
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
@@ -145,7 +145,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     }  
     return arrNew;
   }
-  private displayPreview(newRebar? : any) {
+  private displayPreview(newRebar? : any, changeCalPoint : boolean = false) {
     if (Object.keys(this.rebar).length != 0) {
       this.rebar.selectedCalPoint = newRebar !== undefined ? newRebar : this.rebar.selectedCalPoint;
       let calPoint =  this.rebar.selectedCalPoint; 
@@ -153,6 +153,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       this.member = member;
       this.table_datas_axial = new Array();
       this.table_datas_stirrup = new Array();
+      this.table_datas_cal_point = new Array();
       var axialRebarData = [];
       var stirrupData = [];
       var calPointListData = [];
@@ -256,10 +257,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
               pos: point.position,
               p_name: point.p_name,
               haunch: point.haunch_M, 
-              pq_rowcls: "pq-state-select ui-state-highlight",
-              pq_cellcls: {
-                "no" : "pq-focus"
-              }
+              // pq_rowcls: "pq-state-select ui-state-highlight",
+              // pq_cellcls: {
+              //   "no" : "pq-focus"
+              // }
             })
           } else {
             calPointListData.push({
@@ -279,6 +280,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           data.pq_cellprop = this.propShaded3;
         } 
       })
+      this.table_datas_cal_point.push(calPointListData);
     }
  
     this.setAxialHeaders();
@@ -398,18 +400,49 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       sortable: false,
       locale: "jp",
       numberCell: {
-        show: false,
-        width: 0,
+        show: false,       
       },
+      // editModel: {
+      //   clicksToEdit: 2
+      // },
+      
       colModel: this.calculatedPointHeaders,
       dataModel: { data: calPointListData },
-      cellClick: (evt, ui) => {
+      change: (evt, ui) =>{
+        for (const property of ui.updateList) {
+          for (const key of Object.keys(property.newRow)) {
+            const old = property.oldRow[key];
+            if (property.newRow[key] == null) {
+              continue; // 削除した場合 何もしない
+            }
+          }
+        }    
+        this.table_datas_cal_point = new Array();
+        this.table_datas_cal_point.push(calPointListData);
+        let table_data_bar = this.rebar.table_data
+        let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
+        if(indexBar !== -1){
+          let newCalPoint= this.setCalPoint(this.table_datas_cal_point);
+          console.log(table_data_bar[indexBar])
+          table_data_bar[indexBar].haunch_height= newCalPoint.haunch_height            
+          this.bars.setTableColumns(table_data_bar)  
+          this.rebar.selectedCalPoint.haunch_height = newCalPoint.haunch_height;
+          this.rebar.selectedCalPoint.haunch_M = newCalPoint.haunch_height;
+          this.rebar.selectedCalPoint.haunch_V = newCalPoint.haunch_height;
+
+        }        
+        this.drawPreview();
+      },
+      cellClick: (evt, ui) => {  
         this.clearFocus(calPointListData);
         ui.rowData.pq_rowcls = "pq-state-select ui-state-highlight";
-        this.grid.refreshDataAndView();
+        this.grid.refreshDataAndView();         
+        if(ui.colIndx != 4){         
+         
+        }   
         this.member = this.members.getData(ui.rowData.no)
         this.typeView = this.member.shape
-
+    
         for (let rebar of this.rebar.rebarList) {
           if (rebar.p_name === ui.rowData.p_name) {          
             if(rebar.rebar0.length === 0){
@@ -418,19 +451,22 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             }else  {
               this.rebar.selectedCalPoint = rebar  
             }      
-            this.displayPreview(rebar); 
-            this.axialGrid.refreshDataAndView(); 
-            
+            this.displayPreview(rebar, true); 
+            this.axialGrid.refreshDataAndView();            
             this.drawPreview();
             break;
           }
-        }
+        }    
       },
+     
     }
 
     this.axialRebarOptions = axialRebarOption;
     this.stirrupOptions = stirrupOption;
-    this.calculatedPointOptions = calculatedPointOption;    
+    if(!changeCalPoint){
+      this.calculatedPointOptions = calculatedPointOption; 
+    }
+      
     this.threeNode.dataRebar = this.rebar  
     this.removeScene();
     switch(this.typeView){
@@ -569,6 +605,28 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     stirrup.stirrup_n = data.num;
     stirrup.stirrup_ss = data.interval;
     return stirrup;
+  }
+  private setCalPoint(table_data){
+    var datatb = table_data[0];
+    var dataNew : any
+    datatb.map((data) => {
+      const b = {
+        m_no: null,
+        p_name: null,
+        haunch_height: null,
+        position: null 
+      }
+      if(this.rebar.selectedCalPoint.m_no === data.no){
+        b.haunch_height = data.haunch
+        b.m_no = data.no
+        b.p_name = data.p_name
+        b.position = data.pos
+        dataNew = b; 
+      
+      }           
+    })
+   
+    return dataNew;
   }
   private setColumnWidth(column) {
     const isJapanese = /[\u3000-\u303F\u3040-\u309F\u30A0-\u30FF\uFF00-\uFFEF\u4E00-\u9FAF]/.test(column);
@@ -858,7 +916,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         title: haunch,
         width: 90, halign: 'center', align: 'right',
         dataType: 'integer', dataIndx: 'haunch',
-        editable: false, sortable: false, nodrag: true, resizable: false,
+        editable: true, sortable: false, nodrag: true, resizable: false,
       },
     );
   }
