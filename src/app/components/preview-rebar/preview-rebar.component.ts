@@ -25,9 +25,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private axialHeaders: object[] = new Array();
   private stirrupHeaders: object[] = new Array();
   private calculatedPointHeaders: object[] = new Array();
-  private table_datas_axial: any[];
-  private table_datas_stirrup: any[];
-  private table_datas_cal_point: any[];
+  private table_datas_axial: any[] = [];
+  private table_datas_stirrup: any[] = [];
+  private table_datas_cal_point: any[] = [];
   public typeView: any
   public member: any
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
@@ -148,21 +148,24 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     return arrNew;
   }
   private displayPreview(newRebar? : any, changeCalPoint : boolean = false) {
+    var axialRebarData = [];
+    var stirrupData = [];
+    var calPointListData = [];
+    const upperside = this.translate.instant("preview_rebar.upper_side");
+    const lowerside = this.translate.instant("preview_rebar.lower_side");
+    const lateral = this.translate.instant("preview_rebar.lateral_rebar");    
+    let calPoint =  this.rebar.selectedCalPoint; 
+
     if (Object.keys(this.rebar).length != 0) {
       this.rebar.selectedCalPoint = newRebar !== undefined ? newRebar : this.rebar.selectedCalPoint;
-      let calPoint =  this.rebar.selectedCalPoint; 
       const member = this.members.getData(calPoint.m_no)
       this.member = member;
       this.table_datas_axial = new Array();
       this.table_datas_stirrup = new Array();
       this.table_datas_cal_point = new Array();
-      var axialRebarData = [];
-      var stirrupData = [];
-      var calPointListData = [];
+
       this.typeView = calPoint.rebar0.length > 0 ? member.shape  : "" 
-      const upperside = this.translate.instant("preview_rebar.upper_side");
-      const lowerside = this.translate.instant("preview_rebar.lower_side");
-      const lateral = this.translate.instant("preview_rebar.lateral_rebar");    
+
       // new data
       if (calPoint.rebar0.length > 0)  {        
         calPoint.rebar0 = this.typeView == 3? calPoint.rebar0 : this.OrderByRebarType(calPoint.rebar0);        
@@ -230,8 +233,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       }  
 
 
-      this.table_datas_axial.push(axialRebarData);
-
+      
       // Stirrup Data
       const stirrup = calPoint.rebar0.length >0 ?calPoint.stirrup: null;
       if (stirrup) {
@@ -241,7 +243,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           stirrup_ss: stirrup.stirrup_ss,
         })
       }
-      this.table_datas_stirrup.push(calPoint.rebar0.length > 0 ? stirrupData : []);      
       // Calculation Point List Data
       const calPointList = this.rebar.rebarList;
       let m_no = calPointList[0].m_no;
@@ -284,7 +285,32 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       })
       this.table_datas_cal_point.push(calPointListData);
     }
- 
+    if (calPoint != undefined && axialRebarData.length <= 30){
+      let pushAxialRebarData = Array.from({ length: 30 - axialRebarData.length }, (i) => ({
+          distance_side: null,
+          distance_top: null,
+          interval: null,
+          num: null,
+          pq_ri: i,
+          rebar_type: "",
+          rebar_dia: "null",
+          side_cover: null,
+        }));
+        axialRebarData = [...axialRebarData, ...pushAxialRebarData];
+    }
+    this.table_datas_axial.push(axialRebarData);
+
+    if (calPoint != undefined && stirrupData.length <= 1){
+      let pushStirrupData = Array.from({ length: 1 - stirrupData.length }, (i) => ({
+          stirrup_dia: "null",
+          stirrup_n : null,
+          stirrup_ss: null,
+          pq_ri: i
+        }));
+        stirrupData = [...stirrupData, ...pushStirrupData];
+    }
+    this.table_datas_stirrup.push(stirrupData);      
+
     this.setAxialHeaders();
     this.setStirrupHeader();
     this.setCalculatedPointHeader();
@@ -329,7 +355,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           let table_data_bar = this.rebar.table_data
           let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
           if(indexBar !== -1){
-            let newRebar0=  this.OrderByRebarType(this.setRebar0(this.table_datas_axial))           
+            let newRebar0=  this.OrderByRebarType(this.setRebar0(this.table_datas_axial))
             table_data_bar[indexBar].rebar0=newRebar0          
             this.bars.setTableColumns(table_data_bar)  
             this.rebar.selectedCalPoint.rebar0 = newRebar0;  
@@ -530,12 +556,12 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     let dataNew= new Array();
     table_data[0].map((data)=>{
       const b = {
-        rebar_type: 0,
-        dia: 0,
-        quantity: 0,
-        dist_top: 0,
-        dist_side: 0,                  
-        interval:0
+        rebar_type: null,
+        dia: "null",
+        quantity: null,
+        dist_top: null,
+        dist_side: null,                  
+        interval: null
       }; 
       b.dist_side = data.side_cover; 
       switch (data.rebar_type) {
