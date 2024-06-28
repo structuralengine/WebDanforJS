@@ -236,7 +236,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       const stirrup = calPoint.rebar0.length >0 ?calPoint.stirrup: null;
       if (stirrup) {
         stirrupData.push({
-          stirrup_dia: stirrup.stirrup_dia == null ? 10 : stirrup.stirrup_dia,
+          stirrup_dia: stirrup.stirrup_dia == null ? "null" : stirrup.stirrup_dia,
           stirrup_n: stirrup.stirrup_n,
           stirrup_ss: stirrup.stirrup_ss,
         })
@@ -365,7 +365,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             if (property.newRow[key] == null) {
               continue; // 削除した場合 何もしない
             }
-            if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
+            if ( key === 'side_dia' || key === 'stirrup_dia') {
               // 鉄筋径の規格以外は入力させない
               const value0 = this.bars.matchBarSize(property.newRow[key]);
               const j = property.rowIndx;
@@ -604,7 +604,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private setStrrup(table_data){
     var data = table_data[0][0]
     var stirrup = this.bars.default_stirrup_bar()
-    stirrup.stirrup_dia = data.stirrup_dia;
+    stirrup.stirrup_dia = data.stirrup_dia === "null" ? null : data.stirrup_dia;
     stirrup.stirrup_n = data.stirrup_n;
     stirrup.stirrup_ss = data.stirrup_ss;
     return stirrup;
@@ -821,7 +821,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const rebar_dia = this.translate.instant("preview_rebar.rebar_dia");
     const number = this.translate.instant("preview_rebar.num");
     const interval = this.translate.instant("preview_rebar.interval")
-    const rebar_dia_options = [10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
+    const rebar_dia_options = ["null",10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
 
     this.stirrupHeaders.push(
       {
