@@ -158,7 +158,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
 
     if (Object.keys(this.rebar).length != 0) {
       this.rebar.selectedCalPoint = newRebar !== undefined ? newRebar : this.rebar.selectedCalPoint;
-      const member = this.members.getData(calPoint.m_no)
+      let calPoint =  this.rebar.selectedCalPoint; 
+      const member = this.members.getData(calPoint.m_no != "" ? calPoint.m_no : this.rebar.table_data[0].m_no)
       this.member = member;
       this.table_datas_axial = new Array();
       this.table_datas_stirrup = new Array();
@@ -429,11 +430,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       locale: "jp",
       numberCell: {
         show: false,       
-      },
-      // editModel: {
-      //   clicksToEdit: 2
-      // },
-      
+      },    
       colModel: this.calculatedPointHeaders,
       dataModel: { data: calPointListData },
       change: (evt, ui) =>{
@@ -464,28 +461,28 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       cellClick: (evt, ui) => {  
         this.clearFocus(calPointListData);
         ui.rowData.pq_rowcls = "pq-state-select ui-state-highlight";
-        this.grid.refreshDataAndView();         
-        if(ui.colIndx != 4){         
-         
-        }   
+        this.grid.refreshDataAndView();        
         this.member = this.members.getData(ui.rowData.no)
         this.typeView = this.member.shape
-    
-        for (let rebar of this.rebar.rebarList) {
-          if (rebar.p_name === ui.rowData.p_name) {          
-            if(rebar.rebar0.length === 0){
-              this.removeScene();  
-              this.typeView = ""                         
-            }else  {
-              this.rebar.selectedCalPoint = rebar  
-            }      
-            this.displayPreview(rebar, true); 
-            this.axialGrid.refreshDataAndView(); 
-            this.stirrupGrid.refreshDataAndView();
-            this.drawPreview();
-            break;
-          }
-        }    
+        if(Object.keys(this.rebar).length != 0){
+          for (let rebar of this.rebar.rebarList) {
+            if (rebar.p_name === ui.rowData.p_name) {          
+              if(rebar.rebar0.length === 0){
+                this.removeScene();  
+                this.typeView = ""                         
+              }else  {
+                this.rebar.selectedCalPoint = rebar  
+              }      
+              this.displayPreview(rebar, true); 
+              this.axialGrid.refreshDataAndView(); 
+              this.stirrupGrid.refreshDataAndView();
+              this.drawPreview();
+              break;
+            }
+          } 
+        
+        }
+          
       },
      
     }
@@ -607,7 +604,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
               b.rebar_type = 6;              
             } else {
               b.rebar_type = 5;        
-              b.dist_side = data.distance_side;      
+              b.dist_side = data.distance_side; 
+              data.distance_top = data.distance_side;      
             }
           }
           break;        

@@ -774,28 +774,21 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.refreshDataAndView();
   }
   public preview(): void {
-    let m_no: any
+    
     this.removeScene();
     if (!this.bars.is_review) {
       this.bars.is_review = !this.bars.is_review;
     }
     if (Object.keys(this.rebar).length === 0) {
       this.bars.setTableColumns(this.table_data)
-      for (let i = 0; i < this.bars.bar_list.length; i++) {
-        let rebar = this.bars.bar_list[i];
-        if (rebar.rebar0 && rebar.rebar0.length > 0) {
-          this.rebar = {
-            rebarList: this.bars.bar_list,
-            selectedCalPoint: rebar,
-            table_data: this.table_data,
-          }          
-          rebar.m_no= m_no === undefined ? rebar.m_no : m_no;
-          this.threeNode.dataNode = rebar;
-          this.threeNode.dataRebar = this.rebar
-          break;
-        }
-        m_no = rebar.m_no;
-      }
+      let rebar = this.bars.bar_list[0];
+      this.rebar = {
+        rebarList: this.bars.bar_list,
+        selectedCalPoint:  rebar,
+        table_data: this.table_data,
+      }        
+      this.threeNode.dataNode = rebar;
+      this.threeNode.dataRebar = this.rebar
     }
   }
   public removeScene() {
