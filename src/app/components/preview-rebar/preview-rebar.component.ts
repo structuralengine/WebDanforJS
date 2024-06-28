@@ -57,6 +57,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   @Input() rebar: any
   @ViewChild('calPointGrid') grid: SheetComponent;
   @ViewChild('axialGrid') axialGrid : SheetComponent;
+  @ViewChild('stirrupGrid') stirrupGrid : SheetComponent;
+
   constructor(
     public bars: InputBarsService,
     private translate: TranslateService,
@@ -234,12 +236,12 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       const stirrup = calPoint.rebar0.length >0 ?calPoint.stirrup: null;
       if (stirrup) {
         stirrupData.push({
-          rebar_dia: stirrup.stirrup_dia == null ? 10 : stirrup.stirrup_dia,
-          num: stirrup.stirrup_n,
-          interval: stirrup.stirrup_ss,
+          stirrup_dia: stirrup.stirrup_dia == null ? 10 : stirrup.stirrup_dia,
+          stirrup_n: stirrup.stirrup_n,
+          stirrup_ss: stirrup.stirrup_ss,
         })
       }
-      this.table_datas_stirrup.push(calPoint.rebar0.length>0?calPoint.stirrup: []);      
+      this.table_datas_stirrup.push(calPoint.rebar0.length > 0 ? stirrupData : []);      
       // Calculation Point List Data
       const calPointList = this.rebar.rebarList;
       let m_no = calPointList[0].m_no;
@@ -452,7 +454,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
               this.rebar.selectedCalPoint = rebar  
             }      
             this.displayPreview(rebar, true); 
-            this.axialGrid.refreshDataAndView();            
+            this.axialGrid.refreshDataAndView(); 
+            this.stirrupGrid.refreshDataAndView();
             this.drawPreview();
             break;
           }
@@ -601,9 +604,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private setStrrup(table_data){
     var data = table_data[0][0]
     var stirrup = this.bars.default_stirrup_bar()
-    stirrup.stirrup_dia = data.rebar_dia;
-    stirrup.stirrup_n = data.num;
-    stirrup.stirrup_ss = data.interval;
+    stirrup.stirrup_dia = data.stirrup_dia;
+    stirrup.stirrup_n = data.stirrup_n;
+    stirrup.stirrup_ss = data.stirrup_ss;
     return stirrup;
   }
   private setCalPoint(table_data){
@@ -824,7 +827,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       {
         title: rebar_dia,
         width: this.setColumnWidth(rebar_dia),
-        dataIndx: 'rebar_dia', align: 'center',
+        dataIndx: 'stirrup_dia', align: 'center',
         editable: true, sortable: false, nodrag: true, resizable: false,
         cls: 'pq-drop-icon pq-side-icon',
         editor: {
@@ -838,13 +841,13 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       {
         title: number,
         width: 70, halign: 'center', align: 'right',
-        dataType: 'integer', dataIndx: 'num', format: "#.000",
+        dataType: 'integer', dataIndx: 'stirrup_n', format: "#.000",
         editable: true, sortable: false, nodrag: true, resizable: false,
       },
       {
         title: interval,
         width: 80, halign: 'center', align: 'right',
-        dataType: 'integer', dataIndx: 'interval', resizable: false,
+        dataType: 'integer', dataIndx: 'stirrup_ss', resizable: false,
       },
     )
   }
