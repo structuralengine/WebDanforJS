@@ -449,7 +449,7 @@ export class ThreeNodeService {
     })
     
     dataPoint.map((data,index)=>{
-      this.geometry = new THREE.SphereBufferGeometry(data.dia/2/this.scale)
+      this.geometry = data.dia === null || data.dia === "null" ? new THREE.SphereBufferGeometry(0) : new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
       let interval=0
       for (let i = 1; i <= data.quantity;i++){
         const mesh = new THREE.Mesh(this.geometry,
@@ -1097,7 +1097,7 @@ export class ThreeNodeService {
       }
     })
     dataPoint.map((data, index) => {
-      this.geometry = new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
+      this.geometry = data.dia === null || data.dia === "null" ? new THREE.SphereBufferGeometry(0) : new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
       let interval = 0
       for (let i = 1; i <= data.quantity; i++) {
         const mesh = new THREE.Mesh(this.geometry,
@@ -1356,7 +1356,7 @@ public getPointOnCircle(centerX, centerY, radius, angle) {
     })
 
     dataPoint.map((data,index)=>{
-      let geometry = new THREE.SphereBufferGeometry(data.dia / 2 / this.scale)
+      let geometry = data.dia === null || data.dia === "null" ? new THREE.SphereBufferGeometry(0) : new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
       for (let i = 0; i < data.quantity ;i++){
         const mesh = new THREE.Mesh(
           geometry,

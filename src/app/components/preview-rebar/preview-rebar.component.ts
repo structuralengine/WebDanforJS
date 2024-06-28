@@ -197,7 +197,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }
           axialRebarData.push({
             rebar_type: rebar_type,
-            rebar_dia: rebar.dia,
+            rebar_dia: rebar.dia === null ? "null" : rebar.dia,
             num: rebar.quantity,
             distance_top: rebar.dist_top,
             side_cover: rebar.dist_side,
@@ -316,7 +316,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             if (property.newRow[key] == null) {
               continue; // 削除した場合 何もしない
             }
-            if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
+            if (key === 'side_dia' || key === 'stirrup_dia') {
               // 鉄筋径の規格以外は入力させない
               const value0 = this.bars.matchBarSize(property.newRow[key]);
               const j = property.rowIndx;
@@ -587,10 +587,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           break;        
       }
           b.dist_top= data.distance_top          
-          b.dia= data.rebar_dia
+          b.dia = data.rebar_dia === "null" ? null : data.rebar_dia
           b.quantity= data.num                
           b.interval=data.interval
-
+          console.log("b",b)
           dataNew.push(b)
     })
     return dataNew
@@ -675,7 +675,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const side_cover = this.translate.instant("preview_rebar.side_cover");
     
     const rebar_type_options = [upper_side, lower_side, lateral_rebar];
-    const rebar_dia_options = [10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
+    const rebar_dia_options = ["null",10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
 
     if (this.typeView === 1 || this.typeView === 2 || this.typeView === "") {
       this.axialHeaders.push(
