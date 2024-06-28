@@ -259,10 +259,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
               pos: point.position,
               p_name: point.p_name,
               haunch: point.haunch_M, 
-              // pq_rowcls: "pq-state-select ui-state-highlight",
-              // pq_cellcls: {
-              //   "no" : "pq-focus"
-              // }
+              pq_rowcls: "pq-state-select ui-state-highlight",
+              pq_cellcls: {
+                "no" : "pq-focus"
+              }
             })
           } else {
             calPointListData.push({
