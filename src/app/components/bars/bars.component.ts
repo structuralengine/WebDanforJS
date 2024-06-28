@@ -124,7 +124,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }
       })
-      this.table_datas[i].push({}, {})
+      // this.table_datas[i].push({}, {})
       const op = {
         showTop: false,
         reactive: true,
@@ -135,7 +135,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.beamHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: (this.save.isManual()) ? 3 : 4,
-        mergeCells: (this.save.isManual()) ? [{ r1: this.table_datas[i].length - 2, c1: 5, rc: 2, cc: 10 }] : [{ r1: this.table_datas[i].length - 2, c1: 6, rc: 2, cc: 10 }],
+        // mergeCells: (this.save.isManual()) ? [{ r1: this.table_datas[i].length - 2, c1: 5, rc: 2, cc: 10 }] : [{ r1: this.table_datas[i].length - 2, c1: 6, rc: 2, cc: 10 }],
         contextMenu: {
           on: true,
           items: [
@@ -207,7 +207,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         },
         cellClick: (evt, ui) => {
-          if (ui.rowIndx !== this.options.mergeCells[0].r1) {           
+          // if (ui.rowIndx !== this.options.mergeCells[0].r1) {           
             let m_no = ui.rowData.m_no;           
             let index = ui.rowData.index;
             let rowIndex = ui.rowIndx ;
@@ -243,11 +243,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 p_name: data.p_name
               }
             }
-          }
+          // }
           let colIndex = this.save.isManual() ? 5 : 6
-          if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex) {
-            this.preview();
-          }
+          // if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex) {
+          //   this.preview();
+          // }
           this.removeScene()
         },
       };
@@ -345,14 +345,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
-              render : function (ui) {
-                if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
-                  return {
-                    text: displayPreviewText,
-                    cls: 'display-preview-button',
-                  }
-                }
-              }
+              // render : function (ui) {
+              //   if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+              //     return {
+              //       text: displayPreviewText,
+              //       cls: 'display-preview-button',
+              //     }
+              //   }
+              // }
             },
             {
               title: this.translate.instant("bars.number"),
@@ -490,14 +490,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
-              render : function (ui) {
-                if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
-                  return {
-                    text: displayPreviewText,
-                    cls: 'display-preview-button',
-                  }
-                }
-              }
+              // render : function (ui) {
+              //   if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+              //     return {
+              //       text: displayPreviewText,
+              //       cls: 'display-preview-button',
+              //     }
+              //   }
+              // }
             },
             {
               title: this.translate.instant("bars.number"),
