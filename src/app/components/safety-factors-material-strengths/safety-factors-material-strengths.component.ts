@@ -311,7 +311,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       let self = this;
       // グリッドの設定
       this.option1_list.push({
-        width:1572,
+        width:1172,
         // minWidth: 1072,
         // overflow-x: 'scroll',
         scrollModel: {
@@ -1045,6 +1045,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataIndx: "range",
         dataType: "integer",
         sortable: false,
+        align: "center",
         width: 120,
         nodrag: true,
         paste: false,
