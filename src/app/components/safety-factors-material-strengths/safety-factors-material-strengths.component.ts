@@ -474,6 +474,22 @@ export class SafetyFactorsMaterialStrengthsComponent
             },
           ],
         },
+        change: (evt, ui) => {
+          for (const updateItem of ui.updateList) {
+            for (let key in updateItem.newRow) {
+              updateItem.newRow[key] = parseInt(updateItem.newRow[key]);
+              updateItem.rowData[key] = parseInt(updateItem.newRow[key]);
+              if(ui.source === "clear" || ui.source === "cut"){
+                updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
+                updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
+              }
+              if(Number.isNaN(updateItem.newRow[key])){
+                updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
+              updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
+              }
+            }
+          }
+        },
       });
       this.option4_list.push({
         width: 410,
