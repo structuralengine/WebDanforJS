@@ -40,7 +40,7 @@ export class ThreeCircleService {
       this.createCircleRing(0xb9b9b9, this.type, memB / this.scale, memH / this.scale)
     }  
     arr_rebar_type_7.map((data) => {
-      if(data.dist_side != null){
+      if(data.dist_top != null && data.dist_side != null  && data.dia != null  && data.quantity != null){
         this.createLineDashCircleRing(0x333D46, data.dist_side / this.scale, memB / this.scale)
       }
     })
@@ -138,7 +138,7 @@ export class ThreeCircleService {
     let arr_rebar_type_7 = []
     this.node.dataRebar.selectedCalPoint.rebar0.map((data)=>{
       if (data.rebar_type === 7 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         
         arr_rebar_type_7.push(data)
       }
@@ -172,7 +172,7 @@ export class ThreeCircleService {
 
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
       if (data.rebar_type === type && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         dataPoint.push(data)
       }
       

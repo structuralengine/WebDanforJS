@@ -33,7 +33,7 @@ export class ThreeOvalService {
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
       this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if ((data.rebar_type === 2 || data.rebar_type === 3) && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
           this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_top / this.scale, 0x333D46, this.type, data.rebar_type)
         }
       })
@@ -43,7 +43,7 @@ export class ThreeOvalService {
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
       this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if (data.rebar_type === 5 && data.dist_top != null 
-          && data.dist_side != null  && data.dia != null && data.quantity != null) {
+          && data.dist_side != null  && data.dia != null  && data.quantity != null) {
           this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_top / this.scale, 0x333D46, this.type, data.rebar_type)
         }
       })
@@ -193,11 +193,11 @@ export class ThreeOvalService {
     let arr_rebar_type2 = [];
     this.node.dataRebar.selectedCalPoint.rebar0.map((data)=>{
       if (data.rebar_type === 2 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         arr_rebar_type2.push(data)
       }
       if(data.rebar_type === 3 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null){
+        && data.dist_side != null  && data.dia != null  && data.quantity != null){
         let dataCp = JSON.parse(JSON.stringify(data))
         dataCp.dist_side = h * this.scale -  dataCp.dist_side   
         dataCp.dist_top = h * this.scale -  dataCp.dist_top  
@@ -227,7 +227,7 @@ export class ThreeOvalService {
     let arr_rebar_type6 = [];
     this.node.dataRebar.selectedCalPoint.rebar0.map((data)=>{
       if (data.rebar_type === 6 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         arr_rebar_type6.push(data)
       }
     })
@@ -308,7 +308,7 @@ export class ThreeOvalService {
      let arr_rebar_type_0 = []
      this.node.dataRebar.selectedCalPoint.rebar0.map((data)=>{
        if (data.rebar_type === 0 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
          arr_rebar_type_0.push(data)
        }
      })
@@ -343,7 +343,7 @@ export class ThreeOvalService {
      let arr_rebar_type_1 = []
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
       if (data.rebar_type === 1 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         arr_rebar_type_1.push(data)
       }
     })
@@ -378,7 +378,7 @@ export class ThreeOvalService {
     let arr_rebar_type01 = [];
     this.node.dataRebar.selectedCalPoint.rebar0.map((data)=>{
       if ((data.rebar_type === 0 || data.rebar_type === 1) && data.dist_top != null 
-      && data.dist_side != null  && data.dia != null && data.quantity != null) {
+      && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         arr_rebar_type01.push(data)
       }
     })
@@ -414,7 +414,7 @@ export class ThreeOvalService {
     let dist_side_min;
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) =>{
       if(data.rebar_type == 5 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null){
+        && data.dist_side != null  && data.dia != null  && data.quantity != null){
         dist_side_min = data;
       }
     });
@@ -534,7 +534,7 @@ export class ThreeOvalService {
     let color = typeRebar === 5|| typeRebar === 6 ? 0xfafafa : 0x000000
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
       if (data.rebar_type === typeRebar && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {    
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {    
         dataPoint.push(data)
       }
     })

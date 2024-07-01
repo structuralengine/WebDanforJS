@@ -115,71 +115,75 @@ export class ThreeTshapeService {
     let arr_rebar_type_0 = []
     this.node.dataRebar.selectedCalPoint.rebar0.map((data)=>{
       if (data.rebar_type === 0 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         arr_rebar_type_0.push(data)
       }
     })
     arr_rebar_type_0.sort((a, b) => a.dist_top - b.dist_top)
-    const rebar_type_0 = arr_rebar_type_0[0];
-    if (rebar_type_0 != undefined) {
-      const dist_top = rebar_type_0.dist_top / this.scale;
-      const dist_side = rebar_type_0.dist_side / this.scale;
-      const quantity = rebar_type_0.quantity;
-      const interval =   (b - 2 * dist_side) / (quantity - 1);
-      jsonData["rb_1"] = {
-        x: -(x_start - n - dist_side),
-        y: y_start - dist_top,
-        z: 0
-      }
-      jsonData["rb_2"] = {
-        x: -(x_start - n),
-        y: y_start - 15 / this.scale,
-        z: 0
-      }
-      jsonData["rb_3"] = {
-        x: -(x_start - n - dist_side - interval),
-        y: y_start - 15 / this.scale,
-        z: 0
-      }
-
-     
-      this.node.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
-      if(quantity>1){
-        this.node.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
+    if(arr_rebar_type_0.length > 0){
+      const rebar_type_0 = arr_rebar_type_0[0];
+      if (rebar_type_0 != undefined) {
+        const dist_top = rebar_type_0.dist_top / this.scale;
+        const dist_side = rebar_type_0.dist_side / this.scale;
+        const quantity = rebar_type_0.quantity;
+        const interval =   (b - 2 * dist_side) / (quantity - 1);
+        jsonData["rb_1"] = {
+          x: -(x_start - n - dist_side),
+          y: y_start - dist_top,
+          z: 0
+        }
+        jsonData["rb_2"] = {
+          x: -(x_start - n),
+          y: y_start - 15 / this.scale,
+          z: 0
+        }
+        jsonData["rb_3"] = {
+          x: -(x_start - n - dist_side - interval),
+          y: y_start - 15 / this.scale,
+          z: 0
+        }
+  
+       
+        this.node.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
+        if(quantity>1){
+          this.node.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
+        }
       }
     }
+    
 
     // dimenstions for rebar_type = 1
     let arr_rebar_type_1 = []
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
       if (data.rebar_type === 1 && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         arr_rebar_type_1.push(data)
       }
     })
     arr_rebar_type_1.sort((a, b) => b.dist_top - a.dist_top)
-    const rebar_type_1 = arr_rebar_type_1[0];
-
-    if (rebar_type_1 != undefined) {
-        const dist_top2 = rebar_type_1.dist_top / this.scale;
-        const dist_side2 = rebar_type_1.dist_side / this.scale;
-        const quantity2 = rebar_type_1.quantity;
-        const interval2 = (b - 2 * dist_side2) / (quantity2 - 1);
-        jsonData["rb_7"] = {
-          x: -(x_start - n - dist_side2),
-          y: -(y_start),
-          z: 0
+    if(arr_rebar_type_1.length > 0){
+      const rebar_type_1 = arr_rebar_type_1[0];
+      if (rebar_type_1 != undefined) {
+          const dist_top2 = rebar_type_1.dist_top / this.scale;
+          const dist_side2 = rebar_type_1.dist_side / this.scale;
+          const quantity2 = rebar_type_1.quantity;
+          const interval2 = (b - 2 * dist_side2) / (quantity2 - 1);
+          jsonData["rb_7"] = {
+            x: -(x_start - n - dist_side2),
+            y: -(y_start),
+            z: 0
+          }
+          jsonData["rb_8"] = {
+            x: -(x_start - n - dist_side2 - interval2),
+            y: -(y_start),
+            z: 0
+          }
+          this.node.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);
+          if(quantity2>1){
+            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
+          }
         }
-        jsonData["rb_8"] = {
-          x: -(x_start - n - dist_side2 - interval2),
-          y: -(y_start),
-          z: 0
-        }
-        this.node.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);
-        if(quantity2>1){
-          this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
-        }
-      }
+    }  
 
     // dimenstions for rebar_type = 0 & 1
     const arr_gap01 = this.getArrGap(1,h)
@@ -230,7 +234,7 @@ export class ThreeTshapeService {
     let dist_side_min = 0;
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) =>{   
       if(data.rebar_type === 4 && data.dist_top  === Math.round(arr_gap04[0] * this.scale) && data.dist_top != null 
-      && data.dist_side != null  && data.dia != null && data.quantity != null){               
+      && data.dist_side != null  && data.dia != null  && data.quantity != null){               
         dist_side_min = data.dist_side/this.scale;
       }
     })
@@ -255,28 +259,30 @@ export class ThreeTshapeService {
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
       if(type ===1 ){
         if ((data.rebar_type === 0 || data.rebar_type === type) && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
           arr_dis_top.push(data.dist_top / this.scale)
         }
       }else{
         if ( (data.rebar_type === type) && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
           arr_dis_top.push(data.dist_top / this.scale)
         }
       }
     })
     arr_dis_top.sort((a,b)=>a-b)
-    for (let i = 0; i <= arr_dis_top.length; i++) {
-      if (i === 0) {
-        arr_gap.push(arr_dis_top[i])
+    if(arr_dis_top.length > 0){
+      for (let i = 0; i <= arr_dis_top.length; i++) {
+        if (i === 0) {
+          arr_gap.push(arr_dis_top[i])
+        }
+        if (i === arr_dis_top.length) {
+          arr_gap.push(h  - arr_dis_top[i - 1])
+        }
+        if (i !== 0 && i !== arr_dis_top.length) {
+          arr_gap.push(arr_dis_top[i] - arr_dis_top[i - 1])
+        }
       }
-      if (i === arr_dis_top.length) {
-        arr_gap.push(h  - arr_dis_top[i - 1])
-      }
-      if (i !== 0 && i !== arr_dis_top.length) {
-        arr_gap.push(arr_dis_top[i] - arr_dis_top[i - 1])
-      }
-    }
+    }   
     return arr_gap
   }
   drawPointTShape(bt: any, h: any, b: any, t: any,type:any){
@@ -286,7 +292,7 @@ export class ThreeTshapeService {
     let color = type === 4 ? 0xfafafa : 0x000000
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
       if (data.rebar_type === type && data.dist_top != null 
-        && data.dist_side != null  && data.dia != null && data.quantity != null) {
+        && data.dist_side != null  && data.dia != null  && data.quantity != null) {
         dataPoint.push(data)
       }
     })
