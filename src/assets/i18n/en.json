@@ -324,7 +324,7 @@
         "tys":"Tensile yield strength",
         "sys":"Shear yield strength",
         "ts":"Tensile strength",
-        "fck":"Design standard strength of concrete fck(N/mm2)",
+        "fck":"Design standard strength of concrete Fc(N/mm2)",
         "max_ca":"Maximum dimensions of coarse aggregate (mm)",
         "b_safe":"Bending factor of safety",
         "s_safe":"Shear factor of safety",

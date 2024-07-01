@@ -88,6 +88,39 @@ export class SafetyFactorsMaterialStrengthsComponent
     { id: "3", text: "SD390" },
     { id: "4", text: "SD490" }
   ];
+
+  //
+  public optionsCon ={
+    0: { text: '18' },
+    1: { text: "21" },
+    2: { text: "24" },
+    3: { text: "27" },
+    4: { text: "30" },
+    5: { text: "33" },
+    6: { text: "36" },
+    7: { text: "42" },
+    8: { text: "45" },
+    9: { text: "50" },
+    10:{ text: "55" },
+    11:{ text: "60" },
+  }
+  public optionsConcrete = [
+    { id: "18", text: "18" },
+    { id: "21", text: "21" },
+    { id: "24", text: "24" },
+    { id: "27", text: "27" },
+    { id: "30", text: "30" },
+    { id: "33", text: "33" },
+    { id: "36", text: "36" },
+    { id: "42", text: "42" },
+    { id: "45", text: "45" },
+    { id: "50", text: "50" },
+    { id: "55", text: "55" },
+    { id: "60", text: "60" },
+  ];
+  //
+
+
   public styleEdit = { "color": "#FFFFFF" }
   public styleNoEdit = { "pointer-events": "none", "color": "#999C9F" }
   public propEdit = { edit: true, }
@@ -651,7 +684,24 @@ export class SafetyFactorsMaterialStrengthsComponent
     // コンクリート材料強度
     this.columnHeaders3 = [
       { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, sortable: false, width: 390, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' } },
-      { title: '', dataType: 'float', dataIndx: 'value', sortable: false, width: 140, nodrag: true, },
+      // { title: '', dataType: 'float', dataIndx: 'value', sortable: false, width: 140, nodrag: true, },
+      {
+        title: '',
+        dataType: 'float',
+        dataIndx: 'value', 
+        sortable: false, width: 140, nodrag: true, 
+        paste: false, 
+        cls: 'pq-drop-icon pq-side-icon',
+        editor: {
+          type: 'select',
+          options: this.optionsConcrete,
+          labelIndx: 'text',
+          valueIndx: 'id',
+        }, 
+        render: (ui) => {
+          return (this.optionsCon[ui.cellData] || {}).text;
+        },
+      }
     ];
 
     // 鉄骨 - 安全係数
