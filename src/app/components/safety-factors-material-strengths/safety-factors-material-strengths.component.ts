@@ -363,21 +363,20 @@ export class SafetyFactorsMaterialStrengthsComponent
           for (const updateItem of ui.updateList) {
             let defaultItem = self.default_factor.filter(x => x.id === updateItem.rowData.id)[0];
             for (let key in updateItem.newRow) {
-              if (key === "range" && ui.source === "clear") {
-                updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
-                updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
-                updateItem.rowData.pq_cellstyle = {
-                  ...updateItem.rowData.pq_cellstyle,
-                };
-                updateItem.rowData.pq_cellstyle[`${key}`] = {
-                  color: "gray",
-                };
-              }
-              if(key === "range"){
+              if (key === "range") {
                 updateItem.newRow[key] = parseInt(updateItem.newRow[key]);
                 updateItem.rowData[key] = parseInt(updateItem.newRow[key]);
+                if(ui.source === "clear" || ui.source === "cut"){
+                  updateItem.newRow[key] = parseInt(defaultItem[key]);
+                  updateItem.rowData[key] = parseInt(defaultItem[key]);
+                  updateItem.rowData.pq_cellstyle = {
+                    ...updateItem.rowData.pq_cellstyle,
+                  };
+                  updateItem.rowData.pq_cellstyle[`${key}`] = {
+                    color: "gray",
+                  };
+                }
               }
-              
               const old = updateItem.oldRow[key];
               if (old === null || old === undefined) {
                 updateItem.rowData[key] = null;
