@@ -53,10 +53,10 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     "stirrup_dia",
     "stirrup_ss",
     "stirrup_n",
-    "bending_dia",
-    "bending_n",
-    "bending_ss",
-    "bending_angle",
+    // "bending_dia",
+    // "bending_n",
+    // "bending_ss",
+    // "bending_angle",
   ];
   public table_datas: any[];
   public idTab: number;
@@ -186,6 +186,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.lstItemEdited = [];
     this.setTitle(this.save.isManual());
     this.table_datas = this.bars.getTableColumns();
+    console.log("test",this.table_datas);
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
@@ -251,7 +252,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               if (
                 key === "rebar_dia" ||
                 key === "side_dia" ||
-                key === "stirrup_dia"
+                key === "stirrup_dia" ||
+                key === "bending_dia"
               ) {
                 // 鉄筋径の規格以外は入力させない
                 const value0 = this.bars.matchBarSize(property.newRow[key]);
@@ -350,6 +352,19 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                   };
                 }
               }
+              if (currentObj["bending_dia"] ||
+                currentObj["bending_angle"] ||
+                currentObj["bending_ss"] ||
+                currentObj["bending_n"]){
+                  if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                    ui.updateList[0].rowData.pq_cellstyle = {
+                      ...ui.updateList[0].rowData.pq_cellstyle,
+                    };
+                    ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                      color: "white",
+                    };
+                  }
+              }
               // if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
               //   ui.updateList[0].rowData.pq_cellstyle = {
               //     ...ui.updateList[0].rowData.pq_cellstyle,
@@ -380,7 +395,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     ui.updateList.forEach((item: any) => {
       let i = item.rowIndx;
       for (let key in item.newRow) {
-        this.removeItem(i, key);
+        console.log("key", typeof key)
+        if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n"){
+          break;
+        }
+        else{
+          this.removeItem(i, key);
+        }
+        
       }
     });
     // let checkRowFirst = ui.updateList.filter(
@@ -421,6 +443,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       
       for (let key in item.newRow) {
+        if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n"){
+          break;
+        }
         for (let i = rowIndx; i < this.table_datas[this.idTab].length; i += 2 ) {
           const item = this.table_datas[this.idTab][i];
           if (i === rowIndx) {
