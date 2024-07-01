@@ -29,12 +29,6 @@ export class ThreeCircleService {
       }
     })
     arr_rebar_type_7.sort((a, b) => a.dist_top - b.dist_top)
-    const rebar_type_7_0 = arr_rebar_type_7[0];
-    const rebar_type_7_1 = arr_rebar_type_7[1];
-
-    // let memH = 250;
-    // let memB = 900;
-
     var arr = [memH, memB];
     let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
@@ -44,12 +38,12 @@ export class ThreeCircleService {
       this.createCircleRing(0xb9b9b9, this.type, memB / this.scale)
     } else {
       this.createCircleRing(0xb9b9b9, this.type, memB / this.scale, memH / this.scale)
-    }
-    // this.createLineCircleRing(0x333D46, 50 / this.scale, memB / this.scale)
-    this.createLineDashCircleRing(0x333D46, rebar_type_7_0.dist_side / this.scale, rebar_type_7_1.dist_side / this.scale, memB / this.scale)
+    }  
+    arr_rebar_type_7.map((data) => {
+      this.createLineDashCircleRing(0x333D46, data.dist_side / this.scale, memB / this.scale)
+    })
     this.drawPointCircleShape(memB, 7)
     this.scene.render()
-
   }
   createCircleRing(color: any, type: any, b: any, h?: any,) {
     const material = new THREE.MeshBasicMaterial({ color: color });
@@ -87,42 +81,25 @@ export class ThreeCircleService {
     this.scene.add(ellipse)
 
   }
-  createLineDashCircleRing(color: any, range1: any, range2: any, b: any) {
+  createLineDashCircleRing(color: any, range1: any, b: any) {
     const material = new THREE.LineDashedMaterial({ color: color, dashSize: 1, gapSize: 1 })
 
     let points1: any
     let curve1: any
     let ellipse1: any
-
-    let points2: any
-    let curve2: any
-    let ellipse2: any
-
     curve1 = new THREE.EllipseCurve(
       0, 0,
       Math.abs(b / 2 - range1), Math.abs(b / 2 - range1),
       0, 2 * Math.PI,
       false,
       0
-    );
-    curve2 = new THREE.EllipseCurve(
-      0, 0,
-      Math.abs(b / 2 - range2), Math.abs(b / 2 - range2),
-      0, 2 * Math.PI,
-      false,
-      0
-    );
-
+    ); 
     points1 = curve1.getPoints(100);
     ellipse1 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points1), material);
     ellipse1.computeLineDistances();
 
-    points2 = curve2.getPoints(100);
-    ellipse2 = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points2), material);
-    ellipse2.computeLineDistances();
-
     this.scene.add(ellipse1)
-    this.scene.add(ellipse2)
+
   }
   convertToCoordinatesCircleRing(b: any, h: any) {
     
@@ -163,28 +140,26 @@ export class ThreeCircleService {
       }
     })
     arr_rebar_type_7.sort((a, b) => a.dist_top - b.dist_top)
-    const rebar_type_7_0 = arr_rebar_type_7[0];
-    const rebar_type_7_1 = arr_rebar_type_7[1];
-    let dist_side1 = rebar_type_7_0.dist_side / this.scale
-    let dist_side2 = rebar_type_7_1.dist_side / this.scale
     jsonData["3"] = {
       x: x_start,
       y: 0,
       z: 0,
     }
-    jsonData["4"] = {
-      x: x_start - dist_side1,
-      y: 0,
-      z: 0,
-    }
-    jsonData["5"] = {
-      x: x_start - dist_side2,
-      y: 0,
-      z: 0,
-    }
+    let dist_side_pre = 0;
+    arr_rebar_type_7.map((data, index) => {
+      jsonData[`${4 + index}`] = {
+        x: x_start - data.dist_side/this.scale,
+        y: 0,
+        z: 0,
+      }
+      if(index === 0){
+        this.node.drawLineDim(jsonData["3"], jsonData[`${4 + index}`], 1, Math.round(data.dist_side), false, x_start, -20, -1);
+      }else{
+        this.node.drawLineDim(jsonData[`${4 + index - 1}`], jsonData[`${4 + index}`], 1, Math.round(data.dist_side - dist_side_pre), false, x_start, -20, -1);
+      }
+      dist_side_pre = data.dist_side;
+    })    
     this.node.drawLineDim(jsonData["1"], jsonData["2"], 1, Math.round(b * this.scale), false, x_start * 2 / 3 , 12, 0);
-    this.node.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(rebar_type_7_0.dist_side), false, x_start, -20, -1);
-    this.node.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(rebar_type_7_1.dist_side - rebar_type_7_0.dist_side), false, x_start, -20, -1);
     
   }
   drawPointCircleShape(b: any, type: any){

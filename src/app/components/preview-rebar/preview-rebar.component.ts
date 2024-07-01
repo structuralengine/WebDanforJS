@@ -301,7 +301,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           interval: null,
           num: null,
           pq_ri: i,
-          rebar_type: "",
+          rebar_type: this.typeView == 3 ? 7 : "",
           rebar_dia: "null",
           side_cover: null,
         }));
@@ -559,6 +559,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }else{
             b.rebar_type = 7;
             b.dist_side = data.distance_side; 
+            data.distance_top = data.distance_side; 
           }
           break;
         case lowerside: 
@@ -585,12 +586,18 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             if (this.member.B < this.member.H) {
               b.rebar_type = 6;              
             } else {
-              b.rebar_type = 5;        
+                      
               b.dist_side = data.distance_side; 
               data.distance_top = data.distance_side;      
             }
           }
-          break;        
+          break;         
+        default:{
+          b.rebar_type = 7;
+          b.dist_side = data.distance_side;               
+          data.distance_top = b.dist_side 
+          break;
+        }       
       }
           b.dist_top= data.distance_top          
           b.dia = data.rebar_dia === "null" ? null : data.rebar_dia
