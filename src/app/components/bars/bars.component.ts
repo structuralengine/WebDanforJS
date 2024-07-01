@@ -352,7 +352,11 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                   };
                 }
               }
-              if (currentObj["bending_dia"] ||
+              if (
+                currentObj["haunch_height"] ||
+                currentObj["cos"] ||
+                currentObj["tan"] ||
+                currentObj["bending_dia"] ||
                 currentObj["bending_angle"] ||
                 currentObj["bending_ss"] ||
                 currentObj["bending_n"]){
@@ -395,7 +399,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     ui.updateList.forEach((item: any) => {
       let i = item.rowIndx;
       for (let key in item.newRow) {
-        if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n"){
+        if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n" || key === "haunch_height"|| key === "cos" || key === "tan"){
           break;
         }
         else{
@@ -442,7 +446,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       
       for (let key in item.newRow) {
-        if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n"){
+        if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n" || key === "haunch_height"|| key === "cos" || key === "tan"){
           break;
         }
         for (let i = rowIndx; i < this.table_datas[this.idTab].length; i += 2 ) {
