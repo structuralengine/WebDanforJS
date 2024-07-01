@@ -116,6 +116,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
+      let hasPreviewRebar = false;
       this.table_datas[i].forEach((data: any, index: any) => {
         if (this.activeTab === "rebar_ax") {
           if (index % 2 !== 0) {
@@ -123,126 +124,262 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             data.pq_cellprop = this.propShaded1
           }
         }
+        
+        if (data.input_mode && data.input_mode === 1) {
+          hasPreviewRebar =  true;
+        }
       })
-      // this.table_datas[i].push({}, {})
-      const op = {
-        showTop: false,
-        reactive: true,
-        sortable: false,
-        locale: "jp",
-        height: this.tableHeight().toString(),
-        numberCell: { show: false }, // 行番号
-        colModel: this.beamHeaders,
-        dataModel: { data: this.table_datas[i] },
-        freezeCols: (this.save.isManual()) ? 3 : 4,
-        // mergeCells: (this.save.isManual()) ? [{ r1: this.table_datas[i].length - 2, c1: 5, rc: 2, cc: 10 }] : [{ r1: this.table_datas[i].length - 2, c1: 6, rc: 2, cc: 10 }],
-        contextMenu: {
-          on: true,
-          items: [
-            {
-              name: this.translate.instant("action_key.copy"),
-              shortcut: 'Ctrl + C',
-              action: function (evt, ui, item) {
-                this.copy();
+
+      let op = {}
+      if (!hasPreviewRebar) {
+        op = {
+          showTop: false,
+          reactive: true,
+          sortable: false,
+          locale: "jp",
+          height: this.tableHeight().toString(),
+          numberCell: { show: false }, // 行番号
+          colModel: this.beamHeaders,
+          dataModel: { data: this.table_datas[i] },
+          freezeCols: (this.save.isManual()) ? 3 : 4,
+          // mergeCells: (this.save.isManual()) ? [{ r1: this.table_datas[i].length - 2, c1: 5, rc: 2, cc: 10 }] : [{ r1: this.table_datas[i].length - 2, c1: 6, rc: 2, cc: 10 }],
+          contextMenu: {
+            on: true,
+            items: [
+              {
+                name: this.translate.instant("action_key.copy"),
+                shortcut: 'Ctrl + C',
+                action: function (evt, ui, item) {
+                  this.copy();
+                }
+              },
+              {
+                name: this.translate.instant("action_key.paste"),
+                shortcut: 'Ctrl + V',
+                action: function (evt, ui, item) {
+                  this.paste();
+                }
+              },
+              {
+                name: this.translate.instant("action_key.cut"),
+                shortcut: 'Ctrl + X',
+                action: function (evt, ui, item) {
+                  this.cut();
+                }
+              },
+              {
+                name: this.translate.instant("action_key.undo"),
+                shortcut: 'Ctrl + Z',
+                action: function (evt, ui, item) {
+                  this.History().undo();
+                }
               }
-            },
-            {
-              name: this.translate.instant("action_key.paste"),
-              shortcut: 'Ctrl + V',
-              action: function (evt, ui, item) {
-                this.paste();
+            ]
+          },
+          change: (evt, ui) => {
+            for (const property of ui.updateList) {
+              for (const key of Object.keys(property.newRow)) {
+                const old = property.oldRow[key];
+                if (property.newRow[key] == null) {
+                  continue; // 削除した場合 何もしない
+                }
+                if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
+                  // 鉄筋径の規格以外は入力させない
+                  const value0 = this.bars.matchBarSize(property.newRow[key]);
+                  const j = property.rowIndx;
+                  if (value0 === null) {
+                    this.table_datas[i][j][key] = old;
+                  }
+                }
               }
-            },
-            {
-              name: this.translate.instant("action_key.cut"),
-              shortcut: 'Ctrl + X',
-              action: function (evt, ui, item) {
-                this.cut();
+              let m_no = ui.updateList[0].rowData.m_no
+              let index = ui.updateList[0].rowData.index;
+              let rowIndex = ui.updateList[0].rowIndx
+              if (rowIndex % 2 != 0) {
+                const data_index = this.table_datas[i][rowIndex - 1];
+                m_no = data_index.m_no;
+                index = data_index.index
               }
-            },
-            {
-              name: this.translate.instant("action_key.undo"),
-              shortcut: 'Ctrl + Z',
-              action: function (evt, ui, item) {
-                this.History().undo();
+              if (m_no != null && m_no != undefined) {
+                this.bars.setTableColumns(this.table_datas[i])
+                let data = this.bars.getDataPreview(index);
+                this.threeNode.memNo = m_no;
+                this.threeNode.dataNode = data;
+  
               }
+              this.removeScene()            
             }
-          ]
-        },
-        change: (evt, ui) => {
-          for (const property of ui.updateList) {
-            for (const key of Object.keys(property.newRow)) {
-              const old = property.oldRow[key];
-              if (property.newRow[key] == null) {
-                continue; // 削除した場合 何もしない
+          },
+          cellClick: (evt, ui) => {
+            // if (ui.rowIndx !== this.options.mergeCells[0].r1) {           
+              let m_no = ui.rowData.m_no;           
+              let index = ui.rowData.index;
+              let rowIndex = ui.rowIndx ;
+              if (ui.rowIndx % 2 != 0) {
+                rowIndex--;
+                const data_index = this.table_datas[i][rowIndex];
+                m_no = data_index.m_no;         
+              }else{
+                while(m_no === "" || m_no == undefined ){
+                  rowIndex--;
+                  const data_index = this.table_datas[i][rowIndex];
+                  m_no = data_index.m_no;                
+                }
               }
-              if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
-                // 鉄筋径の規格以外は入力させない
-                const value0 = this.bars.matchBarSize(property.newRow[key]);
-                const j = property.rowIndx;
-                if (value0 === null) {
-                  this.table_datas[i][j][key] = old;
+              if (m_no != null && m_no != undefined) {
+                this.bars.setTableColumns(this.table_datas[i])
+                let data = this.bars.getDataPreview(index);
+                data.m_no = m_no;
+                const member = this.member.getTableColumns(m_no);
+                this.table_data = this.table_datas[i]
+                this.rebar = {
+                  rebarList: this.bars.bar_list,
+                  selectedCalPoint: data,
+                  typeView: member.shape,
+                  table_data: this.table_data 
+                }
+                this.threeNode.memNo = m_no;    
+                this.threeNode.dataRebar = this.rebar
+  
+                this.calPoint = {
+                  m_no: member.m_no,
+                  shape: member.shape,
+                  p_name: data.p_name
+                }
+              }
+            // }
+            let colIndex = this.save.isManual() ? 5 : 6
+            // if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex) {
+            //   this.preview();
+            // }
+            this.removeScene()
+          },
+        };
+      } else {
+        this.table_datas[i].push({},{});
+        op = {
+          showTop: false,
+          reactive: true,
+          sortable: false,
+          locale: "jp",
+          height: this.tableHeight().toString(),
+          numberCell: { show: false }, // 行番号
+          colModel: this.beamHeaders,
+          dataModel: { data: this.table_datas[i] },
+          freezeCols: (this.save.isManual()) ? 3 : 4,
+          mergeCells: (this.save.isManual()) ? [{ r1: this.table_datas[i].length - 2, c1: 5, rc: 2, cc: 10 }] : [{ r1: this.table_datas[i].length - 2, c1: 6, rc: 2, cc: 10 }],
+          contextMenu: {
+            on: true,
+            items: [
+              {
+                name: this.translate.instant("action_key.copy"),
+                shortcut: 'Ctrl + C',
+                action: function (evt, ui, item) {
+                  this.copy();
+                }
+              },
+              {
+                name: this.translate.instant("action_key.paste"),
+                shortcut: 'Ctrl + V',
+                action: function (evt, ui, item) {
+                  this.paste();
+                }
+              },
+              {
+                name: this.translate.instant("action_key.cut"),
+                shortcut: 'Ctrl + X',
+                action: function (evt, ui, item) {
+                  this.cut();
+                }
+              },
+              {
+                name: this.translate.instant("action_key.undo"),
+                shortcut: 'Ctrl + Z',
+                action: function (evt, ui, item) {
+                  this.History().undo();
+                }
+              }
+            ]
+          },
+          change: (evt, ui) => {
+            for (const property of ui.updateList) {
+              for (const key of Object.keys(property.newRow)) {
+                const old = property.oldRow[key];
+                if (property.newRow[key] == null) {
+                  continue; // 削除した場合 何もしない
+                }
+                if (key === 'rebar_dia' || key === 'side_dia' || key === 'stirrup_dia') {
+                  // 鉄筋径の規格以外は入力させない
+                  const value0 = this.bars.matchBarSize(property.newRow[key]);
+                  const j = property.rowIndx;
+                  if (value0 === null) {
+                    this.table_datas[i][j][key] = old;
+                  }
+                }
+              }
+              let m_no = ui.updateList[0].rowData.m_no
+              let index = ui.updateList[0].rowData.index;
+              let rowIndex = ui.updateList[0].rowIndx
+              if (rowIndex % 2 != 0) {
+                const data_index = this.table_datas[i][rowIndex - 1];
+                m_no = data_index.m_no;
+                index = data_index.index
+              }
+              if (m_no != null && m_no != undefined) {
+                this.bars.setTableColumns(this.table_datas[i])
+                let data = this.bars.getDataPreview(index);
+                this.threeNode.memNo = m_no;
+                this.threeNode.dataNode = data;
+  
+              }
+              this.removeScene()            
+            }
+          },
+          cellClick: (evt, ui) => {
+            if (ui.rowIndx !== this.options.mergeCells[0].r1) {           
+              let m_no = ui.rowData.m_no;           
+              let index = ui.rowData.index;
+              let rowIndex = ui.rowIndx ;
+              if (ui.rowIndx % 2 != 0) {
+                rowIndex--;
+                const data_index = this.table_datas[i][rowIndex];
+                m_no = data_index.m_no;         
+              }else{
+                while(m_no === "" || m_no == undefined ){
+                  rowIndex--;
+                  const data_index = this.table_datas[i][rowIndex];
+                  m_no = data_index.m_no;                
+                }
+              }
+              if (m_no != null && m_no != undefined) {
+                this.bars.setTableColumns(this.table_datas[i])
+                let data = this.bars.getDataPreview(index);
+                data.m_no = m_no;
+                const member = this.member.getTableColumns(m_no);
+                this.table_data = this.table_datas[i]
+                this.rebar = {
+                  rebarList: this.bars.bar_list,
+                  selectedCalPoint: data,
+                  typeView: member.shape,
+                  table_data: this.table_data 
+                }
+                this.threeNode.memNo = m_no;    
+                this.threeNode.dataRebar = this.rebar
+  
+                this.calPoint = {
+                  m_no: member.m_no,
+                  shape: member.shape,
+                  p_name: data.p_name
                 }
               }
             }
-            let m_no = ui.updateList[0].rowData.m_no
-            let index = ui.updateList[0].rowData.index;
-            let rowIndex = ui.updateList[0].rowIndx
-            if (rowIndex % 2 != 0) {
-              const data_index = this.table_datas[i][rowIndex - 1];
-              m_no = data_index.m_no;
-              index = data_index.index
-            }
-            if (m_no != null && m_no != undefined) {
-              this.bars.setTableColumns(this.table_datas[i])
-              let data = this.bars.getDataPreview(index);
-              this.threeNode.memNo = m_no;
-              this.threeNode.dataNode = data;
-
+            let colIndex = this.save.isManual() ? 5 : 6
+            if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex) {
+              this.preview();
             }
             this.removeScene()            
           }
-        },
-        cellClick: (evt, ui) => {
-          // if (ui.rowIndx !== this.options.mergeCells[0].r1) {           
-            let m_no = ui.rowData.m_no;           
-            let index = ui.rowData.index;
-            let rowIndex = ui.rowIndx ;
-            if (ui.rowIndx % 2 != 0) {
-              rowIndex--;
-              const data_index = this.table_datas[i][rowIndex];
-              m_no = data_index.m_no;         
-            }else{
-              while(m_no === "" || m_no == undefined ){
-                rowIndex--;
-                const data_index = this.table_datas[i][rowIndex];
-                m_no = data_index.m_no;                
-              }
-            }
-            if (m_no != null && m_no != undefined) {
-              this.bars.setTableColumns(this.table_datas[i])
-              let data = this.bars.getDataPreview(index);
-              data.m_no = m_no;
-              const member = this.member.getTableColumns(m_no);
-              this.table_data = this.table_datas[i]
-              this.rebar = {
-                rebarList: this.bars.bar_list,
-                selectedCalPoint: data,
-                typeView: member.shape,
-                table_data: this.table_data 
-              }
-              this.threeNode.memNo = m_no;    
-              this.threeNode.dataRebar = this.rebar
-
-              this.calPoint = {
-                m_no: member.m_no,
-                shape: member.shape,
-                p_name: data.p_name
-              }
-            }
-          // }              
-          this.removeScene()
-        },
+        }       
       };
       this.option_list.push(op);
     }
@@ -338,14 +475,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
-              // render : function (ui) {
-              //   if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
-              //     return {
-              //       text: displayPreviewText,
-              //       cls: 'display-preview-button',
-              //     }
-              //   }
-              // }
+              render : function (ui) {
+                if (this.options.mergeCells.length > 0 && ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+                  return {
+                    text: displayPreviewText,
+                    cls: 'display-preview-button',
+                  }
+                }
+              }
             },
             {
               title: this.translate.instant("bars.number"),
@@ -483,14 +620,14 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
-              // render : function (ui) {
-              //   if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
-              //     return {
-              //       text: displayPreviewText,
-              //       cls: 'display-preview-button',
-              //     }
-              //   }
-              // }
+              render : function (ui) {
+                if (this.options.mergeCells.length > 0  && ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+                  return {
+                    text: displayPreviewText,
+                    cls: 'display-preview-button',
+                  }
+                }
+              }
             },
             {
               title: this.translate.instant("bars.number"),

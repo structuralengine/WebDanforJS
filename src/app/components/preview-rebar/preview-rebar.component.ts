@@ -368,7 +368,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             table_data_bar[indexBar].rebar0=newRebar0          
             this.bars.setTableColumns(table_data_bar)  
             this.rebar.selectedCalPoint.rebar0 = newRebar0;  
-            this.displayPreview(this.rebar.selectedCalPoint);       
+            // this.displayPreview(this.rebar.selectedCalPoint);       
             this.axialGrid.refreshDataAndView();                 
           }
             this.drawPreview();
