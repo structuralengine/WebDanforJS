@@ -2,6 +2,9 @@ import { Component, ElementRef, Input, NgZone, OnInit, SimpleChanges, ViewChild 
 import * as THREE from 'three';
 import { SceneService } from './scene.service';
 import { ThreeNodeService } from './geometry/three-node.service';
+import { ThreeTshapeService } from './geometry/three-tshape.service';
+import { ThreeOvalService } from './geometry/three-oval.service';
+import { ThreeCircleService } from './geometry/three-circle.service';
 @Component({
   selector: 'app-three',
   templateUrl: './three.component.html',
@@ -13,55 +16,38 @@ export class ThreeComponent implements OnInit {
   private get canvas(): HTMLCanvasElement {
     return this.canvasRef.nativeElement;
   }
-  // @ViewChild("myCanvasRebar", { static: true }) private canvasRef1: ElementRef;
-  // private get canvasRebar(): HTMLCanvasElement {
-  //   return this.canvasRef1.nativeElement;
-  // }
-  // private geometry: THREE.SphereBufferGeometry;
-  // private geometryRebar: THREE.SphereBufferGeometry;
-  // private nodeList: THREE.Object3D;
-  // private nodeListRebar: THREE.Object3D;
   constructor(
     public scene: SceneService,
-    private node: ThreeNodeService
+    private node: ThreeNodeService,
+    private threeTRShape: ThreeTshapeService,
+    private threeOVal: ThreeOvalService,
+    private threeCircle: ThreeCircleService,
   ) {
     THREE.Object3D.DefaultUp.set(0, 0, 1);
-    // this.node.geometry = new THREE.SphereBufferGeometry(0.5);
-    // this.node.geometry1 = new THREE.SphereBufferGeometry(1);
-    // this.geometryRebar = new THREE.SphereBufferGeometry(1);
     this.node.nodeList = new THREE.Object3D();
-    // this.nodeListRebar = new THREE.Object3D();
-
+    this.node.nodeList = new THREE.Object3D();
     this.scene.add(this.node.nodeList);
-    // this.scene.addRebar(this.nodeListRebar);
+
   }
 
   ngOnInit() {
     switch(this.typeView){
       case 1: {
-        this.node.createDemoRectangle();
+        this.threeTRShape.createDemoRectangle();
         break;
       }
       case 2: {
-        this.node.createDemoTShape();
+        this.threeTRShape.createDemoTShape();
         break;
       }
       case 3: {
-        this.node.createDemoCircleRing();
+        this.threeCircle.createDemoCircleRing();
         break;
-      }
-      // case 4: {
-      //   this.node.createDemoCircleRing();
-      //   break;
-      // }
+      }    
       case 4: {
-        this.node.createDemoOval();
+        this.threeOVal.createDemoOval();
         break;
-      }
-      // case 6: {
-      //   this.node.createDemoOval();
-      //   break;
-      // }
+      }   
       default: {
         this.node.showMessage();
         break;

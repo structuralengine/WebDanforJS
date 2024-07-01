@@ -200,10 +200,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               this.threeNode.dataNode = data;
 
             }
-            this.removeScene()
-            // this.threeNode.createDrawingLine()
-            // this.threeNode.createDemoOval()
-            this.threeNode.createDemoCircleRing()
+            this.removeScene()            
           }
         },
         cellClick: (evt, ui) => {
@@ -243,11 +240,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 p_name: data.p_name
               }
             }
-          // }
-          let colIndex = this.save.isManual() ? 5 : 6
-          // if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex) {
-          //   this.preview();
-          // }
+          // }              
           this.removeScene()
         },
       };

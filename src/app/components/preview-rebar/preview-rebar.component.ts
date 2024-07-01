@@ -10,6 +10,9 @@ import { ViewChild } from '@angular/core';
 import { ThreeNodeService } from '../three/geometry/three-node.service';
 import { SceneService } from '../three/scene.service';
 import { data } from 'jquery';
+import { ThreeTshapeService } from '../three/geometry/three-tshape.service';
+import { ThreeOvalService } from '../three/geometry/three-oval.service';
+import { ThreeCircleService } from '../three/geometry/three-circle.service';
 
 @Component({
   selector: 'app-preview-rebar',
@@ -64,6 +67,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     private members: InputMembersService,
     private threeNode: ThreeNodeService,
+    private threeTRShape: ThreeTshapeService,
+    private threeOval: ThreeOvalService,
+    private threeCircle: ThreeCircleService,
     private scene: SceneService,
   ) { }
 
@@ -500,19 +506,19 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     this.removeScene();
     switch(this.typeView){
       case 1: {
-        this.threeNode.createDemoRectangle();
+        this.threeTRShape.createDemoRectangle();
         break;
       }
       case 2: {
-        this.threeNode.createDemoTShape();
+        this.threeTRShape.createDemoTShape();
         break;
       }
       case 3: {
-        this.threeNode.createDemoCircleRing();
+        this.threeCircle.createDemoCircleRing();
         break;
       }
       case 4: {
-        this.threeNode.createDemoOval();
+        this.threeOval.createDemoOval();
         break;
       }
       default: 
