@@ -108,43 +108,53 @@ export class SafetyFactorsMaterialStrengthsComponent
 
   //
   public optionsCon1 = {
-    0: { text: "18" },
-    1: { text: "21" },
-    2: { text: "24" },
-    3: { text: "27" },
-    4: { text: "30" },
-    5: { text: "33" },
-    6: { text: "36" },
-    7: { text: "42" },
-    8: { text: "45" },
-    9: { text: "50" },
-    10: { text: "55" },
-    11: { text: "60" },
+    0: { text: this.translate.instant("safety-factors-material-strengths.av") },
+    1: { text: "18" },
+    2: { text: "21" },
+    3: { text: "24" },
+    4: { text: "27" },
+    5: { text: "30" },
+    6: { text: "33" },
+    7: { text: "36" },
+    8: { text: "42" },
+    9: { text: "45" },
+    10: { text: "50" },
+    11: { text: "55" },
+    12: { text: "60" },
   };
   public optionsConcrete1 = [
-    { id: 0, value: 18, text: "18" },
-    { id: 1, value: 21, text: "21" },
-    { id: 2, value: 24, text: "24" },
-    { id: 3, value: 27, text: "27" },
-    { id: 4, value: 30, text: "30" },
-    { id: 5, value: 33, text: "33" },
-    { id: 6, value: 36, text: "36" },
-    { id: 7, value: 42, text: "42" },
-    { id: 8, value: 45, text: "45" },
-    { id: 9, value: 50, text: "50" },
-    { id: 10, value: 55, text: "55" },
-    { id: 11, value: 60, text: "60" },
+    {
+      id: 0,
+      text: this.translate.instant("safety-factors-material-strengths.av"),
+    },
+    { id: 1, value: 18, text: "18" },
+    { id: 2, value: 21, text: "21" },
+    { id: 3, value: 24, text: "24" },
+    { id: 4, value: 27, text: "27" },
+    { id: 5, value: 30, text: "30" },
+    { id: 6, value: 33, text: "33" },
+    { id: 7, value: 36, text: "36" },
+    { id: 8, value: 42, text: "42" },
+    { id: 9, value: 45, text: "45" },
+    { id: 10, value: 50, text: "50" },
+    { id: 11, value: 55, text: "55" },
+    { id: 12, value: 60, text: "60" },
   ];
 
   public optionsCon2 = {
-    0: { text: "20" },
-    1: { text: "25" },
-    2: { text: "40" },
+    0: { text: this.translate.instant("safety-factors-material-strengths.av") },
+    1: { text: "20" },
+    2: { text: "25" },
+    3: { text: "40" },
   };
   public optionsConcrete2 = [
-    { id: 0, value: 20, text: "20" },
-    { id: 1, value: 25, text: "25" },
-    { id: 2, value: 40, text: "40" },
+    {
+      id: 0,
+      text: this.translate.instant("safety-factors-material-strengths.av"),
+    },
+    { id: 1, value: 20, text: "20" },
+    { id: 2, value: 25, text: "25" },
+    { id: 3, value: 40, text: "40" },
   ];
   //
 
@@ -908,15 +918,18 @@ export class SafetyFactorsMaterialStrengthsComponent
         width: 140,
         nodrag: true,
         paste: false,
+        align: "center",
         cls: "pq-drop-icon pq-side-icon",
         editor: {
           type: "select",
-          options: this.optionsConcrete1,
+          options: (data)=> data.rowIndx === 0 ? this.optionsConcrete1: this.optionsConcrete2,
           labelIndx: "text",
           valueIndx: "id",
         },
         render: (ui) => {
-          return (this.optionsCon1[ui.cellData] || {}).text;
+          console.log("test",ui.rowIndx);
+          // return (this.optionsCon1[ui.cellData] || {}).text;
+          return ui.rowIndx === 0? (this.optionsCon1[ui.cellData] || {}).text : (this.optionsCon2[ui.cellData] || {}).text;
         },
       },
     ];
