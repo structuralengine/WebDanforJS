@@ -155,7 +155,7 @@ export class InputBarsService {
       index: id,
       haunch_M: null,
       haunch_V: null,
-      input_mode:0,
+      input_mode: 1,
       rebar0: [],
       rebar1: this.default_rebar(top),
       rebar2: this.default_rebar(under),

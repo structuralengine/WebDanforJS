@@ -173,7 +173,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       this.table_datas_stirrup = new Array();
       this.table_datas_cal_point = new Array();
 
-      this.typeView = calPoint.rebar0.length > 0 ? member.shape  : "" 
+      this.typeView = calPoint.input_mode === 1 ? member.shape  : "" 
 
       // new data
       if (calPoint.rebar0.length > 0)  {        
@@ -368,7 +368,28 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             table_data_bar[indexBar].rebar0=newRebar0          
             this.bars.setTableColumns(table_data_bar)  
             this.rebar.selectedCalPoint.rebar0 = newRebar0;  
-            // this.displayPreview(this.rebar.selectedCalPoint);       
+            // this.displayPreview(this.rebar.selectedCalPoint);  
+            if(this.typeView === 4){
+              axialRebarData.forEach((data: any)=> {
+                if (this.member.B < this.member.H) { 
+                  if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+                    data.pq_cellstyle = this.styleShaded2;
+                    data.pq_cellprop = this.propShaded2;
+                  } else if (data.rebar_type === lateral) {
+                    data.pq_cellstyle = this.styleShaded1;
+                    data.pq_cellprop = this.propShaded1;
+                  } 
+                } else {
+                  if (data.rebar_type === upperside || data.rebar_type === lowerside) {
+                    data.pq_cellstyle = this.styleShaded1;
+                    data.pq_cellprop = this.propShaded1;
+                  } else if (data.rebar_type === lateral) {
+                    data.pq_cellstyle = this.styleShaded2;
+                    data.pq_cellprop = this.propShaded2;
+                  } 
+                } 
+              })
+            }     
             this.axialGrid.refreshDataAndView();                 
           }
             this.drawPreview();
@@ -469,12 +490,12 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       cellClick: (evt, ui) => {  
         this.clearFocus(calPointListData);
         ui.rowData.pq_rowcls = "pq-state-select ui-state-highlight";
-        this.grid.refreshDataAndView();        
+        this.grid.refreshDataAndView();    
         this.member = this.members.getData(ui.rowData.no)
         this.typeView = this.member.shape
         if(Object.keys(this.rebar).length != 0){
           for (let rebar of this.rebar.rebarList) {
-            if (rebar.p_name === ui.rowData.p_name) {          
+            if (rebar.p_name === ui.rowData.p_name && rebar.m_no === ui.rowData.no) {          
               if(rebar.rebar0.length === 0){
                 this.removeScene();  
                 this.typeView = ""                         
