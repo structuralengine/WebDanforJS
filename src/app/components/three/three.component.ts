@@ -31,28 +31,6 @@ export class ThreeComponent implements OnInit {
   }
 
   ngOnInit() {
-    switch(this.typeView){
-      case 1: {
-        this.threeTRShape.createDemoRectangle();
-        break;
-      }
-      case 2: {
-        this.threeTRShape.createDemoTShape();
-        break;
-      }
-      case 3: {
-        this.threeCircle.createDemoCircleRing();
-        break;
-      }    
-      case 4: {
-        this.threeOVal.createDemoOval();
-        break;
-      }   
-      default: {
-        this.node.showMessage();
-        break;
-      }
-    }   
     this.node.onInit();
   }
   ngAfterViewInit(): void {
@@ -64,15 +42,7 @@ export class ThreeComponent implements OnInit {
         600, 
         600
       );
-    } else {
-      // this.scene.OnInitRebar(
-      //   this.getAspectRatioRebar(),
-      //   this.canvasRebar,
-      //   devicePixelRatio,
-      //   350,
-      //   350
-      // );
-    }
+    } 
     const element = this.scene.labelRendererDomElement();
     const div = document.getElementById("myCanvas"); // ボタンを置きたい場所の手前の要素を取得
     div.parentNode.insertBefore(element, div.nextSibling);

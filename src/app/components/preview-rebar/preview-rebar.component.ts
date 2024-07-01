@@ -90,8 +90,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.displayPreview();   
-    this.drawPreview()
+    
   }
   private OrderByRebarType(rebar0: any){
     let arrUp: any[] = []
@@ -312,7 +311,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           interval: null,
           num: null,
           pq_ri: i,
-          rebar_type: this.typeView == 3 ? 7 : "",
+          rebar_type: this.typeView === 3 ? 7 : "",
           rebar_dia: "null",
           side_cover: null,
         }));
@@ -446,7 +445,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
           if(indexBar !== -1){
             let newStirrup= this.setStrrup(this.table_datas_stirrup)
-            console.log(table_data_bar[indexBar])
             table_data_bar[indexBar].stirrup=newStirrup   
             table_data_bar[indexBar].stirrup_dia=newStirrup.stirrup_dia  
             table_data_bar[indexBar].stirrup_n=newStirrup.stirrup_n 
@@ -488,7 +486,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
         if(indexBar !== -1){
           let newCalPoint= this.setCalPoint(this.table_datas_cal_point);
-          console.log(table_data_bar[indexBar])
           table_data_bar[indexBar].haunch_height= newCalPoint.haunch_height            
           this.bars.setTableColumns(table_data_bar)  
           this.rebar.selectedCalPoint.haunch_height = newCalPoint.haunch_height;
@@ -618,7 +615,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             if (this.member.B < this.member.H) {
               b.rebar_type = 6;              
             } else {
-                      
+              b.rebar_type = 5; 
               b.dist_side = data.distance_side; 
               data.distance_top = data.distance_side;      
             }
@@ -634,8 +631,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           b.dist_top= data.distance_top          
           b.dia = data.rebar_dia === "null" ? null : data.rebar_dia
           b.quantity= data.num                
-          b.interval=data.interval
-          console.log("b",b)
+          b.interval=data.interval      
           dataNew.push(b)
     })
     return dataNew
