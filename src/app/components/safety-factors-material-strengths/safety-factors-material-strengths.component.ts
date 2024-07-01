@@ -311,7 +311,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       let self = this;
       // グリッドの設定
       this.option1_list.push({
-        width:1072,
+        width:1572,
         // minWidth: 1072,
         // overflow-x: 'scroll',
         scrollModel: {
@@ -364,8 +364,8 @@ export class SafetyFactorsMaterialStrengthsComponent
             let defaultItem = self.default_factor.filter(x => x.id === updateItem.rowData.id)[0];
             for (let key in updateItem.newRow) {
               if (key === "range" && ui.source === "clear") {
-                updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
-                updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
+                updateItem.newRow[key] = parseInt(defaultItem[key]);
+                updateItem.rowData[key] = parseInt(defaultItem[key]);
                 updateItem.rowData.pq_cellstyle = {
                   ...updateItem.rowData.pq_cellstyle,
                 };
