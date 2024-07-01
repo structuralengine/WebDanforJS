@@ -32,6 +32,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private table_datas_stirrup: any[] = [];
   private table_datas_cal_point: any[] = [];
   public typeView: any
+  public typeTable : any
   public member: any
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
   public styleShaded1 = {
@@ -171,9 +172,19 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       this.table_datas_axial = new Array();
       this.table_datas_stirrup = new Array();
       this.table_datas_cal_point = new Array();
-
-      this.typeView = calPoint.input_mode === 1 ? member.shape  : "" 
-
+      this.typeView = calPoint.input_mode === 1 ? member.shape  : ""
+      switch (member.shape) {
+        case 1:
+        case 2:
+          this.typeTable = 1;
+          break;
+        case 3:
+          this.typeTable = 3;
+          break;
+        case 4:
+          this.typeTable = 2;
+          break;
+      }
       // new data
       if (calPoint.rebar0.length > 0)  {        
         calPoint.rebar0 = this.typeView == 3? calPoint.rebar0 : this.OrderByRebarType(calPoint.rebar0);        
@@ -708,7 +719,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const rebar_type_options = [upper_side, lower_side, lateral_rebar];
     const rebar_dia_options = ["null",10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
 
-    if (this.typeView === 1 || this.typeView === 2 || this.typeView === "") {
+    if (this.typeTable === 1) {
       this.axialHeaders.push(
         {
           title: rebar_type,
@@ -759,7 +770,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
       )
-    } else if (this.typeView === 4) {
+    } else if (this.typeTable === 2) {
       this.axialHeaders.push(
         {
           title: rebar_type,
@@ -815,7 +826,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
       )
-    } else if (this.typeView === 3) {
+    } else if (this.typeTable === 3) {
       this.axialHeaders.push(
         {
           title: rebar_dia,
@@ -892,6 +903,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     let rebarList = this.rebar.rebarList
     let m_no = 0;
     let cls = []
+    if (rebarList[rebarList.length - 1].index !== null) {
+      rebarList.push({})
+    }
     if (rebarList) {
       for (let i = 0; i < rebarList.length - 1; i++) {
         if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no === m_no) {
