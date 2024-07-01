@@ -395,7 +395,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     ui.updateList.forEach((item: any) => {
       let i = item.rowIndx;
       for (let key in item.newRow) {
-        console.log("key", typeof key)
         if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n"){
           break;
         }
