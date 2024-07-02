@@ -46,7 +46,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     "rebar_ss",
     "side_dia", 
     "stirrup_dia", 
-    "bending_dia",
+    // "bending_dia",
     "side_cover",
     "side_n",
     "side_ss",
@@ -186,7 +186,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.lstItemEdited = [];
     this.setTitle(this.save.isManual());
     this.table_datas = this.bars.getTableColumns();
-    console.log("test",this.table_datas);
     // グリッドの設定
     this.option_list = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
