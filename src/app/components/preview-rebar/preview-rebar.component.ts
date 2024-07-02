@@ -13,6 +13,7 @@ import { data } from 'jquery';
 import { ThreeTshapeService } from '../three/geometry/three-tshape.service';
 import { ThreeOvalService } from '../three/geometry/three-oval.service';
 import { ThreeCircleService } from '../three/geometry/three-circle.service';
+import { IndexRange } from 'igniteui-angular-excel';
 
 @Component({
   selector: 'app-preview-rebar',
@@ -1009,13 +1010,14 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
 
   private copyInputValues(calPoint : any, table_data_bar : any, type: string) {
     let indexRebar = table_data_bar.findIndex(data => data.index === calPoint.index)
-    for (let i = indexRebar; i < table_data_bar.length; i += 2) {
+    for (let i = indexRebar + 2; i < table_data_bar.length; i += 2) {
       if (table_data_bar[i].m_no === "") {
         switch (type) {
           case "axial":
             table_data_bar[i].rebar0 = calPoint.rebar0;
             break;        
           case "stirrup":
+            table_data_bar[i].sttirup = calPoint.stirrup;
             table_data_bar[i].stirrup_dia = calPoint.stirrup.stirrup_dia;
             table_data_bar[i].stirrup_n =  calPoint.stirrup.stirrup_n;
             table_data_bar[i].stirrup_ss =  calPoint.stirrup.stirrup_ss;
