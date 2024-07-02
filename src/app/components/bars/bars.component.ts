@@ -44,8 +44,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     "rebar_n",
     "rebar_space",
     "rebar_ss",
-    "side_dia", 
-    "stirrup_dia", 
+    "side_dia",
+    "stirrup_dia",
     // "bending_dia",
     "side_cover",
     "side_n",
@@ -290,7 +290,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 i += 2
               ) {
                 const item = this.table_datas[this.idTab][i];
-
                 if (
                   currentObj["haunch_height"] ||
                   currentObj["cos"] ||
@@ -298,7 +297,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                   currentObj["bending_dia"] ||
                   currentObj["bending_angle"] ||
                   currentObj["bending_ss"] ||
-                  currentObj["bending_n"]
+                  currentObj["bending_n"] ||
+                  currentObj["design_point_id"]
                 ) {
                   break;
                 }
@@ -319,9 +319,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
                 Object.assign(this.table_datas[this.idTab][i], currentObj);
               }
-              if(rowIndex > 1){
+              if (rowIndex > 1) {
                 let prevItem = this.table_datas[this.idTab][rowIndex - 2];
-                if(prevItem[col] === currentObj[col]){
+                if (prevItem[col] === currentObj[col]) {
                   ui.updateList[0].rowData.pq_cellstyle = {
                     ...ui.updateList[0].rowData.pq_cellstyle,
                   };
@@ -330,8 +330,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                   };
 
                   this.removeItem(rowIndex, col);
-                }
-                else{
+                } else {
                   ui.updateList[0].rowData.pq_cellstyle = {
                     ...ui.updateList[0].rowData.pq_cellstyle,
                   };
@@ -339,9 +338,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                     color: "white",
                   };
                 }
-              }
-              else 
-              {
+              } else {
                 if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
                   ui.updateList[0].rowData.pq_cellstyle = {
                     ...ui.updateList[0].rowData.pq_cellstyle,
@@ -358,15 +355,17 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
                 currentObj["bending_dia"] ||
                 currentObj["bending_angle"] ||
                 currentObj["bending_ss"] ||
-                currentObj["bending_n"]){
-                  if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-                    ui.updateList[0].rowData.pq_cellstyle = {
-                      ...ui.updateList[0].rowData.pq_cellstyle,
-                    };
-                    ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-                      color: "white",
-                    };
-                  }
+                currentObj["bending_n"] ||
+                currentObj["design_point_id"]
+              ) {
+                if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
+                  ui.updateList[0].rowData.pq_cellstyle = {
+                    ...ui.updateList[0].rowData.pq_cellstyle,
+                  };
+                  ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
+                    color: "white",
+                  };
+                }
               }
               // if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
               //   ui.updateList[0].rowData.pq_cellstyle = {
@@ -394,17 +393,24 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private handleDelete(ui:any){
+  private handleDelete(ui: any) {
     ui.updateList.forEach((item: any) => {
       let i = item.rowIndx;
       for (let key in item.newRow) {
-        if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n" || key === "haunch_height"|| key === "cos" || key === "tan"){
+        if (
+          key === "bending_dia" ||
+          key === "bending_angle" ||
+          key === "bending_ss" ||
+          key === "bending_n" ||
+          key === "haunch_height" ||
+          key === "cos" ||
+          key === "tan" ||
+          key === "design_point_id"
+        ) {
           break;
-        }
-        else{
+        } else {
           this.removeItem(i, key);
         }
-        
       }
     });
     // let checkRowFirst = ui.updateList.filter(
@@ -429,26 +435,34 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     //   let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0 && x.rowIndx !== 1);
     //   this.handleDeleteSheet(listNotZero);
     // } else {
-      this.handleDeleteSheet(ui.updateList);
+    this.handleDeleteSheet(ui.updateList);
     // }
   }
 
   private handleDeleteSheet(dataList: any) {
     dataList.forEach((item: any) => {
       let rowIndx = item.rowIndx;
-      var prevItem : any = {};
-      if(rowIndx === 0 || rowIndx === 1){
+      var prevItem: any = {};
+      if (rowIndx === 0 || rowIndx === 1) {
         prevItem = this.bars.default_bars(0);
-      }
-      else{
+      } else {
         prevItem = this.table_datas[this.idTab][rowIndx - 2];
       }
-      
+
       for (let key in item.newRow) {
-        if(key === "bending_dia" || key === "bending_angle" || key === "bending_ss" || key === "bending_n" || key === "haunch_height"|| key === "cos" || key === "tan"){
+        if (
+          key === "bending_dia" ||
+          key === "bending_angle" ||
+          key === "bending_ss" ||
+          key === "bending_n" ||
+          key === "haunch_height" ||
+          key === "cos" ||
+          key === "tan" ||
+          key === "design_point_id"
+        ) {
           break;
         }
-        for (let i = rowIndx; i < this.table_datas[this.idTab].length; i += 2 ) {
+        for (let i = rowIndx; i < this.table_datas[this.idTab].length; i += 2) {
           const item = this.table_datas[this.idTab][i];
           if (i === rowIndx) {
             this.table_datas[this.idTab][i][key] = prevItem[key];
@@ -484,7 +498,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       this.lstItemEdited.splice(index, 1);
     }
   }
-
 
   ngAfterViewInit() {
     this.checkForScrollbar();
@@ -809,7 +822,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             },
           ],
           nodrag: true,
-        },
+        }
         // {
         //   title: this.translate.instant("bars.process"),
         //   align: "center",
@@ -1071,7 +1084,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
             },
           ],
           nodrag: true,
-        },
+        }
         // {
         //   title: this.translate.instant("bars.process"),
         //   align: "center",
@@ -1257,12 +1270,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           (x) => this.colAutoInputs.filter((y) => y === x).length > 0
         );
         keys.forEach((key) => {
-          if (
-            JSON.stringify(currentCell[key]) === 'null'
-          ) {
+          if (JSON.stringify(currentCell[key]) === "null") {
             currentCell[key] = prevRow[key];
-          }
-          else if (
+          } else if (
             JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
@@ -1284,12 +1294,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           (x) => this.colAutoInputs.filter((y) => y === x).length > 0
         );
         keys.forEach((key) => {
-          if (
-            JSON.stringify(currentCell[key]) === 'null'
-          ) {
+          if (JSON.stringify(currentCell[key]) === "null") {
             currentCell[key] = prevRow[key];
-          }
-          else if (
+          } else if (
             JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
           ) {
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
