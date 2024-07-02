@@ -186,7 +186,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           break;
       }
       // Axial rebar data
-      if (calPoint.rebar0.length > 0)  {        
+      if (calPoint.rebar0 !==  null && calPoint.rebar0.length > 0)  {        
         calPoint.rebar0 = this.typeView == 3? calPoint.rebar0 : this.OrderByRebarType(calPoint.rebar0);        
         for (let i = 0; i < calPoint.rebar0.length; i++) {
           let rebar = calPoint.rebar0[i];
@@ -254,7 +254,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
 
 
       // Stirrup Data
-      const stirrup = calPoint.rebar0.length >0 ?calPoint.stirrup: null;
+      const stirrup = (calPoint.input_mode === 1) ? calPoint.stirrup : null;
       if (stirrup) {
         stirrupData.push({
           stirrup_dia: stirrup.stirrup_dia == null ? "null" : stirrup.stirrup_dia,

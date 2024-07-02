@@ -256,7 +256,26 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           },
         };
       } else {
-        this.table_datas[i].push({},{});
+        let mergeCells = []
+        for (let j = 0; j < this.table_datas[i].length; j++) {
+          if (this.table_datas[i][j].input_mode && this.table_datas[i][j].input_mode === 1) {
+            if (this.save.isManual()) {
+              mergeCells.push({
+                r1: j,
+                c1: 5,
+                rc: 2,
+                cc: 10
+              })
+            } else {
+              mergeCells.push({
+                r1: j,
+                c1: 6,
+                rc: 2,
+                cc: 10
+              })
+            }
+          }
+        }
         op = {
           showTop: false,
           reactive: true,
@@ -267,7 +286,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           colModel: this.beamHeaders,
           dataModel: { data: this.table_datas[i] },
           freezeCols: (this.save.isManual()) ? 3 : 4,
-          mergeCells: (this.save.isManual()) ? [{ r1: this.table_datas[i].length - 2, c1: 5, rc: 2, cc: 10 }] : [{ r1: this.table_datas[i].length - 2, c1: 6, rc: 2, cc: 10 }],
+          mergeCells: mergeCells,
           contextMenu: {
             on: true,
             items: [
@@ -374,8 +393,12 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             }
             let colIndex = this.save.isManual() ? 5 : 6
-            if (ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex) {
-              this.preview();
+            for (let cell of this.options.mergeCells) {
+              if (ui.rowIndx === cell.r1 && ui.colIndx === colIndex) {
+                let index = ui.rowIndx / 2
+                this.preview(index);
+                break;
+              }
             }
             this.removeScene()            
           }
@@ -476,10 +499,18 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
               render : function (ui) {
-                if (this.options.mergeCells.length > 0 && ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
-                  return {
-                    text: displayPreviewText,
-                    cls: 'display-preview-button',
+                // if (this.options.mergeCells.length > 0 && ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+                //   return {
+                //     text: displayPreviewText,
+                //     cls: 'display-preview-button',
+                //   }
+                // }
+                for (let cell of this.options.mergeCells) {
+                  if (cell.r1 === ui.rowIndx && ui.colIndx === colIndex) {
+                    return {
+                      text: displayPreviewText,
+                      cls: 'display-preview-button',
+                    }
                   }
                 }
               }
@@ -621,12 +652,20 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               title: this.translate.instant("bars.dia"),
               dataType: 'integer', dataIndx: 'rebar_dia', sortable: false, width: 70, nodrag: true,
               render : function (ui) {
-                if (this.options.mergeCells.length > 0  && ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
-                  return {
-                    text: displayPreviewText,
-                    cls: 'display-preview-button',
+                for (let cell of this.options.mergeCells) {
+                  if (cell.r1 === ui.rowIndx && ui.colIndx === colIndex) {
+                    return {
+                      text: displayPreviewText,
+                      cls: 'display-preview-button',
+                    }
                   }
                 }
+                // if (this.options.mergeCells.length > 0  && ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+                //   return {
+                //     text: displayPreviewText,
+                //     cls: 'display-preview-button',
+                //   }
+                // }
               }
             },
             {
@@ -903,24 +942,35 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.refreshCM()
     this.grid.refreshDataAndView();
   }
-  public preview(): void {
-    
+  public preview(index ?: any): void {
+    let rebar: any;
     this.removeScene();
     if (!this.bars.is_review) {
       this.bars.is_review = !this.bars.is_review;
     }
     if (Object.keys(this.rebar).length === 0) {
       this.bars.setTableColumns(this.table_data)
-      let rebar = this.bars.bar_list[0];
+      rebar = this.bars.bar_list[0];
       this.rebar = {
         rebarList: this.bars.bar_list,
         selectedCalPoint:  rebar,
         table_data: this.table_data,
-      }        
-      this.threeNode.dataNode = rebar;
-      this.threeNode.dataRebar = this.rebar
+      } 
     }
+    if (index != undefined) {
+      rebar = this.bars.bar_list[index]
+      this.rebar = {
+        rebarList: this.bars.bar_list,
+        selectedCalPoint:  rebar,
+        table_data: this.table_data,
+      } 
+
+    }
+    
+    this.threeNode.dataNode = rebar;
+    this.threeNode.dataRebar = this.rebar
   }
+
   public removeScene() {
     let index = []
     if (this.scene.scene.children.length > 0) {
