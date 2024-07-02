@@ -185,7 +185,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           this.typeTable = 2;
           break;
       }
-      // new data
+      // Axial rebar data
       if (calPoint.rebar0.length > 0)  {        
         calPoint.rebar0 = this.typeView == 3? calPoint.rebar0 : this.OrderByRebarType(calPoint.rebar0);        
         for (let i = 0; i < calPoint.rebar0.length; i++) {
@@ -214,7 +214,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
               rebar_type = lateral;
               break;
             case 7: 
-              rebar_type = lowerside; // todo: change when have correct data
+              rebar_type = lowerside; 
               break;
           }
           axialRebarData.push({
@@ -252,7 +252,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       }  
 
 
-      
+
       // Stirrup Data
       const stirrup = calPoint.rebar0.length >0 ?calPoint.stirrup: null;
       if (stirrup) {
@@ -295,16 +295,17 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         }
       }
       
-
+      
       calPointListData.forEach((data: any)=> {
-        if (this.typeView === 3 || this.typeView === 4) {
+        if (this.member.shape === 3 || this.member.shape === 4) {
           data.pq_cellstyle = this.styleShaded3;
           data.pq_cellprop = this.propShaded3;
         } 
       })
       this.table_datas_cal_point.push(calPointListData);
     }
-    if (calPoint != undefined && axialRebarData.length <= 30){
+
+    if (calPoint != undefined && calPoint.input_mode === 1 && axialRebarData.length <= 30){
       let pushAxialRebarData = Array.from({ length: 30 - axialRebarData.length }, (i) => ({
           distance_side: null,
           distance_top: null,
@@ -319,7 +320,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     }
     this.table_datas_axial.push(axialRebarData);
 
-    if (calPoint != undefined && stirrupData.length <= 1){
+    if (calPoint != undefined && calPoint.input_mode === 1 && stirrupData.length <= 1){
       let pushStirrupData = Array.from({ length: 1 - stirrupData.length }, (i) => ({
           stirrup_dia: "null",
           stirrup_n : null,
@@ -384,14 +385,12 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }         
           
           let table_data_bar = this.rebar.table_data
-          let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
+          let indexBar= table_data_bar.findIndex(data=> data.index ===  this.rebar.selectedCalPoint.index)
           if(indexBar !== -1){
-            let newRebar0=  this.OrderByRebarType(this.setRebar0(this.table_datas_axial))
-            table_data_bar[indexBar].rebar0=newRebar0          
+            let newRebar0 =  this.OrderByRebarType(this.setRebar0(this.table_datas_axial))
+            table_data_bar[indexBar].rebar0 = newRebar0          
             this.bars.setTableColumns(table_data_bar)  
             this.rebar.selectedCalPoint.rebar0 = newRebar0;  
-            console.log(newRebar0);
-            // this.displayPreview(this.rebar.selectedCalPoint);  
             if(this.typeView === 4){
               axialRebarData.forEach((data: any)=> {
                 if (this.member.B < this.member.H) { 
@@ -413,7 +412,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
                 } 
               })
             }     
-            this.axialGrid.refreshDataAndView();                 
+            this.copyInputValues(this.rebar.selectedCalPoint, table_data_bar, "axial")
+            this.axialGrid.refreshDataAndView(); 
           }
             this.drawPreview();
         }
@@ -455,7 +455,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }         
           
           let table_data_bar = this.rebar.table_data
-          let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
+          let indexBar= table_data_bar.findIndex(data=> data.index ===  this.rebar.selectedCalPoint.index)
           if(indexBar !== -1){
             let newStirrup= this.setStrrup(this.table_datas_stirrup)
             table_data_bar[indexBar].stirrup=newStirrup   
@@ -465,7 +465,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             this.bars.setTableColumns(table_data_bar)  
             this.rebar.selectedCalPoint.stirrup = newStirrup;
           }
-          // this.bars.setTableColumns(this.table_datas_axial)      
+          this.copyInputValues(this.rebar.selectedCalPoint, table_data_bar, "stirrup")
           this.drawPreview();
         }
       }
@@ -496,7 +496,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         this.table_datas_cal_point = new Array();
         this.table_datas_cal_point.push(calPointListData);
         let table_data_bar = this.rebar.table_data
-        let indexBar= table_data_bar.findIndex(data=> data.m_no ===  this.rebar.selectedCalPoint.m_no)
+        let indexBar= table_data_bar.findIndex(data=> data.index ===  this.rebar.selectedCalPoint.index)
         if(indexBar !== -1){
           let newCalPoint= this.setCalPoint(this.table_datas_cal_point);
           table_data_bar[indexBar].haunch_height= newCalPoint.haunch_height            
@@ -518,9 +518,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           for (let rebar of this.rebar.rebarList) {
             if (rebar.p_name === ui.rowData.p_name && rebar.m_no === ui.rowData.no) {          
               if(rebar.rebar0.length === 0){
+                this.rebar.selectedCalPoint = rebar
                 this.removeScene();  
                 this.typeView = ""                         
-              }else  {
+              } else {
                 this.rebar.selectedCalPoint = rebar  
               }      
               this.displayPreview(rebar, true); 
@@ -1004,5 +1005,35 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     }
     let toRemove: any = Array.from(document.getElementsByClassName("label_theerjs"));
     toRemove.map((e)=> e.remove());    
+  }
+
+  private copyInputValues(calPoint : any, table_data_bar : any, type: string) {
+    let indexRebar = table_data_bar.findIndex(data => data.index === calPoint.index)
+    for (let i = indexRebar; i < table_data_bar.length; i += 2) {
+      if (table_data_bar[i].m_no === "") {
+        switch (type) {
+          case "axial":
+            table_data_bar[i].rebar0 = calPoint.rebar0;
+            break;        
+          case "stirrup":
+            table_data_bar[i].stirrup_dia = calPoint.stirrup.stirrup_dia;
+            table_data_bar[i].stirrup_n =  calPoint.stirrup.stirrup_n;
+            table_data_bar[i].stirrup_ss =  calPoint.stirrup.stirrup_ss;
+            break; 
+        }
+      } else {
+        break;
+      }
+    }
+    this.bars.setTableColumns(table_data_bar)  
+    this.rebar.rebarList = this.bars.bar_list;
+    let m_no = this.rebar.rebarList[0];
+    for (const rebar of this.rebar.rebarList) {
+      if (rebar.m_no !== "") {
+        m_no = rebar.m_no;
+      } else {
+        rebar.m_no = m_no
+      }
+    }
   }
 }
