@@ -369,6 +369,18 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
                 this.table_datas_axial[j][key] = old;
               }
             }
+            if(key === "rebar_type" && this.typeView === 4 && this.member.B > this.member.H){
+            let countLate = 0
+            axialRebarData.map((data) => {
+              if(data.rebar_type === lateral){
+                countLate ++;
+              }
+            })
+            if(countLate === 2){
+              const j = property.rowIndx;              
+              axialRebarData[j][key] = old;              
+            }
+            }
           }         
           
           let table_data_bar = this.rebar.table_data
