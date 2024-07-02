@@ -311,12 +311,12 @@ export class SafetyFactorsMaterialStrengthsComponent
       let self = this;
       // グリッドの設定
       this.option1_list.push({
-        width:1172,
+        // width:1172,
         // minWidth: 1072,
         // overflow-x: 'scroll',
-        scrollModel: {
-          horizontal:true,
-        },
+        // scrollModel: {
+        //   horizontal:true,
+        // },
         height: 320,
         showTop: false,
         reactive: true,
