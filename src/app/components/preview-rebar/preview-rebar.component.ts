@@ -586,10 +586,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             } else {
               b.rebar_type = 0;
             }
-          }else{
-            b.rebar_type = 7;
-            b.dist_side = data.distance_side; 
-            data.distance_top = data.distance_side; 
           }
           break;
         case lowerside: 
@@ -607,6 +603,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           else{
               b.rebar_type = 7;
               b.dist_side = data.distance_side; 
+              data.distance_top = data.distance_side; 
             }
           break;
         case lateral: 
