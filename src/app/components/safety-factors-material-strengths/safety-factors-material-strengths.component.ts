@@ -431,7 +431,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
       });
       this.option3_list.push({
-        width: 550,
+        // width: 660,
         height: 105,
         showTop: false,
         reactive: true,
@@ -486,6 +486,18 @@ export class SafetyFactorsMaterialStrengthsComponent
               if(Number.isNaN(updateItem.newRow[key])){
                 updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
               updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
+              }
+              if(updateItem.newRow[key] === 0){
+                this.columnHeaders3.push({
+                  title: "",
+                  align: "left",
+                  dataType: "string",
+                  dataIndx: "",
+                  editable: false,
+                  sortable: false,
+                  width: 140,
+                  nodrag: true,
+                })
               }
             }
           }
