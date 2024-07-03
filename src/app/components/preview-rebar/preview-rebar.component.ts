@@ -644,7 +644,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           b.dist_top= data.distance_top          
           b.dia = data.rebar_dia === "" ? null : +data.rebar_dia
           b.quantity= data.num                
-          b.interval=data.interval      
+          b.interval= data.interval   
+          this.setInterval(b);   
           dataNew.push(b)
     })
     return dataNew
@@ -1038,5 +1039,31 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         rebar.m_no = m_no
       }
     }
+  }
+  private setInterval(rebar0: any){
+    const PI = 3.14;
+    switch(rebar0.rebar_type){
+      case 0: case 1:{
+        rebar0.interval =   (this.member.B - 2 * rebar0.dist_side) / rebar0.quantity;
+        break;
+      }
+      case 2: case 3:{
+        rebar0.interval =  0.5 * PI * (this.member.B - 2 * rebar0.dist_side) / (rebar0.quantity-1);
+        break;
+      }
+      case 4: case 6:{
+        rebar0.interval =  (this.member.B - 2 * rebar0.dist_side) / (rebar0.quantity-1);
+        break;
+      }
+      case 5:{
+        rebar0.interval =  0.5 * PI * (this.member.H - 2 * rebar0.dist_side) / (rebar0.quantity-1);
+        break;
+      }
+      case 7:{
+        rebar0.interval =  PI * (this.member.B - 2 * rebar0.dist_side) / (rebar0.quantity);
+        break;
+      }
+    }
+    rebar0.interval = +rebar0.interval.toFixed(1);
   }
 }
