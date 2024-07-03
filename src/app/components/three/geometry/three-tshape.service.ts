@@ -144,9 +144,9 @@ export class ThreeTshapeService {
         }
   
        
-        this.node.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, Math.round(dist_side * this.scale), false, 6, 2, 1);
+        this.node.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, rebar_type_0.dist_side, false, 6, 2, 1);
         if(quantity>1){
-          this.node.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round(interval * this.scale), false, 6, 2, 1);
+          this.node.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, (b * this.scale - 2 * rebar_type_0.dist_side) / (quantity - 1), false, 6, 2, 1);
         }
       }
     }
@@ -178,9 +178,9 @@ export class ThreeTshapeService {
             y: -(y_start),
             z: 0
           }
-          this.node.drawLineDim(jsonData["5"], jsonData["rb_7"], 1, Math.round(dist_side2 * this.scale), false, 6, -2, 1);
+          this.node.drawLineDim(jsonData["5"], jsonData["rb_7"], 1,  rebar_type_1.dist_side, false, 6, -2, 1);
           if(quantity2>1){
-            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, Math.round(interval2 * this.scale), false, 6, -2, 1);
+            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, (b * this.scale - 2 * rebar_type_1.dist_side) / (quantity2 - 1), false, 6, -2, 1);
           }
         }
     }  
@@ -193,15 +193,15 @@ export class ThreeTshapeService {
       for(let i = 0; i< arr_gap01.length ; i++){        
         jsonData[`rb0_${i}`]= {
           x:  -(x_start),
-          y:  (y_start - y - arr_gap01[i]),
+          y:  (y_start - y - arr_gap01[i] / this.scale),
           z: 0
         }
         if(i == 0)
-          this.node.drawLineDim(jsonData["8"], jsonData[`rb0_${i}`], 0, Math.round(arr_gap01[i] * this.scale), true, 6, 10, 1);
+          this.node.drawLineDim(jsonData["8"], jsonData[`rb0_${i}`], 0, arr_gap01[i], true, 6, 10, 1);
         else
-        this.node.drawLineDim(jsonData[`rb0_${i - 1}`], jsonData[`rb0_${i}`], 0, Math.round(arr_gap01[i] * this.scale), true, 6, 10, 1);
+          this.node.drawLineDim(jsonData[`rb0_${i - 1}`], jsonData[`rb0_${i}`], 0, arr_gap01[i] , true, 6, 10, 1);
           
-        y += arr_gap01[i];
+        y += (arr_gap01[i]/ this.scale);
       }    
 
     }
@@ -219,37 +219,37 @@ export class ThreeTshapeService {
       for(let i = 0; i< arr_gap04.length ; i++){        
         jsonData[`rb4_${i}`]= {
           x:  x_start - n,
-          y:  (y_start - y - arr_gap04[i]),
+          y:  (y_start - y - arr_gap04[i] / this.scale),
           z: 0
         }
         if(i == 0)
-          this.node.drawLineDim(jsonData["1.1"], jsonData[`rb4_${i}`], 0, Math.round(arr_gap04[i] * this.scale), true, 6, 2, 0);
+          this.node.drawLineDim(jsonData["1.1"], jsonData[`rb4_${i}`], 0, arr_gap04[i] , true, 6, 2, 0);
         else
-        this.node.drawLineDim(jsonData[`rb4_${i - 1}`], jsonData[`rb4_${i}`], 0, Math.round(arr_gap04[i] * this.scale), true, 6, 2, 0);
+        this.node.drawLineDim(jsonData[`rb4_${i - 1}`], jsonData[`rb4_${i}`], 0, arr_gap04[i], true, 6, 2, 0);
           
-        y += arr_gap04[i];
+        y += (arr_gap04[i]/ this.scale);
       }    
 
     }
     let dist_side_min = 0;
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) =>{   
-      if(data.rebar_type === 4 && data.dist_top  === Math.round(arr_gap04[0] * this.scale) && data.dist_top != null 
+      if(data.rebar_type === 4 && data.dist_top  === arr_gap04[0] && data.dist_top != null 
       && data.dist_side != null  && data.dia != null  && data.quantity != null){               
-        dist_side_min = data.dist_side/this.scale;
+        dist_side_min = data.dist_side;
       }
     })
     if(arr_gap04.length > 0){
       jsonData["rb_4"] = {
         x: x_start - n,
-        y: y_start  - arr_gap04[0],
+        y: y_start  - arr_gap04[0]/this.scale,
         z:0
       }
       jsonData["2.1"] = {
-        x: x_start - n - dist_side_min,
-        y: y_start - arr_gap04[0],
+        x: x_start - n - dist_side_min/this.scale,
+        y: y_start - arr_gap04[0]/this.scale,
         z:0
       }
-      this.node.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 1, Math.round(dist_side_min * this.scale), false, 6, 2, 0);
+      this.node.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 1, dist_side_min, false, 6, 2, 0);
     }
     
   }
@@ -260,12 +260,12 @@ export class ThreeTshapeService {
       if(type ===1 ){
         if ((data.rebar_type === 0 || data.rebar_type === type) && data.dist_top != null 
         && data.dist_side != null  && data.dia != null  && data.quantity != null) {
-          arr_dis_top.push(data.dist_top / this.scale)
+          arr_dis_top.push(data.dist_top)
         }
       }else{
         if ( (data.rebar_type === type) && data.dist_top != null 
         && data.dist_side != null  && data.dia != null  && data.quantity != null) {
-          arr_dis_top.push(data.dist_top / this.scale)
+          arr_dis_top.push(data.dist_top)
         }
       }
     })
@@ -276,7 +276,7 @@ export class ThreeTshapeService {
           arr_gap.push(arr_dis_top[i])
         }
         if (i === arr_dis_top.length) {
-          arr_gap.push(h  - arr_dis_top[i - 1])
+          arr_gap.push(h*this.scale  - arr_dis_top[i - 1])
         }
         if (i !== 0 && i !== arr_dis_top.length) {
           arr_gap.push(arr_dis_top[i] - arr_dis_top[i - 1])

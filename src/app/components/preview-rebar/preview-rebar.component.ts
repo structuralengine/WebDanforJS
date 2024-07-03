@@ -163,8 +163,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const upperside = this.translate.instant("preview_rebar.upper_side");
     const lowerside = this.translate.instant("preview_rebar.lower_side");
     const lateral = this.translate.instant("preview_rebar.lateral_rebar");    
-    let calPoint =  this.rebar.selectedCalPoint; 
-    console.log("rebar", this.rebar)
+    let calPoint =  this.rebar.selectedCalPoint;    
     if (Object.keys(this.rebar).length != 0) {
       this.rebar.selectedCalPoint = newRebar !== undefined ? newRebar : this.rebar.selectedCalPoint;
       let calPoint =  this.rebar.selectedCalPoint; 
@@ -369,6 +368,12 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
               const j = property.rowIndx;
               if (value0 === null) {
                 this.table_datas_axial[j][key] = old;
+              }
+            }
+            if(key != "rebar_type"){
+              if(property.newRow[key] <= 0){
+                const j = property.rowIndx;              
+                axialRebarData[j][key] = old;  
               }
             }
             if(key === "rebar_type" && this.typeView === 4 && this.member.B > this.member.H){
@@ -773,13 +778,13 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         {
           title: distance_top,
           width: 120, halign: 'center', align: 'right',
-          dataType: 'integer', dataIndx: 'distance_top', format: "#.0",
+          dataType: 'float', dataIndx: 'distance_top', format: "#.0",
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
         {
           title: side_cover,
           width: this.setColumnWidth(side_cover), halign: 'center', align: 'right',
-          dataType: 'integer', dataIndx: 'side_cover', format: "#.0",
+          dataType: 'float', dataIndx: 'side_cover', format: "#.0",
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
       )
@@ -823,19 +828,19 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         {
           title: distance_edge,
           width: 135, halign: 'center', align: 'right',
-          dataType: 'integer', dataIndx: 'distance_side', format: "#.0",
+          dataType: 'float', dataIndx: 'distance_side', format: "#.0",
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
         {
           title: distance_top,
           width: 120, halign: 'center', align: 'right',
-          dataType: 'integer', dataIndx: 'distance_top', format: "#.0",
+          dataType: 'float', dataIndx: 'distance_top', format: "#.0",
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
         {
           title: side_cover,
           width: this.setColumnWidth(side_cover), halign: 'center', align: 'right',
-          dataType: 'integer', dataIndx: 'side_cover', format: "#.0",
+          dataType: 'float', dataIndx: 'side_cover', format: "#.0",
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
       )
@@ -864,7 +869,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         {
           title: distance_perimeter,
           width: 120, halign: 'center', align: 'right',
-          dataType: 'integer', dataIndx: 'distance_side', format: "#.0",
+          dataType: 'float', dataIndx: 'distance_side', format: "#.0",
           editable: true, sortable: false, nodrag: true, resizable: false,
         },
       )
@@ -902,7 +907,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       {
         title: interval,
         width: 80, halign: 'center', align: 'right',
-        dataType: 'integer', dataIndx: 'stirrup_ss', resizable: false,
+        dataType: 'float', dataIndx: 'stirrup_ss', resizable: false,
       },
     )
   }
