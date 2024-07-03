@@ -29,6 +29,26 @@ export class InputCrackSettingsService {
       m_no: null,
       g_name: null,
       p_name: null,
+      con_u: null,
+      con_l: null,
+      con_s: null,
+      vis_u: false,
+      vis_l: false,
+      ecsd_u: null,
+      ecsd_l: null,
+      kr: null,
+      k4: null,
+      JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
+      wlimit: null
+    };
+  }
+
+  public default_crack_value(id: number): any {
+    return {
+      index: id,
+      m_no: null,
+      g_name: null,
+      p_name: null,
       con_u: 1,
       con_l: 1,
       con_s: 1,
@@ -70,6 +90,7 @@ export class InputCrackSettingsService {
           data.p_name = pos.p_name;
           data.g_id = member.g_id;
           data.wlimit = data.wlimit;
+
           table_groupe.push(data);
           count++;
         }
@@ -87,7 +108,7 @@ export class InputCrackSettingsService {
         if (result.hasOwnProperty(key) && result[key] === null) {
             result[key] = this.default_crack(index)[key];
         }
-    }
+      }
       this.crack_list.push(result);
     }
     return result;
@@ -167,12 +188,6 @@ export class InputCrackSettingsService {
   public setSaveData(crack: any) {
     ////////// 情報追加による調整コード //////////
     for (const value of crack) {
-      const defaultValue = this.default_crack(value.index);
-    for (const key in defaultValue) {
-      if (defaultValue.hasOwnProperty(key) && (value[key] === null || value[key] === undefined)) {
-        value[key] = defaultValue[key];
-      }
-    }
       if (value.ecsd_u == null && value.ecsd_l == null) {
         if (value.ecsd !== null) {
           value['ecsd_u'] = value.ecsd;
@@ -185,7 +200,7 @@ export class InputCrackSettingsService {
       }
       if (value.k4 == undefined) {
         let flag: boolean = true;
-        for (const key of ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'JRTT05', 'wlimit']) {
+        for (const key of ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'JRTT05']) {
           if (value[key] === null || value[key] == null) {
             flag = false;
             break;

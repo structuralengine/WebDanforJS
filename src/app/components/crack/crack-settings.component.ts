@@ -95,7 +95,7 @@ export class CrackSettingsComponent
 
   ngOnInit() {
     this.defaultCrack = {}
-    this.defaultCrack = this.crack.default_crack(0);
+    this.defaultCrack = this.crack.default_crack_value(0);
     this.lstItemEdited = [];
     this.setTitle(this.save.isManual());
     this.table_datas = this.crack.getTableColumns();
@@ -121,29 +121,42 @@ export class CrackSettingsComponent
       }
 
       //
-      for (let j = 0; j < rowData.length; j++) {
-        const currentCell = rowData[j];
-        Object.keys(currentCell).forEach((key) => {
-          if (
-            currentCell[key] === null &&
-            nonNullValues[key] &&
-            nonNullValues[key].length > 0
-          ) {
-            currentCell[key] = nonNullValues[key][0];
-          }
-        });
-      }
+      // for (let j = 0; j < rowData.length; j++) {
+      //   const currentCell = rowData[j];
+      //   Object.keys(currentCell).forEach((key) => {
+      //     if (
+      //       currentCell[key] === null &&
+      //       nonNullValues[key] &&
+      //       nonNullValues[key].length > 0
+      //     ) {
+      //       currentCell[key] = nonNullValues[key][0];
+      //     }
+      //   });
+      // }
       const rowDataTab = this.table_datas[i];
 
       for (let j = 0; j < rowDataTab.length; j++) {
         let currentCell = rowData[j];
+        const keyAlls = Object.keys(currentCell);
+
+        let defaultCrack = this.crack.default_crack_value(i);
+        Object.keys(defaultCrack).forEach((element: any) => {
+          if(keyAlls.indexOf(element) === -1){
+            currentCell[element] = defaultCrack[element];
+          }
+        })
+        
         if (j === 0) {
           currentCell.pq_cellstyle = this.rowStyle;
-          let defaultCrack = this.crack.default_crack(i);
-          const keys = Object.keys(currentCell).filter(
+          const keys = keyAlls.filter(
             (x) => this.colAutoInputs.filter((y) => y === x).length > 0
           );
           keys.forEach((key) => {
+            if(JSON.stringify(currentCell[key]) === 'null' || JSON.stringify(currentCell[key]) === undefined){
+              currentCell[key] = defaultCrack[key];
+              currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+              currentCell.pq_cellstyle[`${key}`] = { color: "gray" };
+            }
             if (
               JSON.stringify(currentCell[key]) !== JSON.stringify(defaultCrack[key])
             ) {
@@ -159,12 +172,19 @@ export class CrackSettingsComponent
             (x) => this.colAutoInputs.filter((y) => y === x).length > 0
           );
           keys.forEach((key) => {
-            if (
-              JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
-            ) {
+            if(JSON.stringify(currentCell[key]) === 'null' || JSON.stringify(currentCell[key]) === undefined){
+              currentCell[key] = prevRow[key];
               currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
-              currentCell.pq_cellstyle[`${key}`] = { color: "white" };
-              this.lstItemEdited.push(i + "-" + j + "-" + key);
+              currentCell.pq_cellstyle[`${key}`] = { color: "gray" };
+            }
+            else{
+              if (
+                JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
+              ) {
+                currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+                currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+                this.lstItemEdited.push(i + "-" + j + "-" + key);
+              }
             }
           });
         }
@@ -328,29 +348,7 @@ export class CrackSettingsComponent
         this.removeItem(i, key);
       }
     });
-    // let checkRowFirst = ui.updateList.filter(
-    //   (x) => x.rowIndx === 0
-    // ).length;
-    // if (checkRowFirst > 0) {
-      // ui.updateList
-      //   // .filter((x) => x.rowIndx === 0)
-      //   .forEach((item: any) => {
-      //     let whiteItem = this.table_datas[this.idTab][1];
-      //     for (let key in item.newRow) {
-      //       whiteItem.pq_cellstyle = { ...whiteItem.pq_cellstyle };
-      //       whiteItem.pq_cellstyle[`${key}`] = { color: "white" };
-
-      //       let sKey = this.idTab + "-" + item.rowIndx + "-" + key;
-      //       if (this.lstItemEdited.indexOf(sKey) === -1) {
-      //         this.lstItemEdited.push(sKey);
-      //       }
-      //     }
-      //   });
-    //   let listNotZero = ui.updateList.filter((x) => x.rowIndx !== 0);
-    //   this.handleDeleteSheet(listNotZero);
-    // } else {
-       this.handleDeleteSheet(ui.updateList);
-    // }
+    this.handleDeleteSheet(ui.updateList);
   }
   private handleDeleteSheet(dataList: any) {
     dataList.forEach((item: any) => {
