@@ -347,7 +347,9 @@
         "bentonite":"Bentonite muddy water",
         "aerial":"Aerial construction",
         "rbmt":"Reinforcing bar material type",
-        "av":"Arbitrary value"
+        "av":"Arbitrary value",
+        "options_concrete":"Options",
+        "value": "Value"
     },
     "calculation-print":{
         "dc":"Design condition",

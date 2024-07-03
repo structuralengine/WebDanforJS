@@ -347,7 +347,9 @@
         "bentonite":"ベントナイト泥水",
         "aerial":"気中施工",
         "rbmt": "鉄筋材種",
-        "av":"任意値"
+        "av":"任意値",
+        "options_concrete":"選択肢",
+        "value": "値"
     },
     "calculation-print":{
         "dc":"設計条件",

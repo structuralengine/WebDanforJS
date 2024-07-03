@@ -109,52 +109,52 @@ export class SafetyFactorsMaterialStrengthsComponent
   //
   public optionsCon1 = {
     0: { text: this.translate.instant("safety-factors-material-strengths.av") },
-    1: { text: "18" },
-    2: { text: "21" },
-    3: { text: "24" },
-    4: { text: "27" },
-    5: { text: "30" },
-    6: { text: "33" },
-    7: { text: "36" },
-    8: { text: "42" },
-    9: { text: "45" },
-    10: { text: "50" },
-    11: { text: "55" },
-    12: { text: "60" },
+    18: { text: "Fc18" },
+    21: { text: "Fc21" },
+    24: { text: "Fc24" },
+    27: { text: "Fc27" },
+    30: { text: "Fc30" },
+    33: { text: "Fc33" },
+    36: { text: "Fc36" },
+    42: { text: "Fc42" },
+    45: { text: "Fc45" },
+    50: { text: "Fc50" },
+    55: { text: "Fc55" },
+    60: { text: "Fc60" },
   };
   public optionsConcrete1 = [
     {
       id: 0,
       text: this.translate.instant("safety-factors-material-strengths.av"),
     },
-    { id: 1, value: 18, text: "18" },
-    { id: 2, value: 21, text: "21" },
-    { id: 3, value: 24, text: "24" },
-    { id: 4, value: 27, text: "27" },
-    { id: 5, value: 30, text: "30" },
-    { id: 6, value: 33, text: "33" },
-    { id: 7, value: 36, text: "36" },
-    { id: 8, value: 42, text: "42" },
-    { id: 9, value: 45, text: "45" },
-    { id: 10, value: 50, text: "50" },
-    { id: 11, value: 55, text: "55" },
-    { id: 12, value: 60, text: "60" },
+    { id: 18, value: 18, text: "Fc18" },
+    { id: 21, value: 21, text: "Fc21" },
+    { id: 24, value: 24, text: "Fc24" },
+    { id: 27, value: 27, text: "Fc27" },
+    { id: 30, value: 30, text: "Fc30" },
+    { id: 33, value: 33, text: "Fc33" },
+    { id: 36, value: 36, text: "Fc36" },
+    { id: 42, value: 42, text: "Fc42" },
+    { id: 45, value: 45, text: "Fc45" },
+    { id: 50, value: 50, text: "Fc50" },
+    { id: 55, value: 55, text: "Fc55" },
+    { id: 60, value: 60, text: "Fc60" },
   ];
 
   public optionsCon2 = {
     0: { text: this.translate.instant("safety-factors-material-strengths.av") },
-    1: { text: "20" },
-    2: { text: "25" },
-    3: { text: "40" },
+    20: { text: "D20" },
+    25: { text: "D25" },
+    40: { text: "D40" },
   };
   public optionsConcrete2 = [
     {
       id: 0,
       text: this.translate.instant("safety-factors-material-strengths.av"),
     },
-    { id: 1, value: 20, text: "20" },
-    { id: 2, value: 25, text: "25" },
-    { id: 3, value: 40, text: "40" },
+    { id: 20, value: 20, text: "D20" },
+    { id: 25, value: 25, text: "D25" },
+    { id: 40, value: 40, text: "D40" },
   ];
   //
 
@@ -487,18 +487,23 @@ export class SafetyFactorsMaterialStrengthsComponent
                 updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
               updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
               }
-              if(updateItem.newRow[key] === 0){
-                this.columnHeaders3.push({
-                  title: "",
-                  align: "left",
-                  dataType: "string",
-                  dataIndx: "",
-                  editable: false,
-                  sortable: false,
-                  width: 140,
-                  nodrag: true,
-                })
-              }
+              // if(updateItem.newRow[key] === 0){
+              //   console.log(updateItem)
+              //   this.columnHeaders3.push(
+              //     {
+              //     title: this.translate.instant(
+              //       "safety-factors-material-strengths.value"
+              //     ),
+              //     align: "left",
+              //     dataType: "integer",
+              //     dataIndx: "value",
+              //     editable: updateItem.rowData.value === 0 ? true : false,
+              //     sortable: false,
+              //     width: 140,
+              //     nodrag: true,
+              //   }
+              // )
+              // }
             }
           }
         },
@@ -932,14 +937,16 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataIndx: "title",
         editable: false,
         sortable: false,
-        width: 390,
+        width: 290,
         nodrag: true,
         style: { background: "#373e45" },
         styleHead: { background: "#373e45" },
       },
       // { title: '', dataType: 'float', dataIndx: 'value', sortable: false, width: 140, nodrag: true, },
       {
-        title: "",
+        title: this.translate.instant(
+          "safety-factors-material-strengths.options_concrete"
+        ),
         dataType: "float",
         dataIndx: "value",
         sortable: false,
@@ -955,11 +962,22 @@ export class SafetyFactorsMaterialStrengthsComponent
           valueIndx: "id",
         },
         render: (ui) => {
-          console.log("test",ui.rowIndx);
           // return (this.optionsCon1[ui.cellData] || {}).text;
           return ui.rowIndx === 0? (this.optionsCon1[ui.cellData] || {}).text : (this.optionsCon2[ui.cellData] || {}).text;
         },
       },
+      {
+        title: this.translate.instant(
+          "safety-factors-material-strengths.value"
+        ),
+        align: "left",
+        dataType: "integer",
+        dataIndx: "value",
+        editable: (op)=>op.rowData.value === 0? true : false,
+        sortable: false,
+        width: 140,
+        nodrag: true,
+      }
     ];
 
     // 鉄骨 - 安全係数
