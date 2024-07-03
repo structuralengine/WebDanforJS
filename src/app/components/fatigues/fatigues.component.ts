@@ -121,7 +121,6 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッ�の設�
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
-      debugger
       const rowData = this.table_datas[i];
 
       const keyAll0s = Object.keys(rowData[0]);
@@ -144,12 +143,12 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       );
       key0s.forEach((key) => {
         if(JSON.stringify(rowData0[key]) === 'null' || JSON.stringify(rowData0[key]) === undefined){
-          if(this.activeTab === "for_b"){
+          if(key.includes("M_")){
             rowData0[key] = this.defaultFatigue.M1[key.replace("M_", "")];
           }
-          if(this.activeTab === "for_s"){
+          if(key.includes("V_")){
             rowData0[key] = this.defaultFatigue.V1[key.replace("V_", "")];
-          }
+          } 
         }
       });
 
@@ -158,73 +157,73 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       );
       key1s.forEach((key) => {
         if(JSON.stringify(rowData1[key]) === 'null' || JSON.stringify(rowData1[key]) === undefined){
-          if(this.activeTab === "for_b"){
-              rowData1[key] = this.defaultFatigue.M1[key.replace("M_", "")];
+          if(key.includes("M_")){
+            rowData1[key] = this.defaultFatigue.M2[key.replace("M_", "")];
           }
-          if(this.activeTab === "for_s"){
-              rowData1[key] = this.defaultFatigue.V1[key.replace("V_", "")];
-          }
+          if(key.includes("V_")){
+            rowData1[key] = this.defaultFatigue.V2[key.replace("V_", "")];
+          } 
         }
       });
 
-      for (let j = 0; j < rowData.length - 1; j++) {
-        const rowData = this.table_datas[i];
-        //
-        const nonNullValue0s = {};
-        const nonNullValue1s = {};
+      // for (let j = 0; j < rowData.length - 1; j++) {
+      //   const rowData = this.table_datas[i];
+      //   //
+      //   const nonNullValue0s = {};
+      //   const nonNullValue1s = {};
 
-        //
-        for (let j = 0; j < rowData.length; j += 2) {
-          const currentCell = rowData[j];
-          Object.keys(currentCell).forEach((key) => {
-            if (currentCell[key] !== null) {
-              if (!nonNullValue0s[key]) {
-                nonNullValue0s[key] = [];
-              }
-              nonNullValue0s[key].push(currentCell[key]);
-            }
-          });
-        }
+      //   //
+      //   for (let j = 0; j < rowData.length; j += 2) {
+      //     const currentCell = rowData[j];
+      //     Object.keys(currentCell).forEach((key) => {
+      //       if (currentCell[key] !== null) {
+      //         if (!nonNullValue0s[key]) {
+      //           nonNullValue0s[key] = [];
+      //         }
+      //         nonNullValue0s[key].push(currentCell[key]);
+      //       }
+      //     });
+      //   }
 
-        for (let j = 1; j < rowData.length; j += 2) {
-          const currentCell = rowData[j];
-          Object.keys(currentCell).forEach((key) => {
-            if (currentCell[key] !== null) {
-              if (!nonNullValue1s[key]) {
-                nonNullValue1s[key] = [];
-              }
-              nonNullValue1s[key].push(currentCell[key]);
-            }
-          });
-        }
+      //   for (let j = 1; j < rowData.length; j += 2) {
+      //     const currentCell = rowData[j];
+      //     Object.keys(currentCell).forEach((key) => {
+      //       if (currentCell[key] !== null) {
+      //         if (!nonNullValue1s[key]) {
+      //           nonNullValue1s[key] = [];
+      //         }
+      //         nonNullValue1s[key].push(currentCell[key]);
+      //       }
+      //     });
+      //   }
 
         
-        for (let j = 0; j < rowData.length; j += 2) {
-          const currentCell = rowData[j];
-          Object.keys(currentCell).forEach((key) => {
-            if (
-              currentCell[key] === null &&
-              nonNullValue0s[key] &&
-              nonNullValue0s[key].length > 0
-            ) {
-              currentCell[key] = nonNullValue0s[key][0];
-            }
-          });
-        }
+      //   for (let j = 0; j < rowData.length; j += 2) {
+      //     const currentCell = rowData[j];
+      //     Object.keys(currentCell).forEach((key) => {
+      //       if (
+      //         currentCell[key] === null &&
+      //         nonNullValue0s[key] &&
+      //         nonNullValue0s[key].length > 0
+      //       ) {
+      //         currentCell[key] = nonNullValue0s[key][0];
+      //       }
+      //     });
+      //   }
 
-        for (let j = 1; j < rowData.length; j += 2) {
-          const currentCell = rowData[j];
-          Object.keys(currentCell).forEach((key) => {
-            if (
-              currentCell[key] === null &&
-              nonNullValue1s[key] &&
-              nonNullValue1s[key].length > 0
-            ) {
-              currentCell[key] = nonNullValue1s[key][0];
-            }
-          });
-        }
-      }
+      //   for (let j = 1; j < rowData.length; j += 2) {
+      //     const currentCell = rowData[j];
+      //     Object.keys(currentCell).forEach((key) => {
+      //       if (
+      //         currentCell[key] === null &&
+      //         nonNullValue1s[key] &&
+      //         nonNullValue1s[key].length > 0
+      //       ) {
+      //         currentCell[key] = nonNullValue1s[key][0];
+      //       }
+      //     });
+      //   }
+      // }
       const op = {
         showTop: false,
         reactive: true,
@@ -339,15 +338,6 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
                   };
                 }
               }
-
-              // if (ui.updateList[0].oldRow !== ui.updateList[0].newRow) {
-              //   ui.updateList[0].rowData.pq_cellstyle = {
-              //     ...ui.updateList[0].rowData.pq_cellstyle,
-              //   };
-              //   ui.updateList[0].rowData.pq_cellstyle[`${col}`] = {
-              //     color: "white",
-              //   };
-              // }
             }
           }
           if (ui.source === "clear" || ui.source === "cut") {
@@ -964,15 +954,22 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           (x) => this.colAutoInputs.filter((y) => y === x).length > 0
         );
         keys.forEach((key) => {
-          if (
-            JSON.stringify(currentCell[key]) !==
-            JSON.stringify(prevRow[key])
-          ) {
+          if(JSON.stringify(currentCell[key]) === 'null' || JSON.stringify(currentCell[key]) === undefined){
+            currentCell[key] = prevRow[key];
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
-            currentCell.pq_cellstyle[`${key}`] = { color: "white" };
-            let sKey = indexTab1 + "-" + this.activeTab + "-" + j + "-" + key;
-            if (this.lstItemEdited.indexOf(sKey) === -1) {
-              this.lstItemEdited.push(sKey);
+            currentCell.pq_cellstyle[`${key}`] = { color: "gray" };
+          }
+          else{
+            if (
+              JSON.stringify(currentCell[key]) !==
+              JSON.stringify(prevRow[key])
+            ) {
+              currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+              currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+              let sKey = indexTab1 + "-" + this.activeTab + "-" + j + "-" + key;
+              if (this.lstItemEdited.indexOf(sKey) === -1) {
+                this.lstItemEdited.push(sKey);
+              }
             }
           }
         });
@@ -1013,14 +1010,21 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
         var prevRow = {...rowData[j - 2]};
         const keys = Object.keys(currentCell).filter(x => this.colAutoInputs.filter(y => y === x).length > 0);
         keys.forEach((key) => {
-          if (
-            JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
-          ) {
+          if(JSON.stringify(currentCell[key]) === 'null' || JSON.stringify(currentCell[key]) === undefined){
+            currentCell[key] = prevRow[key];
             currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
-            currentCell.pq_cellstyle[`${key}`] = { color: "white" };
-            let sKey = indexTab1 + "-" + this.activeTab + "-" + j + "-" + key;
-            if (this.lstItemEdited.indexOf(sKey) === -1) {
-              this.lstItemEdited.push(sKey);
+            currentCell.pq_cellstyle[`${key}`] = { color: "gray" };
+          }
+          else{
+            if (
+              JSON.stringify(currentCell[key]) !== JSON.stringify(prevRow[key])
+            ) {
+              currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+              currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+              let sKey = indexTab1 + "-" + this.activeTab + "-" + j + "-" + key;
+              if (this.lstItemEdited.indexOf(sKey) === -1) {
+                this.lstItemEdited.push(sKey);
+              }
             }
           }
         });
