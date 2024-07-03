@@ -179,7 +179,7 @@ export class ThreeCircleService {
     })
 
     dataPoint.map((data,index)=>{
-      let geometry = data.dia === null || data.dia === "null" ? new THREE.SphereBufferGeometry(0) : new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
+      let geometry = data.dia === null || data.dia === "" ? new THREE.SphereBufferGeometry(0) : new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
       for (let i = 0; i < data.quantity ;i++){
         const mesh = new THREE.Mesh(
           geometry,

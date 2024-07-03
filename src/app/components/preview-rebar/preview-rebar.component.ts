@@ -164,7 +164,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const lowerside = this.translate.instant("preview_rebar.lower_side");
     const lateral = this.translate.instant("preview_rebar.lateral_rebar");    
     let calPoint =  this.rebar.selectedCalPoint; 
-
+    console.log("rebar", this.rebar)
     if (Object.keys(this.rebar).length != 0) {
       this.rebar.selectedCalPoint = newRebar !== undefined ? newRebar : this.rebar.selectedCalPoint;
       let calPoint =  this.rebar.selectedCalPoint; 
@@ -220,7 +220,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }
           axialRebarData.push({
             rebar_type: rebar_type,
-            rebar_dia: rebar.dia === null ? "null" : rebar.dia,
+            rebar_dia: rebar.dia === null ? "" : rebar.dia,
             num: rebar.quantity,
             distance_top: rebar.dist_top,
             side_cover: rebar.dist_side,
@@ -258,7 +258,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       const stirrup = (calPoint.input_mode === 1) ? calPoint.stirrup : null;
       if (stirrup) {
         stirrupData.push({
-          stirrup_dia: stirrup.stirrup_dia == null ? "null" : stirrup.stirrup_dia,
+          stirrup_dia: stirrup.stirrup_dia == null ? "" : stirrup.stirrup_dia,
           stirrup_n: stirrup.stirrup_n,
           stirrup_ss: stirrup.stirrup_ss,
         })
@@ -314,7 +314,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           num: null,
           pq_ri: i,
           rebar_type: this.typeView === 3 ? 7 : "",
-          rebar_dia: "null",
+          rebar_dia: "",
           side_cover: null,
         }));
         axialRebarData = [...axialRebarData, ...pushAxialRebarData];
@@ -323,7 +323,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
 
     if (calPoint != undefined && calPoint.input_mode === 1 && stirrupData.length <= 1){
       let pushStirrupData = Array.from({ length: 1 - stirrupData.length }, (i) => ({
-          stirrup_dia: "null",
+          stirrup_dia: "",
           stirrup_n : null,
           stirrup_ss: null,
           pq_ri: i
@@ -500,7 +500,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         let indexBar= table_data_bar.findIndex(data=> data.index ===  this.rebar.selectedCalPoint.index)
         if(indexBar !== -1){
           let newCalPoint= this.setCalPoint(this.table_datas_cal_point);
-          table_data_bar[indexBar].haunch_height= newCalPoint.haunch_height            
+          table_data_bar[indexBar].haunch_height = newCalPoint.haunch_height            
+          table_data_bar[indexBar + 1].haunch_height = newCalPoint.haunch_height   
           this.bars.setTableColumns(table_data_bar)  
           this.rebar.selectedCalPoint.haunch_height = newCalPoint.haunch_height;
           this.rebar.selectedCalPoint.haunch_M = newCalPoint.haunch_height;
@@ -580,7 +581,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     table_data[0].map((data)=>{
       const b = {
         rebar_type: null,
-        dia: "null",
+        dia: "",
         quantity: null,
         dist_top: null,
         dist_side: null,                  
@@ -641,7 +642,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         }       
       }
           b.dist_top= data.distance_top          
-          b.dia = data.rebar_dia === "null" ? null : data.rebar_dia
+          b.dia = data.rebar_dia === "" ? null : data.rebar_dia
           b.quantity= data.num                
           b.interval=data.interval      
           dataNew.push(b)
@@ -657,7 +658,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private setStrrup(table_data){
     var data = table_data[0][0]
     var stirrup = this.bars.default_stirrup_bar()
-    stirrup.stirrup_dia = data.stirrup_dia === "null" ? null : data.stirrup_dia;
+    stirrup.stirrup_dia = data.stirrup_dia === "" ? null : data.stirrup_dia;
     stirrup.stirrup_n = data.stirrup_n;
     stirrup.stirrup_ss = data.stirrup_ss;
     return stirrup;
@@ -728,7 +729,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const side_cover = this.translate.instant("preview_rebar.side_cover");
     
     const rebar_type_options = [upper_side, lower_side, lateral_rebar];
-    const rebar_dia_options = ["null",10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
+    const rebar_dia_options = ["",10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
 
     if (this.typeTable === 1) {
       this.axialHeaders.push(
@@ -874,7 +875,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const rebar_dia = this.translate.instant("preview_rebar.rebar_dia");
     const number = this.translate.instant("preview_rebar.num");
     const interval = this.translate.instant("preview_rebar.interval")
-    const rebar_dia_options = ["null",10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
+    const rebar_dia_options = ["",10, 13, 16, 19, 22, 25, 29, 32, 35, 38, 41, 51];
 
     this.stirrupHeaders.push(
       {

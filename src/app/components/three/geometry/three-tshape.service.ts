@@ -298,7 +298,7 @@ export class ThreeTshapeService {
     })
     
     dataPoint.map((data,index)=>{
-      this.geometry = data.dia === null || data.dia === "null" ? new THREE.SphereBufferGeometry(0) : new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
+      this.geometry = data.dia === null || data.dia === "" ? new THREE.SphereBufferGeometry(0) : new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
       let interval=0
       for (let i = 1; i <= data.quantity;i++){
         const mesh = new THREE.Mesh(this.geometry,
