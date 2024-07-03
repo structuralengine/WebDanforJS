@@ -256,6 +256,14 @@ export class InputBarsService {
           column1['bh'] = data['b'];
           column1['haunch_height'] = data['haunch_M'];
           column1['input_mode'] = data['input_mode'];
+
+          let keysRebar0 = ["dia", "dist_side", "dist_top", "interval", "quantity","rebar_type"]
+          data['rebar0'].forEach(value => {
+            keysRebar0.map((key)=>{
+              value[key] = value[key] === null ? value[key] : +value[key]
+            })
+          });
+          
           column1['rebar0'] = data['rebar0'];
 
           column1['design_point_id'] = data['rebar1'].title;
@@ -273,7 +281,7 @@ export class InputBarsService {
           column1['side_cover'] = data['sidebar1'].side_cover;
           column1['side_ss'] = data['sidebar1'].side_ss;
 
-          column1['stirrup_dia'] = data['stirrup'].stirrup_dia;
+          column1['stirrup_dia'] = data['stirrup'].stirrup_dia === null ? data['stirrup'].stirrup_dia: +data['stirrup'].stirrup_dia;
           column1['stirrup_n'] = data['stirrup'].stirrup_n;
           column1['stirrup_ss'] = data['stirrup'].stirrup_ss;
 

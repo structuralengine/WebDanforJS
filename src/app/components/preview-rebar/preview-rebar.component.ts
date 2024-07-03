@@ -220,7 +220,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }
           axialRebarData.push({
             rebar_type: rebar_type,
-            rebar_dia: rebar.dia === null ? "" : rebar.dia,
+            rebar_dia: rebar.dia === null ? "" : +rebar.dia,
             num: rebar.quantity,
             distance_top: rebar.dist_top,
             side_cover: rebar.dist_side,
@@ -258,7 +258,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       const stirrup = (calPoint.input_mode === 1) ? calPoint.stirrup : null;
       if (stirrup) {
         stirrupData.push({
-          stirrup_dia: stirrup.stirrup_dia == null ? "" : stirrup.stirrup_dia,
+          stirrup_dia: stirrup.stirrup_dia == null ? "" : +stirrup.stirrup_dia,
           stirrup_n: stirrup.stirrup_n,
           stirrup_ss: stirrup.stirrup_ss,
         })
@@ -579,7 +579,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const lateral = this.translate.instant("preview_rebar.lateral_rebar");
     let dataNew= new Array();
     table_data[0].map((data)=>{
-      const b = {
+      const b:any = {
         rebar_type: null,
         dia: "",
         quantity: null,
@@ -642,7 +642,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         }       
       }
           b.dist_top= data.distance_top          
-          b.dia = data.rebar_dia === "" ? null : data.rebar_dia
+          b.dia = data.rebar_dia === "" ? null : +data.rebar_dia
           b.quantity= data.num                
           b.interval=data.interval      
           dataNew.push(b)
@@ -658,7 +658,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private setStrrup(table_data){
     var data = table_data[0][0]
     var stirrup = this.bars.default_stirrup_bar()
-    stirrup.stirrup_dia = data.stirrup_dia === "" ? null : data.stirrup_dia;
+    stirrup.stirrup_dia = data.stirrup_dia === "" ? null : +data.stirrup_dia;
     stirrup.stirrup_n = data.stirrup_n;
     stirrup.stirrup_ss = data.stirrup_ss;
     return stirrup;
