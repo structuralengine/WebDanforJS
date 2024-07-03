@@ -1,6 +1,7 @@
 <div class="c-subNavArea">
   <nav>
-    <ul #subNavArea class="c-subNavArea__nav" [ngClass]="{'has-scrollbar': hasScrollbar, 'no-scrollbar': !hasScrollbar}">
+<<<<<<< HEAD
+    <ul class="c-subNavArea__nav">
       <li
         class="c-subNavArea__navItem"
         *ngFor="let groupe of table_datas; index as i"
@@ -11,6 +12,12 @@
           class="c-subNavArea__navItemTitle"
         >
           <span>{{ getGroupeName(i) }}</span>
+=======
+    <ul #subNavArea class="c-subNavArea__nav" [ngClass]="{'has-scrollbar': hasScrollbar, 'no-scrollbar': !hasScrollbar}">
+      <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i" >
+        <a (click)="activePageChenge(i)" id="bar{{i}}" class="c-subNavArea__navItemTitle">
+          <span>{{getGroupeName(i)}}</span>
+>>>>>>> develop
         </a>
       </li>
     </ul>
