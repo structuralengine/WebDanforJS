@@ -340,13 +340,16 @@ export class InputSafetyFactorsMaterialStrengthsService {
           }
         }
       }
-
+      const default_material_concrete = this.default_material_concrete()
       if (id in this.material_concrete) {
         const old_material_concrete = this.material_concrete[id];
         for (const key of Object.keys(tmp_material_concrete)) {
           if (key in old_material_concrete) {
             tmp_material_concrete[key] = old_material_concrete[key];
           }
+          if (tmp_material_concrete[key] === null) {
+            tmp_material_concrete[key] = default_material_concrete[key];
+        }
         }
       }
 
