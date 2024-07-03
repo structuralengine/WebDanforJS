@@ -257,12 +257,14 @@ export class InputBarsService {
           column1['haunch_height'] = data['haunch_M'];
           column1['input_mode'] = data['input_mode'];
 
-          let keysRebar0 = ["dia", "dist_side", "dist_top", "interval", "quantity","rebar_type"]
-          data['rebar0'].forEach(value => {
-            keysRebar0.map((key)=>{
-              value[key] = value[key] === null ? value[key] : +value[key]
-            })
-          });
+          if (!!data['rebar0'] && data['rebar0']?.length>0){
+            let keysRebar0 = ["dia", "dist_side", "dist_top", "interval", "quantity", "rebar_type"]
+            data['rebar0'].forEach(value => {
+              keysRebar0.map((key) => {
+                value[key] = value[key] === null ? value[key] : +value[key]
+              })
+            });
+          }
           
           column1['rebar0'] = data['rebar0'];
 
