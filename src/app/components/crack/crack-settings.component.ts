@@ -145,7 +145,7 @@ export class CrackSettingsComponent
             currentCell[element] = defaultCrack[element];
           }
         })
-        
+         
         if (j === 0) {
           currentCell.pq_cellstyle = this.rowStyle;
           const keys = keyAlls.filter(
@@ -157,12 +157,14 @@ export class CrackSettingsComponent
               currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
               currentCell.pq_cellstyle[`${key}`] = { color: "gray" };
             }
-            if (
-              JSON.stringify(currentCell[key]) !== JSON.stringify(defaultCrack[key])
-            ) {
-              currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
-              currentCell.pq_cellstyle[`${key}`] = { color: "white" };
-              this.lstItemEdited.push(i + "-" + j + "-" + key);
+            else{
+              if (
+                JSON.stringify(currentCell[key]) !== JSON.stringify(defaultCrack[key])
+              ) {
+                currentCell.pq_cellstyle = { ...currentCell.pq_cellstyle };
+                currentCell.pq_cellstyle[`${key}`] = { color: "white" };
+                this.lstItemEdited.push(i + "-" + j + "-" + key);
+              }
             }
           });
         } else {

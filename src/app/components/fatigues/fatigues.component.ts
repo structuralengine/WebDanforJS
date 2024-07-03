@@ -107,7 +107,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.lstItemEdited = [];
     this.defaultFatigue = {};
-    this.defaultFatigue = this.fatigues.default_fatigue(0);
+    this.defaultFatigue = this.fatigues.default_fatigue_value(0);
     
     const fatigues = this.fatigues.getSaveData();
 
@@ -121,35 +121,106 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     // グリッ�の設�
     this.options = new Array();
     for (let i = 0; i < this.table_datas.length; i++) {
+      debugger
       const rowData = this.table_datas[i];
+
+      const keyAll0s = Object.keys(rowData[0]);
+      const keyAll1s = Object.keys(rowData[1]);
+
+      Object.keys(this.defaultFatigue).forEach((element: any) => {
+        if(keyAll0s.indexOf(element) === -1){
+          rowData[0][element] = this.defaultFatigue[element];
+        }
+        if(keyAll1s.indexOf(element) === -1){
+          rowData[1][element] = this.defaultFatigue[element];
+        }
+      })
+
+      const rowData0 = this.table_datas[i][0];
+      const rowData1 = this.table_datas[i][1];
+
+      const key0s = keyAll0s.filter(
+        (x) => this.colAutoInputs.filter((y) => y === x).length > 0
+      );
+      key0s.forEach((key) => {
+        if(JSON.stringify(rowData0[key]) === 'null' || JSON.stringify(rowData0[key]) === undefined){
+          if(this.activeTab === "for_b"){
+            rowData0[key] = this.defaultFatigue.M1[key.replace("M_", "")];
+          }
+          if(this.activeTab === "for_s"){
+            rowData0[key] = this.defaultFatigue.V1[key.replace("V_", "")];
+          }
+        }
+      });
+
+      const key1s = keyAll0s.filter(
+        (x) => this.colAutoInputs.filter((y) => y === x).length > 0
+      );
+      key1s.forEach((key) => {
+        if(JSON.stringify(rowData1[key]) === 'null' || JSON.stringify(rowData1[key]) === undefined){
+          if(this.activeTab === "for_b"){
+              rowData1[key] = this.defaultFatigue.M1[key.replace("M_", "")];
+          }
+          if(this.activeTab === "for_s"){
+              rowData1[key] = this.defaultFatigue.V1[key.replace("V_", "")];
+          }
+        }
+      });
+
       for (let j = 0; j < rowData.length - 1; j++) {
         const rowData = this.table_datas[i];
         //
-        const nonNullValues = {};
+        const nonNullValue0s = {};
+        const nonNullValue1s = {};
 
         //
-        for (let j = 0; j < rowData.length; j++) {
+        for (let j = 0; j < rowData.length; j += 2) {
           const currentCell = rowData[j];
           Object.keys(currentCell).forEach((key) => {
             if (currentCell[key] !== null) {
-              if (!nonNullValues[key]) {
-                nonNullValues[key] = [];
+              if (!nonNullValue0s[key]) {
+                nonNullValue0s[key] = [];
               }
-              nonNullValues[key].push(currentCell[key]);
+              nonNullValue0s[key].push(currentCell[key]);
             }
           });
         }
 
-        //
-        for (let j = 0; j < rowData.length; j++) {
+        for (let j = 1; j < rowData.length; j += 2) {
+          const currentCell = rowData[j];
+          Object.keys(currentCell).forEach((key) => {
+            if (currentCell[key] !== null) {
+              if (!nonNullValue1s[key]) {
+                nonNullValue1s[key] = [];
+              }
+              nonNullValue1s[key].push(currentCell[key]);
+            }
+          });
+        }
+
+        
+        for (let j = 0; j < rowData.length; j += 2) {
           const currentCell = rowData[j];
           Object.keys(currentCell).forEach((key) => {
             if (
               currentCell[key] === null &&
-              nonNullValues[key] &&
-              nonNullValues[key].length > 0
+              nonNullValue0s[key] &&
+              nonNullValue0s[key].length > 0
             ) {
-              currentCell[key] = nonNullValues[key][0];
+              currentCell[key] = nonNullValue0s[key][0];
+            }
+          });
+        }
+
+        for (let j = 1; j < rowData.length; j += 2) {
+          const currentCell = rowData[j];
+          Object.keys(currentCell).forEach((key) => {
+            if (
+              currentCell[key] === null &&
+              nonNullValue1s[key] &&
+              nonNullValue1s[key].length > 0
+            ) {
+              currentCell[key] = nonNullValue1s[key][0];
             }
           });
         }
@@ -855,7 +926,6 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadAutoInputData(rowData : any, indexTab1 : any){
-    let defaultFatigue = this.fatigues.default_fatigue(this.idTab);
     for (let j = 0; j < rowData.length; j += 2) {
       let currentCell = rowData[j];
       if (j === 0) {

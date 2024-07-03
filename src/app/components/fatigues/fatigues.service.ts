@@ -49,7 +49,24 @@ export class InputFatiguesService {
     };
   }
 
-  private default_fatigue_coefficient(target: string): any {
+  public default_fatigue_value(id: number): any {
+    return {
+      m_no: null,
+      index: id,
+      g_name: null,
+      p_name: null,
+      b: null,
+      h: null,
+      //itle1: "上側",
+      M1: this.default_fatigue_coefficient_value("Md"),
+      V1: this.default_fatigue_coefficient_value("Vd"),
+      //title2: "下側",
+      M2: this.default_fatigue_coefficient_value("Md"),
+      V2: this.default_fatigue_coefficient_value("Vd"),
+    };
+  }
+
+  private default_fatigue_coefficient_value(target: string): any {
     const result = {
       SA: 1.0,
       SB: 1.0,
@@ -68,6 +85,29 @@ export class InputFatiguesService {
     } else {
       result["r1_2"] = 0.65;
       result["r1_3"] = 1.0;
+    }
+    return result;
+  }
+
+  private default_fatigue_coefficient(target: string): any {
+    const result = {
+      SA: null,
+      SB: null,
+      NA06: null,
+      NB06: null,
+      NA12: null,
+      NB12: null,
+      A: null,
+      B: null,
+    };
+    if (target === "Md") {
+      result["r1_1"] = null;
+      result["r1_3"] = null;
+      result["Class"] = null;
+      result["weld"] = null;
+    } else {
+      result["r1_2"] = null;
+      result["r1_3"] = null;
     }
     return result;
   }
