@@ -954,6 +954,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         nodrag: true,
         paste: false,
         align: "center",
+        defaultValue : 0,
         cls: "pq-drop-icon pq-side-icon",
         editor: {
           type: "select",
@@ -962,15 +963,27 @@ export class SafetyFactorsMaterialStrengthsComponent
           valueIndx: "id",
         },
         render: (ui) => {
-          // return (this.optionsCon1[ui.cellData] || {}).text;
-          return ui.rowIndx === 0? (this.optionsCon1[ui.cellData] || {}).text : (this.optionsCon2[ui.cellData] || {}).text;
+          // return ui.rowIndx === 0? (this.optionsCon1[ui.cellData] || {}).text : (this.optionsCon2[ui.cellData] || {}).text;
+          const allowedValues1 = [18, 21, 24, 27, 30, 33, 36, 42, 45, 50, 55, 60];
+          const allowedValues2 = [ 20, 25, 40];
+          const value = ui.rowData.value;
+      
+          if (allowedValues1.includes(value)&& ui.rowIndx === 0) {
+            // return ui.rowIndx === 0 ? (this.optionsCon1[ui.cellData] || {}).text : (this.optionsCon2[ui.cellData] || {}).text;
+            return (this.optionsCon1[ui.cellData] || {}).text;
+          } if(allowedValues2.includes(value)&& ui.rowIndx !== 0) {
+            return (this.optionsCon2[ui.cellData] || {}).text;
+          }
+          else{
+            return this.translate.instant("safety-factors-material-strengths.av");
+          }
         },
       },
       {
         title: this.translate.instant(
           "safety-factors-material-strengths.value"
         ),
-        align: "left",
+        align: "center",
         dataType: "integer",
         dataIndx: "value",
         editable: (op)=>op.rowData.value === 0? true : false,
