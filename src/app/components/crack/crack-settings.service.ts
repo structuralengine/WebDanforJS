@@ -56,8 +56,8 @@ export class InputCrackSettingsService {
       vis_l: false,
       ecsd_u: 450,
       ecsd_l: 450,
-      kr: 0.85,
-      k4: 0.5,
+      kr: 0.5,
+      k4: 0.85,
       JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
       wlimit: 0.300
     };
@@ -207,7 +207,7 @@ export class InputCrackSettingsService {
           }
         }
         if (flag) {
-          value['k4'] = 0.85;
+          value['k4'] = 0.5;
         }
       }
     }

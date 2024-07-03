@@ -581,6 +581,9 @@ export class CrackSettingsComponent
     // 鉁�運輸機構�場�
     const speci1 = this.basic.get_specification1();
     const speci2 = this.basic.get_specification2();
+
+    if(this.checkedRadioValue === undefined)
+      this.checkedRadioValue = speci2;
     //( 鉁�    &&  運輸機�) or フィリピン の場�
     if ((speci1 == 0 && speci2 === 1) || speci1 == 1) {
       // 縁応力度が制限値以�場合でも�び割れ幂�計算するフラグ
