@@ -39,6 +39,27 @@ export class InputCrackSettingsService {
       kr: null,
       k4: null,
       JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
+      wlimit: null
+    };
+  }
+
+  public default_crack_value(id: number): any {
+    return {
+      index: id,
+      m_no: null,
+      g_name: null,
+      p_name: null,
+      con_u: 1,
+      con_l: 1,
+      con_s: 1,
+      vis_u: false,
+      vis_l: false,
+      ecsd_u: 450,
+      ecsd_l: 450,
+      kr: 0.5,
+      k4: 0.85,
+      JRTT05: false, // 縁応力度が制限値以内の場合でもひび割れ幅を計算するフラグ
+      wlimit: 0.300
     };
   }
 
@@ -68,6 +89,7 @@ export class InputCrackSettingsService {
           data.g_name = pos.g_name;
           data.p_name = pos.p_name;
           data.g_id = member.g_id;
+          data.wlimit = data.wlimit;
 
           table_groupe.push(data);
           count++;
@@ -82,6 +104,11 @@ export class InputCrackSettingsService {
     let result = this.crack_list.find((value) => value.index === index);
     if (result == null) {
       result = this.default_crack(index);
+      for (const key in result) {
+        if (result.hasOwnProperty(key) && result[key] === null) {
+            result[key] = this.default_crack(index)[key];
+        }
+      }
       this.crack_list.push(result);
     }
     return result;
@@ -110,7 +137,7 @@ export class InputCrackSettingsService {
       }
       // 当該入力行より上の行
       let endFlg = true;
-      const check_list = ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'k4', 'JRTT05'];
+      const check_list = ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr', 'k4', 'JRTT05','wlimit'];
       for (const key of check_list){
         if (result[key] == null && key in data) {
           result[key] = this.helper.toNumber(data[key]);
@@ -144,6 +171,7 @@ export class InputCrackSettingsService {
       b.kr =     column.kr;
       b.k4 =     column.k4;
       b.JRTT05 = column.JRTT05;
+      b.wlimit = column.wlimit;
       this.crack_list.push(b);
     }
 
@@ -179,7 +207,7 @@ export class InputCrackSettingsService {
           }
         }
         if (flag) {
-          value['k4'] = 0.85;
+          value['k4'] = 0.5;
         }
       }
     }
