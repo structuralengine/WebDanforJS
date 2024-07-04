@@ -983,8 +983,9 @@ export class SafetyFactorsMaterialStrengthsComponent
         title: this.translate.instant(
           "safety-factors-material-strengths.value"
         ),
-        align: "center",
+        align: "right",
         dataType: "integer",
+        format: "#.0",
         dataIndx: "value",
         editable: (op)=>op.rowData.value === 0? true : false,
         sortable: false,
