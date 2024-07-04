@@ -48,6 +48,9 @@ export class ThreeNodeService {
     let py: any;
     let xmin: any = ni.x;
     let ymin: any = ni.y;
+    if(isNaN(xmin) || isNaN(ymin)){
+      return;
+    }
     let check: boolean = false;
     let i = JSON.parse(JSON.stringify(ni));
     let j = JSON.parse(JSON.stringify(nj));

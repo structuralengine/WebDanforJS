@@ -433,9 +433,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }
             this.drawPreview();
         }
-        this.setCalculatedPointHeader()
-        // this.calPointGrid.refreshDataAndView(); 
-        // this.calPointGrid.refresh();
+        this.setCalculatedPointHeader()        
         this.calculatedPointOptions.colModel = this.calculatedPointHeaders
         this.calPointGrid.options = this.calculatedPointOptions
         this.calPointGrid.refreshCM();
@@ -498,6 +496,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }
           this.drawPreview();
         }
+        this.setCalculatedPointHeader()        
+        this.calculatedPointOptions.colModel = this.calculatedPointHeaders
+        this.calPointGrid.options = this.calculatedPointOptions
+        this.calPointGrid.refreshCM();
       }
     }   
 
@@ -1036,21 +1038,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   }
 
   private copyInputValues(calPoint : any, table_data_bar : any, type: string,arraySample:any) {
-    let indexRebar = table_data_bar.findIndex(data => data.index === calPoint.index)
-    // for (let i = indexRebar + 2; i < table_data_bar.length; i += 2) {
-    //     switch (type) {
-    //       case "axial":
-
-    //         table_data_bar[i].rebar0 = calPoint.rebar0;
-    //         break;        
-    //       case "stirrup":
-    //         table_data_bar[i].sttirup = calPoint.stirrup;
-    //         table_data_bar[i].stirrup_dia = calPoint.stirrup.stirrup_dia;
-    //         table_data_bar[i].stirrup_n =  calPoint.stirrup.stirrup_n;
-    //         table_data_bar[i].stirrup_ss =  calPoint.stirrup.stirrup_ss;
-    //         break; 
-    //     }
-    // }
     arraySample.map(i=>{
       switch (type) {
         case "axial":
@@ -1108,9 +1095,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     let arrayRb0: any = []
     let arrayStirrup: any = []
     rebarList.map((data) => {
-      if(Object.keys(data).length > 0){
-        this.OrderByRebarType(data.rebar0);
-        arrayRb0.push(data.rebar0)
+      if(Object.keys(data).length > 0){        
+        arrayRb0.push(this.OrderByRebarType(data.rebar0))
         arrayStirrup.push(data.stirrup)
       }      
     })
