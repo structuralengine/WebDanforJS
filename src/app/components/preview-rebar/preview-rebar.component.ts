@@ -60,7 +60,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   }
 
   @Input() rebar: any
-  @ViewChild('calPointGrid') grid: SheetComponent;
+  @ViewChild('calPointGrid') calPointGrid: SheetComponent;
   @ViewChild('axialGrid') axialGrid : SheetComponent;
   @ViewChild('stirrupGrid') stirrupGrid : SheetComponent;
 
@@ -99,61 +99,63 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     let arrLo: any[] = []
     let arrNew: any[] = []
     const member = this.member;
-    switch(this.typeView){
-      case 1: case 2:{
-        rebar0.map((data) => {
-          if(data.rebar_type == 0){
-            arrUp.push(data)
-          }
-          if(data.rebar_type == 4){
-            arrLa.push(data)
-          }
-          if(data.rebar_type == 1){
-            arrLo.push(data)
-          }          
-        })
-        arrUp.sort((a,b)=> a.dis_top- b.dis_top)
-        arrLa.sort((a,b)=> a.dis_top- b.dis_top)
-        arrLo.sort((a,b)=> a.dis_top- b.dis_top)
-        arrNew = [...arrUp, ...arrLa, ...arrLo]
-        break;
-      }     
-      case 4: {
-        if(member.B > member.H){
+    if(rebar0 != null){
+      switch(this.typeView){
+        case 1: case 2:{
           rebar0.map((data) => {
             if(data.rebar_type == 0){
               arrUp.push(data)
             }
-            if(data.rebar_type == 5){
+            if(data.rebar_type == 4){
               arrLa.push(data)
             }
             if(data.rebar_type == 1){
               arrLo.push(data)
-            }          
-          })
-        }else{
-          rebar0.map((data) => {
-            if(data.rebar_type == 2){
-              arrUp.push(data)
             }
-            if(data.rebar_type == 6){
-              arrLa.push(data)
-            }
-            if(data.rebar_type == 3){
-              arrLo.push(data)
-            }          
           })
-        }    
-        arrUp.sort((a,b)=> a.dis_top- b.dis_top)
-        arrLa.sort((a,b)=> a.dis_top- b.dis_top)
-        arrLo.sort((a,b)=> a.dis_top- b.dis_top)   
-        arrNew = [...arrUp, ...arrLa, ...arrLo]
-        break;
-      }    
-      default: 
-        arrNew = rebar0;        
-        break;
-    }  
+          arrUp.sort((a,b)=> a.dis_top- b.dis_top)
+          arrLa.sort((a,b)=> a.dis_top- b.dis_top)
+          arrLo.sort((a,b)=> a.dis_top- b.dis_top)
+          arrNew = [...arrUp, ...arrLa, ...arrLo]
+          break;
+        }
+        case 4: {
+          if(member.B > member.H){
+            rebar0.map((data) => {
+              if(data.rebar_type == 0){
+                arrUp.push(data)
+              }
+              if(data.rebar_type == 5){
+                arrLa.push(data)
+              }
+              if(data.rebar_type == 1){
+                arrLo.push(data)
+              }
+            })
+          }else{
+            rebar0.map((data) => {
+              if(data.rebar_type == 2){
+                arrUp.push(data)
+              }
+              if(data.rebar_type == 6){
+                arrLa.push(data)
+              }
+              if(data.rebar_type == 3){
+                arrLo.push(data)
+              }
+            })
+          }
+          arrUp.sort((a,b)=> a.dis_top- b.dis_top)
+          arrLa.sort((a,b)=> a.dis_top- b.dis_top)
+          arrLo.sort((a,b)=> a.dis_top- b.dis_top)
+          arrNew = [...arrUp, ...arrLa, ...arrLo]
+          break;
+        }
+        default:
+          arrNew = rebar0;
+          break;
+      } 
+    } 
     return arrNew;
   }
   private displayPreview(newRebar? : any, changeCalPoint : boolean = false) {
@@ -393,6 +395,14 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           let table_data_bar = this.rebar.table_data
           let indexBar= table_data_bar.findIndex(data=> data.index ===  this.rebar.selectedCalPoint.index)
           if(indexBar !== -1){
+            let indexSampleValue = [];
+            let rbOrder1 = JSON.stringify(this.OrderByRebarType(table_data_bar[indexBar].rebar0))
+            for (let i = indexBar; i <= table_data_bar.length - 3; i += 2) {
+              let rbOrder2 = JSON.stringify(this.OrderByRebarType(table_data_bar[i+2].rebar0))
+              if (rbOrder1 === rbOrder2){
+                indexSampleValue.push(i+2)
+              }
+            }
             let newRebar0 =  this.OrderByRebarType(this.setRebar0(this.table_datas_axial))
             table_data_bar[indexBar].rebar0 = newRebar0          
             this.bars.setTableColumns(table_data_bar)  
@@ -418,11 +428,17 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
                 } 
               })
             }     
-            this.copyInputValues(this.rebar.selectedCalPoint, table_data_bar, "axial")
+            this.copyInputValues(this.rebar.selectedCalPoint, table_data_bar, "axial", indexSampleValue)
             this.axialGrid.refreshDataAndView(); 
           }
             this.drawPreview();
         }
+        this.setCalculatedPointHeader()
+        // this.calPointGrid.refreshDataAndView(); 
+        // this.calPointGrid.refresh();
+        this.calculatedPointOptions.colModel = this.calculatedPointHeaders
+        this.calPointGrid.options = this.calculatedPointOptions
+        this.calPointGrid.refreshCM();
       }
     }
     
@@ -463,6 +479,14 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           let table_data_bar = this.rebar.table_data
           let indexBar= table_data_bar.findIndex(data=> data.index ===  this.rebar.selectedCalPoint.index)
           if(indexBar !== -1){
+            let indexSampleValue = [];
+            let rbOrder1 = JSON.stringify(this.OrderByRebarType(table_data_bar[indexBar].rebar0))
+            for (let i = indexBar; i <= table_data_bar.length - 3; i += 2) {
+              let rbOrder2 = JSON.stringify(this.OrderByRebarType(table_data_bar[i + 2].rebar0))
+              if (rbOrder1 === rbOrder2) {
+                indexSampleValue.push(i + 2)
+              }
+            }
             let newStirrup= this.setStrrup(this.table_datas_stirrup)
             table_data_bar[indexBar].stirrup=newStirrup   
             table_data_bar[indexBar].stirrup_dia=newStirrup.stirrup_dia  
@@ -470,8 +494,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
             table_data_bar[indexBar].stirrup_ss=newStirrup.stirrup_ss       
             this.bars.setTableColumns(table_data_bar)  
             this.rebar.selectedCalPoint.stirrup = newStirrup;
+            this.copyInputValues(this.rebar.selectedCalPoint, table_data_bar, "stirrup", indexSampleValue)
           }
-          this.copyInputValues(this.rebar.selectedCalPoint, table_data_bar, "stirrup")
           this.drawPreview();
         }
       }
@@ -518,13 +542,13 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       cellClick: (evt, ui) => {  
         this.clearFocus(calPointListData);
         ui.rowData.pq_rowcls = "pq-state-select ui-state-highlight";
-        this.grid.refreshDataAndView();    
+        this.calPointGrid.refreshDataAndView();    
         this.member = this.members.getData(ui.rowData.no)
         this.typeView = this.member.shape
         if(Object.keys(this.rebar).length != 0){
           for (let rebar of this.rebar.rebarList) {
             if (rebar.p_name === ui.rowData.p_name && rebar.m_no === ui.rowData.no) {          
-              if(rebar.rebar0.length === 0){
+              if(rebar.rebar0?.length === 0){
                 this.rebar.selectedCalPoint = rebar
                 this.removeScene();  
                 this.typeView = ""                         
@@ -1011,25 +1035,35 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     toRemove.map((e)=> e.remove());    
   }
 
-  private copyInputValues(calPoint : any, table_data_bar : any, type: string) {
+  private copyInputValues(calPoint : any, table_data_bar : any, type: string,arraySample:any) {
     let indexRebar = table_data_bar.findIndex(data => data.index === calPoint.index)
-    for (let i = indexRebar + 2; i < table_data_bar.length; i += 2) {
-      if (table_data_bar[i].m_no === "") {
-        switch (type) {
-          case "axial":
-            table_data_bar[i].rebar0 = calPoint.rebar0;
-            break;        
-          case "stirrup":
-            table_data_bar[i].sttirup = calPoint.stirrup;
-            table_data_bar[i].stirrup_dia = calPoint.stirrup.stirrup_dia;
-            table_data_bar[i].stirrup_n =  calPoint.stirrup.stirrup_n;
-            table_data_bar[i].stirrup_ss =  calPoint.stirrup.stirrup_ss;
-            break; 
-        }
-      } else {
-        break;
+    // for (let i = indexRebar + 2; i < table_data_bar.length; i += 2) {
+    //     switch (type) {
+    //       case "axial":
+
+    //         table_data_bar[i].rebar0 = calPoint.rebar0;
+    //         break;        
+    //       case "stirrup":
+    //         table_data_bar[i].sttirup = calPoint.stirrup;
+    //         table_data_bar[i].stirrup_dia = calPoint.stirrup.stirrup_dia;
+    //         table_data_bar[i].stirrup_n =  calPoint.stirrup.stirrup_n;
+    //         table_data_bar[i].stirrup_ss =  calPoint.stirrup.stirrup_ss;
+    //         break; 
+    //     }
+    // }
+    arraySample.map(i=>{
+      switch (type) {
+        case "axial":
+          table_data_bar[i].rebar0 = calPoint.rebar0;
+          break;
+        case "stirrup":
+          table_data_bar[i].sttirup = calPoint.stirrup;
+          table_data_bar[i].stirrup_dia = calPoint.stirrup.stirrup_dia;
+          table_data_bar[i].stirrup_n = calPoint.stirrup.stirrup_n;
+          table_data_bar[i].stirrup_ss = calPoint.stirrup.stirrup_ss;
+          break;
       }
-    }
+    })
     this.bars.setTableColumns(table_data_bar)  
     this.rebar.rebarList = this.bars.bar_list;
     let m_no = this.rebar.rebarList[0];
@@ -1080,16 +1114,58 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         arrayStirrup.push(data.stirrup)
       }      
     })
-    for(let i = 0 ; i <= arrayRb0.length - 2 ; i++){
-      const rb01 =JSON.stringify(arrayRb0[i]);
-      const rb02 = JSON.stringify(arrayRb0[i + 1]);
-      const striipup1 =JSON.stringify(arrayStirrup[i]);
-      const striipup2 = JSON.stringify(arrayStirrup[i + 1]);
-      if(rb01 === rb02 && striipup1 === striipup2){
-        if(i === 0){
-          cls.push("dot-line");
+    if (rebarList != null){
+      if (rebarList.length > 1) {
+        for (let i = 0; i <= arrayRb0.length - 2; i++) {
+          const rb01 = JSON.stringify(arrayRb0[i]);
+          const rb02 = JSON.stringify(arrayRb0[i + 1]);
+          const striipup1 = JSON.stringify(arrayStirrup[i]);
+          const striipup2 = JSON.stringify(arrayStirrup[i + 1]);
+          if (rb01 === rb02 && striipup1 === striipup2) {
+            if (i === 0 && arrayRb0.length > 2) {
+              cls.push("dot-line");
+              cls.push("l-shape")
+            }
+            if (i === 0 && arrayRb0.length === 2) {
+              cls.push("dot-line");
+              cls.push("last-l-shape")
+            }
+            if (i > 0 && i < arrayRb0.length - 2) {
+              if (cls[i] === "dot") {
+                cls[i] = "dot-line"
+              }
+              cls.push("l-shape")
+            }
+            if (i === arrayRb0.length - 2) {
+              if (cls[i] === "dot"){
+                cls[i] = "dot-line"
+              }
+              cls.push("last-l-shape")
+            }
+          } else {
+            if (i === 0) {
+              cls.push("dot");
+              cls.push("dot");
+            }
+            if (i > 0 && i < arrayRb0.length - 2) {
+              if (cls[i] === "l-shape"){
+                cls[i] = "last-l-shape";
+              }
+              if (cls[i] === "dot-line") {
+                cls[i] = "dot";
+              }
+              cls.push("dot");
+            }
+            if (i === arrayRb0.length - 2) {
+              if (cls[i] === "l-shape"){
+                cls[i] = "last-l-shape";
+              }
+              cls.push("dot");
+            }
+          }
         }
-      }else{
+      }
+      else {
         cls.push("dot");
       }
     }
