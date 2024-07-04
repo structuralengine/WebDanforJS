@@ -154,7 +154,7 @@ export class ThreeNodeService {
     switch (style) {
       case 0:
         div.style.marginTop = "-4em";
-        div.style.marginLeft = "1em";
+        div.style.marginLeft = "2em";
         if (x < 0) {
           div.style.marginLeft = "-2em";
         }

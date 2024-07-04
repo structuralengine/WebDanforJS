@@ -12,6 +12,7 @@ export class ThreeTshapeService {
   public geometry: THREE.SphereBufferGeometry;
   public geometry1: THREE.SphereBufferGeometry;
   public geometry2: THREE.SphereBufferGeometry;
+  public member : any
   constructor(
     private scene: SceneService,
     private memmber: InputMembersService,
@@ -19,6 +20,7 @@ export class ThreeTshapeService {
   ) { }
   createDemoTShape() {
     var member = this.memmber.getData(this.node.dataRebar.selectedCalPoint.m_no);
+    this.member = member;
     let memH = member['H'];
     let memBt = member['Bt'];
     let memB = member['B'];
@@ -184,9 +186,11 @@ export class ThreeTshapeService {
           }
         }
     }  
-
+    let memH: any = this.member.H
     // dimenstions for rebar_type = 0 & 1
-    const arr_gap01 = this.getArrGap(1,h)
+    let haunch_M = this.node.dataRebar.selectedCalPoint.haunch_M;
+    if (!!haunch_M) memH = this.member.H + haunch_M;
+    const arr_gap01 = this.getArrGap(1, this.member.H)
     //draw line rebar_type = 1
     if (arr_gap01.length >0){  
       let y = 0;
@@ -207,7 +211,7 @@ export class ThreeTshapeService {
     }
 
     // dimenstions for rebar_type = 4
-    const arr_gap04 = this.getArrGap(4,h)  
+    const arr_gap04 = this.getArrGap(4,memH)  
     //draw line rebar_type = 4
     jsonData["1.1"] = {
       x: x_start - n,
@@ -276,10 +280,10 @@ export class ThreeTshapeService {
           arr_gap.push(arr_dis_top[i])
         }
         if (i === arr_dis_top.length) {
-          arr_gap.push(h*this.scale  - arr_dis_top[i - 1])
+          arr_gap.push((h - arr_dis_top[i - 1]).toFixed(1))
         }
         if (i !== 0 && i !== arr_dis_top.length) {
-          arr_gap.push(arr_dis_top[i] - arr_dis_top[i - 1])
+          arr_gap.push((arr_dis_top[i] - arr_dis_top[i - 1]).toFixed(1))
         }
       }
     }   

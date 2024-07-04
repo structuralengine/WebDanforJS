@@ -913,26 +913,28 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const p_name = this.translate.instant("preview_rebar.p_name");
     const haunch = this.translate.instant("preview_rebar.haunch");
     let rebarList = this.rebar.rebarList
+    
     let m_no = 0;
     let cls = []
+    cls= this.addClsCalPoint();
     if (rebarList[rebarList.length - 1].index !== null) {
       rebarList.push({})
     }
-    if (rebarList) {
-      for (let i = 0; i < rebarList.length - 1; i++) {
-        if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no === m_no) {
-          cls.push("l-shape");
-        } else if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no !== m_no) {
-          cls.push("last-l-shape");
-        } else if (rebarList[i].m_no !== m_no && rebarList[i].m_no === rebarList[i + 1].m_no) {
-          cls.push("dot-line");
-          m_no = rebarList[i].m_no;
-        } else {
-          cls.push("dot");
-          m_no = rebarList[i].m_no;
-        }
-      }
-    }
+    // if (rebarList) {
+    //   for (let i = 0; i < rebarList.length - 1; i++) {
+    //     if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no === m_no) {
+    //       cls.push("l-shape");
+    //     } else if (rebarList[i].m_no === m_no && rebarList[i + 1].m_no !== m_no) {
+    //       cls.push("last-l-shape");
+    //     } else if (rebarList[i].m_no !== m_no && rebarList[i].m_no === rebarList[i + 1].m_no) {
+    //       cls.push("dot-line");
+    //       m_no = rebarList[i].m_no;
+    //     } else {
+    //       cls.push("dot");
+    //       m_no = rebarList[i].m_no;
+    //     }
+    //   }
+    // }
     
     this.calculatedPointHeaders.push(
       {
@@ -1043,7 +1045,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     const PI = 3.14;
     switch(rebar0.rebar_type){
       case 0: case 1:{
-        rebar0.interval =   (this.member.B - 2 * rebar0.dist_side) / rebar0.quantity;
+        rebar0.interval =   (this.member.B - 2 * rebar0.dist_side) / (rebar0.quantity-1);
         break;
       }
       case 2: case 3:{
@@ -1064,5 +1066,33 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       }
     }
     rebar0.interval = rebar0.interval != null ? +rebar0.interval.toFixed(1) : rebar0.interval ;
+  }
+
+  private addClsCalPoint(){
+    let cls = []
+    let rebarList = this.rebar.rebarList;
+    let arrayRb0: any = []
+    let arrayStirrup: any = []
+    rebarList.map((data) => {
+      if(Object.keys(data).length > 0){
+        this.OrderByRebarType(data.rebar0);
+        arrayRb0.push(data.rebar0)
+        arrayStirrup.push(data.stirrup)
+      }      
+    })
+    for(let i = 0 ; i <= arrayRb0.length - 2 ; i++){
+      const rb01 =JSON.stringify(arrayRb0[i]);
+      const rb02 = JSON.stringify(arrayRb0[i + 1]);
+      const striipup1 =JSON.stringify(arrayStirrup[i]);
+      const striipup2 = JSON.stringify(arrayStirrup[i + 1]);
+      if(rb01 === rb02 && striipup1 === striipup2){
+        if(i === 0){
+          cls.push("dot-line");
+        }
+      }else{
+        cls.push("dot");
+      }
+    }
+    return cls
   }
 }
