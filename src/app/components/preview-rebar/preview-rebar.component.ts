@@ -305,7 +305,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       this.table_datas_cal_point.push(calPointListData);
     }
 
-    if (calPoint != undefined && calPoint.input_mode === 1 && axialRebarData.length <= 30){
+    if (calPoint != undefined && axialRebarData.length <= 30){
       let pushAxialRebarData = Array.from({ length: 30 - axialRebarData.length }, (i) => ({
           distance_side: null,
           distance_top: null,
@@ -320,7 +320,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     }
     this.table_datas_axial.push(axialRebarData);
 
-    if (calPoint != undefined && calPoint.input_mode === 1 && stirrupData.length <= 1){
+    if (calPoint != undefined && stirrupData.length <= 1){
       let pushStirrupData = Array.from({ length: 1 - stirrupData.length }, (i) => ({
           stirrup_dia: "",
           stirrup_n : null,
@@ -640,9 +640,11 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           }
           break;         
         default:{
-          b.rebar_type = 7;
-          b.dist_side = data.distance_side;               
-          data.distance_top = b.dist_side 
+          if (this.typeView === 3){
+            b.rebar_type = 7;
+            b.dist_side = data.distance_side;
+            data.distance_top = b.dist_side 
+          }
           break;
         }       
       }
@@ -1069,6 +1071,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         break;
       }
     }
-    rebar0.interval = +rebar0.interval.toFixed(1);
+    rebar0.interval = rebar0.interval != null ? +rebar0.interval.toFixed(1) : rebar0.interval ;
   }
 }
