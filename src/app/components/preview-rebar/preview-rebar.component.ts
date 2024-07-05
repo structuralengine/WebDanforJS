@@ -267,7 +267,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       // Calculation Point List Data
       const calPointList = this.rebar.rebarList;
       let m_no = calPointList[0].m_no;
-
+      calPointList.sort((a, b) => a.index - b.index)
       for (const point of calPointList) {
         if (point.index) {
           if (point.m_no !== "") {
@@ -603,7 +603,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     }  
     this.scene.render();
   }
-
   private setRebar0(table_data){
     const upperside = this.translate.instant("preview_rebar.upper_side");
     const lowerside = this.translate.instant("preview_rebar.lower_side");
@@ -1090,8 +1089,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   }
 
   private addClsCalPoint(){
+    this.addNewCalPoint();
     let cls = []
-    let rebarList = this.rebar.rebarList;
+    let rebarList = this.rebar.rebarList;    
+    console.log("rebarList",rebarList);
     let arrayRb0: any = []
     let arrayStirrup: any = []
     rebarList.map((data) => {
@@ -1156,5 +1157,36 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       }
     }
     return cls
+  }
+
+  private addNewCalPoint(){
+    let rebarList = this.rebar.rebarList;
+    let newRebarList = []
+    let table_data_bar = this.rebar.table_data;
+    rebarList.map((data)=>{
+      if(Object.keys(data as object).length !== 0 && data.input_mode === 1 && data.rebar0.length === 0){
+        newRebarList.push(data);
+      }
+    })   
+    let rebarPreFinal = rebarList[rebarList.length - newRebarList.length - 1];
+    console.log(newRebarList)    
+
+    if(newRebarList.length > 0){
+      newRebarList.map((data) => {       
+        let indexBar= table_data_bar.findIndex(d=> d.index === data.index)      
+        this.copyInputValues(rebarPreFinal, table_data_bar, "axial", [indexBar])
+        this.copyInputValues(rebarPreFinal, table_data_bar, "stirrup", [indexBar])
+      })
+    }   
+    this.rebar.rebarList = this.bars.bar_list;
+    let m_no = this.rebar.rebarList[0];
+    for (const rebar of this.rebar.rebarList) {
+      if (rebar.m_no !== "") {
+        m_no = rebar.m_no;
+      } else {
+        rebar.m_no = m_no
+      }
+    }
+    console.log(table_data_bar);
   }
 }

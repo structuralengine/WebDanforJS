@@ -1127,7 +1127,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               dataIndx: "side_n",
               sortable: false,
               width: 70,
-              nodrag: true,
+              nodrag: true             
             },
             {
               title: sideCoverTitle,
@@ -1209,7 +1209,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               width: 70,
               nodrag: true,
               cls: "col-disabled",
-              editable: false,
+              editable: false             
             },
             {
               title: this.translate.instant("bars.number"),
@@ -1332,6 +1332,22 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               sortable: false,
               width: 70,
               nodrag: true,
+              render : function (ui) {
+                for (let cell of this.options.mergeCells) {
+                  if (cell.r1 === ui.rowIndx && ui.colIndx === colIndex) {
+                    return {
+                      text: displayPreviewText,
+                      cls: 'display-preview-button',
+                    }
+                  }
+                }
+                // if (this.options.mergeCells.length > 0  && ui.rowIndx === this.options.mergeCells[0].r1 && ui.colIndx === colIndex ) {
+                //   return {
+                //     text: displayPreviewText,
+                //     cls: 'display-preview-button',
+                //   }
+                // }
+              }
             },
             {
               title: this.translate.instant("bars.number"),
