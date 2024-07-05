@@ -1305,7 +1305,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataType: "float",
         dataIndx: "value",
         sortable: false,
-        width: 140,
+        width: 110,
         nodrag: true,
         paste: false,
         align: "center",
@@ -1344,7 +1344,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataIndx: "value",
         editable: (op)=>op.rowData.value === 0? true : false,
         sortable: false,
-        width: 140,
+        width: 70,
         nodrag: true,
       }
     ];
