@@ -48,6 +48,9 @@ export class ThreeNodeService {
     let py: any;
     let xmin: any = ni.x;
     let ymin: any = ni.y;
+    if(isNaN(xmin) || isNaN(ymin)){
+      return;
+    }
     let check: boolean = false;
     let i = JSON.parse(JSON.stringify(ni));
     let j = JSON.parse(JSON.stringify(nj));
@@ -154,7 +157,7 @@ export class ThreeNodeService {
     switch (style) {
       case 0:
         div.style.marginTop = "-4em";
-        div.style.marginLeft = "1em";
+        div.style.marginLeft = "2em";
         if (x < 0) {
           div.style.marginLeft = "-2em";
         }
