@@ -64,7 +64,9 @@ h5 {
 .material-strength {
   display: inline-block;
 }
-
+.safety-factors {
+  max-width: 1072px;
+}
 .pile-factors {
   display: inline-block;
 
@@ -101,7 +103,7 @@ h5 {
 }
 
 .table-container {
-  float: left;
+  // float: left;
   // margin-bottom: 15px;
 }
 
@@ -246,7 +248,7 @@ h5 {
 }
 
 .table-container {
-  float: left;
+  // float: left;
   // margin-bottom: 15px;
 }
 

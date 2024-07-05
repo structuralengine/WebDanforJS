@@ -49,6 +49,46 @@ export class InputFatiguesService {
     };
   }
 
+  public default_fatigue_value(id: number): any {
+    return {
+      m_no: null,
+      index: id,
+      g_name: null,
+      p_name: null,
+      b: null,
+      h: null,
+      //itle1: "上側",
+      M1: this.default_fatigue_coefficient_value("Md"),
+      V1: this.default_fatigue_coefficient_value("Vd"),
+      //title2: "下側",
+      M2: this.default_fatigue_coefficient_value("Md"),
+      V2: this.default_fatigue_coefficient_value("Vd"),
+    };
+  }
+
+  private default_fatigue_coefficient_value(target: string): any {
+    const result = {
+      SA: 1.0,
+      SB: 1.0,
+      NA06: 0,
+      NB06: 0,
+      NA12: 0,
+      NB12: 0,
+      A: 1.0,
+      B: 1.0,
+    };
+    if (target === "Md") {
+      result["r1_1"] = 1;
+      result["r1_3"] = 1;
+      // result["Class"] = 1;
+      // result["weld"] = 1;
+    } else {
+      result["r1_2"] = 0.65;
+      result["r1_3"] = 1.0;
+    }
+    return result;
+  }
+
   private default_fatigue_coefficient(target: string): any {
     const result = {
       SA: null,
@@ -134,6 +174,12 @@ export class InputFatiguesService {
     const bar = this.bars.getTableColumn(index);
     if (result == null) {
       result = this.default_fatigue(index);
+       // Fill in default values for any null properties
+       for (const key in result) {
+        if (result.hasOwnProperty(key) && result[key] === null) {
+            result[key] = this.default_fatigue(index)[key];
+        }
+    }
       result.titgle1 = bar.title1;
       this.fatigue_list.push(result);
     }
@@ -240,6 +286,11 @@ export class InputFatiguesService {
       const f = this.default_fatigue(column1.index);
 
       //f.title1 = column1.design_point_id;
+      f.b= column1.bh;
+      f.g_name = column1.g_name;
+      f.m_no = column1.m_no;
+      f.p_name = column1.p_name;
+      f.h = column1.bh;
       f.M1.SA = column1.M_SA;
       f.M1.SB = column1.M_SB;
       f.M1.NA06 = column1.M_NA06;
@@ -250,8 +301,8 @@ export class InputFatiguesService {
       f.M1.B = column1.M_B;
       f.M1.r1_1 = column1.M_r1_1;
       f.M1.r1_3 = column1.M_r1_3;
-      f.M1.Class = column1.M_Class;
-      f.M1.weld = column1.M_weld;
+      // f.M1.Class = column1.M_Class;
+      // f.M1.weld = column1.M_weld;
 
       f.V1.SA = column1.V_SA;
       f.V1.SB = column1.V_SB;
@@ -275,8 +326,8 @@ export class InputFatiguesService {
       f.M2.B = column2.M_B;
       f.M2.r1_1 = column2.M_r1_1;
       f.M2.r1_3 = column2.M_r1_3;
-      f.M2.Class = column2.M_Class;
-      f.M2.weld = column2.M_weld;
+      // f.M2.Class = column2.M_Class;
+      // f.M2.weld = column2.M_weld;
 
       f.V2.SA = column2.V_SA;
       f.V2.SB = column2.V_SB;
@@ -309,6 +360,28 @@ export class InputFatiguesService {
     this.train_A_count = fatigues.train_A_count;
     this.train_B_count = fatigues.train_B_count;
     this.service_life = fatigues.service_life;
+    // list fatigue
+  this.fatigue_list = fatigues.fatigue_list.map((value) => {
+    const defaultValue = this.default_fatigue(value.index);
+    for (const key in defaultValue) {
+      if (defaultValue.hasOwnProperty(key) && (value[key] === null || value[key] === undefined)) {
+        value[key] = defaultValue[key];
+      }
+    }
+
+    //  M1, M2, V1, V2
+    const subKeys = ["M1", "M2", "V1", "V2"];
+    subKeys.forEach(subKey => {
+      const defaultSubValue = this.default_fatigue_coefficient(subKey.startsWith('M') ? 'Md' : 'Vd');
+      for (const subKeyAttr in defaultSubValue) {
+        if (defaultSubValue.hasOwnProperty(subKeyAttr) && (value[subKey][subKeyAttr] === null || value[subKey][subKeyAttr] === undefined)) {
+          value[subKey][subKeyAttr] = defaultSubValue[subKeyAttr];
+        }
+      }
+    });
+
+    return value;
+  });
   }
 
   public setInputData(train_A_count: any, train_B_count : any, service_life : any) {

@@ -244,6 +244,7 @@ body {
     height: 10px;
     background-position-y: 4px;
  }
+ .safety-factors,
  .material-strength,
  .design-points {
     div.pq-editor-outer {
@@ -390,3 +391,20 @@ body {
  }
 
  // Preview bar css - End
+ .titleCenter{
+    .pq-title-span{
+        text-align: center !important;
+    }
+    // .datasheet {
+    //     width: 100% !important;
+    //     max-width: 1089px !important;
+    //     overflow-x: scroll !important;
+    //     overflow-y :hidden
+    //   }
+ }
+.safety-factors,
+.material-strength {
+    .table-container .datasheet .sheet-layout {
+            border: unset !important
+        }
+}
