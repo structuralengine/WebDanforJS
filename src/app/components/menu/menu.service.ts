@@ -6,7 +6,7 @@ import { Subject } from "rxjs";
   providedIn: "root",
 })
 export class MenuService {
-  private checkedRadioSubject = new Subject<number>();
+  public checkedRadioSubject = new Subject<number>();
   public checkedRadio$ = this.checkedRadioSubject.asObservable();
   public selectedRoad: boolean = false;
   checkedRadio: any;
