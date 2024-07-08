@@ -1357,7 +1357,6 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataIndx: "value",
         editable: (op)=>{
           const value = op.rowData.value;
-          console.log(op);
           if (this.allowedValues1.includes(value)&& op.rowIndx === 0) {
             // op.rowData.pq_cellstyle = {value :{color: "gray"}}
             return false;
