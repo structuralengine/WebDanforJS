@@ -88,6 +88,8 @@ export class SafetyFactorsMaterialStrengthsComponent
   private current_index: number;
   private groupe_list: any[];
   public groupe_name: any[];
+  public allowedValues1 = [18, 21, 24, 27, 30, 33, 36, 42, 45, 50, 55, 60];
+  public allowedValues2 = [ 20, 25, 40];
   public options = {
     0: { text: this.translate.instant("safety-factors-material-strengths.av") },
     1: { text: "SD295" },
@@ -323,7 +325,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       this.table2_datas.push(table2);
 
       this.handleSetSelect(this.table2_datas[i], id);
-
+      
       // 鉄骨材料
       const s1 = safety.material_steel[id][0]; // t16以下
       const s2 = safety.material_steel[id][1]; // t40以下
@@ -367,9 +369,10 @@ export class SafetyFactorsMaterialStrengthsComponent
             "safety-factors-material-strengths.max_ca"
           ),
           value: concrete.dmax,
+
         },
       ]);
-
+      // this.addStyleIfValueAllowed(this.table3_datas)
       // 杭の施工条件
       this.pile_factor_list.push(safety.pile_factor[id]);
       let self = this;
@@ -585,15 +588,17 @@ export class SafetyFactorsMaterialStrengthsComponent
         change: (evt, ui) => {
           for (const updateItem of ui.updateList) {
             for (let key in updateItem.newRow) {
-              updateItem.newRow[key] = parseInt(updateItem.newRow[key]);
-              updateItem.rowData[key] = parseInt(updateItem.newRow[key]);
+              updateItem.newRow[key] = parseFloat(updateItem.newRow[key]);
+              updateItem.rowData[key] = parseFloat(updateItem.newRow[key]);
+              // updateItem.newRow[key] = updateItem.newRow[key];
+              // updateItem.rowData[key] = updateItem.newRow[key];
               if(ui.source === "clear" || ui.source === "cut"){
-                updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
-                updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
+                updateItem.newRow[key] = parseFloat(updateItem.oldRow[key]);
+                updateItem.rowData[key] = parseFloat(updateItem.oldRow[key]);
               }
               if(Number.isNaN(updateItem.newRow[key])){
-                updateItem.newRow[key] = parseInt(updateItem.oldRow[key]);
-              updateItem.rowData[key] = parseInt(updateItem.oldRow[key]);
+                updateItem.newRow[key] = parseFloat(updateItem.oldRow[key]);
+              updateItem.rowData[key] = parseFloat(updateItem.oldRow[key]);
               }
               // if(updateItem.newRow[key] === 0){
               //   console.log(updateItem)
@@ -849,6 +854,18 @@ export class SafetyFactorsMaterialStrengthsComponent
     //
     return allProcessedItems;
   }
+//   private addStyleIfValueAllowed(data: any) {
+//     return data.map(subArray => 
+//       subArray.map(obj => {
+//           if (this.allowedValues1.includes(obj.value) || this.allowedValues2.includes(obj.value)) {
+//               if (!obj.pq_cellstyle) {
+//                   obj.pq_cellstyle = { value: { color: "gray" } };
+//               }
+//           }
+//           return obj;
+//       })
+//   );
+// }
   private setTitle(): void {
     this.columnHeaders1 = [
       {
@@ -1318,15 +1335,11 @@ export class SafetyFactorsMaterialStrengthsComponent
           valueIndx: "id",
         },
         render: (ui) => {
-          // return ui.rowIndx === 0? (this.optionsCon1[ui.cellData] || {}).text : (this.optionsCon2[ui.cellData] || {}).text;
-          const allowedValues1 = [18, 21, 24, 27, 30, 33, 36, 42, 45, 50, 55, 60];
-          const allowedValues2 = [ 20, 25, 40];
           const value = ui.rowData.value;
       
-          if (allowedValues1.includes(value)&& ui.rowIndx === 0) {
-            // return ui.rowIndx === 0 ? (this.optionsCon1[ui.cellData] || {}).text : (this.optionsCon2[ui.cellData] || {}).text;
+          if (this.allowedValues1.includes(value)&& ui.rowIndx === 0) {
             return (this.optionsCon1[ui.cellData] || {}).text;
-          } if(allowedValues2.includes(value)&& ui.rowIndx !== 0) {
+          } if(this.allowedValues2.includes(value)&& ui.rowIndx !== 0) {
             return (this.optionsCon2[ui.cellData] || {}).text;
           }
           else{
@@ -1339,10 +1352,24 @@ export class SafetyFactorsMaterialStrengthsComponent
           "safety-factors-material-strengths.value"
         ),
         align: "right",
-        dataType: "integer",
+        dataType: "float",
         format: "#.0",
         dataIndx: "value",
-        editable: (op)=>op.rowData.value === 0? true : false,
+        editable: (op)=>{
+          const value = op.rowData.value;
+          console.log(op);
+          if (this.allowedValues1.includes(value)&& op.rowIndx === 0) {
+            // op.rowData.pq_cellstyle = {value :{color: "gray"}}
+            return false;
+          } if(this.allowedValues2.includes(value)&& op.rowIndx !== 0) {
+            // op.rowData.pq_cellstyle = {value :{color: "gray"}}
+            return false;
+          }
+          else{
+            return true;
+          }
+        },
+          // op.rowData.value === 0? true : false,
         sortable: false,
         width: 70,
         nodrag: true,
