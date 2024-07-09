@@ -1,9 +1,19 @@
-import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ViewChild, AfterViewInit, ChangeDetectorRef, ElementRef } from '@angular/core';
-import { InputSafetyFactorsMaterialStrengthsService } from './safety-factors-material-strengths.service'
-import { SheetComponent } from '../sheet/sheet.component';
-import pq from 'pqgrid';
-import { InputMembersService } from '../members/members.service';
-import { visitAll } from '@angular/compiler';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChildren,
+  QueryList,
+  ViewChild,
+  AfterViewInit,
+  ChangeDetectorRef,
+  ElementRef,
+} from "@angular/core";
+import { InputSafetyFactorsMaterialStrengthsService } from "./safety-factors-material-strengths.service";
+import { SheetComponent } from "../sheet/sheet.component";
+import pq from "pqgrid";
+import { InputMembersService } from "../members/members.service";
+import { visitAll } from "@angular/compiler";
 import { SaveDataService } from "../../providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from "../menu/menu.service";
@@ -19,7 +29,8 @@ import { InputBasicInformationService } from "../basic-information/basic-informa
   ],
 })
 export class SafetyFactorsMaterialStrengthsComponent
-  implements OnInit, OnDestroy, AfterViewInit {
+  implements OnInit, OnDestroy, AfterViewInit
+{
   public arrayAxis: any[];
   public arrayAxisForce: any = {};
   public consider_moment_checked: boolean = true;
@@ -30,7 +41,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   public opt_no_for_v: boolean = false;
   public groupMem: any;
   public groupId: any;
-  @ViewChild('subNavArea', { static: false }) subNavArea: ElementRef;
+  @ViewChild("subNavArea", { static: false }) subNavArea: ElementRef;
   hasScrollbar: boolean = false;
   // 安全係数
   @ViewChild("grid1") grid1: SheetComponent;
@@ -78,7 +89,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   private groupe_list: any[];
   public groupe_name: any[];
   public allowedValues1 = [18, 21, 24, 27, 30, 33, 36, 42, 45, 50, 55, 60];
-  public allowedValues2 = [ 20, 25, 40];
+  public allowedValues2 = [20, 25, 40];
   public options = {
     0: { text: this.translate.instant("safety-factors-material-strengths.av") },
     1: { text: "SD295" },
@@ -152,18 +163,36 @@ export class SafetyFactorsMaterialStrengthsComponent
   public styleEdit = { color: "#FFFFFF" };
   public range = {
     0: { text: this.translate.instant("safety-factors-material-strengths.av") },
-    1: { text: this.translate.instant("safety-factors-material-strengths.rsb_ten") },
-    2: { text: this.translate.instant("safety-factors-material-strengths.ten_com") },
-    3: { text: this.translate.instant("safety-factors-material-strengths.all") },
+    1: {
+      text: this.translate.instant("safety-factors-material-strengths.rsb_ten"),
+    },
+    2: {
+      text: this.translate.instant("safety-factors-material-strengths.ten_com"),
+    },
+    3: {
+      text: this.translate.instant("safety-factors-material-strengths.all"),
+    },
   };
   public rangeArray = [
     {
       value: 0,
       text: this.translate.instant("safety-factors-material-strengths.av"),
     },
-    { id: 1, value: 1, text: this.translate.instant("safety-factors-material-strengths.rsb_ten") },
-    { id: 2, value: 2, text: this.translate.instant("safety-factors-material-strengths.ten_com") },
-    { id: 3, value: 3, text: this.translate.instant("safety-factors-material-strengths.all") },
+    {
+      id: 1,
+      value: 1,
+      text: this.translate.instant("safety-factors-material-strengths.rsb_ten"),
+    },
+    {
+      id: 2,
+      value: 2,
+      text: this.translate.instant("safety-factors-material-strengths.ten_com"),
+    },
+    {
+      id: 3,
+      value: 3,
+      text: this.translate.instant("safety-factors-material-strengths.all"),
+    },
   ];
   public style = {
     "pointer-events": "none",
@@ -225,7 +254,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.setTitle();
     const safety = this.safety.getTableColumns();
     this.default_factor = {};
-    this.default_factor = [...this.safety.default_safety_factor()]
+    this.default_factor = [...this.safety.default_safety_factor()];
     this.arrayAxis =
       this.safety.arrayAxis !== undefined ? this.safety.arrayAxis : new Array();
     this.applyStylesToItems(safety.safety_factor, this.default_factor);
@@ -262,23 +291,49 @@ export class SafetyFactorsMaterialStrengthsComponent
         steel = [];
       for (const col of safety.safety_factor[id]) {
         if (col.id === 8) continue; // 最小鉄筋量の安全係数は、編集しない
-        let defaultItem = this.default_factor.filter(x => x.id === col.id)[0];
+        let defaultItem = this.default_factor.filter((x) => x.id === col.id)[0];
         bar.push({
           id: col.id,
           title: col.title,
-          M_rc: (col.M_rc === null || col.M_rc === 0) ? defaultItem.M_rc : col.M_rc,
-          M_rs: (col.M_rs === null || col.M_rs === 0) ? defaultItem.M_rs : col.M_rs,
-          M_rbs: (col.M_rbs === null || col.M_rbs === 0) ? defaultItem.M_rbs : col.M_rbs,
-          V_rc: (col.V_rc === null || col.V_rc === 0) ? defaultItem.V_rc : col.V_rc,
-          V_rs: (col.V_rs === null || col.V_rs === 0) ? defaultItem.V_rs : col.V_rs,
-          V_rbc: (col.V_rbc === null || col.V_rbc === 0) ? defaultItem.V_rbc : col.V_rbc,
-          V_rbs: (col.V_rbs === null || col.V_rbs === 0) ? defaultItem.V_rbs : col.V_rbs,
-          V_rbv: (col.V_rbv === null || col.V_rbv === 0) ? defaultItem.V_rbv : col.V_rbv,
-          T_rbt: (col.T_rbt === null || col.T_rbt === 0) ? defaultItem.T_rbt : col.T_rbt,
-          ri: (col.ri === null || col.ri === 0) ? defaultItem.ri : col.ri,
-          range: parseInt((col.range === null || col.range === 0) ? defaultItem.range : col.range),
+          M_rc:
+            col.M_rc === null || col.M_rc === 0 ? defaultItem.M_rc : col.M_rc,
+          M_rs:
+            col.M_rs === null || col.M_rs === 0 ? defaultItem.M_rs : col.M_rs,
+          M_rbs:
+            col.M_rbs === null || col.M_rbs === 0
+              ? defaultItem.M_rbs
+              : col.M_rbs,
+          V_rc:
+            col.V_rc === null || col.V_rc === 0 ? defaultItem.V_rc : col.V_rc,
+          V_rs:
+            col.V_rs === null || col.V_rs === 0 ? defaultItem.V_rs : col.V_rs,
+          V_rbc:
+            col.V_rbc === null || col.V_rbc === 0
+              ? defaultItem.V_rbc
+              : col.V_rbc,
+          V_rbs:
+            col.V_rbs === null || col.V_rbs === 0
+              ? defaultItem.V_rbs
+              : col.V_rbs,
+          V_rbv:
+            col.V_rbv === null || col.V_rbv === 0
+              ? defaultItem.V_rbv
+              : col.V_rbv,
+          T_rbt:
+            col.T_rbt === null || col.T_rbt === 0
+              ? defaultItem.T_rbt
+              : col.T_rbt,
+          ri: col.ri === null || col.ri === 0 ? defaultItem.ri : col.ri,
+          range: parseInt(
+            col.range === null || col.range === 0
+              ? defaultItem.range
+              : col.range
+          ),
           pq_cellstyle: col.pq_cellstyle,
-          NoCalc: (col.NoCalc === null || col.NoCalc === 0) ? defaultItem.NoCalc : col.NoCalc,
+          NoCalc:
+            col.NoCalc === null || col.NoCalc === 0
+              ? defaultItem.NoCalc
+              : col.NoCalc,
         });
         steel.push({
           id: col.id,
@@ -315,7 +370,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       this.table2_datas.push(table2);
 
       this.handleSetSelect(this.table2_datas[i], id);
-      
+
       // 鉄骨材料
       const s1 = safety.material_steel[id][0]; // t16以下
       const s2 = safety.material_steel[id][1]; // t40以下
@@ -359,10 +414,9 @@ export class SafetyFactorsMaterialStrengthsComponent
             "safety-factors-material-strengths.max_ca"
           ),
           value: concrete.dmax,
-
         },
       ]);
-      this.addStyleIfValueAllowed(this.table3_datas[i],id);
+      this.addStyleIfValueAllowed(this.table3_datas[i], id);
       // 杭の施工条件
       this.pile_factor_list.push(safety.pile_factor[id]);
       let self = this;
@@ -418,7 +472,9 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
         change(evt, ui) {
           for (const updateItem of ui.updateList) {
-            let defaultItem = self.default_factor.filter(x => x.id === updateItem.rowData.id)[0];
+            let defaultItem = self.default_factor.filter(
+              (x) => x.id === updateItem.rowData.id
+            )[0];
             for (let key in updateItem.newRow) {
               if (key === "range") {
                 updateItem.newRow[key] = parseInt(updateItem.newRow[key]);
@@ -440,7 +496,10 @@ export class SafetyFactorsMaterialStrengthsComponent
                 continue;
               }
 
-              if (updateItem.newRow[key] === null || updateItem.newRow[key] === undefined) {
+              if (
+                updateItem.newRow[key] === null ||
+                updateItem.newRow[key] === undefined
+              ) {
                 // Assign the value from oldRow to rowData
                 updateItem.rowData[key] = defaultItem[key];
                 updateItem.rowData.pq_cellstyle = {
@@ -449,11 +508,9 @@ export class SafetyFactorsMaterialStrengthsComponent
                 updateItem.rowData.pq_cellstyle[`${key}`] = {
                   color: "gray",
                 };
-              }
-              else if (updateItem.newRow[key] === 0) {
+              } else if (updateItem.newRow[key] === 0) {
                 updateItem.rowData[key] = updateItem.oldRow[key];
-              }
-              else {
+              } else {
                 if (updateItem.newRow[key] === defaultItem[key]) {
                   updateItem.rowData.pq_cellstyle = {
                     ...updateItem.rowData.pq_cellstyle,
@@ -461,8 +518,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                   updateItem.rowData.pq_cellstyle[`${key}`] = {
                     color: "gray",
                   };
-                }
-                else if (updateItem.oldRow !== updateItem.newRow) {
+                } else if (updateItem.oldRow !== updateItem.newRow) {
                   updateItem.rowData.pq_cellstyle = {
                     ...updateItem.rowData.pq_cellstyle,
                   };
@@ -576,18 +632,27 @@ export class SafetyFactorsMaterialStrengthsComponent
           ],
         },
         change: (evt, ui) => {
-          console.log("test",ui);
           let newData = ui.updateList[0].rowData;
           this.handleConcreteSelect(newData);
           for (const updateItem of ui.updateList) {
             for (let key in updateItem.newRow) {
               updateItem.newRow[key] = parseFloat(updateItem.newRow[key]);
               updateItem.rowData[key] = parseFloat(updateItem.newRow[key]);
-              if(ui.source === "clear" || ui.source === "cut"){
+              if (ui.source === "clear" || ui.source === "cut") {
                 updateItem.newRow[key] = parseFloat(updateItem.oldRow[key]);
                 updateItem.rowData[key] = parseFloat(updateItem.oldRow[key]);
               }
-              if(Number.isNaN(updateItem.newRow[key])){
+              if (Number.isNaN(updateItem.newRow[key])) {
+                updateItem.newRow[key] = parseFloat(updateItem.oldRow[key]);
+                updateItem.rowData[key] = parseFloat(updateItem.oldRow[key]);
+              }
+              if (
+                updateItem.newRow[key] === 0 &&
+                ((!this.allowedValues1.includes(updateItem.oldRow[key]) &&
+                  updateItem.rowIndx === 0) ||
+                  (!this.allowedValues2.includes(updateItem.oldRow[key]) &&
+                    updateItem.rowIndx !== 0))
+              ) {
                 updateItem.newRow[key] = parseFloat(updateItem.oldRow[key]);
                 updateItem.rowData[key] = parseFloat(updateItem.oldRow[key]);
               }
@@ -757,13 +822,12 @@ export class SafetyFactorsMaterialStrengthsComponent
         let previousItem: any = null;
 
         for (const item of items) {
-          let defaultItem = default_factor.filter(x => x.id === item.id)[0]
+          let defaultItem = default_factor.filter((x) => x.id === item.id)[0];
           if (!item.pq_cellstyle) {
             item.pq_cellstyle = {};
           }
           for (const prop in item) {
-            if (
-              prop === "title") {
+            if (prop === "title") {
               item.pq_cellstyle[prop] = { ...this.styleColorWhite };
               continue;
             }
@@ -775,12 +839,10 @@ export class SafetyFactorsMaterialStrengthsComponent
             ) {
               if (item[prop] !== defaultItem[prop]) {
                 item.pq_cellstyle[prop] = { ...this.styleColorWhite };
-              }
-              else {
+              } else {
                 item.pq_cellstyle[prop] = { ...this.styleColor };
               }
-            }
-            else {
+            } else {
               item.pq_cellstyle[prop] = { ...this.styleColor };
             }
           }
@@ -856,10 +918,10 @@ export class SafetyFactorsMaterialStrengthsComponent
         width: 60,
         nodrag: true,
         styleHead: {
-          'display': 'flex',
-          'justify-content': 'center',
-          'align-items': 'center',
-          'text-align': 'center',
+          display: "flex",
+          "justify-content": "center",
+          "align-items": "center",
+          "text-align": "center",
         },
       },
       {
@@ -885,10 +947,10 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center",
                 },
               },
               {
@@ -902,18 +964,18 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center",
                 },
               },
             ],
             styleHead: {
-              'display': 'flex',
-              'justify-content': 'center',
-              'align-items': 'center',
-              'text-align': 'center',
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              "text-align": "center",
             },
             nodrag: true,
           },
@@ -935,19 +997,19 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center !important',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center !important",
                 },
               },
             ],
             nodrag: true,
             styleHead: {
-              'display': 'flex',
-              'justify-content': 'center',
-              'align-items': 'center',
-              'text-align': 'center !important',
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              "text-align": "center !important",
             },
           },
         ],
@@ -976,10 +1038,10 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center",
                 },
               },
               {
@@ -993,19 +1055,19 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center",
                 },
               },
             ],
             nodrag: true,
             styleHead: {
-              'display': 'flex',
-              'justify-content': 'center',
-              'align-items': 'center',
-              'text-align': 'center',
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              "text-align": "center",
             },
           },
           {
@@ -1023,10 +1085,10 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center",
                 },
               },
               {
@@ -1038,10 +1100,10 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center",
                 },
               },
               {
@@ -1053,10 +1115,10 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center",
                 },
               },
               {
@@ -1068,28 +1130,28 @@ export class SafetyFactorsMaterialStrengthsComponent
                 width: 70,
                 nodrag: true,
                 styleHead: {
-                  'display': 'flex',
-                  'justify-content': 'center',
-                  'align-items': 'center',
-                  'text-align': 'center',
+                  display: "flex",
+                  "justify-content": "center",
+                  "align-items": "center",
+                  "text-align": "center",
                 },
               },
             ],
             nodrag: true,
             styleHead: {
-              'display': 'flex',
-              'justify-content': 'center',
-              'align-items': 'center',
-              'text-align': 'center',
+              display: "flex",
+              "justify-content": "center",
+              "align-items": "center",
+              "text-align": "center",
             },
           },
         ],
         nodrag: true,
         styleHead: {
-          'display': 'flex',
-          'justify-content': 'center',
-          'align-items': 'center',
-          'text-align': 'center',
+          display: "flex",
+          "justify-content": "center",
+          "align-items": "center",
+          "text-align": "center",
         },
       },
       // {
@@ -1107,18 +1169,18 @@ export class SafetyFactorsMaterialStrengthsComponent
         width: 70,
         nodrag: true,
         styleHead: {
-          'display': 'flex',
-          'justify-content': 'center',
-          'align-items': 'center',
+          display: "flex",
+          "justify-content": "center",
+          "align-items": "center",
         },
       },
       {
-        title:
-          this.translate.instant("safety-factors-material-strengths.rsb_arr")
+        title: this.translate.instant(
+          "safety-factors-material-strengths.rsb_arr"
+        ),
         //   `<div id="safety-question" style="cursor:pointer"><svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left: 6px;">
         // <path d="M2.49023 14.5098C4.1504 16.1699 6.15363 17 8.5 17C10.8464 17 12.8496 16.1699 14.5098 14.5098C16.1699 12.8496 17 10.8464 17 8.5C17 6.15363 16.1699 4.1504 14.5098 2.49023C12.8496 0.83007 10.8464 0 8.5 0C6.15363 0 4.1504 0.83007 2.49023 2.49023C0.83007 4.1504 0 6.15363 0 8.5C0 10.8464 0.83007 12.8496 2.49023 14.5098ZM8.5 2.125C9.67318 2.125 10.6748 2.46256 11.5049 3.1377C12.335 3.81283 12.75 4.78124 12.75 6.04297C12.75 7.63673 11.9753 8.85416 10.4258 9.69531C10.2044 9.80599 10.0052 9.96094 9.82812 10.1602C9.65104 10.3594 9.5625 10.5143 9.5625 10.625C9.5625 10.9128 9.45736 11.1618 9.24707 11.3721C9.03678 11.5824 8.78776 11.6875 8.5 11.6875C8.21224 11.6875 7.96322 11.5824 7.75293 11.3721C7.54264 11.1618 7.4375 10.9128 7.4375 10.625C7.4375 10.0273 7.64778 9.4795 8.06836 8.98145C8.48893 8.4834 8.93164 8.10156 9.39648 7.83594C10.2155 7.39323 10.625 6.79558 10.625 6.04297C10.625 4.84765 9.91667 4.25 8.5 4.25C7.92448 4.25 7.42643 4.43815 7.00586 4.81445C6.58528 5.19076 6.375 5.722 6.375 6.4082C6.375 6.69597 6.26986 6.94499 6.05957 7.15527C5.84928 7.36556 5.60026 7.4707 5.3125 7.4707C5.02474 7.4707 4.77572 7.36556 4.56543 7.15527C4.35514 6.94499 4.25 6.69597 4.25 6.4082C4.25 5.08007 4.68164 4.03418 5.54492 3.27051C6.40821 2.50683 7.39322 2.125 8.5 2.125ZM9.26367 14.6094C9.06445 14.8086 8.8099 14.9082 8.5 14.9082C8.1901 14.9082 7.93001 14.8031 7.71973 14.5928C7.50944 14.3825 7.4043 14.1279 7.4043 13.8291C7.4043 13.5303 7.50944 13.2702 7.71973 13.0488C7.93001 12.8275 8.1901 12.7168 8.5 12.7168C8.8099 12.7168 9.06999 12.8275 9.28027 13.0488C9.49056 13.2702 9.5957 13.5303 9.5957 13.8291C9.5957 14.1279 9.48503 14.388 9.26367 14.6094Z" fill="#00C95F"/>
         // </svg></div>`
-        ,
         dataIndx: "range",
         dataType: "integer",
         sortable: false,
@@ -1127,9 +1189,9 @@ export class SafetyFactorsMaterialStrengthsComponent
         nodrag: true,
         paste: false,
         styleHead: {
-          'display': 'flex',
-          'justify-content': 'center',
-          'align-items': 'center',
+          display: "flex",
+          "justify-content": "center",
+          "align-items": "center",
         },
         cls: "pq-drop-icon pq-side-icon",
         editor: {
@@ -1289,24 +1351,27 @@ export class SafetyFactorsMaterialStrengthsComponent
         nodrag: true,
         paste: false,
         align: "center",
-        defaultValue : 0,
+        defaultValue: 0,
         cls: "pq-drop-icon pq-side-icon",
         editor: {
           type: "select",
-          options: (data)=> data.rowIndx === 0 ? this.optionsConcrete1: this.optionsConcrete2,
+          options: (data) =>
+            data.rowIndx === 0 ? this.optionsConcrete1 : this.optionsConcrete2,
           labelIndx: "text",
           valueIndx: "id",
         },
         render: (ui) => {
           const value = ui.rowData.value;
-      
-          if (this.allowedValues1.includes(value)&& ui.rowIndx === 0) {
+
+          if (this.allowedValues1.includes(value) && ui.rowIndx === 0) {
             return (this.optionsCon1[ui.cellData] || {}).text;
-          } if(this.allowedValues2.includes(value)&& ui.rowIndx !== 0) {
-            return (this.optionsCon2[ui.cellData] || {}).text;
           }
-          else{
-            return this.translate.instant("safety-factors-material-strengths.av");
+          if (this.allowedValues2.includes(value) && ui.rowIndx !== 0) {
+            return (this.optionsCon2[ui.cellData] || {}).text;
+          } else {
+            return this.translate.instant(
+              "safety-factors-material-strengths.av"
+            );
           }
         },
       },
@@ -1318,24 +1383,24 @@ export class SafetyFactorsMaterialStrengthsComponent
         dataType: "float",
         format: "#.0",
         dataIndx: "value",
-        editable: (op)=>{
+        editable: (op) => {
           const value = op.rowData.value;
-          if (this.allowedValues1.includes(value)&& op.rowIndx === 0) {
-            // op.rowData.pq_cellstyle = {value :{color: "gray"}}
-            return false;
-          } if(this.allowedValues2.includes(value)&& op.rowIndx !== 0) {
+          if (this.allowedValues1.includes(value) && op.rowIndx === 0) {
             // op.rowData.pq_cellstyle = {value :{color: "gray"}}
             return false;
           }
-          else{
+          if (this.allowedValues2.includes(value) && op.rowIndx !== 0) {
+            // op.rowData.pq_cellstyle = {value :{color: "gray"}}
+            return false;
+          } else {
             return true;
           }
         },
-          // op.rowData.value === 0? true : false,
+        // op.rowData.value === 0? true : false,
         sortable: false,
         width: 70,
         nodrag: true,
-      }
+      },
     ];
 
     // 鉄骨 - 安全係数
@@ -1537,9 +1602,6 @@ export class SafetyFactorsMaterialStrengthsComponent
     const result = options6.find((v) => v.selected === true);
     return result.id;
   }
-  
- 
-
 
   public activePageChenge(id: number, group: any): void {
     this.groupMem = group.name;
@@ -1569,7 +1631,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     }
 
     this.options2 = this.option2_list[id];
-    this.handleSetSelect(this.options2.dataModel.data, group.id)
+    this.handleSetSelect(this.options2.dataModel.data, group.id);
     if (this.grid2 !== undefined) {
       this.grid2.options = this.options2;
       this.grid2.refreshDataAndView();
@@ -1663,17 +1725,17 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.opt_no_for_v = false;
   }
 
-
-
-  // concrete material 
-  addStyleIfValueAllowed(data:any, id :any){
+  // concrete material
+  addStyleIfValueAllowed(data: any, id: any) {
     const safety = this.safety.getTableColumns();
     const concrete = safety.material_concrete[id];
-    data.forEach((data:any)=>{
+    data.forEach((data: any) => {
       const value = data.value;
-      const isValueAllowed = this.allowedValues1.includes(value) || this.allowedValues2.includes(value);
+      const isValueAllowed =
+        this.allowedValues1.includes(value) ||
+        this.allowedValues2.includes(value);
       this.checkEdit(data, !isValueAllowed);
-    })
+    });
   }
   checkEdit(data: any, checkEdit: boolean, value?: any) {
     if (checkEdit) {
@@ -1694,20 +1756,22 @@ export class SafetyFactorsMaterialStrengthsComponent
       // };
     }
   }
-  handleConcreteSelect(data){
-    const isValueAllowed = this.allowedValues1.includes(data.value) || this.allowedValues2.includes(data.value);
+  handleConcreteSelect(data) {
+    const isValueAllowed =
+      this.allowedValues1.includes(data.value) ||
+      this.allowedValues2.includes(data.value);
     if (data.value === 0 || !isValueAllowed) {
-        data.pq_cellstyle = {
-            value: {
-                color: "white"
-            }
-        };
+      data.pq_cellstyle = {
+        value: {
+          color: "white",
+        },
+      };
     } else {
-        data.pq_cellstyle = {
-            value: {
-                color:  "#999C9F"
-            }
-        };
+      data.pq_cellstyle = {
+        value: {
+          color: "#999C9F",
+        },
+      };
     }
   }
   //
