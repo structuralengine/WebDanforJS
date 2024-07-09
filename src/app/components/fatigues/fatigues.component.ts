@@ -14,6 +14,7 @@ import { AppComponent } from "src/app/app.component";
 import { SaveDataService } from "src/app/providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from "../members/members.service";
+import { MenuService } from "../menu/menu.service";
 
 @Component({
   selector: "app-fatigues",
@@ -99,7 +100,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     private fatigues: InputFatiguesService,
     private save: SaveDataService,
     private translate: TranslateService,
-    private members: InputMembersService
+    private members: InputMembersService,
+    public menuService: MenuService,
   ) {
     this.members.checkGroupNo();
   }
@@ -1038,5 +1040,11 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       precision = 2;
     var multiplier = Math.pow(10, precision || 0);
     return Math.round(value * multiplier) / multiplier;
+  }
+  changeInput() {
+    this.fatigues.setInputData(
+      this.train_A_count,
+      this.train_B_count,
+      this.service_life);
   }
 }

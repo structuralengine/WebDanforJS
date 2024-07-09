@@ -279,7 +279,9 @@
         "weld":"溶接継手",
         "for_s":"せん断用",
         "hoop":"スターラップ",
-        "fold":"折曲げ鉄筋"
+        "fold":"折曲げ鉄筋",
+        "jA":"jA(本/日)",
+        "jB":"jB(本/日)"
     },
     "material-strength-verifiaction-condition":{
         "com_type":"部材種別",

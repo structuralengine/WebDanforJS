@@ -279,7 +279,9 @@
         "weld":"Welded joint",
         "for_s":"For shear",
         "hoop":"Stirrup",
-        "fold":"Bent reinforcement bar"
+        "fold":"Bent reinforcement bar",
+        "jA":"jA(trains/day)",
+        "jB":"jB(trains/day)"
     },
     "material-strength-verifiaction-condition":{
         "com_type":"Component Type",

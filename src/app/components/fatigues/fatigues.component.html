@@ -18,6 +18,59 @@
 </div> -->
 
 <div class="c-subNavArea">
+  <div class="mega-menu2">
+    <!-- <p class="topic" translate>basic-information.dc</p> -->
+    <ng-container *ngIf="menuService.selectedRoad === false">
+      <!-- 耐用年数 セクション -->
+      <div class="d-flex service-life">
+        <p translate>fatigues.durable</p>
+        <input
+          *ngIf="translate.currentLang === 'en'"
+          placeholder="Example: 100"
+          id="T"
+          name="T"
+          type="text"
+          [(ngModel)]="service_life"
+          (change)="changeInput()"
+        />
+        <input
+          *ngIf="translate.currentLang === 'ja'"
+          placeholder="例: 100"
+          id="T"
+          name="T"
+          type="text"
+          [(ngModel)]="service_life"
+          (change)="changeInput()"
+        />
+      </div>
+      <div class="d-flex jA-jB">
+        <div class="d-flex service-life">
+          <p translate>fatigues.jA</p>
+          <input
+            title="input1"
+            laceholder="input1"
+            id="jA"
+            name="jA"
+            type="text"
+            [(ngModel)]="train_A_count"
+            (change)="changeInput()"
+          />
+        </div>
+        <div class="d-flex service-life">
+          <p translate>fatigues.jB</p>
+          <input
+            title="input3"
+            laceholder="input2"
+            id="jB"
+            name="jB"
+            type="text"
+            [(ngModel)]="train_B_count"
+            (change)="changeInput()"
+          />
+        </div>
+      </div>
+    </ng-container>
+  </div>
   <nav>
     <ul #subNavArea class="c-subNavArea__nav" [ngClass]="{'has-scrollbar': hasScrollbar, 'no-scrollbar': !hasScrollbar}">
       <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i">
