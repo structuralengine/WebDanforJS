@@ -191,6 +191,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   //   T_rbt: { ...this.style },
   // }
   public styleNoEdit = { "pointer-events": "none", color: "#999C9F" };
+  public styleNoConcreEdit = { color: "#999C9F" };
   public propEdit = { edit: true };
   public propNoEdit = { edit: false };
   public considerMomentChecked: boolean;
@@ -361,7 +362,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
         },
       ]);
-      // this.addStyleIfValueAllowed(this.table3_datas)
+      this.addStyleIfValueAllowed(this.table3_datas[i],id);
       // 杭の施工条件
       this.pile_factor_list.push(safety.pile_factor[id]);
       let self = this;
@@ -575,37 +576,21 @@ export class SafetyFactorsMaterialStrengthsComponent
           ],
         },
         change: (evt, ui) => {
+          console.log("test",ui);
+          let newData = ui.updateList[0].rowData;
+          this.handleConcreteSelect(newData);
           for (const updateItem of ui.updateList) {
             for (let key in updateItem.newRow) {
               updateItem.newRow[key] = parseFloat(updateItem.newRow[key]);
               updateItem.rowData[key] = parseFloat(updateItem.newRow[key]);
-              // updateItem.newRow[key] = updateItem.newRow[key];
-              // updateItem.rowData[key] = updateItem.newRow[key];
               if(ui.source === "clear" || ui.source === "cut"){
                 updateItem.newRow[key] = parseFloat(updateItem.oldRow[key]);
                 updateItem.rowData[key] = parseFloat(updateItem.oldRow[key]);
               }
               if(Number.isNaN(updateItem.newRow[key])){
                 updateItem.newRow[key] = parseFloat(updateItem.oldRow[key]);
-              updateItem.rowData[key] = parseFloat(updateItem.oldRow[key]);
+                updateItem.rowData[key] = parseFloat(updateItem.oldRow[key]);
               }
-              // if(updateItem.newRow[key] === 0){
-              //   console.log(updateItem)
-              //   this.columnHeaders3.push(
-              //     {
-              //     title: this.translate.instant(
-              //       "safety-factors-material-strengths.value"
-              //     ),
-              //     align: "left",
-              //     dataType: "integer",
-              //     dataIndx: "value",
-              //     editable: updateItem.rowData.value === 0 ? true : false,
-              //     sortable: false,
-              //     width: 140,
-              //     nodrag: true,
-              //   }
-              // )
-              // }
             }
           }
         },
@@ -843,18 +828,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     //
     return allProcessedItems;
   }
-//   private addStyleIfValueAllowed(data: any) {
-//     return data.map(subArray => 
-//       subArray.map(obj => {
-//           if (this.allowedValues1.includes(obj.value) || this.allowedValues2.includes(obj.value)) {
-//               if (!obj.pq_cellstyle) {
-//                   obj.pq_cellstyle = { value: { color: "gray" } };
-//               }
-//           }
-//           return obj;
-//       })
-//   );
-// }
+
   private setTitle(): void {
     this.columnHeaders1 = [
       {
@@ -1688,6 +1662,55 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.opt_tens_only = false;
     this.opt_no_for_v = false;
   }
+
+
+
+  // concrete material 
+  addStyleIfValueAllowed(data:any, id :any){
+    const safety = this.safety.getTableColumns();
+    const concrete = safety.material_concrete[id];
+    data.forEach((data:any)=>{
+      const value = data.value;
+      const isValueAllowed = this.allowedValues1.includes(value) || this.allowedValues2.includes(value);
+      this.checkEdit(data, !isValueAllowed);
+    })
+  }
+  checkEdit(data: any, checkEdit: boolean, value?: any) {
+    if (checkEdit) {
+      data.pq_cellstyle = {
+        value: { ...this.styleEdit },
+      };
+      data.pq_cellprop = {
+        value: { ...this.propEdit },
+      };
+    } else {
+      data.pq_cellstyle = {
+        ...data.pq_cellstyle,
+        value: { ...this.styleNoConcreEdit },
+      };
+      // data.pq_cellprop = {
+      //   ...data.pq_cellprop,
+      //   value: { ...this.propNoEdit },
+      // };
+    }
+  }
+  handleConcreteSelect(data){
+    const isValueAllowed = this.allowedValues1.includes(data.value) || this.allowedValues2.includes(data.value);
+    if (data.value === 0 || !isValueAllowed) {
+        data.pq_cellstyle = {
+            value: {
+                color: "white"
+            }
+        };
+    } else {
+        data.pq_cellstyle = {
+            value: {
+                color:  "#999C9F"
+            }
+        };
+    }
+  }
+  //
   handleSetSelect(dataTable: any, id: any) {
     const safety = this.safety.getTableColumns();
     const fx = safety.material_bar[id];
