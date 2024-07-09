@@ -318,6 +318,7 @@ export class ThreeTshapeService {
   }
   createDemoRectangle() {
     var member = this.memmber.getData(this.node.dataRebar.selectedCalPoint.m_no);
+    this.member = member;
     let memH = member['H'];
     let memB = member['B'];
     var arr = [memH, memB];
@@ -334,7 +335,7 @@ export class ThreeTshapeService {
     const plane = new THREE.Mesh(geometry, materialPlane);
     plane.position.set(0, 0, 0);
     this.convertToCoordinatesTShape(b, h, b, h);
-    this.drawPointTShape(b, h, b, h,0)
+    this.drawPointTShape(b, h, b, h, 0)
     this.drawPointTShape(b, h, b, h, 4)
     this.drawPointTShape(b, h, b, h, 1)
 
