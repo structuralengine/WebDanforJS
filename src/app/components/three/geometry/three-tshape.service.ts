@@ -245,15 +245,15 @@ export class ThreeTshapeService {
     if(arr_gap04.length > 0){
       jsonData["rb_4"] = {
         x: x_start - n,
-        y: y_start  - arr_gap04[0]/this.scale,
+        y: y_start  - arr_gap04[0]/this.scale ,
         z:0
       }
       jsonData["2.1"] = {
         x: x_start - n - dist_side_min/this.scale,
-        y: y_start - arr_gap04[0]/this.scale,
+        y:  y_start  - arr_gap04[0]/this.scale ,
         z:0
       }
-      this.node.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 1, dist_side_min, false, 6, 2, 0);
+      this.node.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 2, dist_side_min, false, b > h ? -6 : 6, 2, 0);
     }
     
   }
@@ -311,7 +311,7 @@ export class ThreeTshapeService {
         mesh.position.x = -(bt / 2- n - data.dist_side / this.scale - interval);
         mesh.position.y = h / 2 - data.dist_top / this.scale;
         mesh.position.z = 0;
-        this.node.nodeList.children.push(mesh);
+        this.node.nodeList.children.push(mesh);        
         interval += (b - 2 * data.dist_side / this.scale) / (data.quantity - 1);
       }
     })

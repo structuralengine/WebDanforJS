@@ -39,8 +39,8 @@ export class ThreeComponent implements OnInit {
         this.getAspectRatio(),
         this.canvas,
         devicePixelRatio,
-        600, 
-        600
+        615, 
+        615
       );
     } 
     const element = this.scene.labelRendererDomElement();

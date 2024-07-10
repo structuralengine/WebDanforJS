@@ -164,8 +164,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     var calPointListData = [];
     const upperside = this.translate.instant("preview_rebar.upper_side");
     const lowerside = this.translate.instant("preview_rebar.lower_side");
-    const lateral = this.translate.instant("preview_rebar.lateral_rebar");    
-    let calPoint =  this.rebar.selectedCalPoint;    
+    const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
+    let calPoint =  this.rebar.selectedCalPoint;  
     if (Object.keys(this.rebar).length != 0) {
       this.rebar.selectedCalPoint = newRebar !== undefined ? newRebar : this.rebar.selectedCalPoint;
       let calPoint =  this.rebar.selectedCalPoint; 
