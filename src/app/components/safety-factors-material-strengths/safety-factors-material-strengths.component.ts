@@ -633,7 +633,6 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
         change: (evt, ui) => {
           let newData = ui.updateList[0].rowData;
-          console.log("ui",ui)
           this.handleConcreteSelect(newData,ui);
           for (const updateItem of ui.updateList) {
             for (let key in updateItem.newRow) {
