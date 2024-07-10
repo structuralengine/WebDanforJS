@@ -162,6 +162,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     var axialRebarData = [];
     var stirrupData = [];
     var calPointListData = [];
+    this.addNewCalPoint();
     const upperside = this.translate.instant("preview_rebar.upper_side");
     const lowerside = this.translate.instant("preview_rebar.lower_side");
     const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
@@ -1037,20 +1038,21 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   }
 
   private copyInputValues(calPoint : any, table_data_bar : any, type: string,arraySample:any) {
-    arraySample.map(i=>{
-      switch (type) {
-        case "axial":
-          table_data_bar[i].rebar0 = calPoint.rebar0;
-          break;
-        case "stirrup":
-          table_data_bar[i].sttirup = calPoint.stirrup;
-          table_data_bar[i].stirrup_dia = calPoint.stirrup.stirrup_dia;
-          table_data_bar[i].stirrup_n = calPoint.stirrup.stirrup_n;
-          table_data_bar[i].stirrup_ss = calPoint.stirrup.stirrup_ss;
-          break;
-      }
-    })
-    this.bars.setTableColumns(table_data_bar)  
+    if(arraySample.length > 0 && calPoint != undefined){
+      arraySample.map(i=>{
+        switch (type) {
+          case "axial":
+            table_data_bar[i].rebar0 = calPoint.rebar0;
+            break;
+          case "stirrup":
+            table_data_bar[i].sttirup = calPoint.stirrup;
+            table_data_bar[i].stirrup_dia = calPoint.stirrup.stirrup_dia;
+            table_data_bar[i].stirrup_n = calPoint.stirrup.stirrup_n;
+            table_data_bar[i].stirrup_ss = calPoint.stirrup.stirrup_ss;
+            break;
+        }
+      })
+      this.bars.setTableColumns(table_data_bar)  
     this.rebar.rebarList = this.bars.bar_list;
     let m_no = this.rebar.rebarList[0];
     for (const rebar of this.rebar.rebarList) {
@@ -1060,6 +1062,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         rebar.m_no = m_no
       }
     }
+    }
+    
+    
   }
   private setInterval(rebar0: any){
     const PI = 3.14;
@@ -1089,7 +1094,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   }
 
   private addClsCalPoint(){
-    this.addNewCalPoint();
+   
     let cls = []
     let rebarList = this.rebar.rebarList;    
     console.log("rebarList",rebarList);
@@ -1172,13 +1177,18 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     console.log(newRebarList)    
 
     if(newRebarList.length > 0){
-      newRebarList.map((data) => {       
-        let indexBar= table_data_bar.findIndex(d=> d.index === data.index)      
-        this.copyInputValues(rebarPreFinal, table_data_bar, "axial", [indexBar])
-        this.copyInputValues(rebarPreFinal, table_data_bar, "stirrup", [indexBar])
+      newRebarList.map((data) => {  
+        if(data.index != 1)   {
+          let indexBar= table_data_bar.findIndex(d=> d.index === data.index)      
+          this.copyInputValues(rebarPreFinal, table_data_bar, "axial", [indexBar])
+          this.copyInputValues(rebarPreFinal, table_data_bar, "stirrup", [indexBar])
+        }  
+        
       })
     }   
-    this.rebar.rebarList = this.bars.bar_list;
+     this.rebar.rebarList = this.bars.bar_list;
+     this.rebar.selectedCalPoint =this.rebar.rebarList[0];
+
     let m_no = this.rebar.rebarList[0];
     for (const rebar of this.rebar.rebarList) {
       if (rebar.m_no !== "") {
