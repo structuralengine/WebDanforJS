@@ -349,17 +349,17 @@ export class InputFatiguesService {
   public getSaveData(): any {
     return {
       fatigue_list: this.fatigue_list,
-      train_A_count: this.train_A_count,
-      train_B_count: this.train_B_count,
-      service_life: this.service_life,
+      train_A_count: this.train_A_count != null ? +this.train_A_count : this.train_A_count,
+      train_B_count: this.train_B_count != null ? +this.train_B_count : this.train_B_count,
+      service_life: this.service_life != null ? +this.service_life : this.service_life,
     };
   }
 
   public setSaveData(fatigues: any) {
     this.fatigue_list = fatigues.fatigue_list;
-    this.train_A_count = fatigues.train_A_count;
-    this.train_B_count = fatigues.train_B_count;
-    this.service_life = fatigues.service_life;
+    this.train_A_count = fatigues.train_A_count != null ? +fatigues.train_A_count : fatigues.train_A_count;
+    this.train_B_count = fatigues.train_B_count != null ? +fatigues.train_B_count : fatigues.train_B_count;
+    this.service_life = fatigues.service_life != null ? +fatigues.service_life : fatigues.service_life;
     // list fatigue
   this.fatigue_list = fatigues.fatigue_list.map((value) => {
     const defaultValue = this.default_fatigue(value.index);

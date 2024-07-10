@@ -257,7 +257,7 @@
         "reinforcement_bar":"shear reinforcement bar"
     },
     "fatigues":{
-        "durable":"Durable life",
+        "durable":"Durable years",
         "m_no":"Member\nNo",
         "position":"Position\n(m)",
         "position_":"Tensile side",

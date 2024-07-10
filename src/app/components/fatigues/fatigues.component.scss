@@ -83,7 +83,7 @@
 
 p {
   margin-bottom: 0;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .mega-menu2 {
@@ -102,12 +102,23 @@ p {
   border-radius: 4px;
   background: #F5F5F5;
   border: none;
-  height: 29px;
+  height: 28px;
   outline: none;
-  width: 149px
+  width: 149px;
+  font-size: 12px;
 }
 
 .jA-jB {
   gap: 21px;
   font-weight: 700;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
 }

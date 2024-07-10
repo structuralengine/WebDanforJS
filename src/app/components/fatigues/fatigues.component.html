@@ -29,18 +29,20 @@
           placeholder="Example: 100"
           id="T"
           name="T"
-          type="text"
-          [(ngModel)]="service_life"
-          (change)="changeInput()"
+          type="number"
+          [(ngModel)]="service_life_round"
+          (change)="handleChange('service life')"
+          (click)="handleClick('service life')"
         />
         <input
           *ngIf="translate.currentLang === 'ja'"
           placeholder="例: 100"
           id="T"
           name="T"
-          type="text"
-          [(ngModel)]="service_life"
-          (change)="changeInput()"
+          type="number"
+          [(ngModel)]="service_life_round"
+          (change)="handleChange('service life')"
+          (click)="handleClick('service life')"
         />
       </div>
       <div class="d-flex jA-jB">
@@ -48,24 +50,24 @@
           <p translate>fatigues.jA</p>
           <input
             title="input1"
-            laceholder="input1"
             id="jA"
             name="jA"
-            type="text"
-            [(ngModel)]="train_A_count"
-            (change)="changeInput()"
+            type="number"
+            [(ngModel)]="train_A_count_round"
+            (change)="handleChange('jA')"
+            (click)="handleClick('jA')"
           />
         </div>
         <div class="d-flex service-life">
           <p translate>fatigues.jB</p>
           <input
             title="input3"
-            laceholder="input2"
             id="jB"
             name="jB"
-            type="text"
-            [(ngModel)]="train_B_count"
-            (change)="changeInput()"
+            type="number"
+            [(ngModel)]="train_B_count_round"
+            (change)="handleChange('jB')"
+            (click)="handleClick('jB')"
           />
         </div>
       </div>
