@@ -290,7 +290,7 @@ export class SaveDataService {
       // 鉄筋情報
       bar: this.bars.getSaveData(),
       // 鉄骨情報
-      steel: this.steel.getSaveData(),
+      // steel: this.steel.getSaveData(),
       // 疲労情報
       fatigues: this.fatigues.getSaveData(),
       // 安全係数情報
