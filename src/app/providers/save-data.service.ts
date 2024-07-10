@@ -313,9 +313,18 @@ export class SaveDataService {
     if (data && Array.isArray(data.steel)) {
       let hasNonNullValues = false;
 
+      // data.steel.forEach(steelItem => {
+      //   if ((steelItem.I && Object.values(steelItem.I).some(value => value !== null)) ||
+      //       (steelItem.H && Object.values(steelItem.H).some(value => value !== null))) {
+      //     hasNonNullValues = true;
+      //   }
+      // });
       data.steel.forEach(steelItem => {
-        if ((steelItem.I && Object.values(steelItem.I).some(value => value !== null)) ||
-            (steelItem.H && Object.values(steelItem.H).some(value => value !== null))) {
+        // Check if the 'I' or 'H' properties of the current steelItem have any non-null values
+        const IValues = steelItem.I ? Object.entries(steelItem.I).filter(([key, value]) => key !== 'title' && value !== null) : [];
+        const HValues = steelItem.H ? Object.entries(steelItem.H).filter(([key, value]) => key !== 'title' && value !== null) : [];
+  
+        if (IValues.length > 0 || HValues.length > 0) {
           hasNonNullValues = true;
         }
       });
