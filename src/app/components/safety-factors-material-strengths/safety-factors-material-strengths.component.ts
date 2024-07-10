@@ -633,7 +633,8 @@ export class SafetyFactorsMaterialStrengthsComponent
         },
         change: (evt, ui) => {
           let newData = ui.updateList[0].rowData;
-          this.handleConcreteSelect(newData);
+          console.log("ui",ui)
+          this.handleConcreteSelect(newData,ui);
           for (const updateItem of ui.updateList) {
             for (let key in updateItem.newRow) {
               updateItem.newRow[key] = parseFloat(updateItem.newRow[key]);
@@ -1756,10 +1757,10 @@ export class SafetyFactorsMaterialStrengthsComponent
       // };
     }
   }
-  handleConcreteSelect(data) {
+  handleConcreteSelect(data,ui) {
     const isValueAllowed =
-      this.allowedValues1.includes(data.value) ||
-      this.allowedValues2.includes(data.value);
+      this.allowedValues1.includes(data.value) && ui.updateList[0].rowIndx ===0 ||
+      this.allowedValues2.includes(data.value) && ui.updateList[0].rowIndx !==0 ;
     if (data.value === 0 || !isValueAllowed) {
       data.pq_cellstyle = {
         value: {
