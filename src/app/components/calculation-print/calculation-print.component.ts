@@ -296,7 +296,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
         Checked: this.table_datas[i].calc_checked
       });
 
-    ui_data["member_group_selection"] = column_data;
+    // ui_data["member_group_selection"] = column_data;
 
     console.log(JSON.stringify(ui_data));
     //check if get safety ratio list
@@ -372,13 +372,14 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
         Checked: this.table_datas[i].calc_checked
       });
 
-    ui_data["member_group_selection"] = column_data;
+    // ui_data["member_group_selection"] = column_data;
     ui_data['calc']['print_calculate_checked'] = false;
     ui_data['calc']['print_safety_ratio_checked'] = false;
     ui_data['calc']['print_section_force_checked'] = false;
     ui_data['calc']['print_summary_table_checked'] = true;
     console.log(JSON.stringify(ui_data));
     const url_summary = environment.printURL;
+    console.log("SummaryFun4", ui_data)
     this.http
       .post(url_summary, ui_data, {
         headers: new HttpHeaders({
