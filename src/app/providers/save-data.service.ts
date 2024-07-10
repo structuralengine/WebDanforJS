@@ -339,10 +339,8 @@ export class SaveDataService {
   
         // const result = await modalRef.result;
         // return result === "yes";
-        console.log('Updated data:', data);
       }
 
-      // Do something with the updated data, e.g., save it or display it
     }
   }
 
