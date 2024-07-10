@@ -11,9 +11,12 @@ import { InputCalclationPrintService } from "../components/calculation-print/cal
 import { InputCrackSettingsService } from "../components/crack/crack-settings.service";
 import { InputSteelsService } from "../components/steels/steels.service";
 import { ShearStrengthService } from "../components/shear/shear-strength.service";
+import { AlertDialogComponent } from "../components/alert-dialog/alert-dialog.component";
 
 import packageJson from '../../../package.json';
 import { InputMaterialStrengthVerificationConditionService } from "../components/material-strength-verification-conditions/material-strength-verification-conditions.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { TranslateService } from "@ngx-translate/core";
 
 @Injectable({
   providedIn: "root",
@@ -52,7 +55,9 @@ export class SaveDataService {
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private material: InputMaterialStrengthVerificationConditionService,
     private force: InputSectionForcesService,
-    private calc: InputCalclationPrintService
+    private calc: InputCalclationPrintService,
+    private modalService: NgbModal,
+    private translate: TranslateService,
   ) {
     this.arrayAxis = this.safety.arrayAxis;
     this.clear();
@@ -301,7 +306,44 @@ export class SaveDataService {
   // インプットデータを読み込む
   public readInputData(inputText: string) {
     const jsonData: {} = JSON.parse(inputText);
+    this.processData(jsonData);
     this.setInputData(jsonData);
+  }
+  processData(data: any) {
+    if (data && Array.isArray(data.steel)) {
+      let hasNonNullValues = false;
+
+      data.steel.forEach(steelItem => {
+        if ((steelItem.I && Object.values(steelItem.I).some(value => value !== null)) ||
+            (steelItem.H && Object.values(steelItem.H).some(value => value !== null))) {
+          hasNonNullValues = true;
+        }
+      });
+
+      // Remove the steel array
+      delete data.steel;
+
+      if (hasNonNullValues) {
+        // this.showMessage = true;
+        const modalRef = this.modalService.open(AlertDialogComponent, {
+          centered: true,
+          backdrop: true,
+          keyboard: true,
+          size: "sm",
+          windowClass: "confirm-modal",
+        });
+        modalRef.componentInstance.message = this.translate.instant(
+          "menu.removed_steel"
+        );
+        modalRef.componentInstance.dialogMode = "confirm";
+  
+        // const result = await modalRef.result;
+        // return result === "yes";
+        console.log('Updated data:', data);
+      }
+
+      // Do something with the updated data, e.g., save it or display it
+    }
   }
 
   public setInputData(jsonData: any) {
@@ -355,11 +397,11 @@ export class SaveDataService {
       this.bars.clear();
     }
     // 鉄骨情報
-    if ("steel" in jsonData) {
-      this.steel.setSaveData(jsonData.steel);
-    } else {
-      this.steel.clear();
-    }
+    // if ("steel" in jsonData) {
+    //   this.steel.setSaveData(jsonData.steel);
+    // } else {
+    //   this.steel.clear();
+    // }
     // 疲労情報
     if ("fatigues" in jsonData) {
       this.fatigues.setSaveData(jsonData.fatigues);
