@@ -501,6 +501,12 @@ export class InputBarsService {
   }
 
   public setSaveData(bar: any) {
+    bar.map((data) => {
+      if(!Object.keys(data).includes("input_mode")){
+        data.input_mode = 0;
+      }
+    })
+    
     this.bar_list = bar;
   }
 

@@ -1097,7 +1097,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
    
     let cls = []
     let rebarList = this.rebar.rebarList;    
-    console.log("rebarList",rebarList);
     let arrayRb0: any = []
     let arrayStirrup: any = []
     rebarList.map((data) => {
@@ -1174,7 +1173,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       }
     })   
     let rebarPreFinal = rebarList[rebarList.length - newRebarList.length - 1];
-    console.log(newRebarList)    
 
     if(newRebarList.length > 0){
       newRebarList.map((data) => {  
@@ -1197,6 +1195,5 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         rebar.m_no = m_no
       }
     }
-    console.log(table_data_bar);
   }
 }
