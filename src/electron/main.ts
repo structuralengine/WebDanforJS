@@ -226,7 +226,9 @@ ipcMain.on(
       fs.writeFileSync(path, data);
       event.returnValue = path;
     } catch (error) {
-      await dialog.showMessageBox({ message: 'error : ' + error });
+      if(path != null){
+        await dialog.showMessageBox({ message: 'error : ' + error });
+      }
       event.returnValue = '';
     }
   }
