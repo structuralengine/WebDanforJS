@@ -9,6 +9,6 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 export class AlertDialogComponent {
   @Input() message: string;
   @Input() dialogMode: "confirm" | "alert" = "alert";
-
+  @Input() close: boolean = true;
   constructor(public modal: NgbActiveModal) {}
 }
