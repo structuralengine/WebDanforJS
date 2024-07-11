@@ -232,6 +232,7 @@ body {
     background-color: #222222;
     width: 96%;
     border-radius: 4px;
+    color: white
 }
 
  .pq-grid-cell.pq-drop-icon>div:before {
@@ -243,15 +244,18 @@ body {
     width: 10px;
     height: 10px;
     background-position-y: 4px;
+    color: #fff;
  }
  .safety-factors,
  .material-strength,
- .design-points {
+ .design-points, 
+ .concrete-strength {
     div.pq-editor-outer {
      background: #222222 !important;
      select.pq-editor-focus{
         option{
         background-color: #222222;
+        color: #fff;
         }
      }
     }

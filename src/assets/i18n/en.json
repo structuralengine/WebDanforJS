@@ -17,7 +17,8 @@
         "acceptedFile":"Please choose pik or csv file format",
         "NewWindow":"New window",
         "contact":"Contact",
-        "message_ver":"The current version of WebDan does not support roads (beta version)"
+        "message_ver":"The current version of WebDan does not support roads (beta version)",
+        "removed_steel":"Removed steel frame data due to incompatibility"
     },
     "login-dialog":{
         "createAccount":"Creat account",
@@ -338,7 +339,7 @@
         "tys":"Tensile yield strength",
         "sys":"Shear yield strength",
         "ts":"Tensile strength",
-        "fck":"Design standard strength of concrete fck(N/mm2)",
+        "fck":"Design standard strength of concrete Fc(N/mm2)",
         "max_ca":"Maximum dimensions of coarse aggregate (mm)",
         "b_safe":"Safety factor for bending check",
         "material_coefficient":"Material coefficient",
@@ -367,7 +368,9 @@
         "bentonite":"Bentonite muddy water",
         "aerial":"Aerial construction",
         "rbmt":"Reinforcing bar material type",
-        "av":"Arbitrary value"
+        "av":"Arbitrary value",
+        "options_concrete":"Options",
+        "value": "Value"
     },
     "calculation-print":{
         "dc":"Design condition",
