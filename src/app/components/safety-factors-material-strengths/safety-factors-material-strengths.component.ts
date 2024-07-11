@@ -1352,6 +1352,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         paste: false,
         align: "center",
         defaultValue: 0,
+        style: { 'color': 'white' },
         cls: "pq-drop-icon pq-side-icon",
         editor: {
           type: "select",
