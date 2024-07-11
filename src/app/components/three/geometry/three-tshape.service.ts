@@ -25,13 +25,16 @@ export class ThreeTshapeService {
     let memBt = member['Bt'];
     let memB = member['B'];
     let memt = member['t'];
+    let haunch_M = this.node.dataRebar.selectedCalPoint.haunch_M;
+    if (!!haunch_M){
+      memH = memH + haunch_M;
+    } 
     var arr = [memH, memBt, memB, memt];
     let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
     });
     this.scale = max_val / 88;
-    let haunch_M = this.node.dataRebar.selectedCalPoint.haunch_M;
-    if (!!haunch_M) memH = memH + haunch_M;
+    
     this.createTShape(memBt / this.scale, memH / this.scale, memB / this.scale, memt / this.scale, 0xb9b9b9)
     //this.createLineRectangle(memB / this.scale, memH / this.scale, 20 / this.scale, 0x333D46)
     this.scene.render()
@@ -148,7 +151,7 @@ export class ThreeTshapeService {
        
         this.node.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, rebar_type_0.dist_side, false, 6, 2, 1);
         if(quantity>1){
-          this.node.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, (b * this.scale - 2 * rebar_type_0.dist_side) / (quantity - 1), false, 6, 2, 1);
+          this.node.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, (this.member.B - 2 * rebar_type_0.dist_side) / (quantity - 1), false, 6, 2, 1);
         }
       }
     }
@@ -182,7 +185,7 @@ export class ThreeTshapeService {
           }
           this.node.drawLineDim(jsonData["5"], jsonData["rb_7"], 1,  rebar_type_1.dist_side, false, 6, -2, 1);
           if(quantity2>1){
-            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, (b * this.scale - 2 * rebar_type_1.dist_side) / (quantity2 - 1), false, 6, -2, 1);
+            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, (this.member.B - 2 * rebar_type_1.dist_side) / (quantity2 - 1), false, 6, -2, 1);
           }
         }
     }  
@@ -190,7 +193,7 @@ export class ThreeTshapeService {
     // dimenstions for rebar_type = 0 & 1
     let haunch_M = this.node.dataRebar.selectedCalPoint.haunch_M;
     if (!!haunch_M) memH = this.member.H + haunch_M;
-    const arr_gap01 = this.getArrGap(1, this.member.H)
+    const arr_gap01 = this.getArrGap(1, memH)
     //draw line rebar_type = 1
     if (arr_gap01.length >0){  
       let y = 0;
@@ -201,9 +204,9 @@ export class ThreeTshapeService {
           z: 0
         }
         if(i == 0)
-          this.node.drawLineDim(jsonData["8"], jsonData[`rb0_${i}`], 0, arr_gap01[i], true, 6, 10, 1);
+          this.node.drawLineDim(jsonData["8"], jsonData[`rb0_${i}`], 0, +arr_gap01[i], true, 6, 10, 1);
         else
-          this.node.drawLineDim(jsonData[`rb0_${i - 1}`], jsonData[`rb0_${i}`], 0, arr_gap01[i] , true, 6, 10, 1);
+          this.node.drawLineDim(jsonData[`rb0_${i - 1}`], jsonData[`rb0_${i}`], 0, +arr_gap01[i] , true, 6, 10, 1);
           
         y += (arr_gap01[i]/ this.scale);
       }    
@@ -227,9 +230,9 @@ export class ThreeTshapeService {
           z: 0
         }
         if(i == 0)
-          this.node.drawLineDim(jsonData["1.1"], jsonData[`rb4_${i}`], 0, arr_gap04[i] , true, 6, 2, 0);
+          this.node.drawLineDim(jsonData["1.1"], jsonData[`rb4_${i}`], 0, +arr_gap04[i] , true, 6, 2, 0);
         else
-        this.node.drawLineDim(jsonData[`rb4_${i - 1}`], jsonData[`rb4_${i}`], 0, arr_gap04[i], true, 6, 2, 0);
+        this.node.drawLineDim(jsonData[`rb4_${i - 1}`], jsonData[`rb4_${i}`], 0, +arr_gap04[i], true, 6, 2, 0);
           
         y += (arr_gap04[i]/ this.scale);
       }    
@@ -321,10 +324,14 @@ export class ThreeTshapeService {
     this.member = member;
     let memH = member['H'];
     let memB = member['B'];
+    let haunch_M = this.node.dataRebar.selectedCalPoint.haunch_M;
+    if (!!haunch_M) memH = memH + haunch_M;
     var arr = [memH, memB];
+  
     let max_val = arr.reduce(function (accumulator, element) {
       return (accumulator > element) ? accumulator : element
     });
+   
     this.scale = max_val / 88;
     this.createRectangle(memB / this.scale, memH / this.scale, 0xb9b9b9) 
     this.scene.render()
