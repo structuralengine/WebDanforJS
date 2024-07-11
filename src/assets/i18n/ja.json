@@ -16,7 +16,8 @@
         "open":"を開いてください！",
         "NewWindow":"新しいウィンドウ",
         "contact":"お問い合わせ",
-        "message_ver":"現バージョンのWebDanは道路（β版）に対応しておりません"
+        "message_ver":"現バージョンのWebDanは道路（β版）に対応しておりません",
+        "removed_steel":"非対応のため鉄骨データを削除しました"
     },
     "login-dialog":{
         "createAccount":"ユーザー登録がお済みでない方はこちらから",

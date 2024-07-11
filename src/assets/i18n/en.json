@@ -17,7 +17,8 @@
         "acceptedFile":"Please choose pik or csv file format",
         "NewWindow":"New window",
         "contact":"Contact",
-        "message_ver":"The current version of WebDan does not support roads (beta version)"
+        "message_ver":"The current version of WebDan does not support roads (beta version)",
+        "removed_steel":"Removed steel frame data due to incompatibility"
     },
     "login-dialog":{
         "createAccount":"Creat account",
