@@ -1,14 +1,15 @@
 <div class="modal-wrapper">
   <div class="text">{{ message }}</div>
   <div class="button-wrapper" *ngIf="dialogMode === 'confirm'">
-    <!-- <div
+    <div
       type="button"
       class="button secondary"
       (click)="modal.close('no')"
       translate
+      *ngIf="close"
     >
       modal.cancel
-    </div> -->
+    </div>
     <div
       type="button"
       class="button primary"

@@ -345,7 +345,7 @@ export class SaveDataService {
           "menu.removed_steel"
         );
         modalRef.componentInstance.dialogMode = "confirm";
-  
+        modalRef.componentInstance.close = false;
         // const result = await modalRef.result;
         // return result === "yes";
       }
