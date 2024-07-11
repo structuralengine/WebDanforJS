@@ -1070,16 +1070,31 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   handleChange(type:any){
     switch (type) {
       case "service life":
+       if(this.service_life_round == null){
+        this.service_life_round = "100";
+        this.service_life = +this.service_life_round;
+       }else{
         this.service_life = this.service_life_round;
         this.service_life_round = this.service_life.toFixed(0);
+       }
         break;
       case "jA":
-        this.train_A_count = this.train_A_count_round;
-        this.train_A_count_round = this.train_A_count.toFixed(3);
+        if(this.train_A_count_round == null){
+          this.train_A_count_round = "0.000";
+          this.train_A_count = +this.train_A_count_round;
+         }else{
+          this.train_A_count = this.train_A_count_round;
+          this.train_A_count_round = this.train_A_count.toFixed(3);
+         }
         break;
       case "jB":
-        this.train_B_count = this.train_B_count_round;
-        this.train_B_count_round = this.train_B_count.toFixed(3);
+        if(this.train_B_count_round == null){
+          this.train_B_count_round = "0.000";
+          this.train_B_count = +this.train_B_count_round;
+         }else{
+          this.train_B_count = this.train_B_count_round;
+          this.train_B_count_round = this.train_B_count.toFixed(3);
+         }
         break;
     }
     this.changeInput()

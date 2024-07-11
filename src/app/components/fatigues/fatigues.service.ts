@@ -23,9 +23,10 @@ export class InputFatiguesService {
     this.clear();
   }
   public clear(): void {
-    this.train_A_count = null; // A列車本数
-    this.train_B_count = null; // B列車本数
-    this.service_life = null; // 耐用年数
+    let defaultFatigueDesignCondition = this.default_fatigue_design_condition()
+    this.train_A_count = defaultFatigueDesignCondition.train_A_count; // A列車本数
+    this.train_B_count = defaultFatigueDesignCondition.train_B_count; // B列車本数
+    this.service_life = defaultFatigueDesignCondition.service_life; // 耐用年数
     this.reference_count = 2000000;
 
     this.fatigue_list = new Array();
@@ -109,6 +110,14 @@ export class InputFatiguesService {
       result["r1_2"] = null;
       result["r1_3"] = null;
     }
+    return result;
+  }
+  private default_fatigue_design_condition(): any {
+    const result = {
+      train_A_count: 0.000, 
+      train_B_count: 0.000, 
+      service_life: 100 
+    };
     return result;
   }
 
@@ -356,10 +365,11 @@ export class InputFatiguesService {
   }
 
   public setSaveData(fatigues: any) {
+    let defaultFatigueDesignCondition = this.default_fatigue_design_condition()
     this.fatigue_list = fatigues.fatigue_list;
-    this.train_A_count = fatigues.train_A_count != null ? +fatigues.train_A_count : fatigues.train_A_count;
-    this.train_B_count = fatigues.train_B_count != null ? +fatigues.train_B_count : fatigues.train_B_count;
-    this.service_life = fatigues.service_life != null ? +fatigues.service_life : fatigues.service_life;
+    this.train_A_count = fatigues.train_A_count != null ? +fatigues.train_A_count : defaultFatigueDesignCondition.train_A_count;
+    this.train_B_count = fatigues.train_B_count != null ? +fatigues.train_B_count : defaultFatigueDesignCondition.train_B_count;
+    this.service_life = fatigues.service_life != null ? +fatigues.service_life : defaultFatigueDesignCondition.service_life;
     // list fatigue
   this.fatigue_list = fatigues.fatigue_list.map((value) => {
     const defaultValue = this.default_fatigue(value.index);
