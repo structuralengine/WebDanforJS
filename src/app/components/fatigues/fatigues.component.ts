@@ -125,7 +125,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let i = 0; i < this.table_datas.length; i++) {
       const rowData = this.table_datas[i];
 
-      const keyAll0s = Object.keys(rowData[0]);
+      if(rowData && rowData.length > 0){
+        const keyAll0s = Object.keys(rowData[0]);
       const keyAll1s = Object.keys(rowData[1]);
 
       Object.keys(this.defaultFatigue).forEach((element: any) => {
@@ -167,6 +168,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           } 
         }
       });
+      }
 
       // for (let j = 0; j < rowData.length - 1; j++) {
       //   const rowData = this.table_datas[i];
