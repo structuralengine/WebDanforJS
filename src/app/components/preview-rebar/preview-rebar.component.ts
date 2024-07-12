@@ -36,6 +36,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   public typeTable : any
   public member: any
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
+  public style1 = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, #09de6d 52.5%, transparent 54.5%, transparent 100%) !important", "font-size": "0" }
+  
   public styleShaded1 = {
     distance_side: {...this.style} 
   }
@@ -44,7 +46,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     side_cover : {...this.style}
   }
   public styleShaded3 = {
-    haunch : {...this.style}
+    haunch : {...this.style1}
   }
 
   public prop = { edit: false, show: false }
@@ -162,7 +164,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     var axialRebarData = [];
     var stirrupData = [];
     var calPointListData = [];
-    this.addNewCalPoint();
+    // if(newRebar != undefined){
+    //   this.addNewCalPoint();
+    // }
     const upperside = this.translate.instant("preview_rebar.upper_side");
     const lowerside = this.translate.instant("preview_rebar.lower_side");
     const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
@@ -667,9 +671,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           break;       
       }
           b.dist_top= data.distance_top          
-          b.dia = data.rebar_dia === "" ? null : +data.rebar_dia
-          b.quantity= data.num                
-          b.interval= data.interval   
+          b.dia = data.rebar_dia === "" || data.rebar_dia === undefined ? null : +data.rebar_dia
+          b.quantity= data.num === undefined ? null : data.num                
+          b.interval= data.interval === undefined ? null : data.interval   
           this.setInterval(b);   
           dataNew.push(b)
     })
@@ -684,9 +688,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   private setStrrup(table_data){
     var data = table_data[0][0]
     var stirrup = this.bars.default_stirrup_bar()
-    stirrup.stirrup_dia = data.stirrup_dia === "" ? null : +data.stirrup_dia;
-    stirrup.stirrup_n = data.stirrup_n;
-    stirrup.stirrup_ss = data.stirrup_ss;
+    stirrup.stirrup_dia = data.stirrup_dia === "" || data.stirrup_dia === undefined ? null : +data.stirrup_dia;
+    stirrup.stirrup_n = data.stirrup_n === undefined ? null :data.stirrup_n;
+    stirrup.stirrup_ss = data.stirrup_ss === undefined ? null :data.stirrup_ss;
     return stirrup;
   }
   private setCalPoint(table_data){
