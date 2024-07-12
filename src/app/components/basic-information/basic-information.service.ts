@@ -835,6 +835,9 @@ export class InputBasicInformationService {
       const _sp2 = basic.specification2_list.find((v) => v.id === sp2.id);
       if (_sp2 != null) {
         sp2.selected = _sp2.selected;
+        if(sp2.selected){
+          this.menuService.checkedRadioSubject.next(sp2.id)
+        }
       }
     }
     this.setDefault();

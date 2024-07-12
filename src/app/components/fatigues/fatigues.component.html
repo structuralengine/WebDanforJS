@@ -18,6 +18,65 @@
 </div> -->
 
 <div class="c-subNavArea">
+  <div class="mega-menu2">
+    <!-- <p class="topic" translate>basic-information.dc</p> -->
+    <ng-container *ngIf="menuService.selectedRoad === false">
+      <!-- 耐用年数 セクション -->
+      <div class="d-flex service-life">
+        <p translate>fatigues.durable</p>
+        <input
+          *ngIf="translate.currentLang === 'en'"
+          placeholder="Example: 100"
+          id="T"
+          name="T"
+          type="number"
+          [class.default]="service_life_round==='100'"
+          [(ngModel)]="service_life_round"
+          (change)="handleChange('service life')"
+          (click)="handleClick('service life')"
+        />
+        <input
+          *ngIf="translate.currentLang === 'ja'"
+          placeholder="例: 100"
+          id="T"
+          name="T"
+          type="number"
+          [class.default]="service_life_round==='100'"
+          [(ngModel)]="service_life_round"
+          (change)="handleChange('service life')"
+          (click)="handleClick('service life')"
+        />
+      </div>
+      <div class="d-flex jA-jB">
+        <div class="d-flex service-life">
+          <p translate>fatigues.jA</p>
+          <input
+            title="input1"
+            id="jA"
+            name="jA"
+            type="number"
+            [class.default]="train_A_count_round === '0.000'"
+            [(ngModel)]="train_A_count_round"
+            (change)="handleChange('jA')"
+            (click)="handleClick('jA')"
+          />
+        </div>
+        <div class="d-flex service-life">
+          <p translate>fatigues.jB</p>
+          <input
+            title="input3"
+            id="jB"
+            name="jB"
+            type="number"
+            [class.default]="train_B_count_round === '0.000'"
+            [(ngModel)]="train_B_count_round"
+            (change)="handleChange('jB')"
+            (click)="handleClick('jB')"
+          />
+        </div>
+      </div>
+    </ng-container>
+  </div>
   <nav>
     <ul #subNavArea class="c-subNavArea__nav" [ngClass]="{'has-scrollbar': hasScrollbar, 'no-scrollbar': !hasScrollbar}">
       <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i">
