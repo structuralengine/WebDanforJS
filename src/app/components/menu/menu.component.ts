@@ -2,7 +2,7 @@
 import { NgbModal, ModalDismissReasons } from "@ng-bootstrap/ng-bootstrap";
 import { AppComponent } from "../../app.component";
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
-import { InputFatiguesService } from '../fatigues/fatigues.service';
+// import { InputFatiguesService } from '../fatigues/fatigues.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
 
@@ -52,9 +52,9 @@ export class MenuComponent implements OnInit {
   public showMenu: boolean = false;
   public specification1_select_id: number;
   public specification2_select_id: number;
-  public train_A_count: number;
-  public train_B_count: number;
-  public service_life: number;
+  // public train_A_count: number;
+  // public train_B_count: number;
+  // public service_life: number;
   public showIcon:boolean = false
 
 
@@ -102,7 +102,7 @@ export class MenuComponent implements OnInit {
     private config: ConfigService,
     public user: UserInfoService,
     private basic: InputBasicInformationService,
-    private fatigues: InputFatiguesService,
+    // private fatigues: InputFatiguesService,
     private menuBehaviorSubject: MenuBehaviorSubject,
     private crack: InputCrackSettingsService,
     private shear: ShearStrengthService,
@@ -173,12 +173,12 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  changeInput() {
-    this.fatigues.setInputData(
-      this.train_A_count,
-      this.train_B_count,
-      this.service_life);
-  }
+  // changeInput() {
+  //   this.fatigues.setInputData(
+  //     this.train_A_count,
+  //     this.train_B_count,
+  //     this.service_life);
+  // }
 
 
   public setDefaultOpenControl() {
@@ -535,10 +535,10 @@ export class MenuComponent implements OnInit {
     this.table2_datas = basic.pickup_shear_force;
     this.table3_datas = basic.pickup_torsional_moment;
 
-    const fatigues = this.fatigues.getSaveData();
-    this.train_A_count = fatigues.train_A_count;
-    this.train_B_count = fatigues.train_B_count;
-    this.service_life = fatigues.service_life;
+    // const fatigues = this.fatigues.getSaveData();
+    // this.train_A_count = fatigues.train_A_count;
+    // this.train_B_count = fatigues.train_B_count;
+    // this.service_life = fatigues.service_life;
   }
 
   ngOnDestroy() {

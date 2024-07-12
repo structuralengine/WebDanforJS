@@ -5,6 +5,7 @@ import {
   ViewChild,
   AfterViewInit,
   ElementRef,
+  HostListener,
 } from "@angular/core";
 import { InputFatiguesService } from "./fatigues.service";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
@@ -14,6 +15,7 @@ import { AppComponent } from "src/app/app.component";
 import { SaveDataService } from "src/app/providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from "../members/members.service";
+import { MenuService } from "../menu/menu.service";
 
 @Component({
   selector: "app-fatigues",
@@ -21,9 +23,12 @@ import { InputMembersService } from "../members/members.service";
   styleUrls: ["./fatigues.component.scss", "../subNavArea.scss"],
 })
 export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
-  public train_A_count: number;
-  public train_B_count: number;
-  public service_life: number;
+  public train_A_count: any;
+  public train_B_count: any;
+  public service_life: any;
+  public train_A_count_round: any;
+  public train_B_count_round: any;
+  public service_life_round: any;
   public defaultFatigue : any = {};
   @ViewChild("grid") grid: SheetComponent;
   @ViewChild('subNavArea', { static: false  }) subNavArea: ElementRef;
@@ -99,7 +104,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     private fatigues: InputFatiguesService,
     private save: SaveDataService,
     private translate: TranslateService,
-    private members: InputMembersService
+    private members: InputMembersService,
+    public menuService: MenuService,
   ) {
     this.members.checkGroupNo();
   }
@@ -109,11 +115,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.defaultFatigue = {};
     this.defaultFatigue = this.fatigues.default_fatigue_value(0);
     
-    const fatigues = this.fatigues.getSaveData();
-
-    this.train_A_count = fatigues.train_A_count;
-    this.train_B_count = fatigues.train_B_count;
-    this.service_life = fatigues.service_life;
+    this.getDataInput()
 
     this.setTitle(this.save.isManual());
 
@@ -123,7 +125,8 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let i = 0; i < this.table_datas.length; i++) {
       const rowData = this.table_datas[i];
 
-      const keyAll0s = Object.keys(rowData[0]);
+      if(rowData && rowData.length > 0){
+        const keyAll0s = Object.keys(rowData[0]);
       const keyAll1s = Object.keys(rowData[1]);
 
       Object.keys(this.defaultFatigue).forEach((element: any) => {
@@ -165,6 +168,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
           } 
         }
       });
+      }
 
       // for (let j = 0; j < rowData.length - 1; j++) {
       //   const rowData = this.table_datas[i];
@@ -828,9 +832,11 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public saveData(): void {
     const table_datas = [];
-    for (const g of this.table_datas) {
-      for (const e of g) {
-        table_datas.push(e);
+    if(this.table_datas){
+      for (const g of this.table_datas) {
+        for (const e of g) {
+          table_datas.push(e);
+        }
       }
     }
     this.fatigues.setTableColumns({
@@ -1038,5 +1044,80 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
       precision = 2;
     var multiplier = Math.pow(10, precision || 0);
     return Math.round(value * multiplier) / multiplier;
+  }
+
+  @HostListener('document:click', ['$event'])
+  public mouseClick(event: any) {
+    if (event?.target?.id !== 'T') {
+      this.service_life_round = this.service_life?.toFixed(0);
+    }
+    if (event?.target?.id !== 'jA') {
+      this.train_A_count_round = this.train_A_count?.toFixed(3);
+    }
+    if (event?.target?.id !== 'jB') {
+      this.train_B_count_round = this.train_B_count?.toFixed(3);
+    }
+  }
+
+  getDataInput(){
+    const fatigues = this.fatigues.getSaveData();
+
+    this.train_A_count = fatigues.train_A_count;
+    this.train_A_count_round = this.train_A_count.toFixed(3);
+    this.train_B_count = fatigues.train_B_count;
+    this.train_B_count_round = this.train_B_count.toFixed(3);
+    this.service_life = fatigues.service_life;
+    this.service_life_round = this.service_life.toFixed(0);
+  }
+  handleChange(type:any){
+    switch (type) {
+      case "service life":
+       if(this.service_life_round == null){
+        this.service_life_round = "100";
+        this.service_life = +this.service_life_round;
+       }else{
+        this.service_life = this.service_life_round;
+        this.service_life_round = this.service_life.toFixed(0);
+       }
+        break;
+      case "jA":
+        if(this.train_A_count_round == null){
+          this.train_A_count_round = "0.000";
+          this.train_A_count = +this.train_A_count_round;
+         }else{
+          this.train_A_count = this.train_A_count_round;
+          this.train_A_count_round = this.train_A_count.toFixed(3);
+         }
+        break;
+      case "jB":
+        if(this.train_B_count_round == null){
+          this.train_B_count_round = "0.000";
+          this.train_B_count = +this.train_B_count_round;
+         }else{
+          this.train_B_count = this.train_B_count_round;
+          this.train_B_count_round = this.train_B_count.toFixed(3);
+         }
+        break;
+    }
+    this.changeInput()
+  }
+  handleClick(type:any){
+    switch (type) {
+      case "service life":
+        this.service_life_round = this.service_life;
+        break;
+      case "jA":
+        this.train_A_count_round = this.train_A_count;
+        break;
+      case "jB":
+        this.train_B_count_round = this.train_B_count;
+        break;
+    }
+  }
+  changeInput() {
+    this.fatigues.setInputData(
+      this.train_A_count,
+      this.train_B_count,
+      this.service_life);
   }
 }
