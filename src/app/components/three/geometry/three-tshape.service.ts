@@ -185,7 +185,7 @@ export class ThreeTshapeService {
           }
           this.node.drawLineDim(jsonData["5"], jsonData["rb_7"], 1,  rebar_type_1.dist_side, false, 6, -2, 1);
           if(quantity2>1){
-            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, (this.member.B - 2 * rebar_type_1.dist_side) / (quantity2 - 1), false, 6, -2, 1);
+            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, +((this.member.B - 2 * rebar_type_1.dist_side) / (quantity2 - 1)).toFixed(1), false, 6, -2, 1);
           }
         }
     }  
