@@ -216,7 +216,7 @@ body {
 
 #chatplusview.chatplusview-basic.closed #outline{
     display: none;
-  }
+}
 #cls-2:hover {
     fill: #00C95F!important;
   }
@@ -262,7 +262,7 @@ body {
  }
  //three.js
  #screenArea div {
-     top: 48px;
+     top: 43px;
      z-index: 1;
  }
  // Preview bar css - Start
@@ -412,3 +412,23 @@ body {
             border: unset !important
         }
 }
+.previewArea{
+    .material-strength,
+    .calculate-point
+    {
+        .datasheet .pq-header-outer{
+            position: unset;
+        }
+    }
+}
+#chatplusview {
+    right: 18px !important;
+    bottom: 20px !important;
+}
+#chatplusview.chatplusview-basic #outline {
+    border-radius: 10px !important;
+}
+#chatplusview.chatplusview-basic {
+    border-radius: 10px !important;
+}
+ 

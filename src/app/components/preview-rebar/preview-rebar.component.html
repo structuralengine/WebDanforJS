@@ -1,27 +1,29 @@
 <div class="datasheet">
-  <div class="data-table">
-    <div class="table material-strength">
-      <h6 class="header " translate>preview_rebar.axial_rebar</h6>
-      <app-sheet #axialGrid [options]="axialRebarOptions"></app-sheet>
+  <div class="content">
+    <div class="data-table">
+      <div class="table material-strength">
+        <h6 class="header " translate>preview_rebar.axial_rebar</h6>
+        <app-sheet #axialGrid [options]="axialRebarOptions"></app-sheet>
+      </div>
+      <div class="table material-strength">
+        <h6 class="header" translate>preview_rebar.stirrup</h6>
+        <app-sheet #stirrupGrid [options]="stirrupOptions"></app-sheet>
+      </div>
+      <div class="table calculate-point">
+        <h6 class="header" translate>preview_rebar.p_title <span class="sub-title"
+            translate>preview_rebar.p_subtitle</span></h6>
+        <app-sheet #calPointGrid [options]="calculatedPointOptions"></app-sheet>
+      </div>
     </div>
-    <div class="table material-strength">
-      <h6 class="header" translate>preview_rebar.stirrup</h6>
-      <app-sheet #stirrupGrid [options]="stirrupOptions"></app-sheet>
-    </div>
-    <div class="table">
-      <h6 class="header" translate>preview_rebar.p_title <span class="sub-title"
-          translate>preview_rebar.p_subtitle</span></h6>
-      <app-sheet #calPointGrid [options]="calculatedPointOptions"></app-sheet>
-    </div>
-  </div>
-
-  <div class="three-model">
-    <div>
-      <button *ngIf="bars.is_review" class="table-button" (click)="back()" translate>bars.table_mode</button>
-    </div>
-    <div class="bodyBar">
-      <div class="three-container">
-        <app-three [typeView]="typeView"></app-three>
+  
+    <div class="three-model">
+      <div>
+        <button *ngIf="bars.is_review" class="table-button" (click)="back()" translate>bars.table_mode</button>
+      </div>
+      <div class="bodyBar">
+        <div class="three-container">
+          <app-three [typeView]="typeView"></app-three>
+        </div>
       </div>
     </div>
   </div>
