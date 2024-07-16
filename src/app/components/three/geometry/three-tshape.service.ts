@@ -111,9 +111,9 @@ export class ThreeTshapeService {
     }    
     this.node.drawLineDim(jsonData["1"], jsonData["4"], 0, Math.round(h * this.scale), true, 8, 1, 4);
     
-    this.node.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 1, 4);
+    this.node.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 2, 6);
     if(b != bt){
-      this.node.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 3, 0, 9);
+      this.node.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 3, 0, 12);
     }
 
     // dimenstions for rebar_type = 0
@@ -256,7 +256,7 @@ export class ThreeTshapeService {
         y:  y_start  - arr_gap04[0]/this.scale ,
         z:0
       }
-      this.node.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 2, dist_side_min, false, b > h ? -6 : 6, 2, 0);
+      this.node.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 2, dist_side_min, false, b > h ? -5 : 5, 2, 0);
     }
     
   }

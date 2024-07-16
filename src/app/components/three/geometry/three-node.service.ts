@@ -144,7 +144,7 @@ export class ThreeNodeService {
     mesh.name = "member" + 2;
 
     if (vertical) {      
-      mesh.position.set(px + lenDim - distanceDim, y - length / 2, 0);
+      mesh.position.set(px + lenDim - distanceDim, y - length / 2, 0);    
     } else {
       mesh.position.set(x - length / 2, (px + py) / 2 + distanceDim, 0);
       mesh.rotation.z = Math.acos(0);

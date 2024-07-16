@@ -36,7 +36,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   public typeTable : any
   public member: any
   public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
-  public style1 = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, #09de6d 52.5%, transparent 54.5%, transparent 100%) !important", "font-size": "0" }
+  public style1 = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0", "border": "1px solid #39b54a" }
   
   public styleShaded1 = {
     distance_side: {...this.style} 
@@ -46,9 +46,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     side_cover : {...this.style}
   }
   public styleShaded3 = {
-    haunch : {...this.style1}
+    haunch : {...this.style}
   }
-
   public prop = { edit: false, show: false }
   public propShaded1 = {
     distance_side: {...this.prop}
@@ -154,7 +153,12 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
           break;
         }
         default:
-          arrNew = rebar0;
+          rebar0.map((data) => {
+            if(data.dia != null || data.quantity != null || data.interval != null){
+              arrNew.push(data);
+            }
+          })
+         
           break;
       } 
     } 
@@ -164,9 +168,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     var axialRebarData = [];
     var stirrupData = [];
     var calPointListData = [];
-    // if(newRebar != undefined){
-    //   this.addNewCalPoint();
-    // }
+    if(newRebar != undefined){
+      this.addNewCalPoint();
+    }
     const upperside = this.translate.instant("preview_rebar.upper_side");
     const lowerside = this.translate.instant("preview_rebar.lower_side");
     const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
@@ -1095,6 +1099,9 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       }
     }
     rebar0.interval = rebar0.interval != null ? +rebar0.interval.toFixed(1) : rebar0.interval ;
+    if(rebar0.interval === Infinity || isNaN(rebar0.interval)){
+      rebar0.interval = null
+    }
   }
 
   private addClsCalPoint(){
