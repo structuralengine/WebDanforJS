@@ -6,18 +6,17 @@ import { Subject } from "rxjs";
   providedIn: "root",
 })
 export class MenuService {
-  private checkedRadioSubject = new Subject<number>();
+  public checkedRadioSubject = new Subject<number>();
   public checkedRadio$ = this.checkedRadioSubject.asObservable();
   public selectedRoad: boolean = false;
   checkedRadio: any;
-
   // 部材情報
   constructor() {
 
   }
   setCheckedRadio(value: number) {
     this.checkedRadio = value;
-    this.checkedRadioSubject.next(value); // Th
+    this.checkedRadioSubject.next(value);
   }
 
   getCheckedRadio(): number {

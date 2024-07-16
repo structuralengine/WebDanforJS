@@ -5,6 +5,7 @@ import { ConfigService } from "./providers/config.service";
 import { SaveDataService } from "./providers/save-data.service";
 import { MenuService } from "./components/menu/menu.service";
 import { TranslateService } from "@ngx-translate/core";
+import { InputBasicInformationService } from "./components/basic-information/basic-information.service";
 
 @Component({
   selector: "app-root",
@@ -12,17 +13,52 @@ import { TranslateService } from "@ngx-translate/core";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
+  public specification2 = [
+    {
+      id: 0,
+      title: "basic-information.jr_standard",
+    },
+    {
+      id: 1,
+      title: "basic-information.trans",
+    },
+    {
+      id: 2,
+      title: "basic-information.jr_east",
+    },
+    {
+      id: 3,
+      title: "basic-information.jr_com5",
+    },
+    {
+      id: 4, 
+      title: "basic-information.trans5",
+    },
+  ];
+  public text:any
+
   constructor(
     private config: ConfigService,
     private save: SaveDataService,
     private members: InputMembersService,
     public menuService: MenuService,
     private points: InputDesignPointsService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private basic: InputBasicInformationService
   ) {
     translate.use(this.translate.getBrowserLang());
+    this.menuService.checkedRadio$.subscribe(
+      (value) => {
+        this.getText(value)
+      }
+    );
+     this.translate.onLangChange.subscribe(() => {
+      this.getText(this.basic.get_specification2())
+    });
   }
-
+  ngOnInit() {
+    this.getText(this.basic.get_specification2())
+  }
   public isManual(): boolean {
     return this.save.isManual();
   }
@@ -107,5 +143,14 @@ export class AppComponent {
   }
   public onClickHeader(){
     console.log("test")
+  }
+  getText(id:any){
+    let index = this.specification2.findIndex((data)=> data.id === id)
+    if(index !== -1){
+      let data = this.specification2[index].title
+      this.text = this.translate.instant(data)
+    }else{
+      this.text=""
+    }
   }
 }

@@ -35,7 +35,7 @@
     transition: width 0.3s ease;
     ul {
         padding-left: 0;
-        margin: 40px 4px auto 4px;
+        margin: 18px 4px auto 4px;
     }
     &__nav {
         margin-bottom: 0;
@@ -69,6 +69,17 @@
             color: var(--text_main);
             background: var(--primary);
         }
+    }
+    &__text {
+        margin: 18px 4px auto 4px;
+        text-align: center;
+    }
+    &__textItem{
+        color: #00C95F;
+        margin: 0px;
+        font-weight: 700;
+        font-size: 13px;
+        line-height: 13px;
     }
 }
 
