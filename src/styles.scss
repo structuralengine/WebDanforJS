@@ -385,11 +385,11 @@ body {
  }
 
  .pq-state-select.ui-state-highlight {
-     background: #5d656c !important;
+     background: var(--primary-500) !important;
      color: var(--text_main);
 
      &>div {
-         background: #5d656c !important;
+        background: var(--primary-500) !important;
          color: var(--text_main);
      }
  }

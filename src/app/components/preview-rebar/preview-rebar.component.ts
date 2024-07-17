@@ -35,9 +35,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
   public typeView: any
   public typeTable : any
   public member: any
-  public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0" }
-  public style1 = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%)", "font-size": "0", "border": "1px solid #39b54a" }
-  
+  public style = { "pointer-events": "none", "background": "linear-gradient(to left top, transparent 0%, transparent 50.5%, gray 52.5%, transparent 54.5%, transparent 100%) !important", "font-size": "0" }
   public styleShaded1 = {
     distance_side: {...this.style} 
   }
