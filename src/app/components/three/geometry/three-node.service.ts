@@ -104,14 +104,14 @@ export class ThreeNodeService {
       let pointHors = [];
       px = y >= 0 ? y + distance : y - distance;
       py = px >= 0 ? px + lenDim : px - lenDim;     
-      if(ni.x === x && ni.y === ymin && !check){
-        check = true;
-        pointHors.push(new THREE.Vector3(x, ni.y, 0));
-      }else if(nj.x === x && nj.y == ymin && !check){
-        check = true;
-        pointHors.push(new THREE.Vector3(x, nj.y, 0));
-      }else
-        pointHors.push(new THREE.Vector3(x, px, 0));
+      // if(ni.x === x && ni.y === ymin && !check){
+      //   check = true;
+      //   pointHors.push(new THREE.Vector3(x, ni.y, 0));
+      // }else if(nj.x === x && nj.y == ymin && !check){
+      //   check = true;
+      //   pointHors.push(new THREE.Vector3(x, nj.y, 0));
+      // }else
+      pointHors.push(new THREE.Vector3(x, px, 0));
       pointHors.push(new THREE.Vector3(x, py, 0));
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(pointHors),
@@ -120,13 +120,13 @@ export class ThreeNodeService {
       this.scene.add(line);
 
       let points = [];
-      if(ni.x === x && ni.y === ymin && !check){
-        points.push(new THREE.Vector3(x - length, ni.y, 0));
-      }else if(nj.x === x && nj.y == ymin && !check){
-        points.push(new THREE.Vector3(x - length, nj.y, 0));
-      }else
-        points.push(new THREE.Vector3(x - length, px, 0));
-      //points.push(new THREE.Vector3(x - length, px, 0));
+      // if(ni.x === x && ni.y === ymin && !check){
+      //   points.push(new THREE.Vector3(x - length, ni.y, 0));
+      // }else if(nj.x === x && nj.y == ymin && !check){
+      //   points.push(new THREE.Vector3(x - length, nj.y, 0));
+      // }else
+      //   points.push(new THREE.Vector3(x - length, px, 0));
+      points.push(new THREE.Vector3(x - length, px, 0));
       points.push(new THREE.Vector3(x - length, py, 0));
       const line2 = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(points),
@@ -163,7 +163,7 @@ export class ThreeNodeService {
         }
         break;
       case 1:
-        div.style.marginTop = "-5em";
+        div.style.marginTop = "-4.6em";
         if (y < 0) div.style.marginTop = "-3em";
         break;
       case 2:

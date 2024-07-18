@@ -85,6 +85,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
       this.rebar = {};
       this.typeView = ""
     }
+    this.addNewCalPoint();
     this.displayPreview();
     this.drawPreview()
   }
@@ -166,9 +167,10 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     var axialRebarData = [];
     var stirrupData = [];
     var calPointListData = [];
-    if(newRebar != undefined){
-      this.addNewCalPoint();
-    }
+    // // if(newRebar != undefined){
+    // //   
+    // // }
+    // this.addNewCalPoint();
     const upperside = this.translate.instant("preview_rebar.upper_side");
     const lowerside = this.translate.instant("preview_rebar.lower_side");
     const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
@@ -1176,15 +1178,18 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     let rebarList = this.rebar.rebarList;
     let newRebarList = []
     let table_data_bar = this.rebar.table_data;
+    rebarList.sort((a, b)=> a.index - b.index)
     rebarList.map((data)=>{
-      if(Object.keys(data as object).length !== 0 && data.input_mode === 1 && data.rebar0.length === 0){
+      if(Object.keys(data as object).length !== 0 && Object.keys(data as object).includes("rebar0")
+         && data.input_mode === 1 && data.rebar0.length === 0){
         newRebarList.push(data);
       }
-    })   
-    let rebarPreFinal = rebarList[rebarList.length - newRebarList.length - 1];
-
-    if(newRebarList.length > 0){
+    })  
+    //console.log("newRebarList", newRebarList);
+    if(newRebarList.length > 0){      
       newRebarList.map((data) => {  
+        var final = rebarList.findIndex(x => x.index == data.index);
+        let rebarPreFinal = rebarList[final - 1];
         if(data.index != 1)   {
           let indexBar= table_data_bar.findIndex(d=> d.index === data.index)      
           this.copyInputValues(rebarPreFinal, table_data_bar, "axial", [indexBar])

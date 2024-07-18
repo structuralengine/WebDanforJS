@@ -107,13 +107,13 @@ export class ThreeTshapeService {
       }
     }
     if(h !== t){
-      this.node.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(t * this.scale), true, 6, 4, 1);
+      this.node.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(t * this.scale), true, 6, 2, 1);
     }    
-    this.node.drawLineDim(jsonData["1"], jsonData["4"], 0, Math.round(h * this.scale), true, 8, 1, 4);
+    this.node.drawLineDim(jsonData["1"], jsonData["4"], 0, Math.round(h * this.scale), true, 10, 2.5, 4);
     
-    this.node.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 8, 2, 6);
+    this.node.drawLineDim(jsonData["1"], jsonData["8"], 1, Math.round(bt * this.scale), false, 11, 3, 1);
     if(b != bt){
-      this.node.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 3, 0, 12);
+      this.node.drawLineDim(jsonData["4"], jsonData["5"], 1, Math.round(b * this.scale), false, 12, -4, 1);
     }
 
     // dimenstions for rebar_type = 0
@@ -147,11 +147,10 @@ export class ThreeTshapeService {
           y: y_start - 15 / this.scale,
           z: 0
         }
-  
        
-        this.node.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, rebar_type_0.dist_side, false, 6, 2, 1);
+        this.node.drawLineDim(jsonData["rb_2"], jsonData["rb_1"], 1, rebar_type_0.dist_side, false, 6, 1.5, 2);
         if(quantity>1){
-          this.node.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, (this.member.B - 2 * rebar_type_0.dist_side) / (quantity - 1), false, 6, 2, 1);
+          this.node.drawLineDim(jsonData["rb_3"], jsonData["rb_1"], 1, Math.round((this.member.B - 2 * rebar_type_0.dist_side) / (quantity - 1)), false, 6, 1.5, 2);
         }
       }
     }
@@ -185,7 +184,7 @@ export class ThreeTshapeService {
           }
           this.node.drawLineDim(jsonData["5"], jsonData["rb_7"], 1,  rebar_type_1.dist_side, false, 6, -2, 1);
           if(quantity2>1){
-            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, +((this.member.B - 2 * rebar_type_1.dist_side) / (quantity2 - 1)).toFixed(1), false, 6, -2, 1);
+            this.node.drawLineDim(jsonData["rb_7"], jsonData["rb_8"], 1, +(this.member.B - 2 * rebar_type_1.dist_side) / (quantity2 - 1), false, 6, -2, 1);
           }
         }
     }  
@@ -283,10 +282,10 @@ export class ThreeTshapeService {
           arr_gap.push(arr_dis_top[i])
         }
         if (i === arr_dis_top.length) {
-          arr_gap.push((h - arr_dis_top[i - 1]).toFixed(1))
+          arr_gap.push(Math.round(h - arr_dis_top[i - 1]))
         }
         if (i !== 0 && i !== arr_dis_top.length) {
-          arr_gap.push((arr_dis_top[i] - arr_dis_top[i - 1]).toFixed(1))
+          arr_gap.push(Math.round(arr_dis_top[i] - arr_dis_top[i - 1]))
         }
       }
     }   

@@ -1829,16 +1829,8 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
       })
 
     }
-    // for (let i = this.threeNode.nodeList.children.length - 1; i >= 0; i--) {
-
-
-    //     const target = this.threeNode.nodeList.children[i];
-    //     while (target.children.length > 0) {
-    //       const object = target.children[0];
-    //       object.parent.remove(object);
-    //     }
-    //     this.threeNode.nodeList.children.splice(i, 1);
-
-    // }
+    let toRemove: any = Array.from(document.getElementsByClassName("label_theerjs"));
+    toRemove.map((e)=> e.remove());   
+    console.log(this.scene.scene)
   }
 }

@@ -301,7 +301,7 @@ export class ThreeOvalService {
         z: 0
       }      
     }
-    this.node.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, y_start*1.5, y_start/3.5, 0);
+    this.node.drawLineDim(jsonData["1"], jsonData["2"], 0, Math.round(h * this.scale), true, y_start + 5, 2, 3);
     this.node.drawLineDim(jsonData["3"], jsonData["4"], 1, Math.round(b * this.scale), false, y_start, y_start/2.5, 0);
     
      // dimenstions for rebar_type = 0
@@ -397,9 +397,9 @@ export class ThreeOvalService {
           z: 0
         }
         if(i == 0)
-          this.node.drawLineDim(jsonData["rb6"], jsonData[`rb6_${i}`], 0, Math.round(rebar_6.dist_top), true, y_start*1.5,y_start*2.75, 0);
+          this.node.drawLineDim(jsonData["rb6"], jsonData[`rb6_${i}`], 0, Math.round(rebar_6.dist_top), true, y_start*1.2,y_start*2.3, 0);
         else
-          this.node.drawLineDim(jsonData[`rb6_${i - 1}`], jsonData[`rb6_${i}`], 0, Math.round(arr_rebar_type01[i].dist_top - arr_rebar_type01[i-1].dist_top), true, y_start*1.5, y_start*2.75, 0);    
+          this.node.drawLineDim(jsonData[`rb6_${i - 1}`], jsonData[`rb6_${i}`], 0, Math.round(arr_rebar_type01[i].dist_top - arr_rebar_type01[i-1].dist_top), true, y_start*1.2, y_start*2.3, 0);    
         
         if(i == arr_rebar_type01.length - 1){
           jsonData["rb6_end"] = {
@@ -407,7 +407,7 @@ export class ThreeOvalService {
             y: -(y_start),
             z:0
           }
-          this.node.drawLineDim(jsonData[`rb6_end`], jsonData[`rb6_${i}`], 0, Math.round(h * this.scale - rebar_6.dist_top), true, y_start*1.5, y_start*2.75, 0);  
+          this.node.drawLineDim(jsonData[`rb6_end`], jsonData[`rb6_${i}`], 0, Math.round(h * this.scale - rebar_6.dist_top), true, y_start*1.2, y_start*2.3, 0);  
         }
       }   
     }
