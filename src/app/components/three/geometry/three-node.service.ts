@@ -104,13 +104,7 @@ export class ThreeNodeService {
       let pointHors = [];
       px = y >= 0 ? y + distance : y - distance;
       py = px >= 0 ? px + lenDim : px - lenDim;     
-      // if(ni.x === x && ni.y === ymin && !check){
-      //   check = true;
-      //   pointHors.push(new THREE.Vector3(x, ni.y, 0));
-      // }else if(nj.x === x && nj.y == ymin && !check){
-      //   check = true;
-      //   pointHors.push(new THREE.Vector3(x, nj.y, 0));
-      // }else
+      
       pointHors.push(new THREE.Vector3(x, px, 0));
       pointHors.push(new THREE.Vector3(x, py, 0));
       const line = new THREE.Line(
@@ -118,23 +112,16 @@ export class ThreeNodeService {
         new THREE.LineBasicMaterial({ color: 0x000000 })
       );
       this.scene.add(line);
-
-      let points = [];
-      // if(ni.x === x && ni.y === ymin && !check){
-      //   points.push(new THREE.Vector3(x - length, ni.y, 0));
-      // }else if(nj.x === x && nj.y == ymin && !check){
-      //   points.push(new THREE.Vector3(x - length, nj.y, 0));
-      // }else
-      //   points.push(new THREE.Vector3(x - length, px, 0));
+      let points = [];   
       points.push(new THREE.Vector3(x - length, px, 0));
       points.push(new THREE.Vector3(x - length, py, 0));
       const line2 = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(points),
-        new THREE.LineBasicMaterial({ color: 0x000000 })
+        new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 1, })
       );
       this.scene.add(line2);
     }
-    const geometry = new THREE.CylinderGeometry(0.1, 0.1, length, 12);
+    const geometry = new THREE.CylinderGeometry(0.08, 0.08, length, 12);
 
     // 要素をシーンに追加
     const mesh = new THREE.Mesh(
@@ -180,8 +167,7 @@ export class ThreeNodeService {
     label.visible = true;
     mesh.add(label);
 
-    this.scene.add(mesh);
-    //this.nodeList.children.push(mesh);
+    this.scene.add(mesh);   
     this.scene.render()
   }
  

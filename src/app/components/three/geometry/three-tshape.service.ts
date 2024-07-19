@@ -255,7 +255,7 @@ export class ThreeTshapeService {
         y:  y_start  - arr_gap04[0]/this.scale ,
         z:0
       }
-      this.node.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 2, dist_side_min, false, b > h ? -5 : 5, 2, 0);
+      this.node.drawLineDim(jsonData["rb_4"], jsonData["2.1"], 2, dist_side_min, false, b > h ? -5 : 5, 1, 0);
     }
     
   }
