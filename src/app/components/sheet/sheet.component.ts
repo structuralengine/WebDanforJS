@@ -256,7 +256,14 @@ export class SheetComponent implements AfterViewInit, OnChanges {
         else {
           const indexCrr = this.colsShow.indexOf(ui.colIndx);
           let colNext = this.colsShow[indexCrr + 1];
-          if (indexCrr === this.colsShow.length - 1) {
+          const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
+          if(ui.dataIndx === "distance_side" && ui.rowData.rebar_type === lateral){
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx + mov,
+              colIndx: 0,
+              focus: true,
+            });
+          }else if (indexCrr === this.colsShow.length - 1) {
             this.grid.setSelection({
               rowIndx: ui.rowIndx + mov,
               colIndx: 0,
