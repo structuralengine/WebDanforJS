@@ -9,6 +9,7 @@ import { InputBasicInformationService } from '../basic-information/basic-informa
 
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import { LanguagesService } from 'src/app/providers/languages.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sheet',
@@ -31,7 +32,8 @@ export class SheetComponent implements AfterViewInit, OnChanges {
   constructor(
     public save: SaveDataService,
     public basic: InputBasicInformationService,
-    public language: LanguagesService
+    public language: LanguagesService,
+    private translate: TranslateService,
     ){   
   }
   @HostListener('document:mouseover', ['$event'])
@@ -156,7 +158,14 @@ export class SheetComponent implements AfterViewInit, OnChanges {
         } else {
           const indexCrr = this.colsShow.indexOf(ui.colIndx);
           let colNext = this.colsShow[indexCrr + 1];
-          if (indexCrr === this.colsShow.length - 1) {
+          const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
+          if(ui.dataIndx === "distance_side" && ui.rowData.rebar_type === lateral){
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx + mov,
+              colIndx: 0,
+              focus: true,
+            });
+          }else if (indexCrr === this.colsShow.length - 1) {
             this.grid.setSelection({
               rowIndx: ui.rowIndx + mov,
               colIndx: 0,
@@ -170,6 +179,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
               focus: true,
             });
           }
+         
           // if ($cell.length > 0) {
           //   // 右に移動
           //   this.grid.setSelection({

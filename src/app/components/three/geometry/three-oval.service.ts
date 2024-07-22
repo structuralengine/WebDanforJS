@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { SceneService } from '../scene.service';
 import { ThreeNodeService } from './three-node.service';
 import { InputMembersService } from '../../members/members.service';
+import { data } from 'jquery';
 @Injectable({
   providedIn: 'root'
 })
@@ -41,12 +42,15 @@ export class ThreeOvalService {
       this.createOval(memB / this.scale, memH / this.scale, 0xb9b9b9, this.type)
       // this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
+      let arr_side = [];
       this.node.dataRebar.selectedCalPoint.rebar0.map((data) => {
         if (data.rebar_type === 5 && data.dist_top != null 
           && data.dist_side != null  && data.dia != null  && data.quantity != null) {
-          this.createArcDashedOVal(memB / this.scale, memH / this.scale, data.dist_top / this.scale, 0x333D46, this.type, data.rebar_type)
+            arr_side.push(data);
         }
       })
+      arr_side.sort((a, b) => a.dist_side - b.dist_side)      
+      this.createArcDashedOVal(memB / this.scale, memH / this.scale, arr_side[0].dist_top / this.scale, 0x333D46, this.type, arr_side[0].rebar_type)
     }   
     this.scene.render()
   }
@@ -412,12 +416,15 @@ export class ThreeOvalService {
       }   
     }
     let dist_side_min;
+    let array_side = [];
     this.node.dataRebar.selectedCalPoint.rebar0.map((data) =>{
       if(data.rebar_type == 5 && data.dist_top != null 
         && data.dist_side != null  && data.dia != null  && data.quantity != null){
-        dist_side_min = data;
+          array_side.push(data);
       }
     });
+    array_side.sort((a, b) => a.dist_side - b.dist_side)
+    dist_side_min = array_side[0]
     if(dist_side_min != undefined){
       jsonData["rb6_side1"] ={
         x: x_start,
@@ -538,6 +545,10 @@ export class ThreeOvalService {
         dataPoint.push(data)
       }
     })
+    if(typeRebar == 5){
+      dataPoint.sort((a, b) => a.dist_side - b.dist_side);
+      dataPoint = dataPoint.slice(0, 1);
+    }
     dataPoint.map((data, index) => {
       this.geometry = data.dia === null || data.dia == "" ? new THREE.SphereBufferGeometry(0) : new THREE.SphereBufferGeometry(+data.dia / 2 / this.scale)
       let interval = 0
