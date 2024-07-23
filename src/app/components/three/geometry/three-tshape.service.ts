@@ -40,6 +40,7 @@ export class ThreeTshapeService {
     this.scene.render()
   }
   createTShape(bt: any, h: any, b: any, t: any, color: any) {
+    this.node.type="TShape"
     const materialPlane = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
     let geometry1: any = new THREE.PlaneGeometry(bt, t);
     const plane1 = new THREE.Mesh(geometry1, materialPlane);
@@ -336,6 +337,7 @@ export class ThreeTshapeService {
     this.scene.render()
   }
   createRectangle(b: any, h: any, color: any) {
+    this.node.type="Rectangle"
     let geometry: any = new THREE.PlaneGeometry(b, h);
     const materialPlane = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
     const plane = new THREE.Mesh(geometry, materialPlane);

@@ -10,6 +10,7 @@ import { InputBasicInformationService } from '../basic-information/basic-informa
 import { SaveDataService } from 'src/app/providers/save-data.service';
 import { LanguagesService } from 'src/app/providers/languages.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ThreeNodeService } from '../three/geometry/three-node.service';
 
 @Component({
   selector: 'app-sheet',
@@ -34,6 +35,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
     public basic: InputBasicInformationService,
     public language: LanguagesService,
     private translate: TranslateService,
+    private node: ThreeNodeService 
     ){   
   }
   @HostListener('document:mouseover', ['$event'])
@@ -159,8 +161,16 @@ export class SheetComponent implements AfterViewInit, OnChanges {
           this.setColsShow();
           const indexCrr = this.colsShow.indexOf(ui.colIndx);
           let colNext = this.colsShow[indexCrr + 1];
-          const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
-          if(ui.dataIndx === "distance_side" && ui.rowData.rebar_type === lateral){
+          const lateral = this.translate.instant("preview_rebar.lateral_rebar");
+          const upper_side = this.translate.instant("preview_rebar.upper_side");
+          const lower_side = this.translate.instant("preview_rebar.lower_side");   
+          if(ui.dataIndx === "distance_side" && ui.rowData.rebar_type === lateral && this.node.type ==="Horizontal"){
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx + mov,
+              colIndx: 0,
+              focus: true,
+            });
+          }else if(ui.dataIndx === "distance_side" && (ui.rowData.rebar_type === upper_side|| ui.rowData.rebar_type === lower_side) && this.node.type ==="Vertical"){
             this.grid.setSelection({
               rowIndx: ui.rowIndx + mov,
               colIndx: 0,
@@ -255,10 +265,19 @@ export class SheetComponent implements AfterViewInit, OnChanges {
           }
         }
         else {
+          this.setColsShow();
           const indexCrr = this.colsShow.indexOf(ui.colIndx);
           let colNext = this.colsShow[indexCrr + 1];
           const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
-          if(ui.dataIndx === "distance_side" && ui.rowData.rebar_type === lateral){
+          const upper_side = this.translate.instant("preview_rebar.upper_side");
+          const lower_side = this.translate.instant("preview_rebar.lower_side");   
+          if(ui.dataIndx === "distance_side" && ui.rowData.rebar_type === lateral && this.node.type ==="Horizontal"){
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx + mov,
+              colIndx: 0,
+              focus: true,
+            });
+          }else if(ui.dataIndx === "distance_side" && (ui.rowData.rebar_type === upper_side|| ui.rowData.rebar_type === lower_side) && this.node.type ==="Vertical"){
             this.grid.setSelection({
               rowIndx: ui.rowIndx + mov,
               colIndx: 0,

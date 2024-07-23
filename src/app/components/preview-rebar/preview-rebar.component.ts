@@ -72,6 +72,7 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
     private threeOval: ThreeOvalService,
     private threeCircle: ThreeCircleService,
     private scene: SceneService,
+    private node: ThreeNodeService
   ) { }
 
   ngOnChanges(obj: SimpleChanges): void {
@@ -1185,7 +1186,6 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         newRebarList.push(data);
       }
     })  
-    //console.log("newRebarList", newRebarList);
     if(newRebarList.length > 0){      
       newRebarList.map((data) => {  
         var final = rebarList.findIndex(x => x.index == data.index);
@@ -1209,5 +1209,8 @@ export class PreviewRebarComponent implements OnInit, OnChanges {
         rebar.m_no = m_no
       }
     }
+  }
+  ngOnDestroy() {
+    this.node.type=undefined
   }
 }

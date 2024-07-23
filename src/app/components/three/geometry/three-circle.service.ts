@@ -53,8 +53,10 @@ export class ThreeCircleService {
     let mesh
 
     if (h > 0) {
+      this.node.type="Ring"
       geometry = new THREE.RingGeometry(h / 2, b / 2, 100)
     } else {
+      this.node.type="Circle"
       geometry = new THREE.CircleGeometry(b / 2, 100)
     }
     mesh = new THREE.Mesh(geometry, material);

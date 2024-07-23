@@ -29,6 +29,7 @@ export class ThreeOvalService {
     this.scale = max_val / 88;
     this.type = memB < memH ? "Vertical" : "Horizontal"
     if (this.type === "Vertical") {
+      this.node.type="Vertical"
       this.createOval(memB / this.scale, memH / this.scale, 0xb9b9b9, this.type);
       // this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)
@@ -39,6 +40,7 @@ export class ThreeOvalService {
         }
       })
     } else {
+      this.node.type="Horizontal"
       this.createOval(memB / this.scale, memH / this.scale, 0xb9b9b9, this.type)
       // this.createLineOval(memB / this.scale, memH / this.scale, 10 / this.scale, 0x333D46, this.type)
       this.createLineDashedOval(memB / this.scale, memH / this.scale, 0x333D46, this.type)    
