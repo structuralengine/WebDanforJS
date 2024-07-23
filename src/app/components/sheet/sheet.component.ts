@@ -156,6 +156,7 @@ export class SheetComponent implements AfterViewInit, OnChanges {
           //   }
           // }
         } else {
+          this.setColsShow();
           const indexCrr = this.colsShow.indexOf(ui.colIndx);
           let colNext = this.colsShow[indexCrr + 1];
           const lateral = this.translate.instant("preview_rebar.lateral_rebar");   
