@@ -176,6 +176,18 @@ export class SheetComponent implements AfterViewInit, OnChanges {
               colIndx: 0,
               focus: true,
             });
+          }else if(ui.dataIndx === "num" && ui.rowData.rebar_type === lateral && this.node.type ==="Vertical"){
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx,
+              colIndx: ui.colIndx + 2,
+              focus: true,
+            });
+          }else if(ui.dataIndx === "num" && (ui.rowData.rebar_type === upper_side|| ui.rowData.rebar_type === lower_side) && this.node.type ==="Horizontal"){
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx,
+              colIndx: ui.colIndx + 2,
+              focus: true,
+            });
           }else if (indexCrr === this.colsShow.length - 1) {
             this.grid.setSelection({
               rowIndx: ui.rowIndx + mov,
@@ -281,6 +293,18 @@ export class SheetComponent implements AfterViewInit, OnChanges {
             this.grid.setSelection({
               rowIndx: ui.rowIndx + mov,
               colIndx: 0,
+              focus: true,
+            });
+          }else if(ui.dataIndx === "num" && ui.rowData.rebar_type === lateral && this.node.type ==="Vertical"){
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx,
+              colIndx: ui.colIndx + 2,
+              focus: true,
+            });
+          }else if(ui.dataIndx === "num" && (ui.rowData.rebar_type === upper_side|| ui.rowData.rebar_type === lower_side) && this.node.type ==="Horizontal"){
+            this.grid.setSelection({
+              rowIndx: ui.rowIndx,
+              colIndx: ui.colIndx + 2,
               focus: true,
             });
           }else if (indexCrr === this.colsShow.length - 1) {
