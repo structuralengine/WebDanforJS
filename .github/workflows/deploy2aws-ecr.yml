@@ -67,12 +67,18 @@ jobs:
         JSON_DECODE: ${{ secrets.environment_prod }}
       run: |
         echo $JSON_DECODE | base64 --decode > ./src/environments/environment.prod.ts
-        
+
     - name: Set environment
       env:
         JSON_DECODE: ${{ secrets.environment }}
       run: |
         echo $JSON_DECODE | base64 --decode > ./src/environments/environment.ts
+
+    - name: Set AWS ECS taskdef.json
+      env:
+        JSON_DECODE: ${{ secrets.ecs_task_definition_json }}
+      run: |
+        echo $JSON_DECODE | base64 --decode > ./$ECS_TASK_DEFINITION
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
