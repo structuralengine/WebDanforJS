@@ -341,7 +341,7 @@ export class DsdDataService {
             f.M2.r1_3 = sngHirou3;
           }
         } else {
-          if (this.isOlder("2.5.1", buff.datVersID)) {
+          if (this.isOlder("2.4.0", buff.datVersID)) {
             const kr = this.readSingle(buff); // kr
             if (kr > 0) c.kr = kr;
             const sngHirou1 = this.readSingle(buff);
@@ -497,8 +497,6 @@ export class DsdDataService {
           if (ii < 5) safety_factor[ii].V_rbs = Sen;
           Sen = this.readSingle(buff);
           if (ii < 5) safety_factor[ii].V_rbv = Sen;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].T_rbt = Sen;
         } else {
           let Mage = this.readSingle(buff);
           if (ii < 5) safety_factor[ii].M_rc = Mage;
@@ -518,8 +516,6 @@ export class DsdDataService {
           if (ii < 5) safety_factor[ii].V_rbv = Sen;
           Sen = this.readSingle(buff);
           if (ii < 5) safety_factor[ii].ri = Sen;
-          // Sen = this.readSingle(buff);
-          // if (ii < 5) safety_factor[ii].T_rbt = Sen;
         }
       }
 
