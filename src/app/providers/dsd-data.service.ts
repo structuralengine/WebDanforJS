@@ -14,6 +14,8 @@ import { InputSafetyFactorsMaterialStrengthsService } from '../components/safety
 import { InputSectionForcesService } from '../components/section-forces/section-forces.service';
 import { InputSteelsService } from '../components/steels/steels.service';
 import { ShearStrengthService } from '../components/shear/shear-strength.service';
+import { data } from 'jquery';
+import { worker } from 'cluster';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +23,7 @@ import { ShearStrengthService } from '../components/shear/shear-strength.service
 export class DsdDataService {
 
   private float_max: number = 3.4 * Math.pow(10, 38);
-  private float_min: number = 3.4 * Math.pow(10, -38);//1.4 * Math.pow(10,-45);
+  private float_min: number = 3.4 * Math.pow(10, -38);  //1.4 * Math.pow(10,-45);
   private byte_max: number = 255;
 
   constructor(
@@ -37,48 +39,54 @@ export class DsdDataService {
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private force: InputSectionForcesService,
     private calc: InputCalclationPrintService,
-    private helper: DataHelperModule) { }
+    private helper: DataHelperModule
+  ) { }
 
-  // DSD データを読み込む
+  /**
+   * DSDデータの読み込み
+   * @param buffer 
+   * @returns ピックアップモードの場合はピックアップファイルへのフルパス\
+   * 断面力モードの場合はnull
+   */
   public readDsdData(buffer: any): string {
-    const old = this.save.getInputJson();  
+    const old = this.save.getInputJson();  // 現在のデータをキープ（読み込みエラーが発生したら元のデータに戻すため）
     try {
       this.save.clear();
       const buff: any = {
-        u8array: new Uint8Array(buffer),
-        byteOffset: 0
+        u8array: new Uint8Array(buffer),  //Byteの配列
+        byteOffset: 0  //u8arrayの現在の読み込み開始位置
       };
-      const obj = this.IsDSDFile(buff);      
-      buff['datVersID'] = obj.datVersID;
-      buff['isManualInput'] = (obj.ManualInput > 0);
 
-      // 断面力手入力モード
+      // DSDデータバージョン、断面力データ数
+      const verInfo = this.IsDSDFile(buff);      
+      buff['datVersID'] = verInfo.datVersID;
+      buff['isManualInput'] = (verInfo.ManualInput > 0);
+
+      // 断面力データ（断面力モードの場合のみ）
       if (buff.isManualInput) {
-        this.FrmManualGetTEdata(buff, obj.ManualInput);
+        this.FrmManualGetTEdata(buff, verInfo.ManualInput);
       }
-      // 画面１ 基本データ
+      // 基本データ、ピックアップ番号
       this.GetKIHONscrn(buff);
-      // 画面２  部材､断面データ
+      // 部材・断面データ、ひび割れ検討条件、疲労検討用加工低減係数
       this.GetBUZAIscrn(buff)
-      // 画面５　安全係数の画面
+      // 安全係数データ
       this.GetKEISUscrn(buff)
-      // 画面３　算出点
+      // 算出点データ
       this.GetSANSHUTUscrn(buff)
-      // 画面４　鉄筋データ
+      // 鉄筋配置データ、疲労検討条件
       this.GetTEKINscrn(buff)
-      // 画面６　計算・印刷フォーム
-      this.GetPrtScrn(buff)
+      // 計算・印刷設定※未使用
+      // this.GetPrtScrn(buff)
 
-      // 互換性の確保
-      this.shear.setLaFromPoint();
-      // 断面力手入力モード
+      // ピックアップモードの場合はピックアップファイルへのフルパスを返す
       if (buff.isManualInput) {
         return null;
       } else {
         return buff.PickFile.trim();
       }
-
     } catch (e) {
+      // dsdファイル読み込み中にエラーが発生した場合は元々のデータに戻す
       this.save.setInputData(old);
       throw (e);
     }
@@ -110,499 +118,484 @@ export class DsdDataService {
     });
   }
 
-  // 画面１ 基本データ
+  /**
+   * 基本データ、ピックアップ番号の読み込み
+   * @param buff 
+   */
   private GetKIHONscrn(buff: any): void {
-
-    const dt1Dec = this.readSingle(buff); // -----> 疲労寿命 05/02/22
-    const dt1Infl = this.readByte(buff);
+    // デフォルトの基本データの準備
+    this.basic.clear();
+    
+    // 未使用
+    this.readSingle(buff);
+    this.readByte(buff);
 
     // 仕様
     const dt1Spec = this.readByte(buff);
-    this.basic.set_specification2(dt1Spec)
+    if (this.isOlder('4.0.0', buff.datVersID)) {  // フィリピン版の場合は設定しない（デフォルト設定）
+      if (dt1Spec != null && dt1Spec >= 0 && dt1Spec <= 2) {
+        this.basic.set_specification2(dt1Spec);
+      }
+    }
 
-    const dt1Ser = this.readInteger(buff);
-    const dt1Sekou = this.readByte(buff); // 杭の施工条件
-    buff['dt1Sekou'] = dt1Sekou;
-    const dt1Shusei = this.readSingle(buff); // -----> 材料修正係数 ----->  ' 耐用年数 05/02/22
+    // 未使用
+    this.readInteger(buff);
+
+    // 杭の施工条件
+    const dt1Sekou = this.readByte(buff);
+    buff['dt1Sekou'] = dt1Sekou;  // buffで保持しておき安全係数データの読み込み時に設定する
+
+    // 耐用年数
+    const dt1Shusei = this.readSingle(buff);
     this.fatigues.service_life = dt1Shusei;
 
-    const gOud = this.readByte(buff)
-
-    let MaxPicUp: number;
+    // 未使用
+    this.readByte(buff)
     if (!this.isOlder('0.1.6', buff.datVersID)) {
-      MaxPicUp = this.readInteger(buff);
+      this.readInteger(buff);
     }
 
-    // ピックアップ番号を代入
-    // 曲げ
-    let dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_moment(0, dt2Pick);
+    // ピックアップ番号の一時格納用変数
+    let pickTmp : number;
 
-    let dt3Pick = this.readByte(buff);
-    if (dt3Pick !== null) {
-      this.basic.set_pickup_moment(1, dt3Pick);
-      dt2Pick = this.readByte(buff);
+    // 耐久性曲げ照査（縁応力度）ピックアップ番号
+    pickTmp = this.readByte(buff);
+    this.basic.set_pickup_moment(0, pickTmp);
+    // 耐久性曲げ照査（永久作用）ピックアップ番号
+    pickTmp = this.readByte(buff);
+    if (pickTmp != null) {
+      this.basic.set_pickup_moment(1, pickTmp);
+      this.readByte(buff);
     } else {
-      dt3Pick = this.readByte(buff);
-      if (dt3Pick !== null) this.basic.set_pickup_moment(1, dt3Pick);
+      pickTmp = this.readByte(buff);
+      this.basic.set_pickup_moment(1, pickTmp);
     }
-    // 耐久性 （変動荷重）
-    dt2Pick = this.readByte(buff); // ・・・捨て
-    // 使用性 外観ひび割れ
-    dt2Pick = this.readByte(buff);
-    if (dt3Pick !== null) this.basic.set_pickup_moment(1, dt2Pick);
-    // 安全性 （疲労破壊）永久作用
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_moment(3, dt2Pick);
-
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_moment(4, dt2Pick);
-
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_moment(5, dt2Pick);
-
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_moment(6, dt2Pick);
-
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_moment(7, dt2Pick);
-
-    dt2Pick = this.readByte(buff);
-    dt2Pick = this.readByte(buff);
-
-    // せん断
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_shear_force(0, dt2Pick);
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_shear_force(1, dt2Pick);
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_shear_force(2, dt2Pick);
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_shear_force(3, dt2Pick);
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_shear_force(4, dt2Pick);
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_shear_force(5, dt2Pick);
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_shear_force(6, dt2Pick);
-    dt2Pick = this.readByte(buff);
-    this.basic.set_pickup_shear_force(7, dt2Pick);
-
-    dt2Pick = this.readByte(buff);
-    dt2Pick = this.readByte(buff);
-
-    if (!this.isOlder('4.0.0', buff.datVersID)) {
-      this.basic.set_specification1(1); // フィリピン版
+    // 耐久性曲げ照査（変動作用）ピックアップ番号※未使用
+    this.readByte(buff);
+    // 耐久性曲げ照査（永久作用）ピックアップ番号
+    if (pickTmp != null){
+      pickTmp = this.readByte(buff);
+      this.basic.set_pickup_moment(1, pickTmp);
+    } else {
+      this.readByte(buff);
     }
+    // 曲げ照査用ピックアップ番号（3:疲労永久、4:疲労永久＋変動、5:破壊、6:復旧性地震時以外、7:復旧性地震時）
+    for (let i = 3; i <= 7; i++) {
+      pickTmp = this.readByte(buff);
+      this.basic.set_pickup_moment(i, pickTmp);
+    }
+    // 未使用
+    this.readByte(buff);
+    this.readByte(buff);
 
+    // せん断照査用ピックアップ番号
+    // （0:耐久性ひび割れ判定、1:耐久性永久、2:耐久性変動※未使用、3:疲労永久、4:疲労永久＋変動、5:破壊、6:復旧性地震時以外、7:復旧性地震時）
+    for (let i = 0; i <= 7; i++) {
+      pickTmp = this.readByte(buff);
+      this.basic.set_pickup_shear_force(i, pickTmp);
+    }
+    // 未使用
+    this.readByte(buff);
+    this.readByte(buff);
+
+    // 縁応力度が制限値以内でも ひび割れ幅の検討を行う※未使用
     if (!this.isOlder('1.3.10', buff.datVersID)) {
-      // 縁応力度が制限値以内でも ひび割れ幅の検討を行う
       const iOutputHibiware = this.readInteger(buff);
-      this.basic.set_conditions('JR-000', iOutputHibiware !== 0);
+      //this.basic.set_conditions('JR-000', iOutputHibiware !== 0);
     }
-
+    // T形断面でフランジ側引張は矩形断面で計算する※未使用
     if (!this.isOlder('1.3.11', buff.datVersID)) {
-      // T形断面でフランジ側引張は矩形断面で計算する
       const iOutputTgataKeisan = this.readInteger(buff);
-      this.basic.set_conditions('JR-002', iOutputTgataKeisan !== 0);
+      //this.basic.set_conditions('JR-002', iOutputTgataKeisan !== 0);
     }
 
+    // 疲労検討用列車本数(本/日)
     if (!this.isOlder('1.3.13', buff.datVersID)) {
-      const dt1HibiSeigen = this.readSingle(buff);
-      this.fatigues.train_A_count = Math.round(dt1HibiSeigen);
-      const dt1HibiK2 = this.readSingle(buff);
-      this.fatigues.train_B_count = Math.round(dt1HibiK2);
+      const trainA = this.readSingle(buff);
+      this.fatigues.train_A_count = Math.round(trainA);
+      const trainB = this.readSingle(buff);
+      this.fatigues.train_B_count = Math.round(trainB);
     }
 
+    // 未使用
     if (!this.isOlder('1.3.14', buff.datVersID)) {
-      const dt1USCheck = this.readByte(buff);
+      this.readByte(buff);
     }
 
+    // // 円形断面で鉄筋を頂点に１本配置する※未使用
     if (!this.isOlder('1.4.1', buff.datVersID)) {
       const dt1ChoutenCheck = this.readByte(buff);
-      // 円形断面で鉄筋を頂点に１本配置する
-      this.basic.set_conditions('JR-003', dt1ChoutenCheck !== 0);
+      //this.basic.set_conditions('JR-003', dt1ChoutenCheck !== 0);
     }
 
+    // ひび割れ幅制限値に用いるかぶりは 100mm を上限とする※未使用
     if (!this.isOlder('2.1.2', buff.datVersID)) {
       const gひび割れ制限 = this.readByte(buff);
-      // ひび割れ幅制限値に用いるかぶりは 100mm を上限とする
-      this.basic.set_conditions('JR-001', gひび割れ制限 !== 0);
+      //this.basic.set_conditions('JR-001', gひび割れ制限 !== 0);
     }
 
+    // ひび割れ幅制限値(mm)
     if (!this.isOlder('3.1.8', buff.datVersID)) {
-      const sng外観ひび = this.readSingle(buff);
+      const crackLim = this.readSingle(buff);
+      buff['crackLim'] = crackLim;  // buffで保持しておき部材・断面データの読み込み時に設定する
     }
-
   }
 
-  // 画面２  部材､断面データ
+  /**
+   * 部材・断面データ、ひび割れ検討条件、疲労検討用加工低減係数の読み込み
+   * @param buff 
+   */
   private GetBUZAIscrn(buff: any): void {
-
-    let iDummyCount: number;
-    iDummyCount = this.readInteger(buff)
-    let mData:any=[]
-    for (let i = 0; i < iDummyCount; i++) {
-
+    // 部材数
+    const numMember = this.readInteger(buff)
+    
+    let mData: any = [];
+    for (let i = 0; i < numMember; i++) {
       try {
+        // 部材に含まれる第1算出点へのインデックス
+        const index = this.readInteger(buff) + 1;
+        // 部材に含まれる算出点数
+        const iNumCalc = this.readInteger(buff);
+        // 部材番号
+        const iBzNo = this.readInteger(buff);
 
-        const Index = this.readInteger(buff) + 1;     // 算出点データ（基本データ）へのIndex
-        const iNumCalc = this.readInteger(buff);  // 部材の算出点数
-        const iBzNo = this.readInteger(buff); // 部材番号
+        // データ保存先のオブジェクトを取得
+        let crackData = this.crack.getTableColumn(index);  // 第1算出点のひび割れ検討条件
+        let fatigueData = this.fatigues.getTableColumn(index);  // 第1算出点の疲労検討条件
+        let member = this.members.getTableColumns(iBzNo);  // 部材データ
 
-        // ひび割れデータ
-        let c = this.crack.getTableColumn(Index);
-        // 疲労データ
-        let f = this.fatigues.getTableColumn(Index);
-        // 部材データ
-        let m = this.members.getTableColumns(iBzNo);
-        c.m_no = m.m_no;
-        f.m_no = m.m_no;
+        // ひび割れ条件、疲労条件データの部材番号の同期
+        crackData.m_no = member.m_no;
+        fatigueData.m_no = member.m_no;
 
-        const sLeng = this.readSingle(buff);  // 部材長 = JTAN
-        m.m_len = sLeng;
-
+        // 部材長(m)
+        const sLeng = this.readSingle(buff);
+        member.m_len = sLeng;
+        // 部材グループ番号（ID）
         const strMark = this.readString(buff, 32);
-        m.g_id = strMark.trim();
-        m.g_no = this.helper.toNumber(m.g_id);
-
+        member.g_id = strMark.trim();
+        member.g_no = this.helper.toNumber(member.g_id);
+        //　部材グループ名
         const strBuzaiName = this.readString(buff, 32);
-        m.g_name = strBuzaiName.trim();
-        f.g_name = m.g_name;
-        c.g_name = m.g_name;
+        member.g_name = strBuzaiName.trim();
+        fatigueData.g_name = member.g_name;
+        crackData.g_name = member.g_name;
 
+        // 断面番号
         const intDanmenType = this.readInteger(buff);
-        switch (intDanmenType) {
-          case 1:
-            m.shape = '矩形';
-            break;
-          case 2:
-            m.shape = 'T形';
-            break;
-          case 3:
-            m.shape = '円形';
-            break;
-          case 4:
-            m.shape = '小判';
-            break;
-        }
-
-        const isOlder311 = (this.isOlder('3.1.1', buff.datVersID));
-        let sngDanmen1 = this.readSingle(buff);
-        if (isOlder311) { sngDanmen1 *= 10; } // cm --> mm
-        if (sngDanmen1 > 0) {
-          m.B = sngDanmen1;
-          if (m.shape === '円形') {
-            m.B *= 2;
+        member.shape = intDanmenType;
+        // 寸法値(mm)
+        for (let i = 0; i < 4; i++) {
+          let sizeTmp = this.readSingle(buff);
+          if (sizeTmp > 0) {
+            if (this.isOlder('3.1.1', buff.datVersID)) {
+              sizeTmp *= 10;  // 3.1.1より前バージョンはcm入力のためmmに変更
+            }
+            switch (i) {
+              case 0:
+                if (member.shape == 3) { sizeTmp *= 2; }  // 円形の場合は直径に変換
+                member.B = sizeTmp;
+                break;
+              case 1:
+                if (member.shape != 3) { member.H = sizeTmp; }  // 円形以外
+                break;
+              case 2:
+                if (member.shape == 2) { member.Bt = sizeTmp; }  // T形
+                break;
+              case 3:
+                if (member.shape == 2) { member.t = sizeTmp; }  // T形
+                break;
+            }
           }
         }
-        let sngDanmen2 = this.readSingle(buff);
-        if (isOlder311) { sngDanmen2 *= 10; } // cm --> mm
-        if (sngDanmen2 > 0) m.H = sngDanmen2;
-        let sngDanmen3 = this.readSingle(buff);
-        if (isOlder311) { sngDanmen3 *= 10; } // cm --> mm
-        if (sngDanmen3 > 0) m.Bt = sngDanmen3;
-        let sngDanmen4 = this.readSingle(buff);
-        if (isOlder311) { sngDanmen4 *= 10; } // cm --> mm
-        if (sngDanmen4 > 0) m.t = sngDanmen4;
 
-
-        // 環境条件 曲げ
-        const intKankyo1 = this.readInteger(buff);
-        if (intKankyo1 > 0) c.con_u = intKankyo1;
-        const intKankyo2 = this.readInteger(buff);
-        if (intKankyo2 > 0) c.con_l = intKankyo2;
-
-        // 環境条件せん断 　since version 0.1.4
+        // 環境条件（曲げ上側引張）
+        const envBU = this.readInteger(buff);
+        if (envBU > 0 && envBU <= 3) { crackData.con_u = envBU; }
+        // 環境条件（曲げ下側引張）
+        const envBL = this.readInteger(buff);
+        if (envBL > 0 && envBL <= 3) { crackData.con_l = envBL; }
+        // 環境条件（せん断）
         if (!this.isOlder('0.1.4', buff.datVersID)) {
-          const intKankyo2 = this.readInteger(buff);
-          if (intKankyo2 > 0) c.con_s = intKankyo2;
+          const envS = this.readInteger(buff);
+          if (envS > 0 && envS <= 3) { crackData.con_s = envS; }
         }
 
+        // 外観照査の実施有無（上側引張）
         const bytHibi1 = this.readByte(buff);
-        c.vis_u = bytHibi1 !== 0;
+        crackData.vis_u = bytHibi1 != 0;
+        // 外観照査の実施有無（下側引張）
         const bytHibi2 = this.readByte(buff);
-        c.vis_l = bytHibi2 !== 0;
+        crackData.vis_l = bytHibi2 != 0;
 
+        // ε'csd(*10^-6)※整数部が上側引張用、小数点以下が下側引張用
+        if (!this.isOlder("2.4.0", buff.datVersID)) {
+          let sngEcsd = this.readSingle(buff);
+          if (sngEcsd != null) {
+            let intEcsd = Math.floor(sngEcsd);
+            if (intEcsd > 0) {
+              crackData.ecsd_u = intEcsd;
+              crackData.ecsd_l = intEcsd;
+            }
+            sngEcsd = (sngEcsd - intEcsd) * 100000;
+            intEcsd = Math.floor(sngEcsd);
+            if (intEcsd > 0) {
+              crackData.ecsd_l = intEcsd;
+            }
+          }
+        }
+        // kr
+        if (!this.isOlder("0.1.4", buff.datVersID)) {
+          const kr = this.readSingle(buff);
+          if (kr > 0) { crackData.kr = kr; }
+        }
+
+        // 疲労照査用の加工低減係数（軸方向鉄筋、スターラップ、折曲げ鉄筋）
         if (this.isOlder("0.1.4", buff.datVersID)) {
-          const sngHirou1 = this.readInteger(buff);
-          if (sngHirou1 > 0) {
-            f.M1.r1_1 = sngHirou1;
-            f.M2.r1_1 = sngHirou1;
+          const intHirou1 = this.readInteger(buff);
+          if (intHirou1 > 0) {
+            fatigueData.M1.r1_1 = intHirou1;
+            fatigueData.M2.r1_1 = intHirou1;
           }
-          const sngHirou2 = this.readInteger(buff);
-          if (sngHirou2 > 0) {
-            f.V1.r1_2 = sngHirou2;
-            f.V2.r1_2 = sngHirou2;
+          const intHirou2 = this.readInteger(buff);
+          if (intHirou2 > 0) {
+            fatigueData.V1.r1_2 = intHirou2;
+            fatigueData.V2.r1_2 = intHirou2;
           }
-          const sngHirou3 = this.readInteger(buff);
-          if (sngHirou3 > 0) {
-            f.M1.r1_3 = sngHirou3;
-            f.M2.r1_3 = sngHirou3;
+          const intHirou3 = this.readInteger(buff);
+          if (intHirou3 > 0) {
+            fatigueData.V1.r1_3 = intHirou3;
+            fatigueData.V2.r1_3 = intHirou3;
           }
         } else {
-          if (this.isOlder("2.4.0", buff.datVersID)) {
-            const kr = this.readSingle(buff); // kr
-            if (kr > 0) c.kr = kr;
-            const sngHirou1 = this.readSingle(buff);
-            if (sngHirou1 > 0) {
-              f.M1.r1_1 = sngHirou1;
-              f.M2.r1_1 = sngHirou1;
-            }
-            const sngHirou2 = this.readSingle(buff);
-            if (sngHirou2 > 0) {
-              f.V1.r1_2 = sngHirou2;
-              f.V2.r1_2 = sngHirou2;
-            }
-            const sngHirou3 = this.readSingle(buff);
-            if (sngHirou3 > 0) {
-              f.M1.r1_3 = sngHirou3;
-              f.M2.r1_3 = sngHirou3;
-            }
-          } else {
-            let sngEcsd = this.readSingle(buff); // εcsd
-            if (sngEcsd != null) {
-              let intEcsd = Math.floor(sngEcsd);
-              if (intEcsd > 0) {
-                c.ecsd_u = intEcsd;
-                c.ecsd_l = intEcsd;
-              }
-              sngEcsd = (sngEcsd - intEcsd) * 100000;
-              intEcsd = Math.floor(sngEcsd);
-              if (intEcsd > 0) {
-                c.ecsd_l = intEcsd;
-              }
-            }
-
-            const kr = this.readSingle(buff);// kr
-            if (kr > 0) c.kr = kr;
-            const sngHirou1 = this.readSingle(buff);
-            if (sngHirou1 > 0) {
-              f.M1.r1_1 = Math.round(sngHirou1 * 100) / 100;
-              f.M2.r1_1 = Math.round(sngHirou1 * 100) / 100;
-            }
-            const sngHirou2 = this.readSingle(buff);
-            if (sngHirou2 > 0) {
-              f.V1.r1_2 = Math.round(sngHirou2 * 100) / 100;
-              f.V2.r1_2 = Math.round(sngHirou2 * 100) / 100;
-            }
-            const sngHirou3 = this.readSingle(buff);
-            if (sngHirou3 > 0) {
-              f.M1.r1_3 = Math.round(sngHirou3 * 100) / 100;
-              f.M2.r1_3 = Math.round(sngHirou3 * 100) / 100;
-            }
+          const sngHirou1 = this.readSingle(buff);
+          if (sngHirou1 > 0) {
+            fatigueData.M1.r1_1 = Math.round(sngHirou1 * 100) / 100;
+            fatigueData.M2.r1_1 = Math.round(sngHirou1 * 100) / 100;
+          }
+          const sngHirou2 = this.readSingle(buff);
+          if (sngHirou2 > 0) {
+            fatigueData.V1.r1_2 = Math.round(sngHirou2 * 100) / 100;
+            fatigueData.V2.r1_2 = Math.round(sngHirou2 * 100) / 100;
+          }
+          const sngHirou3 = this.readSingle(buff);
+          if (sngHirou3 > 0) {
+            fatigueData.V1.r1_3 = Math.round(sngHirou3 * 100) / 100;
+            fatigueData.V2.r1_3 = Math.round(sngHirou3 * 100) / 100;
           }
         }
 
+        // k4
         if (!this.isOlder("3.6.1", buff.datVersID)) {
           const sngK4 = this.readSingle(buff);
-          c.k4 = sngK4;
+          crackData.k4 = sngK4;
         }
 
+        // 部材数
         if (this.isOlder("1.3.4", buff.datVersID)) {
           const sngNumBZI = this.readInteger(buff);
-          const a = sngNumBZI;
-          if (sngNumBZI > 0) m.n = sngNumBZI;
+          if (sngNumBZI > 0) { member.n = sngNumBZI; }
         } else if (this.isOlder("3.6.2", buff.datVersID)) {
           const sngNumBZI = this.readSingle(buff);
-          if (sngNumBZI > 0) m.n = sngNumBZI;
+          if (sngNumBZI > 0) { member.n = sngNumBZI; }
         } else if (!this.isOlder("4.0.0", buff.datVersID)
-          && this.isOlder("4.1.0", buff.datVersID)) {
-          // フィリピン版
+          && this.isOlder("4.1.0", buff.datVersID)) {  // フィリピン版用
           const sngNumBZI = this.readSingle(buff);
-          if (sngNumBZI > 0) m.n = sngNumBZI;
-
+          if (sngNumBZI > 0) { member.n = sngNumBZI; }
         } else {
           const strNumBZI = this.helper.toNumber(this.readString(buff, 32));
-          if (strNumBZI !== null && strNumBZI > 0) m.n = strNumBZI;
+          if (strNumBZI != null && strNumBZI > 0) { member.n = strNumBZI; }
         }
 
+        // 未使用
         if (!this.isOlder("0.1.3", buff.datVersID)) {
-          const bytTaisinKiso = this.readByte(buff);
+          this.readByte(buff);
         }
 
-
-        for (let j = Index + 1; j < Index + iNumCalc; j++) {
-          // ひび割れデータ
-          const crack = this.crack.getTableColumn(j);
-          for (const key of Object.keys(crack)) {
-            if (key === 'index') continue;
-            crack[key] = c[key];
+        // ひび割れ幅制限値(mm)
+        if (!this.isOlder('3.1.8', buff.datVersID)) {
+          const crackLim = buff.crackLim;
+          if (crackLim != null && crackLim > 0) {
+            crackData.wlimit = crackLim;
           }
-          // 疲労データ
-          // f は連想配列が含まれているため clone をコピーしないと
-          const f2 = JSON.parse(JSON.stringify(f));
-          const fatigue = this.fatigues.getTableColumn(j);
-          for (const key of Object.keys(fatigue)) {
-            if (key === 'index') continue;
-            fatigue[key] = f2[key];
+        }
+
+        // 第2節点以降のデータ登録
+        for (let j = index + 1; j < index + iNumCalc; j++) {
+          // ひび割れ検討条件
+          let crackTmp = this.crack.getTableColumn(j);
+          for (const key of Object.keys(crackData)) {
+            if (key === 'index') { continue; }
+            crackTmp[key] = crackData[key];
+          }
+          // 疲労検討条件※fatigueDataは配列が含まれるためcloneを取得してからコピーする
+          const fatigueData2 = JSON.parse(JSON.stringify(fatigueData));
+          let fatigueTmp = this.fatigues.getTableColumn(j);
+          for (const key of Object.keys(fatigueData2)) {
+            if (key === 'index') { continue; }
+            fatigueTmp[key] = fatigueData2[key];
           }       
         }
-        mData.push(m);
+
+        // 部材データの保持
+        mData.push(member);
       } catch (e) {
         throw (e);
       }
-     
     }
-    if (buff.isManualInput) {
-      this.members.setSaveData(mData)
-    }
+
+    // 部材データの登録
+    this.members.setSaveData(mData)
   }
 
-  // 画面５　安全係数の画面
+  /**
+   * 安全係数データの読み込み
+   * @param buff 
+   */
   private GetKEISUscrn(buff: any): void {
+    // データ保存先のオブジェクトを取得
+    let safetyData = this.safety.getSaveData();
 
-    const jsonData = this.safety.getSaveData();
-
-    let iDummyCount: number;
-    iDummyCount = this.readInteger(buff)
-
+    // バージョン分岐用の変数
     const isOlder328 = this.isOlder('3.2.8', buff.datVersID);
     const isOlder015 = this.isOlder('0.1.5', buff.datVersID);
-    const IsOldData = this.isOlder('0.1.4', buff.datVersID);
+    const isOlder014 = this.isOlder('0.1.4', buff.datVersID);
 
-    const groupe = this.members.getGroupes();
+    // 部材グループ数
+    const iDummyCount = this.readInteger(buff)
+
+    // 部材グループID一覧の取得
+    const groupIDs = this.members.getGroupes();
 
     for (let i = 0; i < iDummyCount; i++) {
-      const g_id = groupe[i];
-      const safety_factor = this.safety.default_safety_factor();
-      const material_bar = this.safety.default_material_bar();
-      const material_steel = this.safety.default_material_steel();
-      const material_concrete = this.safety.default_material_concrete();
-      const pile_factor = this.safety.default_pile_factor();
+      // ひとまず各種データのデフォルトを取得
+      const g_id = groupIDs[i];  // 部材グループID
+      let safety_factor = this.safety.default_safety_factor();  // 安全係数
+      let material_bar = this.safety.default_material_bar();  // 鉄筋材料
+      let material_steel = this.safety.default_material_steel();  // 鉄骨材料※未使用
+      let material_concrete = this.safety.default_material_concrete();  // コンクリート材料
+      let pile_factor = this.safety.default_pile_factor();  // 杭の施工条件
 
+      // 安全係数（0:耐久性・使用性、1:疲労破壊、2:破壊、3:復旧性地震時以外、4:復旧性地震時、5:最小鉄筋量※未使用）
       for (let ii = 0; ii <= 5; ii++) {
-
+        // 考慮する鉄筋範囲
         const mgTkin = this.readByte(buff);
-        if (ii < 5) {
+        if (ii < 5 && mgTkin != null && mgTkin > 0 && mgTkin <= 3) {
           safety_factor[ii].range = mgTkin;
         }
-
+        // 全安全係数の値の取得
+        let safetyAll = [9]
+        for (let j = 0; j < 9; j++) {
+          safetyAll[j] = this.readSingle(buff);
+        }
+        // 安全係数の格納
+        if (ii == 5) { continue; }  // 最小鉄筋量は未使用なのでスキップ
         if (isOlder328) {
-          let Mage = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].M_rc = Mage;
-          let Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rc = Sen;
-          Mage = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].M_rs = Mage;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rs = Sen;
-          Mage = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].M_rbs = Mage;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rbc = Sen;
-          Mage = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].ri = Mage;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rbs = Sen;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rbv = Sen;
+          safety_factor[ii].M_rc = safetyAll[0];  // 曲げ照査用のコンクリートの材料係数
+          safety_factor[ii].V_rc = safetyAll[1];  // せん断照査用のコンクリートの材料係数
+          safety_factor[ii].M_rs = safetyAll[2];  // 曲げ照査用の鋼材の材料係数
+          safety_factor[ii].V_rs = safetyAll[3];  // せん断照査用の鋼材の材料係数
+          safety_factor[ii].M_rbs = safetyAll[4];  // 曲げ照査用の部材係数
+          safety_factor[ii].V_rbc = safetyAll[5];  // せん断照査のVcd、Vwcd用の部材係数
+          safety_factor[ii].ri = safetyAll[6];  // 構造物係数
+          safety_factor[ii].V_rbs = safetyAll[7];  // せん断照査のVsd用の部材係数
+          safety_factor[ii].V_rbv = safetyAll[8];  // せん断照査のVdd用の部材係数
         } else {
-          let Mage = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].M_rc = Mage;
-          Mage = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].M_rs = Mage;
-          Mage = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].M_rbs = Mage;
-          let Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rc = Sen;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rs = Sen;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rbc = Sen;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rbs = Sen;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].V_rbv = Sen;
-          Sen = this.readSingle(buff);
-          if (ii < 5) safety_factor[ii].ri = Sen;
+          safety_factor[ii].M_rc = safetyAll[0];  // 曲げ照査用のコンクリートの材料係数
+          safety_factor[ii].M_rs = safetyAll[1];  // 曲げ照査用の鋼材の材料係数
+          safety_factor[ii].M_rbs = safetyAll[2];  // 曲げ照査用の部材係数
+          safety_factor[ii].V_rc = safetyAll[3];  // せん断照査用のコンクリートの材料係数
+          safety_factor[ii].V_rs = safetyAll[4];  // せん断照査用の鋼材の材料係数
+          safety_factor[ii].V_rbc = safetyAll[5];  // せん断照査のVcd、Vwcd用の部材係数
+          safety_factor[ii].V_rbs = safetyAll[6];  // せん断照査のVsd用の部材係数
+          safety_factor[ii].V_rbv = safetyAll[7];  // せん断照査のVdd用の部材係数
+          safety_factor[ii].ri = safetyAll[8];  // 構造物係数
         }
       }
 
-      for (const k1 of ['tensionBar', 'sidebar', 'stirrup', 'bend']) {
-        for (const k2 of ['fsy', 'fsu']) {
-          for (let j = 0; j < 2; j++) {
+      // 鉄筋材料※折曲げ鉄筋（bend）は未使用
+      for (const k1 of ['tensionBar', 'sidebar', 'stirrup', 'bend']) {  // 鉄筋種別
+        for (const k2 of ['fsy', 'fsu']) {  // 強度種別
+          for (let j = 0; j < 2; j++) {  // 分類{0:D25以下、1:D29以上}
             let Kyodo = this.readInteger(buff);
-            if (material_bar.length < (j + 1))
-              continue;
-            const mb = material_bar[j];
-            if (mb == null) continue;
-            if (!(k1 in mb)) continue;
-            const mbk1 = mb[k1];
-            if (!(k2 in mbk1)) continue;
-            let mbk1k2 = mbk1[k2];
-            if (Kyodo > 0) {
-              mbk1k2 = Kyodo;
-              material_bar[j][k1][k2] = mbk1k2;
+            if (Kyodo != null && Kyodo > 0) {
+              if (material_bar.length < (j + 1)) { continue; }
+              const mb = material_bar[j];  // 分類オブジェクトの取得
+              if (mb == null) { continue; }
+              if (!(k1 in mb)) { continue; }
+              const mbk1 = mb[k1];  // 鉄筋種別オブジェクトの取得
+              if (!(k2 in mbk1)) { continue; }
+              // 強度の登録
+              material_bar[j][k1][k2] = Kyodo;
             }
           }
         }
       }
 
+      // 未使用
       if (!isOlder015) {
-        let KyodoD = this.readInteger(buff);
-        if (KyodoD > 0) {
-          material_bar[0].separate = KyodoD;
+        for (let j = 0; j < 2; j++){
+          const KyodoD = this.readInteger(buff);
+          // 分類（D25以下、D29以上）はひとまず固定なので下記はコメントアウト
+          // if (KyodoD > 0 && material_bar.length > j) {
+          //   material_bar[j].separate = KyodoD;
+          // }
         }
-        KyodoD = this.readInteger(buff);
-        if (KyodoD > 0) {
-          if (1 < material_bar.length)
-            material_bar[1].separate = KyodoD;
-        }
-        KyodoD = this.readInteger(buff);
-        KyodoD = this.readInteger(buff);
-      }
-      if (IsOldData) {
-        const iii = this.readInteger(buff);
-        material_concrete.fck = Math.round(iii * 10) / 10;
-      } else {
-        const Dummy = this.readSingle(buff);
-        material_concrete.fck = Math.round(Dummy * 10) / 10;
+        this.readInteger(buff);
+        this.readInteger(buff);
       }
 
+      // コンクリート強度(N/mm2)
+      if (isOlder014) {
+        const fck = this.readInteger(buff);
+        material_concrete.fck = fck;
+      } else {
+        const fck = this.readSingle(buff);
+        material_concrete.fck = Math.round(fck * 10) / 10;
+      }
+
+      // 杭の施工条件の登録※部材グループ番号が3以上を杭と認識する？
       if (this.helper.toNumber(g_id) >= 3) {
+        const dt1Sekou = buff['dt1Sekou'];
         let id = null;
-        switch (buff['dt1Sekou']) {
-          case 0:
-            id = 'pile-000';
-            break;
-          case 1:
-            id = 'pile-001';
-            break;
-          case 2:
-            id = 'pile-002';
-            break;
-          case 3:
-            id = 'pile-003';
-            break;
-          case 9:
-            id = 'pile-004';
-            break;
+        if (dt1Sekou === 0 || dt1Sekou === 1 || dt1Sekou === 2 || dt1Sekou === 3) {
+          id = 'pile-00' + dt1Sekou;
+        } else if (dt1Sekou == 9) {
+          id = 'pile-004';
         }
-        for (const key of Object.keys(pile_factor)) {
-          const value = pile_factor[key];
-          value.selected = (value.id === id) ? true : false;
+        if (id != null) {
+          for (const key of Object.keys(pile_factor)) {
+            const value = pile_factor[key];
+            value.selected = (value.id === id) ? true : false;
+          }
         }
       }
-      jsonData.safety_factor[g_id] = safety_factor;
-      jsonData.material_bar[g_id] = material_bar;
-      jsonData.material_steel[g_id] = material_steel;
-      jsonData.material_concrete[g_id] = material_concrete;
-      jsonData.pile_factor[g_id] = pile_factor;
+
+      // 各種データの保持
+      safetyData.safety_factor[g_id] = safety_factor;
+      safetyData.material_bar[g_id] = material_bar;
+      safetyData.material_steel[g_id] = material_steel;
+      safetyData.material_concrete[g_id] = material_concrete;
+      safetyData.pile_factor[g_id] = pile_factor;
     }
 
-    // 最後に登録する
-    this.safety.setSaveData(jsonData);
+    // データの登録
+    this.safety.setSaveData(safetyData);
   }
 
-  // 画面３　算出点
+  /**
+   * 算出点データの読み込み
+   * @param buff 
+   */
   private GetSANSHUTUscrn(buff: any): void {
+    // 謎の数値
+    const iTmp = this.readInteger(buff)
 
-    let iDummyCount: number;
-    iDummyCount = this.readInteger(buff)
-
-    if (iDummyCount !== 0) {
-      buff['PickFile'] = this.readString(buff, 100).trim(); // ピックアップファイルのパス
+    if (iTmp !== 0) {
+      // ピックアップファイルへのフルパス
+      buff['PickFile'] = this.readString(buff, 100).trim();
+      // ピックアップファイル名
+      // Shift-JISとUnicodeでデコードした時の文字列長が短い方を採用（この処理いるのか？）
       const buff2 = { u8array: buff.u8array.slice(0, buff.u8array.length) };
       let strFix100 = this.readString(buff, 100, 'unicode').trim();
       let strFix102 = this.readString(buff2, 100).trim();
@@ -612,451 +605,366 @@ export class DsdDataService {
       }
       const D_Name = strFix100.trim();
 
-      for (let i = 0; i < iDummyCount; i++) {
-        const Matr = this.readInteger(buff);
-        const Calc1 = this.readString(buff, 32);
-        const Calc2 = this.readSingle(buff);
+      // 未使用
+      for (let i = 0; i < iTmp; i++) {
+        this.readInteger(buff);
+        this.readString(buff, 32);
+        this.readSingle(buff);
       }
     }
 
-    iDummyCount = this.readInteger(buff)
-
-    for (let i = 0; i < iDummyCount; i++) {
+    // 算出点数
+    const nPoints = this.readInteger(buff)
+    // 算出点データ
+    for (let i = 0; i < nPoints; i++) {
+      // データ保存先のオブジェクトを取得
       const index = i + 1;
+      let point = this.points.getTableColumn(index);  // 算出点データ
+      let shearCondition = this.shear.getTableColumn(index);  // せん断条件
+      point.p_id = index;
 
-      let position = this.points.getTableColumn(index);
-      position.p_id = index;
-
+      // 算出点名
       const CalName = this.readString(buff, 12).trim();
-      position.p_name = CalName;
-
+      point.p_name = CalName;
+      // 部材番号
       const iBzNo = this.readInteger(buff);
-      position.m_no = iBzNo;
-
+      point.m_no = iBzNo;
+      // せん断照査の実施有無
       if (this.isOlder('0.1.2', buff.datVersID)) {
-        const byteVar = this.readByte(buff);
-        //position.isMzCalc = byteVar !== 0;
-        position.isVyCalc = byteVar !== 0;
+        const calShear = this.readByte(buff);
+        point.isVyCalc = calShear !== 0;
       } else {
-        const Safe2 = this.readInteger(buff);
-        //position.isMzCalc = Safe2 !== 0;
-        position.isVyCalc = Safe2 !== 0;
+        const calShear = this.readInteger(buff);
+        point.isVyCalc = calShear !== 0;
       }
-      const Safe1 = this.readBoolean(buff);
-      //position.isVyCalc = Safe1;
-      position.isMzCalc = Safe1;
-      const Ness0 = this.readBoolean(buff);
-      const Ness1 = this.readBoolean(buff);
+      // 曲げ照査の実施有無
+      const calBending = this.readBoolean(buff);
+      point.isMzCalc = calBending;
 
-      const GammaEM = this.readSingle(buff);
+      // 未使用
+      this.readBoolean(buff);
+      this.readBoolean(buff);
+
+      // せん断スパン(mm)
+      const shearSpan = this.readSingle(buff);
       if (!buff.isManualInput) {
-        position.La = GammaEM;
+        // ピックアップモードの場合のみ（断面力モードの場合は断面力の読み込み時に設定される）
+        if (shearSpan != null && shearSpan != 0){
+          shearCondition.La = shearSpan;
+        }
       }
 
+      // 未使用
       if (!this.isOlder('3.2.8', buff.datVersID)) {
-        const T2d = this.readSingle(buff);
-        const KuiKei = this.readSingle(buff);
+        this.readSingle(buff);
+        this.readSingle(buff);
       }
 
-
-      // 登録
-      const bar = this.bars.getTableColumn(index);
+      // 算出点名などの同期
+      const bar = this.bars.getTableColumn(index);  // 鉄筋配置データ
       for (const key of Object.keys(bar)) {
-        if (key in position) {
-          bar[key] = position[key];
+        if (key in point) {
+          bar[key] = point[key];
         }
       }
-      // 疲労データ
-      const fatigue = this.fatigues.getTableColumn(index);
+      const fatigue = this.fatigues.getTableColumn(index);  // 疲労条件
       for (const key of Object.keys(fatigue)) {
-        if (key in position) {
-          fatigue[key] = position[key];
+        if (key in point) {
+          fatigue[key] = point[key];
         }
       }
-      // ひび割れデータ
-      const crack = this.crack.getTableColumn(index);
+      const crack = this.crack.getTableColumn(index);  // ひび割れ条件
       for (const key of Object.keys(crack)) {
-        if (key in position) {
-          crack[key] = position[key];
+        if (key in point) {
+          crack[key] = point[key];
         }
       }
-
     }
-
   }
 
-  // 画面４　鉄筋データ
+  /**
+   * 鉄筋配置データ、疲労検討条件の読み込み
+   * @param buff 
+   */
   private GetTEKINscrn(buff: any): void {
-
-    const bTekinShori = this.readByte(buff);
-
-    const iDummyCount = this.readInteger(buff);
-
-    for (let i = 0; i < iDummyCount; i++) {
+    // 未使用
+    this.readByte(buff);
+    // 算出点数
+    const nPoints = this.readInteger(buff);
+    // 算出点ごとのデータ読み込み
+    for (let i = 0; i < nPoints; i++) {
+      // データ保存先のオブジェクトを取得
       const index = i + 1;
+      const bar = this.bars.getTableColumn(index);  // 鉄筋配置データ
+      let point = this.points.getTableColumn(index);  // 算出点データ
+      const member = this.members.getCalcData(bar.m_no);  // 部材データ
 
-      const bar = this.bars.getTableColumn(index);
-      const m = this.members.getCalcData(bar.m_no);
+      // 未使用
+      this.readInteger(buff);
+      this.readInteger(buff);
 
-      const iType = this.readInteger(buff);
-      const iNext = this.readInteger(buff);
-      const MageSendan0 = this.readSingle(buff);
-      if (MageSendan0 > 0) {
-        if (m.g_no < 2 && m.shape !== '小判' && m.shape !== '円形') {
-          bar.haunch_M = MageSendan0;
-        }
-      }
-      const MageSendan1 = this.readSingle(buff);
-      if (MageSendan1 > 0) {
-        if (m.g_no < 2 && m.shape !== '小判' && m.shape !== '円形') {
-          bar.haunch_V = MageSendan1;
-        }
-      }
-
-      if (this.isOlder("3.1.4", buff.datVersID)) {
-        const stDummy1 = this.readByte(buff);
-        if (stDummy1 > 0) bar.rebar1.rebar_dia = stDummy1;
-        const stDummy2 = this.readByte(buff);
-        if (stDummy2 > 0) bar.rebar2.rebar_dia = stDummy2;
-      } else {
-        const JikuR0 = this.readInteger(buff);
-        if (JikuR0 > 0) bar.rebar1.rebar_dia = JikuR0;
-        const JikuR1 = this.readInteger(buff);
-        if (JikuR1 > 0) {
-          if (m.shape !== '円形') {
-            bar.rebar2.rebar_dia = JikuR1;
+      // ハンチ高(mm)（曲げ用、せん断用）
+      for (let j = 0; j < 2; j++) {
+        const haunch = this.readSingle(buff);
+        if (haunch > 0) {
+          if (member.g_no < 2 && member.shape != 3 && member.shape != 4) {
+            // 円形、小判以外で部材グループ番号が2未満のものをハンチ有効と判定？
+            if (j == 0) {
+              bar.haunch_M = haunch;
+            } else {
+              bar.haunch_V = haunch;
+            }
           }
         }
       }
-      const JikuHON0 = this.readSingle(buff);
-      if (JikuHON0 > 0) {
-        bar.rebar1.rebar_n = JikuHON0;
-      } else if (JikuHON0 < 0) {
-        bar.rebar1.rebar_n = -1000 / JikuHON0;
-      }
-      const JikuHON1 = this.readSingle(buff);
-      if (m.shape !== '円形') {
-        if (JikuHON1 > 0) {
-          bar.rebar2.rebar_n = JikuHON1;
-        } else if (JikuHON1 < 0) {
-          bar.rebar2.rebar_n = -1000 / JikuHON1;
+
+      // 鉄筋径(mm)（上側引張鉄筋、下側引張鉄筋）
+      let diaTmp: number;
+      for (let j = 0; j < 2; j++) {
+        if (this.isOlder("3.1.4", buff.datVersID)) {
+          diaTmp = this.readByte(buff);
+        } else {
+          diaTmp = this.readInteger(buff);
+        }
+        if (diaTmp > 0) {
+          if (j == 0) {
+            bar.rebar1.rebar_dia = diaTmp;
+          } else if (j == 1 && member.shape != 3) {
+            bar.rebar2.rebar_dia = diaTmp;
+          }
         }
       }
+      // 鉄筋本数（上側引張鉄筋、下側引張鉄筋）
+      for (let j = 0; j < 2; j++) {
+        let nBar = this.readSingle(buff);  // 負値の場合は鉄筋ピッチ(mm)
+        if (nBar < 0) {
+          nBar = -1000 / nBar;  // ピッチを1m幅あたりの本数に変換
+        }
+        if (nBar > 0) {
+          if (j == 0) {
+            bar.rebar1.rebar_n = nBar;
+          } else if (j == 1 && member.shape != 3) {
+            bar.rebar2.rebar_n = nBar;
+          }
+        }
+      }
+      // 芯かぶり(mm)（上側引張鉄筋）
       const JikuKABURI0 = this.readSingle(buff);
       if (JikuKABURI0 > 0) {
         bar.rebar1.rebar_cover = Math.round(JikuKABURI0 * 10) / 10;
       }
+      // 芯かぶり(mm)（下側引張鉄筋）
       const JikuKABURI1 = this.readSingle(buff);
-      if (JikuKABURI1 > 0) {
-        if (m.shape !== '円形') {
-          bar.rebar2.rebar_cover = Math.round(JikuKABURI1 * 10) / 10;
+      if (JikuKABURI1 > 0 && member.shape != 3) {
+        bar.rebar2.rebar_cover = Math.round(JikuKABURI1 * 10) / 10;
+      }
+      // 1段目本数（上側引張鉄筋、下側引張鉄筋）
+      for (let j = 0; j < 2; j++) {
+        let nBar1: number;
+        if (this.isOlder('3.1.4', buff.datVersID)) {
+          nBar1 = this.readInteger(buff);
+        } else if (!this.isOlder('3.1.4', buff.datVersID) && this.isOlder('3.2.6', buff.datVersID)) {
+          nBar1 = this.readByte(buff);
+        } else {
+          nBar1 = this.readSingle(buff);
+        }
+        if (nBar1 > 0 && member.g_no < 3) {  // 部材グループ番号3未満が対象？
+          if (j == 0) {
+            bar.rebar1.rebar_lines = nBar1;
+          } else if (j == 1 && member.shape != 3) {
+            bar.rebar2.rebar_lines = nBar1;
+          }
+        }
+      }
+      // 段間隔(mm)（上側引張鉄筋、下側引張鉄筋)
+      for (let j = 0; j < 2; j++) {
+        let rowPitch: number;
+        if (!this.isOlder('3.1.4', buff.datVersID) && this.isOlder('3.2.6', buff.datVersID)) {
+          rowPitch = this.readSingle(buff);
+        } else if (this.isOlder('3.3.2', buff.datVersID)) {
+          rowPitch = this.readByte(buff);
+        } else {
+          rowPitch = this.readSingle(buff);
+        }
+        if (rowPitch > 0 && member.g_no < 3) {  // 部材グループ番号3未満が対象？
+          if (j == 0) {
+            bar.rebar1.rebar_space = rowPitch;
+          } else if (j == 1 && member.shape != 3) {
+            bar.rebar2.rebar_space = rowPitch;
+          }
+        }
+      }
+      // 鉄筋間隔(mm)（上側引張鉄筋、下側引張鉄筋)
+      for (let j = 0; j < 2; j++) {
+        const pitch = this.readSingle(buff);
+        if (pitch > 0 && member.g_no < 3) {  // 部材グループ番号3未満が対象？
+          if (j == 0) {
+            bar.rebar1.rebar_ss = Math.round(pitch * 10) / 10;
+          } else if (j == 1 && member.shape != 3) {
+            bar.rebar2.rebar_ss = Math.round(pitch * 10) / 10;
+          }
+        }
+      }
+      // 斜率cos（上側引張鉄筋、下側引張鉄筋)
+      for (let j = 0; j < 2; j++) {
+        const cosTmp = this.readSingle(buff);
+        if (cosTmp > 0 && member.g_no < 2) {  // 部材グループ番号2未満が対象？
+          if (j == 0) {
+            bar.rebar1.cos = Math.round(cosTmp * 1000) / 1000;
+          } else if (j == 1 && member.shape != 3) {
+            bar.rebar2.cos = Math.round(cosTmp * 1000) / 1000;
+          }
         }
       }
 
-      if (this.isOlder("3.2.6", buff.datVersID) === true
-        && this.isOlder("3.1.4", buff.datVersID) === false) {
-        const stDummy6 = this.readByte(buff);
-        if (stDummy6 > 0) {
-          if (m.g_no < 3) {
-            bar.rebar1.rebar_lines = stDummy6;
-          }
-        }
-        const stDummy7 = this.readByte(buff);
-        if (stDummy7 > 0) {
-          if (m.g_no < 3 && m.shape !== '円形') {
-            bar.rebar2.rebar_lines = stDummy7;
-          }
-        }
-        const stDummy8 = this.readSingle(buff);
-        if (stDummy8 > 0) {
-          if (m.g_no < 3) {
-            bar.rebar1.rebar_space = stDummy8;
-          }
-        }
-        const stDummy9 = this.readSingle(buff);
-        if (stDummy9 > 0) {
-          if (m.g_no < 3 && m.shape !== '円形') {
-            bar.rebar2.rebar_space = stDummy9;
-          }
-        }
-      } else {
-        if (this.isOlder("3.1.4", buff.datVersID)) {
-          const stDummy3 = this.readInteger(buff);
-          if (stDummy3 > 0) {
-            if (m.g_no < 3) {
-              bar.rebar1.rebar_lines = stDummy3;
-            }
-          }
-          const stDummy4 = this.readInteger(buff);
-          if (stDummy4 > 0) {
-            if (m.g_no < 3 && m.shape !== '円形') {
-              bar.rebar2.rebar_lines = stDummy4;
-            }
-          }
-        } else {
-          const JikuNARABI0 = this.readSingle(buff);
-          if (JikuNARABI0 > 0) {
-            if (m.g_no < 3) {
-              bar.rebar1.rebar_lines = JikuNARABI0;
-            }
-          }
-          const JikuNARABI1 = this.readSingle(buff);
-          if (JikuNARABI1 > 0) {
-            if (m.g_no < 3 && m.shape !== '円形') {
-              bar.rebar2.rebar_lines = JikuNARABI1;
-            }
-          }
-        }
-        if (this.isOlder("3.3.2", buff.datVersID)) {
-          const stDummy6 = this.readByte(buff);
-          if (stDummy6 > 0) {
-            if (m.g_no < 3) {
-              bar.rebar1.rebar_space = stDummy6;
-            }
-          }
-          const stDummy7 = this.readByte(buff);
-          if (stDummy7 > 0) {
-            if (m.g_no < 3 && m.shape !== '円形') {
-              bar.rebar2.rebar_space = stDummy7;
-            }
-          }
-        } else {
-          const JikuAKI0 = this.readSingle(buff);
-          if (JikuAKI0 > 0) {
-            if (m.g_no < 3) {
-              bar.rebar1.rebar_space = JikuAKI0;
-            }
-          }
-          const JikuAKI1 = this.readSingle(buff);
-          if (JikuAKI1 > 0) {
-            if (m.g_no < 3 && m.shape !== '円形') {
-              bar.rebar2.rebar_space = JikuAKI1;
-            }
-          }
-        }
-      }
-      const JikuPITCH0 = this.readSingle(buff);
-      if (JikuPITCH0 > 0) {
-        if (m.g_no < 3) {
-          bar.rebar1.rebar_ss = Math.round(JikuPITCH0 * 10) / 10;
-        }
-      }
-      const JikuPITCH1 = this.readSingle(buff);
-      if (JikuPITCH1 > 0) {
-        if (m.g_no < 3 && m.shape !== '円形') {
-          bar.rebar2.rebar_ss = Math.round(JikuPITCH1 * 10) / 10;
-        }
-      }
-      const JikuSHARITU0 = this.readSingle(buff);
-      if (JikuSHARITU0 > 0) {
-        if (m.g_no < 2) {
-          bar.rebar1.cos = Math.round(JikuSHARITU0 * 1000) / 1000;
-        }
-      }
-      const JikuSHARITU1 = this.readSingle(buff);
-      if (JikuSHARITU1 > 0) {
-        if (m.g_no < 2 && m.shape !== '円形') {
-          bar.rebar2.cos = Math.round(JikuSHARITU1 * 1000) / 1000;
-        }
-      }
-
+      // 側方鉄筋径(mm)
       const SokuR0 = this.readByte(buff);
-      if (SokuR0 > 0) {
-        if (m.g_no < 3 && m.shape !== '円形') {
-          if (bar.sidebar1 !== undefined) {
-            bar.sidebar1.side_dia = SokuR0;
-          } else {
-            bar.sidebar.side_dia = SokuR0;
-          }
-        }
+      if (SokuR0 > 0 && member.g_no < 3 && member.shape != 3) {  // 部材グループ番号3未満が対象？
+        bar.sidebar1.side_dia = SokuR0;
       }
-      const SokuR1 = this.readByte(buff);
+      // 未使用
+      this.readByte(buff);
+      // 側方鉄筋本数
       const SokuHON0 = this.readByte(buff);
-      if (SokuHON0 > 0) {
-        if (m.g_no < 3 && m.shape !== '円形') {
-          if (bar.sidebar1 !== undefined) {
-            bar.sidebar1.side_n = SokuHON0;
-          } else {
-            bar.sidebar.side_n = SokuHON0;
-          }
-        }
+      if (SokuHON0 > 0 && member.g_no < 3 && member.shape != 3) {  // 部材グループ番号3未満が対象？
+        bar.sidebar1.side_n = SokuHON0;
       }
-      const SokuHON1 = this.readByte(buff);
+      // 未使用
+      this.readByte(buff);
+      // 側方鉄筋芯かぶり(mm)、側方鉄筋間隔※整数部が芯かぶり、小数点以下が間隔
       const SokuKABURI0 = this.readSingle(buff);
-      if (SokuKABURI0 > 0) {
-        if (m.g_no < 2 && m.shape !== '円形') {
-          const s1 = Math.floor(SokuKABURI0);
-          const s2 = Math.ceil((SokuKABURI0 - s1) * 10000);
-          if (s1 > 0) {
-            if (bar.sidebar1 !== undefined) {
-              bar.sidebar1.side_cover = s1;
-            } else {
-              bar.sidebar.side_cover = s1;
-            }
-          }
-          if (s2 > 0) {
-            if (bar.sidebar1 !== undefined) {
-              bar.sidebar1.side_ss = s2;
-            } else {
-              bar.sidebar.side_ss = s2;
-            }
-          }
-
+      if (SokuKABURI0 > 0 && member.g_no < 2 && member.shape != 3) {  // 部材グループ番号2未満が対象？
+        const s1 = Math.floor(SokuKABURI0);
+        const s2 = Math.ceil((SokuKABURI0 - s1) * 10000);
+        if (s1 > 0) {
+          bar.sidebar1.side_cover = s1;
+        }
+        if (s2 > 0) {
+          bar.sidebar1.side_ss = s2;
         }
       }
-      const SokuKABURI1 = this.readSingle(buff);
+      // 未使用
+      this.readSingle(buff);
 
+      // スターラップ径(mm)
       const StarR0 = this.readByte(buff);
-      if (StarR0 > 0) bar.stirrup.stirrup_dia = StarR0;
-      const StarR1 = this.readByte(buff);
+      if (StarR0 > 0) { bar.stirrup.stirrup_dia = StarR0; }
+      // 未使用
+      this.readByte(buff);
+      // スターラップ組数
       const StarKUMI0 = this.readSingle(buff);
-      if (StarKUMI0 > 0) bar.stirrup.stirrup_n = StarKUMI0 * 2;
-      const StarKUMI1 = this.readSingle(buff);
+      if (StarKUMI0 > 0) { bar.stirrup.stirrup_n = StarKUMI0 * 2; }  // 組数から本数に変換
+      // 未使用
+      this.readSingle(buff);
+      // スターラップ間隔(mm)
       const StarPitch0 = this.readSingle(buff);
-      if (StarPitch0 > 0) bar.stirrup.stirrup_ss = StarPitch0;
-      const StarPitch1 = this.readSingle(buff);
+      if (StarPitch0 > 0) { bar.stirrup.stirrup_ss = StarPitch0; }
+      // 未使用
+      this.readSingle(buff);
+
+      // 有効高が変化する場合の係数tan
       const StarTanTHETA0 = this.readSingle(buff);
-      if (StarTanTHETA0 > 0) {
-        if (m.g_no < 2) {
-          bar.tan = StarTanTHETA0;
-        }
+      if (StarTanTHETA0 > 0 && member.g_no < 2) {  // 部材グループ番号2未満が対象？
+        bar.tan = StarTanTHETA0;
       }
-      const StarTanTHETA1 = this.readSingle(buff);
+      // 未使用
+      this.readSingle(buff);
 
+      // 折曲げ鉄筋径(mm)
       const OrimgR = this.readByte(buff);
-      if (OrimgR > 0) {
-        if (m.g_no < 2) {
-          bar.bend.bending_dia = OrimgR;
-        }
+      if (OrimgR > 0 && member.g_no < 2) {  // 部材グループ番号2未満が対象？
+        bar.bend.bending_dia = OrimgR;
       }
+      // 折曲げ鉄筋本数
+      let nBent: number;
       if (this.isOlder("3.4.5", buff.datVersID)) {
-        const stDummy10 = this.readByte(buff);
-        if (stDummy10 > 0) {
-          if (m.g_no < 2) {
-            bar.bend.bending_n = stDummy10;
-          }
-        }
+        nBent = this.readByte(buff);
       } else {
-        const OrimgHON = this.readSingle(buff);
-        if (OrimgHON > 0) {
-          if (m.g_no < 2) {
-            bar.bend.bending_n = OrimgHON;
-          }
-        }
+        nBent = this.readSingle(buff);
       }
+      if (nBent > 0 && member.g_no < 2) {  // 部材グループ番号2未満が対象？
+        bar.bend.bending_n = nBent;
+      }
+      // 折曲げ鉄筋角度(°)
       const OrimgANGLE = this.readByte(buff);
-      if (OrimgANGLE > 0) {
-        if (m.g_no < 2) {
-          bar.bend.bending_angle = OrimgANGLE;
-        }
+      if (OrimgANGLE > 0 && member.g_no < 2) {  // 部材グループ番号2未満が対象？
+        bar.bend.bending_angle = OrimgANGLE;
       }
-
-      if (this.isOlder("0.1.5", buff.datVersID)) {
-        const Shori0 = this.readByte(buff);
-        bar.rebar1.enable = Shori0 !== 0;
-
-      } else {
+      // 折曲げ鉄筋間隔(mm)
+      if (!this.isOlder("0.1.5", buff.datVersID)) {
         const OrimgKankaku = this.readSingle(buff);
-        if (OrimgKankaku > 0) {
-          if (m.g_no < 2) {
-            bar.bend.bending_ss = OrimgKankaku;
-          }
+        if (OrimgKankaku > 0 && member.g_no < 2) {  // 部材グループ番号2未満が対象？
+          bar.bend.bending_ss = OrimgKankaku;
+        }
+      }
+      
+      // 上側引張照査の実施有無
+      const Shori0 = this.readByte(buff);
+      point.isUpperCalc = Shori0 !== 0;
+      // 下側引張照査の実施有無
+      if (this.isOlder("0.1.5", buff.datVersID)) {
+        point.isLowerCalc = point.isUpperCalc;
+      } else {
+        const Shori1 = this.readByte(buff);
+        point.isLowerCalc = Shori1 !== 0;
+      }
+
+      // 疲労検討条件
+      if (!this.isOlder("3.1.6", buff.datVersID)) {
+        // データ保存先のオブジェクトを取得
+        const fatigue = this.fatigues.getTableColumn(index);
+        
+        // 曲げ照査用疲労条件
+        fatigue.M1.SA = this.readSingle(buff);  // 上側引張のSA/SC
+        fatigue.M2.SA = this.readSingle(buff);  // 下側引張のSA/SC
+        fatigue.M1.SB = this.readSingle(buff);  // 上側引張のSB/SC
+        fatigue.M2.SB = this.readSingle(buff);  // 下側引張のSB/SC
+        fatigue.M1.NA06 = this.readSingle(buff);  // 上側引張のA列車繰返し回数（k=0.06）
+        fatigue.M2.NA06 = this.readSingle(buff);  // 下側引張のA列車繰返し回数（k=0.06）
+        fatigue.M1.NB06 = this.readSingle(buff);  // 上側引張のB列車繰返し回数（k=0.06）
+        fatigue.M2.NB06 = this.readSingle(buff);  // 下側引張のB列車繰返し回数（k=0.06）
+        fatigue.M1.NA12 = this.readSingle(buff);  // 上側引張のA列車繰返し回数（k=0.12）
+        fatigue.M2.NA12 = this.readSingle(buff);  // 下側引張のA列車繰返し回数（k=0.12）
+        fatigue.M1.NB12 = this.readSingle(buff);  // 上側引張のB列車繰返し回数（k=0.12）
+        fatigue.M2.NB12 = this.readSingle(buff);  // 下側引張のB列車繰返し回数（k=0.12）
+        fatigue.M1.A = this.readSingle(buff);  // 上側引張の列車分担比
+        fatigue.M2.A = this.readSingle(buff);  // 下側引張の列車分担比
+        fatigue.M1.B = this.readSingle(buff);  // 上側引張の複線載荷確率
+        fatigue.M2.B = this.readSingle(buff);  // 下側引張の複線載荷確率
+        // 未使用
+        for (let j = 0; j < 6 ; j++) {
+          this.readSingle(buff);
         }
 
-        const Shori0 = this.readByte(buff);
-        bar.rebar1.enable = Shori0 !== 0;
-        const Shori1 = this.readByte(buff);
-        bar.rebar2.enable = Shori1 !== 0;
+        // せん断照査用疲労条件
+        fatigue.V1.SA = this.readSingle(buff);  // 上側引張のSA/SC
+        fatigue.V2.SA = this.readSingle(buff);  // 下側引張のSA/SC
+        fatigue.V1.SB = this.readSingle(buff);  // 上側引張のSB/SC
+        fatigue.V2.SB = this.readSingle(buff);  // 下側引張のSB/SC
+        fatigue.V1.NA06 = this.readSingle(buff);  // 上側引張のA列車繰返し回数（k=0.06）
+        fatigue.V2.NA06 = this.readSingle(buff);  // 下側引張のA列車繰返し回数（k=0.06）
+        fatigue.V1.NB06 = this.readSingle(buff);  // 上側引張のB列車繰返し回数（k=0.06）
+        fatigue.V2.NB06 = this.readSingle(buff);  // 下側引張のB列車繰返し回数（k=0.06）
+        fatigue.V1.NA12 = this.readSingle(buff);  // 上側引張のA列車繰返し回数（k=0.12）
+        fatigue.V2.NA12 = this.readSingle(buff);  // 下側引張のA列車繰返し回数（k=0.12）
+        fatigue.V1.NB12 = this.readSingle(buff);  // 上側引張のB列車繰返し回数（k=0.12）
+        fatigue.V2.NB12 = this.readSingle(buff);  // 下側引張のB列車繰返し回数（k=0.12）
+        fatigue.V1.A = this.readSingle(buff);  // 上側引張の列車分担比
+        fatigue.V2.A = this.readSingle(buff);  // 下側引張の列車分担比
+        fatigue.V1.B = this.readSingle(buff);  // 上側引張の複線載荷確率
+        fatigue.V2.B = this.readSingle(buff);  // 下側引張の複線載荷確率
+        // 未使用
+        for (let j = 0; j < 6 ; j++) {
+          this.readSingle(buff);
+        }
       }
-
-      if (!this.isOlder("3.1.6", buff.datVersID)) {
-        const fatigue = this.fatigues.getTableColumn(index);
-
-        const cMage00 = this.readSingle(buff);
-        fatigue.M1.SA = cMage00;
-        const cMage01 = this.readSingle(buff);
-        fatigue.M2.SA = cMage01;
-        const cMage10 = this.readSingle(buff);
-        fatigue.M1.SB = cMage10;
-        const cMage11 = this.readSingle(buff);
-        fatigue.M2.SB = cMage11;
-        const cMage20 = this.readSingle(buff);
-        fatigue.M1.NA06 = cMage20;
-        const cMage21 = this.readSingle(buff);
-        fatigue.M2.NA06 = cMage21;
-        const cMage30 = this.readSingle(buff);
-        fatigue.M1.NB06 = cMage30;
-        const cMage31 = this.readSingle(buff);
-        fatigue.M2.NB06 = cMage31;
-        const cMage40 = this.readSingle(buff);
-        fatigue.M1.NA12 = cMage40;
-        const cMage41 = this.readSingle(buff);
-        fatigue.M2.NA12 = cMage41;
-        const cMage50 = this.readSingle(buff);
-        fatigue.M1.NB12 = cMage50;
-        const cMage51 = this.readSingle(buff);
-        fatigue.M2.NB12 = cMage51;
-        const cMage60 = this.readSingle(buff);
-        fatigue.M1.A = cMage60;
-        const cMage61 = this.readSingle(buff);
-        fatigue.M2.A = cMage61;
-        const cMage70 = this.readSingle(buff);
-        fatigue.M1.B = cMage70;
-        const cMage71 = this.readSingle(buff);
-        fatigue.M2.B = cMage71;
-        const cMage800 = this.readSingle(buff);
-        const cMage810 = this.readSingle(buff);
-        const cMage801 = this.readSingle(buff);
-        const cMage811 = this.readSingle(buff);
-        const cMage802 = this.readSingle(buff);
-        const cMage812 = this.readSingle(buff);
-
-        const cSend00 = this.readSingle(buff);
-        fatigue.V1.SA = cSend00;
-        const cSend01 = this.readSingle(buff);
-        fatigue.V2.SA = cSend01;
-        const cSend10 = this.readSingle(buff);
-        fatigue.V1.SB = cSend10;
-        const cSend11 = this.readSingle(buff);
-        fatigue.V2.SB = cSend11;
-        const cSend20 = this.readSingle(buff);
-        fatigue.V1.NA06 = cSend20;
-        const cSend21 = this.readSingle(buff);
-        fatigue.V2.NA06 = cSend21;
-        const cSend30 = this.readSingle(buff);
-        fatigue.V1.NB06 = cSend30;
-        const cSend31 = this.readSingle(buff);
-        fatigue.V2.NB06 = cSend31;
-        const cSend40 = this.readSingle(buff);
-        fatigue.V1.NA12 = cSend40;
-        const cSend41 = this.readSingle(buff);
-        fatigue.V2.NA12 = cSend41;
-        const cSend50 = this.readSingle(buff);
-        fatigue.V1.NB12 = cSend50;
-        const cSend51 = this.readSingle(buff);
-        fatigue.V2.NB12 = cSend51;
-        const cSend60 = this.readSingle(buff);
-        fatigue.V1.A = cSend60;
-        const cSend61 = this.readSingle(buff);
-        fatigue.V2.A = cSend61;
-        const cSend70 = this.readSingle(buff);
-        fatigue.V1.B = cSend70;
-        const cSend71 = this.readSingle(buff);
-        fatigue.V2.B = cSend71;
-        const cSend800 = this.readSingle(buff);
-        const cSend810 = this.readSingle(buff);
-        const cSend801 = this.readSingle(buff);
-        const cSend811 = this.readSingle(buff);
-        const cSend802 = this.readSingle(buff);
-        const cSend812 = this.readSingle(buff);
-
-      }
-
-
     }
   }
 
-  // 画面６　計算・印刷フォーム
+  /**
+   * 計算・印刷設定の読み込み※未使用
+   * @param buff 
+   */
   private GetPrtScrn(buff: any): void {
     const bCollect = this.readBoolean(buff);
     const bDoDraft = this.readBoolean(buff);
@@ -1090,160 +998,172 @@ export class DsdDataService {
         const KuiTKIN_D = this.readInteger(buff);
       }
     }
-
   }
 
-  // 断面力手入力情報を
+  /**
+   * 断面力データの読み込み
+   * @param buff 
+   * @param NumManualDt 断面力データ数
+   */
   private FrmManualGetTEdata(buff: any, NumManualDt: number): void {
 
     let strfix10: string;
     let strfix32: string;
 
     for (let i = 0; i < NumManualDt; i++) {
-      const index = i + 1;
+      // データ保存先のオブジェクトを取得
+      const index = i + 1;  //各データテーブルへのindex
+      let member = this.members.getTableColumns(index);  // 部材・断面データ
+      let point = this.points.getTableColumn(index);  // 算出点データ
+      let force = this.force.getTable1Columns(index);  // 断面力データ
+      let bar = this.bars.getTableColumn(index);  // 鉄筋配置データ
+      let fatigue = this.fatigues.getTableColumn(index);  // 疲労条件
+      let shearCondition = this.shear.getTableColumn(index);  // せん断条件
 
-      // グループNo
-      const member = this.members.getTableColumns(index);
-
+      // 部材グループNo
       strfix10 = this.readString(buff, 10);
       member.g_no = this.helper.toNumber(strfix10.trim());
+
+      // 部材グループNoを文字列化したものをグループIDとする
       if (member.g_no === null) {
         member.g_id = 'blank';
       } else {
         member.g_id = member.g_no.toString();
       }
 
-      // 部材名
+      // 部材グループ名
       strfix32 = this.readString(buff, 32);
       member.g_name = strfix32.trim();
 
-      const position = this.points.getTableColumn(index);
-      for (const key of Object.keys(position)) {
+      // 部材データと算出点データの共通プロパティの同期
+      // 着目点データの読み込みで上書きされるので必要ないかも
+      for (const key of Object.keys(point)) {
         if (key in member) {
-          position[key] = member[key];
+          point[key] = member[key];
         }
       }
 
       // 着目点名
       strfix32 = this.readString(buff, 32);
-      position.p_name = strfix32.trim();
-      position.isMzCalc = true;
-      position.isVyCalc = true;
-      position.isMtCalc = true;
+      point.p_name = strfix32.trim();
 
-      // 断面力
-      const force = this.force.getTable1Columns(index);
-      // 設計曲げモーメントの入力を取得
-      let sHAND_MageDAN: number;
-      // 耐久性 縁応力検討用
+      // 着目点のデフォルト設定
+      point.isMzCalc = true;
+      point.isVyCalc = true;
+      point.axis_type = 2;  // dsdデータは2次元のみ
+
+      // 断面力の一時格納用変数
+      let forceTmp: number;
+      
+      // 耐久性曲げ照査（縁応力度検討用）曲げモーメント(kNm)、軸力(kN)
       for (const k3 of ['Md0_Md', 'Md0_Nd']) {
-        sHAND_MageDAN = this.readSingle(buff);
-        if (sHAND_MageDAN !== null) {
-          force[k3] = Math.round(sHAND_MageDAN * 100) / 100;
+        forceTmp = this.readSingle(buff);
+        if (forceTmp !== null) {
+          force[k3] = Math.round(forceTmp * 100) / 100;
         }
       }
 
-      // 耐久性 鉄筋応力検討用, 永久
+      // 耐久性曲げ照査（永久作用）曲げモーメント(kNm)、軸力(kN)※最後に読み込まれた有効値が採用される
       for (let id = 0; id <= 1; id++) {
         for (const k3 of ['Md1_Md', 'Md1_Nd']) {
-          sHAND_MageDAN = this.readSingle(buff);
-          if (sHAND_MageDAN !== null) {
-            force[k3] = Math.round(sHAND_MageDAN * 100) / 100;
+          forceTmp = this.readSingle(buff);
+          if (forceTmp !== null) {
+            force[k3] = Math.round(forceTmp * 100) / 100;
           }
         }
       }
-      // 耐久性 変動
-      sHAND_MageDAN = this.readSingle(buff);
-      sHAND_MageDAN = this.readSingle(buff);
-      // 耐久性 外観
+
+      // 耐久性曲げ照査（変動作用）曲げモーメント(kNm)、軸力(kN)※未使用
+      this.readSingle(buff);
+      this.readSingle(buff);
+
+      // 耐久性曲げ照査（永久作用）曲げモーメント(kNm)、軸力(kN)※最後に読み込まれた有効値が採用される
       for (const k3 of ['Md1_Md', 'Md1_Nd']) {
-        sHAND_MageDAN = this.readSingle(buff);
-        if (sHAND_MageDAN !== null) {
-          force[k3] = Math.round(sHAND_MageDAN * 100) / 100;
+        forceTmp = this.readSingle(buff);
+        if (forceTmp !== null) {
+          force[k3] = Math.round(forceTmp * 100) / 100;
         }
       }
-      // 3疲労 最小応力, 4最大応力, 5安全性, 6復旧性 地震時以外, 7復旧性 地震時
+
+      // 各曲げ照査（3:疲労永久作用、4:疲労永久＋変動、5:安全性破壊、6:復旧性地震時以外、7:復旧性地震時）曲げモーメント(kNm)、軸力(kN)
       for (let id = 3; id <= 7; id++) {
         const k1 = 'Md' + id;
         for (const k2 of ['_Md', '_Nd']) {
           const k3 = k1 + k2;
-          sHAND_MageDAN = this.readSingle(buff);
-          if (sHAND_MageDAN !== null) {
-            force[k3] = Math.round(sHAND_MageDAN * 100) / 100;
+          forceTmp = this.readSingle(buff);
+          if (forceTmp !== null) {
+            force[k3] = Math.round(forceTmp * 100) / 100;
           }
         }
       }
-      // 余り
-      sHAND_MageDAN = this.readSingle(buff);
-      sHAND_MageDAN = this.readSingle(buff);
 
-      // 設計せん断力の入力を取得
-      let sHAND_SenDAN: number;
+      // 未使用
+      this.readSingle(buff);
+      this.readSingle(buff);
+
+      // 各せん断照査（0:耐久性ひび割れ判定、1:耐久性永久作用、2:未使用、3:疲労永久作用、4:疲労永久＋変動、5:安全性破壊、6:復旧性地震時以外、7:復旧性地震時）
+      // せん断力(kN)、曲げモーメント(kNm)、軸力(kN)
       for (let id = 0; id <= 7; id++) {
         const k1 = 'Vd' + id;
         for (const k2 of ['_Vd', '_Md', '_Nd']) {
           const k3 = k1 + k2;
-          sHAND_SenDAN = this.readSingle(buff);
-          if (sHAND_SenDAN !== null) {
-            force[k3] = Math.round(sHAND_SenDAN * 100) / 100;
+          forceTmp = this.readSingle(buff);
+          if (forceTmp !== null) {
+            force[k3] = Math.round(forceTmp * 100) / 100;
           }
         }
       }
 
-      // せん断スパンの入力を取得
-      let sHAND_SenDANLa: number = null;
+      // せん断スパン(mm)
       if (!this.isOlder('3.1.7', buff.datVersID)) {
-        sHAND_SenDANLa = this.readSingle(buff);
-      }
-      if (sHAND_SenDANLa !== null && sHAND_SenDANLa !== 0) {
-        position.La = sHAND_SenDANLa;
+        const shearSpan = this.readSingle(buff);
+        if (shearSpan != null && shearSpan != 0){
+          shearCondition.La = shearSpan;
+        }
       }
 
-      // 安全性破壊の設計軸圧縮力の入力を取得
-      let sHAND_軸力maxDAN = null
+      // 安全性破壊の設計軸圧縮力(kN)※未使用
       if (!this.isOlder('3.2.4', buff.datVersID)) {
-        sHAND_軸力maxDAN = this.readSingle(buff);
+        this.readSingle(buff);
       }
 
-      // min(t/2, d) の入力
-      let sHAND_SenDANLa2_1: number = null
+      // min(t/2, d)の入力※未使用
       if (!this.isOlder('3.2.7', buff.datVersID)) {
-        sHAND_SenDANLa2_1 = this.readSingle(buff);
+        this.readSingle(buff);
       }
 
-      // 杭の直径 の入力
-      let sHAND_SenDANLa2_2: number = null
+      // 杭の直径※未使用
       if (!this.isOlder('3.2.8', buff.datVersID)) {
-        sHAND_SenDANLa2_2 = this.readSingle(buff);
+        this.readSingle(buff);
       }
 
-
-      // 登録
-      const bar = this.bars.getTableColumn(index);
+      // 鉄筋配置データおよび疲労条件に部材データと算出点データの共通プロパティを同期
+      // 後で各データの読み込みで上書きされるので必要ないかも
       for (const key of Object.keys(bar)) {
         if (key in member) {
           bar[key] = member[key];
         }
-        if (key in position) {
-          bar[key] = position[key];
+        if (key in point) {
+          bar[key] = point[key];
         }
       }
-      const fatigue = this.fatigues.getTableColumn(index);
       for (const key of Object.keys(fatigue)) {
         if (key in member) {
           fatigue[key] = member[key];
         }
-        if (key in position) {
-          fatigue[key] = position[key];
+        if (key in point) {
+          fatigue[key] = point[key];
         }
       }
     }
-
-
-
   }
 
-  // バージョンを調べる
+  /**
+   * DSDファイルのバージョンを調べる
+   * @param buff 
+   * @returns datVersID：バージョン番号(ex. 1.1.1)\
+   * ManualInput：断面力データ数
+   */
   private IsDSDFile(buff: any): any {
     const strfix32 = this.readString(buff, 32);
     const strT: string[] = strfix32.replace("WINDAN", "").trim().split(" ");
