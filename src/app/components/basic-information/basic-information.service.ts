@@ -41,6 +41,7 @@ export class InputBasicInformationService {
     this.conditions_list = new Array();
 
     this.specification1_list = this.default_specification1(); //set value specification1_list
+    this.specification2_list = this.default_specification2(this.get_specification1());
     this.set_default_pickup(); //have set value specification2_list
   }
 
@@ -124,9 +125,9 @@ export class InputBasicInformationService {
     }
     this.pickup_torsional_moment = tmp_torsional;
 
-    this.specification2_list = this.default_specification2(sp1);
+    // this.specification2_list = this.default_specification2(sp1);
 
-    this.conditions_list = this.default_conditions(sp1);
+    // this.conditions_list = this.default_conditions(sp1);
   }
 
   public setPreSpecification2(id: number, data: any) {
