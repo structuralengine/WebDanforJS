@@ -276,6 +276,7 @@ export class MenuComponent implements OnInit {
           .then((buff) => {
             this.checkOpenDSD = true
             const pik = this.dsdData.readDsdData(buff);
+            this.app.getText(this.basic.get_specification2());
             this.open_done(modalRef);
             if (pik !== null) {
               this.helper.alert(pik + this.translate.instant("menu.open"));
