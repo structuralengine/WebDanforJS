@@ -10,6 +10,7 @@ import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { LanguagesService } from "../../providers/languages.service";
 
 import printJS from "print-js";
+import * as pako from "pako";
 import { ElectronService } from 'src/app/providers/electron.service';
 import packageJson from '../../../../package.json';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -271,7 +272,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     //    this._save_summary(filename);
     //  });
   }
-  pdfSummary() {
+  async pdfSummary() {
     const user = this.user.userProfile;
     if (!user) {
       this.helper.alert(this.translate.instant("calculation-print.p_login"));
@@ -311,8 +312,25 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     ui_data['calc']['print_section_force_checked'] = this.print_section_force_checked;
     ui_data['calc']['print_summary_table_checked'] = false;
     console.log("pdf summary", ui_data)
+
+    const jsonStr = JSON.stringify(ui_data);
+    const compressed = pako.gzip(jsonStr);
+    //const base64Encoded = btoa(compressed);
+    const base64Encoded = await this.base64Encode(compressed);
+    
+    const base64EncodedSize = this.getByteCount(base64Encoded);
+    console.log("jsonStr size = %d, base64Encoded size = %d", this.getByteCount(jsonStr), base64EncodedSize);
+
+    const maxRequestBodySize = 30 * 1000 * 1000 - 1000; // use a slightly smaller value than the true limit (30MB)
+    if (base64EncodedSize > maxRequestBodySize) {
+      this.loading_disable();
+      console.log("Request body size (%d) exceeds the limit (%d)", base64EncodedSize, maxRequestBodySize);
+      this.helper.alert(this.translate.instant("calculation-print.too-large-request"));
+      return;
+    }
+
     this.http
-      .post(url, ui_data, {
+      .post(url, base64Encoded, {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
           "Accept": "*/*"
@@ -352,7 +370,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     // }
   }
 
-  downloadSummaryFun4() {
+  async downloadSummaryFun4() {
     const user = this.user.userProfile;
     if (!user) {
       this.helper.alert(this.translate.instant("calculation-print.p_login"));
@@ -377,11 +395,29 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     ui_data['calc']['print_safety_ratio_checked'] = false;
     ui_data['calc']['print_section_force_checked'] = false;
     ui_data['calc']['print_summary_table_checked'] = true;
-    console.log(JSON.stringify(ui_data));
+
+    const jsonStr = JSON.stringify(ui_data);
+    console.log(jsonStr);
+
+    const compressed = pako.gzip(jsonStr);
+    //const base64Encoded = btoa(compressed);
+    const base64Encoded = await this.base64Encode(compressed);
+    
+    const base64EncodedSize = this.getByteCount(base64Encoded);
+    console.log("jsonStr size = %d, base64Encoded size = %d", this.getByteCount(jsonStr), base64EncodedSize);
+
+    const maxRequestBodySize = 30 * 1000 * 1000 - 1000; // use a slightly smaller value than the true limit (30MB)
+    if (base64EncodedSize > maxRequestBodySize) {
+      this.loading_disable();
+      console.log("Request body size (%d) exceeds the limit (%d)", base64EncodedSize, maxRequestBodySize);
+      this.helper.alert(this.translate.instant("calculation-print.too-large-request"));
+      return;
+    }
+
     const url_summary = environment.printURL;
     console.log("SummaryFun4", ui_data)
     this.http
-      .post(url_summary, ui_data, {
+      .post(url_summary, base64Encoded, {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
           "Accept": "*/*"
@@ -537,5 +573,25 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
       );
     }
     return formattedString;
+  }
+
+  // https://qiita.com/i15fujimura1s/items/6fa5d16b1e53f04f3b06
+  base64Encode(...parts: any[]): Promise<string> {
+    return new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const offset = result.indexOf(",") + 1;
+        resolve(reader.result.slice(offset) as string);
+      };
+      reader.readAsDataURL(new Blob(parts));
+    });
+  }
+
+  getByteCount(base64: string): number {
+    const encoder = new TextEncoder();
+    const encoded = encoder.encode(base64);
+    const bytes = encoded.byteLength;
+    return bytes;
   }
 }
