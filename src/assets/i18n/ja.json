@@ -393,7 +393,8 @@
         "p_login":"ログインしてください。",
         "download":"総括表ダウンロード",
         "downloading":"ダウンロード中",
-        "judgement": "検討結果一覧表"
+        "judgement": "検討結果一覧表",
+        "too-large-request": "データが大きすぎて計算できません。担当営業にご連絡ください。"
     },
     "section-force-list":{
         "m_no":"部材\n番号",
