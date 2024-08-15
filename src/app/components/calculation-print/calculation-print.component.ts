@@ -370,7 +370,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     // }
   }
 
-  downloadSummaryFun4() {
+  async downloadSummaryFun4() {
     const user = this.user.userProfile;
     if (!user) {
       this.helper.alert(this.translate.instant("calculation-print.p_login"));
@@ -395,11 +395,29 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     ui_data['calc']['print_safety_ratio_checked'] = false;
     ui_data['calc']['print_section_force_checked'] = false;
     ui_data['calc']['print_summary_table_checked'] = true;
-    console.log(JSON.stringify(ui_data));
+
+    const jsonStr = JSON.stringify(ui_data);
+    console.log(jsonStr);
+
+    const compressed = pako.gzip(jsonStr);
+    //const base64Encoded = btoa(compressed);
+    const base64Encoded = await this.base64Encode(compressed);
+    
+    const base64EncodedSize = this.getByteCount(base64Encoded);
+    console.log("jsonStr size = %d, base64Encoded size = %d", this.getByteCount(jsonStr), base64EncodedSize);
+
+    const maxRequestBodySize = 30 * 1000 * 1000 - 1000; // use a slightly smaller value than the true limit (30MB)
+    if (base64EncodedSize > maxRequestBodySize) {
+      this.loading_disable();
+      console.log("Request body size (%d) exceeds the limit (%d)", base64EncodedSize, maxRequestBodySize);
+      this.helper.alert(this.translate.instant("calculation-print.too-large-request"));
+      return;
+    }
+
     const url_summary = environment.printURL;
     console.log("SummaryFun4", ui_data)
     this.http
-      .post(url_summary, ui_data, {
+      .post(url_summary, base64Encoded, {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
           "Accept": "*/*"
