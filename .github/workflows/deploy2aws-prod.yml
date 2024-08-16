@@ -29,7 +29,7 @@ name: Deploy to Amazon ECS
 
 on:
   push:
-    branches: [ "fujikawa_#000" ]
+    branches: [ "fujikawa_#668" ]
   # push:
   #   tags:
   #     - 'v*.*.*'
