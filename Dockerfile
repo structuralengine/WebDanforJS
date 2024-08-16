@@ -1,8 +1,11 @@
-# ローカルDocker Desktopテストコマンド(webdanforjs＝ローカルDocker Desktopでの任意のイメージ名)
-#   > docker build -t webdanforjs .
-#   > docker run -p 4200:80 webdanforjs
-
 FROM node:18.16.0-alpine AS app
+
+# 使用例
+#  $ docker build --build-arg BUILD_SCRIPT="build-actions:staging" -t webdanforjs .
+# 設定値
+# AWSへイメージをpushする場合 "build-actions"もしくは"build-actions:staging"
+# Docker Desktop等を使ってlocalhostで動作確認する場合 "build-docker:local"
+ARG BUILD_SCRIPT
 
 # アプリケーションディレクトリ作成
 WORKDIR /usr/src/app
@@ -15,12 +18,9 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN npm install -g @angular/cli@12.2.7 && npm install --legacy-peer-deps && npm install rxfire@6.0.3 --legacy-peer-deps
 
-# GitHub PagesまたはAWS EC2インスタンスの場合はこちらを有効に
-RUN npm run "build-actions:staging"
+RUN npm run $BUILD_SCRIPT
 
-# ローカルのDocker Desktopを使ってlocalhost確認する場合はこちらを有効に
-# RUN npm run "build-actions:local"
-
+# 実際のイメージ
 FROM nginx:alpine
 
 # compiled Angular application files を NGINX ドキュメントルートへコピー

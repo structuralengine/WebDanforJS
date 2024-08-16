@@ -56,6 +56,3 @@ Thumbs.db
 debug.log
 src/environments/environment.prod.ts
 src/environments/environment.ts
-
-# Deploy to AWS
-src/environments/environment.aws.taskdef.json
