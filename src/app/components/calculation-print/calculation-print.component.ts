@@ -333,6 +333,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
       .post(url, base64Encoded, {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
+          "Content-Encoding": "gzip",
           "Accept": "*/*"
         }),
         responseType: "text"
@@ -420,6 +421,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
       .post(url_summary, base64Encoded, {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
+          "Content-Encoding": "gzip",
           "Accept": "*/*"
         }),
         responseType: "text"
