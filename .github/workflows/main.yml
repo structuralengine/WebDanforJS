@@ -2,8 +2,12 @@ name: Deploy Angular App
 
 on:
   push:
-    tags:
-      - v*
+    branches-ignore:
+      - '**'
+    tags-ignore:
+    - 'v*.*.*'
+    # tags:
+    #   - v*
 
 jobs:
   build:
