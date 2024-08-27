@@ -393,7 +393,8 @@
         "download":"Summary download",
         "downloading": "Downloading",
         "p_login":"Please login",
-        "judgement": "Judgement value list"
+        "judgement": "Judgement value list",
+        "too-large-request": "Data size is too large to calculate.  Please contact your sales representative."
     },
     "section-force-list":{
         "m_no":"Member\nNo",
