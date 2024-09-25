@@ -10,7 +10,6 @@ import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { LanguagesService } from "../../providers/languages.service";
 
 import printJS from "print-js";
-import * as pako from "pako";
 import { ElectronService } from 'src/app/providers/electron.service';
 import packageJson from '../../../../package.json';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -22,6 +21,8 @@ import { PreviewExcelComponent } from '../preview-excel/preview-excel.component'
 import { merge } from 'rxjs';
 import { Guid } from 'guid-typescript';
 import { MenuService } from '../menu/menu.service';
+
+import { generateCalculationData, getByteCount } from './generate-calculation-data';
 
 @Component({
   selector: 'app-calculation-print',
@@ -123,203 +124,48 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
       });
   }
 
-  // 計算開始
-  onClick() {
-
-    const user = this.user.userProfile;
-    if (!user) {
-      this.helper.alert(this.translate.instant("calculation-print.p_login"));
-      return;
-    }
-
-    this.user.clear(user.uid);
-
-    //console.log('印刷データ準備中...');
-
-    this.loading_enable();
-
-    this.saveData();
-    var ui_data: any = this.save.getInputJson();
-    ui_data["lang"] = this.language.browserLang;
-    ui_data["uid"] = user.uid;
-
-    var column_data = new Array();
-    for (var i = 0; this.table_datas.length > i; i++)
-      column_data.push({
-        GroupName: this.table_datas[i].g_name,
-        Checked: this.table_datas[i].calc_checked
-      });
-
-    ui_data["member_group_selection"] = column_data;
-
-    console.log(JSON.stringify(ui_data));
-
-    const url = environment.calcURL; // サーバ側で集計もPDF生成もするバージョンのAzureFunction
-
-    this.http
-      .post(url, ui_data, {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "Accept": "*/*"
-        }),
-        responseType: "text"
-      })
-      .subscribe(
-        (response) => {
-          this.loading_disable();
-
-          var resp = JSON.parse(response.toString());
-
-          //console.log("JSON!!!", response.toString());
-          //console.log("from JSON!!!", resp);
-
-          this.showPDF(resp.pdf_base64);
-
-          const byteCharacters = atob(resp.excel_base64);
-          let byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++)
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-
-          this.summary_data = new Uint8Array(byteNumbers);
-          this.hasSummary = true;
-        },
-        (err) => {
-          this.loading_disable();
-          this.hasSummary = false;
-          console.log("Error response: ", err);
-          this.helper.alert(err['error']);
-        }
-      );
-  }
-
   previewSummary() {
     window.alert("preview excel");
   }
 
-  downloadSummary() {
-
-    const user = this.user.userProfile;
-    if (!user) {
-      this.helper.alert(this.translate.instant("calculation-print.p_login"));
-      return;
-    }
-
-    this.user.clear(user.uid);
-
-    //console.log('印刷データ準備中...');
-
-    this.loading_enable();
-
-    this.saveData();
-    var ui_data: any = this.save.getInputJson();
-    ui_data["lang"] = this.language.browserLang;
-    ui_data["uid"] = user.uid;
-
-    var column_data = new Array();
-    for (var i = 0; this.table_datas.length > i; i++)
-      column_data.push({
-        GroupName: this.table_datas[i].g_name,
-        Checked: this.table_datas[i].calc_checked
-      });
-
-    ui_data["member_group_selection"] = column_data;
-
-    console.log(JSON.stringify(ui_data));
-
-    const url = environment.calcURL; // サーバ側で集計もPDF生成もするバージョンのAzureFunction
-    const url_summary = environment.printURL;
-    this.http
-      .post(url, ui_data, {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "Accept": "*/*"
-        }),
-        responseType: "text"
-      })
-      .subscribe(
-        (response) => {
-          this.loading_disable();
-
-          var resp = JSON.parse(response.toString());
-
-          //console.log("JSON!!!", response.toString());
-          //console.log("from JSON!!!", resp);
-
-          //this.showPDF(resp.pdf_base64);
-
-          const byteCharacters = atob(resp.excel_base64);
-          let byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++)
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-
-          this.summary_data = new Uint8Array(byteNumbers);
-          this.hasSummary = true;
-          const filename = "dummy.xlsx";
-          this._save_summary(filename);
-        },
-        (err) => {
-          this.loading_disable();
-          this.hasSummary = false;
-          console.log("Error response: ", err);
-          this.helper.alert(err['error']);
-        }
-      );
-
-
-    //this.http.get('assets/' + filename, { responseType: 'arraybuffer' })
-    //  .subscribe((binaryData: ArrayBuffer) => {
-    //    this.summary_data = binaryData;
-    //    this._save_summary(filename);
-    //  });
-  }
   async pdfSummary() {
     const user = this.user.userProfile;
     if (!user) {
       this.helper.alert(this.translate.instant("calculation-print.p_login"));
       return;
     }
-
-    this.user.clear(user.uid);
-
-    //console.log('印刷データ準備中...');
-
     this.loading_enable();
-
+    this.user.clear(user.uid);
     this.saveData();
-    var ui_data: any = this.save.getInputJson();
-    ui_data["lang"] = this.language.browserLang;
-    ui_data["uid"] = user.uid;
+    const ui_data = this.save.getInputJson();
 
-    var column_data = new Array();
-    for (var i = 0; this.table_datas.length > i; i++)
-      column_data.push({
-        GroupName: this.table_datas[i].g_name,
-        Checked: this.table_datas[i].calc_checked
-      });
-
-    // ui_data["member_group_selection"] = column_data;
-
-    console.log(JSON.stringify(ui_data));
-    //check if get safety ratio list
-    const isSR = this.print_safety_ratio_checked;
-    let url = environment.calcURL; // サーバ側で集計もPDF生成もするバージョンのAzureFunction
-    if (isSR) {
-      ui_data['calc']['print_calculate_checked'] = true;
-      url = environment.prevURL;
+    const data = {
+      "ui_data": ui_data,
+      "lang": this.language.browserLang,
+      "uid": user.uid,
+      "print_calculate_checked": this.print_calculate_checked,
+      "print_safety_ratio_checked": this.print_safety_ratio_checked,
+      "print_section_force_checked": this.print_section_force_checked,
+      "print_summary_table_checked": false,
+    };
+    if (typeof Worker !== 'undefined') {
+      // Web Workerが使用できる場合
+      const worker = new Worker(new URL('./calculation-print.worker', import.meta.url));
+      worker.onmessage = ({ data }) => {
+        const base64Encoded = data as string;
+        this.calculateThenPrintPdf(base64Encoded);
+        worker.terminate();
+      };
+      worker.postMessage(data);
+    } else {
+      // Web Workerが使用できない場合
+      const base64Encoded = await generateCalculationData(data);
+      this.calculateThenPrintPdf(base64Encoded);
     }
-    ui_data['calc']['print_calculate_checked'] = this.print_calculate_checked;
-    ui_data['calc']['print_safety_ratio_checked'] = this.print_safety_ratio_checked;
-    ui_data['calc']['print_section_force_checked'] = this.print_section_force_checked;
-    ui_data['calc']['print_summary_table_checked'] = false;
-    console.log("pdf summary", ui_data)
-
-    const jsonStr = JSON.stringify(ui_data);
-    const compressed = pako.gzip(jsonStr);
-    //const base64Encoded = btoa(compressed);
-    const base64Encoded = await this.base64Encode(compressed);
-    
-    const base64EncodedSize = this.getByteCount(base64Encoded);
-    console.log("jsonStr size = %d, base64Encoded size = %d", this.getByteCount(jsonStr), base64EncodedSize);
+  }
+  calculateThenPrintPdf(base64Encoded: string): void {
+    const base64EncodedSize = getByteCount(base64Encoded);
+    console.log("base64Encoded size = %d", base64EncodedSize);
 
     const maxRequestBodySize = 30 * 1000 * 1000 - 1000; // use a slightly smaller value than the true limit (30MB)
     if (base64EncodedSize > maxRequestBodySize) {
@@ -329,6 +175,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const url = environment.calcURL;
     this.http
       .post(url, base64Encoded, {
         headers: new HttpHeaders({
@@ -380,43 +227,45 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     this.loading_enable_download();
     this.user.clear(user.uid);
     this.saveData();
-    var ui_data: any = this.save.getInputJson();
-    ui_data["lang"] = this.language.browserLang;
-    ui_data["uid"] = user.uid;
+    var ui_data = this.save.getInputJson();
 
-    var column_data = new Array();
-    for (var i = 0; this.table_datas.length > i; i++)
-      column_data.push({
-        GroupName: this.table_datas[i].g_name,
-        Checked: this.table_datas[i].calc_checked
-      });
-
-    // ui_data["member_group_selection"] = column_data;
-    ui_data['calc']['print_calculate_checked'] = false;
-    ui_data['calc']['print_safety_ratio_checked'] = false;
-    ui_data['calc']['print_section_force_checked'] = false;
-    ui_data['calc']['print_summary_table_checked'] = true;
-
-    const jsonStr = JSON.stringify(ui_data);
-    console.log(jsonStr);
-
-    const compressed = pako.gzip(jsonStr);
-    //const base64Encoded = btoa(compressed);
-    const base64Encoded = await this.base64Encode(compressed);
-    
-    const base64EncodedSize = this.getByteCount(base64Encoded);
-    console.log("jsonStr size = %d, base64Encoded size = %d", this.getByteCount(jsonStr), base64EncodedSize);
+    const data = {
+      "ui_data": ui_data,
+      "lang": this.language.browserLang,
+      "uid": user.uid,
+      "print_calculate_checked": false,
+      "print_safety_ratio_checked": false,
+      "print_section_force_checked": false,
+      "print_summary_table_checked": true,
+    };
+    if (typeof Worker !== 'undefined') {
+      // Web Workerが使用できる場合
+      const worker = new Worker(new URL('./calculation-print.worker', import.meta.url));
+      worker.onmessage = ({ data }) => {
+        const base64Encoded = data as string;
+        this.calculateThenDownloadExcel(base64Encoded);
+        worker.terminate();
+      };
+      worker.postMessage(data);
+    } else {
+      // Web Workerが使用できない場合
+      const base64Encoded = await generateCalculationData(data);
+      this.calculateThenDownloadExcel(base64Encoded);
+    }
+  }
+  calculateThenDownloadExcel(base64Encoded: string): void {
+    const base64EncodedSize = getByteCount(base64Encoded);
+    console.log("base64Encoded size = %d", base64EncodedSize);
 
     const maxRequestBodySize = 30 * 1000 * 1000 - 1000; // use a slightly smaller value than the true limit (30MB)
     if (base64EncodedSize > maxRequestBodySize) {
-      this.loading_disable();
+      this.loading_disable_dowload();
       console.log("Request body size (%d) exceeds the limit (%d)", base64EncodedSize, maxRequestBodySize);
       this.helper.alert(this.translate.instant("calculation-print.too-large-request"));
       return;
     }
 
     const url_summary = environment.printURL;
-    console.log("SummaryFun4", ui_data)
     this.http
       .post(url_summary, base64Encoded, {
         headers: new HttpHeaders({
@@ -575,25 +424,5 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
       );
     }
     return formattedString;
-  }
-
-  // https://qiita.com/i15fujimura1s/items/6fa5d16b1e53f04f3b06
-  base64Encode(...parts: any[]): Promise<string> {
-    return new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        const offset = result.indexOf(",") + 1;
-        resolve(reader.result.slice(offset) as string);
-      };
-      reader.readAsDataURL(new Blob(parts));
-    });
-  }
-
-  getByteCount(base64: string): number {
-    const encoder = new TextEncoder();
-    const encoded = encoder.encode(base64);
-    const bytes = encoded.byteLength;
-    return bytes;
   }
 }

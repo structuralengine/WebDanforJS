@@ -28,8 +28,8 @@ export class InputMembersService {
       ["2", 'RC-T形'],
       ["3", 'RC-円形'],
       ["4", 'RC-円環'],
-      ["5", 'RC-縦小判形'],
-      ["6", 'RC-横小判形']
+      ["5", 'RC-横小判形'],
+      ["6", 'RC-縦小判形']
     ];
 
   private lang_shape_names: any = {};
@@ -62,8 +62,8 @@ export class InputMembersService {
         this.shape_names_new[2].push(obj.members.t_shape.trim());
         this.shape_names_new[3].push(obj.members.c_circle.trim());
         this.shape_names_new[4].push(obj.members.ring.trim());
-        this.shape_names_new[5].push(obj.members.v_oval.trim());
-        this.shape_names_new[6].push(obj.members.h_oval.trim());
+        this.shape_names_new[5].push(obj.members.h_oval.trim());
+        this.shape_names_new[6].push(obj.members.v_oval.trim());
 
         this.lang_shape_names_new[lang] = [];
         this.lang_shape_names_new[lang].push("");

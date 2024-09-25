@@ -22,6 +22,15 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
+
+## Running on Docker
+By running the following commands, the Angular app will run in Docker with its environment specified in the Dockerfile and nginx.conf files. Then, open http://localhost:4200/ in a web browser.
+```
+docker build --build-arg BUILD_SCRIPT="build-docker:local" -t webdanforjs .
+docker run -p 4200:80 webdanforjs
+```
+`BUILD_SCRIPT`is an environment parameter will be one of the Angular build scripts in the `package.json` so that Docker will run `npm run` it. For the app on localhost, `--base-href` doe nost require specific domain/subdomain.
+
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
