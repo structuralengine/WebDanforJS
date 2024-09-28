@@ -298,13 +298,13 @@ export class InputDesignPointsService {
           if (mode === "csv") {
             new_point["axis_type"] = 1
           }
-          new_point["isMyCalc"] = false
-          new_point["isVzCalc"] = false
-          new_point["isMtCalc"] = false
-          if(!checkOpenDSD){
-            new_point["isVyCalc"] = false
-            new_point["isMzCalc"] = false
-          }
+          // new_point["isMyCalc"] = false
+          // new_point["isVzCalc"] = false
+          // new_point["isMtCalc"] = false
+          // if(!checkOpenDSD){
+          //   new_point["isVyCalc"] = false
+          //   new_point["isMzCalc"] = false
+          // }
         }
       }
       // 部材長をセットする
