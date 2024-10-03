@@ -281,7 +281,6 @@ ipcMain.on(IPC_MESSAGES.LOGIN, async () => {
 
   const tokenResponse = await authProvider.getToken(tokenRequest);
   const graphResponse = await getGraphClient(tokenResponse.accessToken)
-    // .api(environment.apiConfig.uri).get();
     .api("https://graph.microsoft.com/v1.0/me").get();
 
   mainWindow.webContents.send(IPC_MESSAGES.GET_PROFILE, graphResponse);

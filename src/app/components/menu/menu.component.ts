@@ -94,7 +94,6 @@ export class MenuComponent implements OnInit {
   public checkOpenDSD: boolean = false;
   public arg_wdj: string = null;
 
-  isIframe = false;
   loginDisplay = false;
   private readonly _destroying$ = new Subject<void>();
 
@@ -203,9 +202,7 @@ export class MenuComponent implements OnInit {
         }
       })
     } else {
-      this.isIframe = window !== window.parent && !window.opener;
       this.setLoginDisplay();
-
       this.authService.instance.enableAccountStorageEvents();
       this.msalBroadcastService.msalSubject$
         .pipe(
@@ -296,8 +293,6 @@ export class MenuComponent implements OnInit {
       this.user.setUserProfile(null);
     } else {
       this.user.setUserProfile(null);
-      // window.sessionStorage.setItem("openStart", "1");
-      // this.authService.logoutRedirect();
       this.authService.logoutPopup();
     }
   }
