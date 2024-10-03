@@ -1,4 +1,4 @@
-﻿import { Component, HostListener, OnInit, ElementRef, ViewChild } from "@angular/core";
+﻿import { Component, HostListener, OnInit, ElementRef, ViewChild, Inject } from "@angular/core";
 import { NgbModal, ModalDismissReasons } from "@ng-bootstrap/ng-bootstrap";
 import { AppComponent } from "../../app.component";
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
@@ -39,7 +39,12 @@ import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
 import { InputCrackSettingsService } from "../crack/crack-settings.service";
 import { InputBarsService } from "../bars/bars.service";
 import { ShearStrengthService } from "../shear/shear-strength.service";
-
+import { Subject } from 'rxjs';
+import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from "@azure/msal-angular";
+import { RedirectRequest, InteractionStatus, EventMessage, EventType, } from "@azure/msal-browser";
+import { filter, takeUntil } from 'rxjs/operators';
+import { HttpClient } from "@angular/common/http";
+import { environment } from "src/environments/environment";
 @Component({
   selector: "app-menu",
   templateUrl: "./menu.component.html",
@@ -55,21 +60,19 @@ export class MenuComponent implements OnInit {
   // public train_A_count: number;
   // public train_B_count: number;
   // public service_life: number;
-  public showIcon:boolean = false
+  public showIcon: boolean = false;
 
-
-  @ViewChild('grid1') grid1: SheetComponent;
+  @ViewChild("grid1") grid1: SheetComponent;
   private table1_datas: any[] = [];
   public options1: pq.gridT.options;
 
-  @ViewChild('grid2') grid2: SheetComponent;
+  @ViewChild("grid2") grid2: SheetComponent;
   private table2_datas: any[] = [];
   public options2: pq.gridT.options;
 
-  @ViewChild('grid3') grid3: SheetComponent;
+  @ViewChild("grid3") grid3: SheetComponent;
   private table3_datas: any[] = [];
   public options3: pq.gridT.options;
-
 
   // 適用 に関する変数
   public specification1_list: any[];
@@ -87,8 +90,13 @@ export class MenuComponent implements OnInit {
   public hideDCJ3_J5: boolean = false;
   public firstCondition: any;
 
-  public checkOpenDSD:boolean= false
-  public arg_wdj:string = null;
+  public checkOpenDSD: boolean = false;
+  public arg_wdj: string = null;
+
+  isIframe = false;
+  loginDisplay = false;
+  private readonly _destroying$ = new Subject<void>();
+
   constructor(
     private modalService: NgbModal,
     public menuService: MenuService,
@@ -113,7 +121,11 @@ export class MenuComponent implements OnInit {
     private elementRef: ElementRef,
     private readonly keycloak: KeycloakService,
     private multiWindowService: MultiWindowService,
-    private bars:InputBarsService
+    private bars: InputBarsService,
+    private http: HttpClient,
+    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
+    private authService: MsalService,
+    private msalBroadcastService: MsalBroadcastService,
   ) {
     // this.auth = getAuth();
     this.fileName = "";
@@ -122,51 +134,53 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initMSAL();
     this.menuService.selectedRoad = false;
     this._renew();
     this.windows = this.multiWindowService.getKnownWindows();
     this.setDefaultOpenControl();
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.openShiyoJoken();
-    })
+    });
     this.arg_wdj = this.electronService.ipcRenderer.sendSync("get-main-wdj");
     if (this.arg_wdj !== null) {
       this.open_electron();
-    } 
+    }
     if (this.conditions_list.length > 0) {
       this.firstCondition = this.conditions_list[0];
-    } 
-  }
-
-  @HostListener('window:beforeunload', ['$event'])
-  onBeforeUnload($event: BeforeUnloadEvent) {
-    if (!this.electronService.isElectron) {
-      $event.returnValue = "Your work will be lost. Do you want to leave this site?";
     }
   }
-  @HostListener('window:unload')
+
+  @HostListener("window:beforeunload", ["$event"])
+  onBeforeUnload($event: BeforeUnloadEvent) {
+    if (!this.electronService.isElectron) {
+      $event.returnValue =
+        "Your work will be lost. Do you want to leave this site?";
+    }
+  }
+  @HostListener("window:unload")
   unloadHandler() {
     this.multiWindowService.saveWindow();
   }
 
   @HostListener("document:click", ["$event"])
   public documentClick(event: MouseEvent): void {
-    const megaMenuElement = this.elementRef.nativeElement.querySelector(
-      ".mega-menu"
-    );
-    const controlBtnElement = this.elementRef.nativeElement.querySelector(
-      ".control-btn"
-    );
+    const megaMenuElement =
+      this.elementRef.nativeElement.querySelector(".mega-menu");
+    const controlBtnElement =
+      this.elementRef.nativeElement.querySelector(".control-btn");
     if (
-      (megaMenuElement && !megaMenuElement.contains(event.target)) &&
-      (controlBtnElement && !controlBtnElement.contains(event.target))
+      megaMenuElement &&
+      !megaMenuElement.contains(event.target) &&
+      controlBtnElement &&
+      !controlBtnElement.contains(event.target)
     ) {
       this.showMenu = false;
     }
   }
   onKeyDown(event: KeyboardEvent): void {
     //Check if Ctrl and S key are both pressed
-    if (event.ctrlKey && (event.key === 'S' || event.key === 's')) {
+    if (event.ctrlKey && (event.key === "S" || event.key === "s")) {
       event.preventDefault(); // Prevent default behavior of Ctrl + S
       // Perform your action here
       this.overWrite();
@@ -180,30 +194,142 @@ export class MenuComponent implements OnInit {
   //     this.service_life);
   // }
 
+  initMSAL() {
+    this.isIframe = window !== window.parent && !window.opener; // Remove this line to use Angular Universal
+    this.setLoginDisplay();
+
+    this.authService.instance.enableAccountStorageEvents(); // Optional - This will enable ACCOUNT_ADDED and ACCOUNT_REMOVED events emitted when a user logs in or out of another tab or window
+    this.msalBroadcastService.msalSubject$
+      .pipe(
+        filter(
+          (msg: EventMessage) =>
+            msg.eventType === EventType.ACCOUNT_ADDED ||
+            msg.eventType === EventType.ACCOUNT_REMOVED
+        )
+      )
+      .subscribe((result: EventMessage) => {
+        if (this.authService.instance.getAllAccounts().length === 0) {
+          window.location.pathname = "/";
+        } else {
+          this.setLoginDisplay();
+        }
+      });
+
+    this.msalBroadcastService.inProgress$
+      .pipe(
+        filter(
+          (status: InteractionStatus) => status === InteractionStatus.None
+        ),
+        takeUntil(this._destroying$)
+      )
+      .subscribe(() => {
+        this.setLoginDisplay();
+        this.checkAndSetActiveAccount();
+        if (this.loginDisplay) {
+          this.http.get(environment.apiConfig.uri).subscribe((profile: any) => {
+            console.log('profile', profile)
+            if (profile.id) {
+              const isOpenFirst = window.sessionStorage.getItem("openStart");
+              if (isOpenFirst === "1" || isOpenFirst === null) {
+                this.router.navigate([{ outlets: { startOutlet: ["start"] } }]);
+                window.sessionStorage.setItem("openStart", "0");
+              }
+              const userProfile = {
+                uid: profile.id,
+                email: profile.userPrincipalName,
+                firstName: profile.givenName ?? "Account",
+                lastName: profile.surname ?? "MS",
+              }
+              this.user.setUserProfile(userProfile);
+            }
+          })
+        }
+
+      });
+  }
+
+  setLoginDisplay() {
+    this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
+  }
+
+
+  checkAndSetActiveAccount() {
+    /**
+     * If no active account set but there are accounts signed in, sets first account to active account
+     * To use active account set here, subscribe to inProgress$ first in your component
+     * Note: Basic usage demonstrated. Your app may require more complicated account selection logic
+     */
+    let activeAccount = this.authService.instance.getActiveAccount();
+
+    if (
+      !activeAccount &&
+      this.authService.instance.getAllAccounts().length > 0
+    ) {
+      let accounts = this.authService.instance.getAllAccounts();
+      this.authService.instance.setActiveAccount(accounts[0]);
+    }
+  }
+
+  loginMS() {
+    if (this.electronService.isElectron) {
+      this.modalService
+        .open(LoginDialogComponent, { backdrop: false })
+        .result.then((result) => {});
+    } else {
+      this.msalBroadcastService.inProgress$
+        .pipe(
+          filter(
+            (status: InteractionStatus) => status === InteractionStatus.None
+          )
+        )
+        .subscribe(() => {
+          if (this.msalGuardConfig.authRequest) {
+            this.authService.loginRedirect({
+              ...this.msalGuardConfig.authRequest,
+            } as RedirectRequest);
+          } else {
+            this.authService.loginRedirect();
+          }
+        });
+    }
+  }
+
+  logoutMS(popup?: boolean) {
+    if (popup) {
+      this.authService.logoutPopup({
+        mainWindowRedirectUri: "/",
+      });
+    } else {
+      this.user.setUserProfile(null);
+      // window.sessionStorage.setItem("openStart", "1");
+      // this.authService.logoutRedirect();
+      this.authService.logoutPopup();
+    }
+  }
 
   public setDefaultOpenControl() {
-    const controlBtnElement = this.elementRef.nativeElement.querySelector(
-      ".control-btn"
-    );
+    const controlBtnElement =
+      this.elementRef.nativeElement.querySelector(".control-btn");
     if (controlBtnElement) {
       this.openShiyoJoken();
       this.showMenu = true;
     }
   }
 
-
   public newWindow() {
-    //window.open('index.html');     
+    //window.open('index.html');
     this.electronService.ipcRenderer.send("newWindow");
   }
 
   // 新規作成
   async renew(): Promise<void> {
-    const isConfirm = await this.helper.confirm(this.translate.instant("window.confirm"));
+    const isConfirm = await this.helper.confirm(
+      this.translate.instant("window.confirm")
+    );
     if (isConfirm) {
       this.router.navigate(["/blank-page"]);
       this._renew();
-      this.checkOpenDSD = false
+      this.checkOpenDSD = false;
     }
   }
 
@@ -222,8 +348,7 @@ export class MenuComponent implements OnInit {
 
   // Electron でファイルを開く
   open_electron() {
-
-    const response = this.electronService.ipcRenderer.sendSync('open');
+    const response = this.electronService.ipcRenderer.sendSync("open");
     if (response.status !== true) {
       this.helper.alert(this.translate.instant("menu.fail") + response.status);
       return;
@@ -231,13 +356,13 @@ export class MenuComponent implements OnInit {
     const modalRef = this.modalService.open(WaitDialogComponent);
     this.fileName = response.path;
 
-    this.router.navigate(["/blank-page"]);  // ngOnDestroyと非同期
+    this.router.navigate(["/blank-page"]); // ngOnDestroyと非同期
     this.app.deactiveButtons();
 
     setTimeout(() => {
       switch (this.helper.getExt(this.fileName)) {
         case "dsd":
-          this.checkOpenDSD = true
+          this.checkOpenDSD = true;
           const pik = this.dsdData.readDsdData(response.textB);
           this.open_done(modalRef);
           if (pik !== null) {
@@ -245,20 +370,20 @@ export class MenuComponent implements OnInit {
           }
           break;
         default:
-          this.checkOpenDSD = false
+          this.checkOpenDSD = false;
           if (this.save.checkVerFile(response.text)) {
-            this.showIcon = false
-            this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
+            this.showIcon = false;
+            this.fileName =
+              this.translate.instant("menu.softName") + " ver." + this.version;
             this.helper.alert(this.translate.instant("menu.message_ver"));
           } else {
-            this.showIcon = true
+            this.showIcon = true;
             this.save.readInputData(response.text);
           }
           this.open_done(modalRef);
       }
     }, 10);
     this.showMenu = false;
-
   }
   // ファイルを開く
   open(evt) {
@@ -274,7 +399,7 @@ export class MenuComponent implements OnInit {
       case "dsd":
         this.fileToBinary(file)
           .then((buff) => {
-            this.checkOpenDSD = true
+            this.checkOpenDSD = true;
             const pik = this.dsdData.readDsdData(buff);
             this.app.getText(this.basic.get_specification2());
             this.open_done(modalRef);
@@ -289,22 +414,27 @@ export class MenuComponent implements OnInit {
       default:
         this.fileToText(file)
           .then((text) => {
-            this.checkOpenDSD = false
+            this.checkOpenDSD = false;
             //Check to hide design condition
             this.hideDCJ3_J5 = this.save.hideDC(text);
-            
+
             //Read file
-            if (this.save.checkVerFile(text)){
-              this.showIcon = false
-              this.fileName = this.translate.instant("menu.softName") + " ver." + this.version
+            if (this.save.checkVerFile(text)) {
+              this.showIcon = false;
+              this.fileName =
+                this.translate.instant("menu.softName") +
+                " ver." +
+                this.version;
               this.helper.alert(this.translate.instant("menu.message_ver"));
-            }else{
-              this.showIcon = true
+            } else {
+              this.showIcon = true;
               this.save.readInputData(text);
               let basicFile = this.save.getBasicData();
               this.specification1_list_file = basicFile.specification1_list;
-              this.basic.set_specification1_data_file(this.specification1_list_file);
-              this.specification2_list = basicFile.specification2_list
+              this.basic.set_specification1_data_file(
+                this.specification1_list_file
+              );
+              this.specification2_list = basicFile.specification2_list;
             }
             this.open_done(modalRef);
           })
@@ -313,17 +443,18 @@ export class MenuComponent implements OnInit {
           });
     }
     this.showMenu = false;
-
   }
 
   public getFileNameFromUrl(url) {
-    return url.replace(/^.*[\\/]/, '')
+    return url.replace(/^.*[\\/]/, "");
   }
 
   public shortenFilename(filename, maxLength = 30) {
     let tempName = filename;
     tempName = this.getFileNameFromUrl(tempName);
-    return tempName.length <= maxLength ? tempName : '...' + tempName.slice(tempName.length - maxLength);
+    return tempName.length <= maxLength
+      ? tempName
+      : "..." + tempName.slice(tempName.length - maxLength);
   }
 
   private open_done(modalRef, error = null) {
@@ -348,14 +479,21 @@ export class MenuComponent implements OnInit {
     }
     this.config.saveActiveComponentData();
     const inputJson: string = this.save.getInputText();
-    this.fileName = this.electronService.ipcRenderer.sendSync('overWrite', this.fileName, inputJson);
+    this.fileName = this.electronService.ipcRenderer.sendSync(
+      "overWrite",
+      this.fileName,
+      inputJson
+    );
   }
 
   // ピックアップファイルを開く
   pickup(evt) {
     const file = evt.target.files[0];
     var ext = /^.+\.([^.]+)$/.exec(file.name);
-    if (ext != null && (ext[1].toLowerCase() == 'pik' || ext[1].toLowerCase() == "csv")) {
+    if (
+      ext != null &&
+      (ext[1].toLowerCase() == "pik" || ext[1].toLowerCase() == "csv")
+    ) {
       const modalRef = this.modalService.open(WaitDialogComponent);
       evt.target.value = "";
 
@@ -367,8 +505,6 @@ export class MenuComponent implements OnInit {
           this.save.readPickUpData(text, file.name, this.checkOpenDSD); // データを読み込む
           this.pickup_file_name = this.save.getPickupFilename();
           modalRef.close();
-
-          
         })
         .catch((err) => {
           modalRef.close();
@@ -421,7 +557,11 @@ export class MenuComponent implements OnInit {
     }
     // 保存する
     if (this.electronService.isElectron) {
-      this.fileName = this.electronService.ipcRenderer.sendSync('saveFile', this.fileName, inputJson);
+      this.fileName = this.electronService.ipcRenderer.sendSync(
+        "saveFile",
+        this.fileName,
+        inputJson
+      );
     } else {
       const blob = new window.Blob([inputJson], { type: "text/plain" });
       FileSaver.saveAs(blob, this.fileName);
@@ -431,7 +571,9 @@ export class MenuComponent implements OnInit {
   // ログイン関係
   async logIn() {
     if (this.electronService.isElectron) {
-      this.modalService.open(LoginDialogComponent, { backdrop: false }).result.then((result) => { });
+      this.modalService
+        .open(LoginDialogComponent, { backdrop: false })
+        .result.then((result) => {});
     } else {
       this.keycloak.login();
     }
@@ -447,52 +589,50 @@ export class MenuComponent implements OnInit {
   }
 
   public goToLink() {
-    window.open(
-      "https://help-webdan.malme.app/",
-      "_blank"
-    );
+    window.open("https://help-webdan.malme.app/", "_blank");
   }
 
   public setSpecification1(i: number): void {
-
     let basic = this.basic.set_specification1(i);
     this.specification1_list = basic.specification1_list; // 適用
 
-    ///Set selected for specification2_list 
+    ///Set selected for specification2_list
     if (i === 2) {
       //Case Road: temporary set default spe_2.2: "partial coefficient method"
-      basic.specification2_list.map(obj =>
-        obj.selected = (obj.id === 6) ? true : false);
+      basic.specification2_list.map(
+        (obj) => (obj.selected = obj.id === 6 ? true : false)
+      );
       this.specification2_select_id = 6;
-      this.basic.setPreSpecification2(this.specification1_select_id, basic.specification2_list)
-    }
-    else {
+      this.basic.setPreSpecification2(
+        this.specification1_select_id,
+        basic.specification2_list
+      );
+    } else {
       const prev = this.basic.prevSpecification2[i];
       if (prev != undefined) {
         this.basic.specification2_list = prev;
         basic.specification2_list = this.basic.specification2_list;
       }
-      const selectedObject = basic.specification2_list.find(obj => obj.selected === true);
+      const selectedObject = basic.specification2_list.find(
+        (obj) => obj.selected === true
+      );
       this.specification2_select_id = selectedObject ? selectedObject.id : 0;
     }
 
     this.specification2_list = basic.specification2_list; // 仕様
-    this.conditions_list = basic.conditions_list;         //  設計条件
+    this.conditions_list = basic.conditions_list; //  設計条件
 
     this.table1_datas = basic.pickup_moment;
     this.table2_datas = basic.pickup_shear_force;
     this.table3_datas = basic.pickup_torsional_moment;
 
-    if (!(this.grid1 == null))
-      this.grid1.refreshDataAndView();
-    if (!(this.grid2 == null))
-      this.grid2.refreshDataAndView();
-    if (!(this.grid3 == null))
-      this.grid3.refreshDataAndView();
+    if (!(this.grid1 == null)) this.grid1.refreshDataAndView();
+    if (!(this.grid2 == null)) this.grid2.refreshDataAndView();
+    if (!(this.grid3 == null)) this.grid3.refreshDataAndView();
     this.specification1_select_id = i;
     this.menuService.selectApply(i);
     this.menuBehaviorSubject.setValue(i.toString());
-    this.router.navigate(['./basic-information']);
+    this.router.navigate(["./basic-information"]);
     for (let i = 0; i <= 12; i++) {
       const data = document.getElementById(i + "");
       if (data != null) {
@@ -508,28 +648,32 @@ export class MenuComponent implements OnInit {
   public setSpecification2(id: number): void {
     this.menuService.setCheckedRadio(id);
     this.specification2_list.map(
-      obj => obj.selected = (obj.id === id) ? true : false);
+      (obj) => (obj.selected = obj.id === id ? true : false)
+    );
     this.specification2_select_id = id;
-    this.bars.refreshShowHidden$.next({})
+    this.bars.refreshShowHidden$.next({});
     this.crack.refreshTitle$.next({});
-    this.shear.refreshTable$.next({})
-    this.basic.setPreSpecification2(this.specification1_select_id, this.specification2_list);
+    this.shear.refreshTable$.next({});
+    this.basic.setPreSpecification2(
+      this.specification1_select_id,
+      this.specification2_list
+    );
   }
 
   // 耐用年数, jA, jB
   public openShiyoJoken() {
     const basic = this.basic.getSaveData();
     // 適用
-    this.basic.updateTitleSpecification(1, basic.specification1_list)
+    this.basic.updateTitleSpecification(1, basic.specification1_list);
     this.specification1_list = basic.specification1_list;
     this.specification1_select_id = this.basic.get_specification1();
 
     // 仕様
-    this.basic.updateTitleSpecification(2, basic.specification2_list)
+    this.basic.updateTitleSpecification(2, basic.specification2_list);
     this.specification2_list = basic.specification2_list;
     this.specification2_select_id = this.basic.get_specification2();
     //  設計条件
-    this.basic.updateTitleCondition(basic.conditions_list)
+    this.basic.updateTitleCondition(basic.conditions_list);
     this.conditions_list = basic.conditions_list;
 
     this.table1_datas = basic.pickup_moment;
@@ -554,28 +698,27 @@ export class MenuComponent implements OnInit {
 
       specification1_list: this.specification1_list, // 適用
       specification2_list: this.specification2_list, // 仕様
-      conditions_list: this.conditions_list         // 設計条件
+      conditions_list: this.conditions_list, // 設計条件
     });
   }
 
   public changeDesignCondition(item: any) {
     if (item.id === "JR-003" && item.selected) {
-      const jR005 = this.conditions_list.find(item => item.id === "JR-005");
+      const jR005 = this.conditions_list.find((item) => item.id === "JR-005");
       if (jR005 && jR005.selected) {
         jR005.selected = false;
       }
-    }
-    else if (item.id === "JR-005" && item.selected) {
-      const jR003 = this.conditions_list.find(item => item.id === "JR-003");
+    } else if (item.id === "JR-005" && item.selected) {
+      const jR003 = this.conditions_list.find((item) => item.id === "JR-003");
       if (jR003 && jR003.selected) {
         jR003.selected = false;
       }
     }
     // if (item.id === "JR-003" || item.id === "JR-005")
-      // this.members.setGTypeForMembers();
+    // this.members.setGTypeForMembers();
   }
   handelClickChat() {
     const elementChat = document.getElementById("chatplusheader");
-    elementChat.click()
+    elementChat.click();
   }
 }
