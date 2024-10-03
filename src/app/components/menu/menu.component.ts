@@ -30,8 +30,8 @@ import { LanguagesService } from "../../providers/languages.service";
 import { ElectronService } from "src/app/providers/electron.service";
 import packageJson from '../../../../package.json';
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
-import { KeycloakService } from 'keycloak-angular';
-import { KeycloakProfile } from 'keycloak-js';
+// import { KeycloakService } from 'keycloak-angular';
+// import { KeycloakProfile } from 'keycloak-js';
 import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
@@ -45,6 +45,7 @@ import { RedirectRequest, InteractionStatus, EventMessage, EventType, } from "@a
 import { filter, takeUntil } from 'rxjs/operators';
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
+import { IPC_MESSAGES } from "src/electron/login/constants";
 @Component({
   selector: "app-menu",
   templateUrl: "./menu.component.html",
@@ -119,13 +120,13 @@ export class MenuComponent implements OnInit {
     public electronService: ElectronService,
     private translate: TranslateService,
     private elementRef: ElementRef,
-    private readonly keycloak: KeycloakService,
+    // private readonly keycloak: KeycloakService,
     private multiWindowService: MultiWindowService,
     private bars: InputBarsService,
     private http: HttpClient,
     @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration,
     private authService: MsalService,
-    private msalBroadcastService: MsalBroadcastService,
+    private msalBroadcastService: MsalBroadcastService
   ) {
     // this.auth = getAuth();
     this.fileName = "";
@@ -195,63 +196,60 @@ export class MenuComponent implements OnInit {
   // }
 
   initMSAL() {
-    this.isIframe = window !== window.parent && !window.opener; // Remove this line to use Angular Universal
-    this.setLoginDisplay();
+    if (this.electronService.isElectron) {
+      this.electronService.ipcRenderer.on(IPC_MESSAGES.GET_PROFILE, (event, profile) => {
+        if (profile.id) {
+          this.setUserProfile(profile)
+        }
+      })
+    } else {
+      this.isIframe = window !== window.parent && !window.opener;
+      this.setLoginDisplay();
 
-    this.authService.instance.enableAccountStorageEvents(); // Optional - This will enable ACCOUNT_ADDED and ACCOUNT_REMOVED events emitted when a user logs in or out of another tab or window
-    this.msalBroadcastService.msalSubject$
-      .pipe(
-        filter(
-          (msg: EventMessage) =>
-            msg.eventType === EventType.ACCOUNT_ADDED ||
-            msg.eventType === EventType.ACCOUNT_REMOVED
+      this.authService.instance.enableAccountStorageEvents();
+      this.msalBroadcastService.msalSubject$
+        .pipe(
+          filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
         )
-      )
-      .subscribe((result: EventMessage) => {
-        if (this.authService.instance.getAllAccounts().length === 0) {
-          window.location.pathname = "/";
-        } else {
+        .subscribe((result: EventMessage) => {
+          if (this.authService.instance.getAllAccounts().length === 0) {
+            window.location.pathname = "/";
+          } else {
+            this.setLoginDisplay();
+          }
+        });
+
+      this.msalBroadcastService.inProgress$
+        .pipe(
+          filter((status: InteractionStatus) => status === InteractionStatus.None),
+          takeUntil(this._destroying$)
+        )
+        .subscribe(() => {
           this.setLoginDisplay();
-        }
-      });
-
-    this.msalBroadcastService.inProgress$
-      .pipe(
-        filter(
-          (status: InteractionStatus) => status === InteractionStatus.None
-        ),
-        takeUntil(this._destroying$)
-      )
-      .subscribe(() => {
-        this.setLoginDisplay();
-        this.checkAndSetActiveAccount();
-        if (this.loginDisplay) {
-          this.http.get(environment.apiConfig.uri).subscribe((profile: any) => {
-            console.log('profile', profile)
-            if (profile.id) {
-              const isOpenFirst = window.sessionStorage.getItem("openStart");
-              if (isOpenFirst === "1" || isOpenFirst === null) {
-                this.router.navigate([{ outlets: { startOutlet: ["start"] } }]);
-                window.sessionStorage.setItem("openStart", "0");
+          this.checkAndSetActiveAccount();
+          if (this.loginDisplay) {
+            this.http.get(environment.apiConfig.uri).subscribe((profile: any) => {
+              if (profile.id) {
+                this.setUserProfile(profile)
               }
-              const userProfile = {
-                uid: profile.id,
-                email: profile.userPrincipalName,
-                firstName: profile.givenName ?? "Account",
-                lastName: profile.surname ?? "MS",
-              }
-              this.user.setUserProfile(userProfile);
-            }
-          })
-        }
+            })
+          }
+        })
+    }
+  }
 
-      });
+  setUserProfile(profile: any) {
+    this.user.setUserProfile({
+      uid: profile.id,
+      email: profile.userPrincipalName,
+      firstName: profile.givenName ?? "Anonymous",
+      lastName: profile.surname ?? "Anonymous",
+    });
   }
 
   setLoginDisplay() {
     this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
   }
-
 
   checkAndSetActiveAccount() {
     /**
@@ -272,9 +270,7 @@ export class MenuComponent implements OnInit {
 
   loginMS() {
     if (this.electronService.isElectron) {
-      this.modalService
-        .open(LoginDialogComponent, { backdrop: false })
-        .result.then((result) => {});
+      this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGIN);
     } else {
       this.msalBroadcastService.inProgress$
         .pipe(
@@ -294,11 +290,10 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  logoutMS(popup?: boolean) {
-    if (popup) {
-      this.authService.logoutPopup({
-        mainWindowRedirectUri: "/",
-      });
+  logoutMS() {
+    if (this.electronService.isElectron) {
+      this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGOUT)
+      this.user.setUserProfile(null);
     } else {
       this.user.setUserProfile(null);
       // window.sessionStorage.setItem("openStart", "1");
@@ -575,7 +570,7 @@ export class MenuComponent implements OnInit {
         .open(LoginDialogComponent, { backdrop: false })
         .result.then((result) => {});
     } else {
-      this.keycloak.login();
+      //this.keycloak.login();
     }
   }
 
@@ -583,7 +578,7 @@ export class MenuComponent implements OnInit {
     if (this.electronService.isElectron) {
       this.user.setUserProfile(null);
     } else {
-      this.keycloak.logout(window.location.origin);
+      //this.keycloak.logout(window.location.origin);
       this.user.setUserProfile(null);
     }
   }

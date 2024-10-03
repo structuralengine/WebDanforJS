@@ -34,7 +34,7 @@ export class LoginDialogComponent implements OnInit {
     private translate: TranslateService,
     private helper: DataHelperModule,
     public user: UserInfoService,
-    private readonly keycloak: KeycloakService
+    //private readonly keycloak: KeycloakService
     ) {
     this.loginError = false;
     this.connecting = false;
@@ -70,8 +70,8 @@ export class LoginDialogComponent implements OnInit {
     
     axios.request(config)
       .then((response) => {
-        const keycloakInstance = this.keycloak.getKeycloakInstance();
-
+        // const keycloakInstance = this.keycloak.getKeycloakInstance();
+        const keycloakInstance = null;
         keycloakInstance.token = response.data.access_token;
         keycloakInstance.refreshToken = response.data.refresh_token;
         keycloakInstance.idToken = response.data.id_token;

@@ -3,7 +3,7 @@
   "version": "2.3.9",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host=127.0.0.1",
+    "start": "ng serve --port=4200",
     "build": "ng build --configuration production --base-href \"https://webdan.malme.app/\" && npm run filecopy3 && angular-cli-ghpages",
     "build-actions": "ng build --configuration production --base-href \"https://webdan.malme.app/\" && npm run filecopy3",
     "build-docker:local": "ng build --configuration production --base-href ./ && npm run filecopy3",
@@ -49,7 +49,9 @@
     "@angular/router": "^15.2.8",
     "@azure/msal-angular": "^3.0.24",
     "@azure/msal-browser": "^3.24.0",
+    "@azure/msal-node": "^2.15.0",
     "@fortawesome/fontawesome-free": "^5.15.4",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "@ng-bootstrap/ng-bootstrap": "^14.1.0",
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
