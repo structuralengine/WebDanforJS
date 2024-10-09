@@ -153,10 +153,10 @@ export class MenuComponent implements OnInit {
 
   @HostListener("window:beforeunload", ["$event"])
   onBeforeUnload($event: BeforeUnloadEvent) {
-    if (!this.electronService.isElectron) {
-      $event.returnValue =
-        "Your work will be lost. Do you want to leave this site?";
-    }
+    // if (!this.electronService.isElectron) {
+    //   $event.returnValue =
+    //     "Your work will be lost. Do you want to leave this site?";
+    // }
   }
   @HostListener("window:unload")
   unloadHandler() {
@@ -276,12 +276,14 @@ export class MenuComponent implements OnInit {
           )
         )
         .subscribe(() => {
-          if (this.msalGuardConfig.authRequest) {
-            this.authService.loginRedirect({
-              ...this.msalGuardConfig.authRequest,
-            } as RedirectRequest);
-          } else {
-            this.authService.loginRedirect();
+          if (confirm('Your work will be lost. Do you want to leave this site?', )) {
+            if (this.msalGuardConfig.authRequest) {
+              this.authService.loginRedirect({
+                ...this.msalGuardConfig.authRequest,
+              } as RedirectRequest);
+            } else {
+              this.authService.loginRedirect();
+            }
           }
         });
     }
