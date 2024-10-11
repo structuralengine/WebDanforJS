@@ -206,7 +206,7 @@ export class MenuComponent implements OnInit {
       this.authService.instance.enableAccountStorageEvents();
       this.msalBroadcastService.msalSubject$
         .pipe(
-          filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
+          filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED || msg.eventType === EventType.LOGOUT_SUCCESS || msg.eventType === EventType.LOGOUT_END),
         )
         .subscribe((result: EventMessage) => {
           if (this.authService.instance.getAllAccounts().length === 0) {
@@ -239,8 +239,8 @@ export class MenuComponent implements OnInit {
     this.user.setUserProfile({
       uid: profile.id,
       email: profile.userPrincipalName,
-      firstName: profile.givenName ?? "Anonymous",
-      lastName: profile.surname ?? "Anonymous",
+      firstName: profile.givenName ?? "User",
+      lastName: profile.surname ?? "User",
     });
   }
 
@@ -276,7 +276,7 @@ export class MenuComponent implements OnInit {
           )
         )
         .subscribe(() => {
-          if (confirm('Your work will be lost. Do you want to leave this site?', )) {
+          if (!this.loginDisplay && confirm('Your work will be lost. Do you want to leave this site?', )) {
             if (this.msalGuardConfig.authRequest) {
               this.authService.loginRedirect({
                 ...this.msalGuardConfig.authRequest,

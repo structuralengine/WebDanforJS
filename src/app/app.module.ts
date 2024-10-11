@@ -109,12 +109,19 @@ export function loggerCallback(logLevel: LogLevel, message: string) {
   }
   
   export function MSALInstanceFactory(): IPublicClientApplication {
+    let redirectUri : string;
+    if (!!(window && window.process && window.process.type)) {
+      redirectUri = environment.msalConfig.auth.redirectUriElectron
+    } else {
+      redirectUri = environment.msalConfig.auth.redirectUri
+    }
+
     return new PublicClientApplication({
       auth: {
         clientId: environment.msalConfig.auth.clientId,
         authority: environment.msalConfig.auth.authority,
         redirectUri: environment.msalConfig.auth.redirectUri,
-        postLogoutRedirectUri: environment.apiConfig.uri
+        postLogoutRedirectUri: environment.msalConfig.auth.redirectUri
       },
       cache: {
         cacheLocation: BrowserCacheLocation.LocalStorage
