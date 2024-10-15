@@ -289,12 +289,12 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  logoutMS() {
+  async logoutMS() {
     if (this.electronService.isElectron) {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGOUT)
       this.user.setUserProfile(null);
     } else {
-      this.authService.instance
+      await this.authService.instance
         .handleRedirectPromise()
         .then((tokenResponse) => {
           if (!tokenResponse) {
