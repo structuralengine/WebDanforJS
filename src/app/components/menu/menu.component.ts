@@ -269,23 +269,24 @@ export class MenuComponent implements OnInit {
     if (this.electronService.isElectron) {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGIN);
     } else {
-      this.msalBroadcastService.inProgress$
+      if (!this.loginDisplay && confirm('Your work will be lost. Do you want to leave this site?', )) {
+        this.msalBroadcastService.inProgress$
         .pipe(
           filter(
             (status: InteractionStatus) => status === InteractionStatus.None
           )
         )
-        .subscribe(() => {
-          if (!this.loginDisplay && confirm('Your work will be lost. Do you want to leave this site?', )) {
-            if (this.msalGuardConfig.authRequest) {
-              this.authService.loginRedirect({
-                ...this.msalGuardConfig.authRequest,
-              } as RedirectRequest);
-            } else {
-              this.authService.loginRedirect();
-            }
+        .subscribe(async () => {
+          if (this.msalGuardConfig.authRequest) {
+            await this.authService.loginRedirect({
+              ...this.msalGuardConfig.authRequest,
+            } as RedirectRequest);
+            await this.authService.acquireTokenRedirect({ ...this.msalGuardConfig.authRequest } as RedirectRequest)
+          } else {
+            await this.authService.loginRedirect();
           }
         });
+      }
     }
   }
 
