@@ -107,55 +107,68 @@ const config: MultiWindowConfig = {windowSaveStrategy: WindowSaveStrategy.SAVE_W
 export function loggerCallback(logLevel: LogLevel, message: string) {
     console.log(message);
   }
-  
-  export function MSALInstanceFactory(): IPublicClientApplication {
-    let redirectUri : string;
-    if (!!(window && window.process && window.process.type)) {
-      redirectUri = environment.msalConfig.auth.redirectUriElectron
-    } else {
-      redirectUri = environment.msalConfig.auth.redirectUri
-    }
 
-    return new PublicClientApplication({
-      auth: {
-        clientId: environment.msalConfig.auth.clientId,
-        authority: environment.msalConfig.auth.authority,
-        redirectUri: environment.msalConfig.auth.redirectUri,
-        postLogoutRedirectUri: environment.msalConfig.auth.redirectUri
-      },
-      cache: {
-        cacheLocation: BrowserCacheLocation.LocalStorage
-      },
-      system: {
-        allowNativeBroker: false, // Disables WAM Broker
-        loggerOptions: {
-          loggerCallback,
-          logLevel: LogLevel.Info,
-          piiLoggingEnabled: false
-        }
-      }
-    });
+export function MSALInstanceFactory(): IPublicClientApplication {
+  let clientID: string;
+  let authority: string;
+  let redirectUri: string;
+  let postLogoutRedirectUri: string;
+
+  if (!!(window && window.process && window.process.type)) {
+    redirectUri = environment.msalConfig.authElectron.redirectUriElectron;
+    clientID = environment.msalConfig.authElectron.clientIdElectron;
+    authority = environment.msalConfig.authElectron.authorityElectron;
+    postLogoutRedirectUri =
+      environment.msalConfig.authElectron.redirectUriElectron;
+  } else {
+    redirectUri = environment.msalConfig.authWeb.redirectUri;
+    postLogoutRedirectUri = environment.msalConfig.authWeb.redirectUri;
+    clientID = environment.msalConfig.authWeb.clientId;
+    authority = environment.msalConfig.authWeb.authority;
   }
-  
-  export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
-    const protectedResourceMap = new Map<string, Array<string>>();
-    protectedResourceMap.set(environment.apiConfig.uri, environment.apiConfig.scopes);
-  
-    return {
-      interactionType: InteractionType.Redirect,
-      protectedResourceMap
-    };
-  }
-  
-  export function MSALGuardConfigFactory(): MsalGuardConfiguration {
-    return {
-      interactionType: InteractionType.Redirect,
-      authRequest: {
-        scopes: [...environment.apiConfig.scopes]
+  return new PublicClientApplication({
+    auth: {
+      clientId: clientID,
+      authority: authority,
+      redirectUri: redirectUri,
+      postLogoutRedirectUri: redirectUri,
+    },
+    cache: {
+      cacheLocation: BrowserCacheLocation.LocalStorage,
+    },
+    system: {
+      allowNativeBroker: false, // Disables WAM Broker
+      loggerOptions: {
+        loggerCallback,
+        logLevel: LogLevel.Info,
+        piiLoggingEnabled: false,
       },
-      loginFailedRoute: '/login-failed'
-    };
-  }
+    },
+  });
+}
+
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+  protectedResourceMap.set(
+    environment.apiConfig.uri,
+    environment.apiConfig.scopes
+  );
+
+  return {
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap,
+  };
+}
+
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return {
+    interactionType: InteractionType.Redirect,
+    authRequest: {
+      scopes: [...environment.apiConfig.scopes],
+    },
+    loginFailedRoute: "/login-failed",
+  };
+}
 
 
 
