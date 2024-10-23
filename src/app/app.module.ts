@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { APP_INITIALIZER, NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
-import { HttpClientModule, HttpClient } from "@angular/common/http";
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from "@angular/common/http";
 
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -76,31 +76,84 @@ import { DurabilityDataComponent } from "./components/durability-data/durability
 import { InputMaterialStrengthVerificationConditionService } from "./components/material-strength-verification-conditions/material-strength-verification-conditions.service";
 import { MaterialStrengthVerificationConditionComponent } from "./components/material-strength-verification-conditions/material-strength-verification-conditions.component";
 import { ModalPreview } from "./components/modal-preview/modal-preview.component";
+import { BrowserCacheLocation, InteractionType, IPublicClientApplication, LogLevel, PublicClientApplication } from "@azure/msal-browser";
+import { MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalBroadcastService, MsalGuard, MsalGuardConfiguration, MsalInterceptor, MsalInterceptorConfiguration, MsalModule, MsalRedirectComponent, MsalService } from "@azure/msal-angular";
 
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
   new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 const config: MultiWindowConfig = {windowSaveStrategy: WindowSaveStrategy.SAVE_WHEN_EMPTY};
-function initializeKeycloak(keycloak: KeycloakService) {
-    console.log("initializaing keycloak");
-    return () => keycloak.init({
-        config: {
-            url: 'https://auth.malme.app',
-            realm: 'structural-engine',
-            clientId: 'malme-mypage'
-        },
-        initOptions: {
-            onLoad: 'check-sso',
-        }
-    })
-    .catch((error) => {
-      const elVer = window?.process?.versions["electron"];
-      if (elVer) {
-        return;
-      } else {
-        window.alert("自動ログインに失敗しました。");
-      }
-    });
+// function initializeKeycloak(keycloak: KeycloakService) {
+//     console.log("initializaing keycloak");
+//     return () => keycloak.init({
+//         config: {
+//             url: 'https://auth.malme.app',
+//             realm: 'structural-engine',
+//             clientId: 'malme-mypage'
+//         },
+//         initOptions: {
+//             onLoad: 'check-sso',
+//         }
+//     })
+//     .catch((error) => {
+//       const elVer = window?.process?.versions["electron"];
+//       if (elVer) {
+//         return;
+//       } else {
+//         window.alert("自動ログインに失敗しました。");
+//       }
+//     });
+// }
+
+export function loggerCallback(logLevel: LogLevel, message: string) {
+    console.log(message);
+  }
+
+export function MSALInstanceFactory(): IPublicClientApplication {
+  return new PublicClientApplication({
+    auth: {
+      clientId: environment.msalConfig.authWeb.clientId,
+      authority: environment.msalConfig.authWeb.authority,
+      redirectUri: environment.msalConfig.authWeb.redirectUri,
+      postLogoutRedirectUri: environment.msalConfig.authWeb.redirectUri
+    },
+    cache: {
+      cacheLocation: BrowserCacheLocation.LocalStorage,
+    },
+    system: {
+      allowNativeBroker: false, // Disables WAM Broker
+      loggerOptions: {
+        loggerCallback,
+        logLevel: LogLevel.Info,
+        piiLoggingEnabled: false,
+      },
+    },
+  });
 }
+
+export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+  const protectedResourceMap = new Map<string, Array<string>>();
+  protectedResourceMap.set(
+    environment.apiConfig.uri,
+    environment.apiConfig.scopes
+  );
+
+  return {
+    interactionType: InteractionType.Redirect,
+    protectedResourceMap,
+  };
+}
+
+export function MSALGuardConfigFactory(): MsalGuardConfiguration {
+  return {
+    interactionType: InteractionType.Redirect,
+    authRequest: {
+      scopes: [...environment.apiConfig.scopes],
+    },
+    loginFailedRoute: "/login-failed",
+  };
+}
+
+
 
 @NgModule({
     imports: [
@@ -130,6 +183,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         IgxExcelModule,
         IgxSpreadsheetModule,
         MultiWindowModule.forRoot(config),
+        MsalModule
     ],
     declarations: [
         AppComponent,
@@ -177,16 +231,36 @@ function initializeKeycloak(keycloak: KeycloakService) {
         // declarations だけではなくココ(providers) にも宣言して
         // 他のコンポーネントから機能の一部を使えるようにする
         ElectronService,
-        {
-            provide: APP_INITIALIZER,
-            useFactory: initializeKeycloak,
-            multi: true,
-            deps: [KeycloakService]
-        },
+        // {
+        //     provide: APP_INITIALIZER,
+        //     useFactory: initializeKeycloak,
+        //     multi: true,
+        //     deps: [KeycloakService]
+        // },
         NgbActiveModal,
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: MsalInterceptor,
+          multi: true,
+        },
+        {
+          provide: MSAL_INSTANCE,
+          useFactory: MSALInstanceFactory,
+        },
+        {
+          provide: MSAL_GUARD_CONFIG,
+          useFactory: MSALGuardConfigFactory,
+        },
+        {
+          provide: MSAL_INTERCEPTOR_CONFIG,
+          useFactory: MSALInterceptorConfigFactory,
+        },
+        MsalService,
+        MsalGuard,
+        MsalBroadcastService
     ],
     entryComponents: [PreviewExcelComponent],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule {}
 
