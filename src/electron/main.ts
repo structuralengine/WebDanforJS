@@ -29,7 +29,7 @@ async function createWindow() {
   });
   mainWindow.maximize();
   mainWindow.setMenuBarVisibility(false);
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   mainWindow.on('close', function (e) {
     if(check == -1){
       let langText = require(`../assets/i18n/${locale}.json`)
