@@ -30,8 +30,7 @@ import { LanguagesService } from "../../providers/languages.service";
 import { ElectronService } from "src/app/providers/electron.service";
 import packageJson from '../../../../package.json';
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
-// import { KeycloakService } from 'keycloak-angular';
-// import { KeycloakProfile } from 'keycloak-js';
+
 import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
@@ -119,7 +118,6 @@ export class MenuComponent implements OnInit {
     public electronService: ElectronService,
     private translate: TranslateService,
     private elementRef: ElementRef,
-    // private readonly keycloak: KeycloakService,
     private multiWindowService: MultiWindowService,
     private bars: InputBarsService,
     private http: HttpClient,
@@ -240,7 +238,7 @@ export class MenuComponent implements OnInit {
       uid: profile.id,
       email: profile.userPrincipalName,
       firstName: profile.givenName ?? "User",
-      lastName: profile.surname ?? "User",
+      lastName: profile.surname,
     });
   }
 

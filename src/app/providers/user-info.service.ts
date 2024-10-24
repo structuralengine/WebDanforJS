@@ -1,9 +1,11 @@
 ﻿import { Injectable } from '@angular/core';
-import { KeycloakService } from 'keycloak-angular';
 import { ElectronService } from './electron.service';
 import { nanoid } from 'nanoid';
 import axios from 'axios';
 import { Firestore, collection, doc, getDocs, getFirestore, onSnapshot } from '@angular/fire/firestore';
+import { MsalService } from '@azure/msal-angular';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 const APP = 'WebDan';
 const USER_PROFILE = 'userProfile';
@@ -30,8 +32,9 @@ export class UserInfoService {
 
   constructor(
     public electronService: ElectronService,
-    private readonly keycloak: KeycloakService,
     private db: Firestore,
+    private authService: MsalService,
+    private http: HttpClient,
   ) {
     this.db = getFirestore();
     const clientId = window.sessionStorage.getItem(CLIENT_ID);
@@ -54,15 +57,18 @@ export class UserInfoService {
         this.setUserProfile(null);
       }
     } else {
-      const isLoggedIn = await this.keycloak.isLoggedIn();
+      const isLoggedIn = this.authService.instance.getAllAccounts().length > 0;
       if (isLoggedIn) {
-        const keycloakProfile = await this.keycloak.loadUserProfile();
-        this.setUserProfile({
-          uid: keycloakProfile.id,
-          email: keycloakProfile.email,
-          firstName: keycloakProfile.firstName,
-          lastName: keycloakProfile.lastName,
-        });
+        this.http.get(environment.apiConfig.uri).subscribe((profile: any) => {
+          if (profile.id) {
+            this.setUserProfile({
+              uid: profile.id,
+              email: profile.userPrincipalName,
+              firstName: profile.givenName ?? "User",
+              lastName: profile.surname,
+            });
+          }
+        })
       } else {
         this.setUserProfile(null);
       }
