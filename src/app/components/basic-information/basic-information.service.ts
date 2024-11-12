@@ -55,7 +55,7 @@ export class InputBasicInformationService {
       {
         id: 3,
         title: this.translate.instant("basic-information.rail_Bangladesh"),
-        selected: true,
+        selected: false,
       },
       {
         id: 2,
