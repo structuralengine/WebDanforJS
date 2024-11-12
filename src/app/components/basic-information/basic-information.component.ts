@@ -120,7 +120,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
         el.no = null
       });
     }
-    if(this.basic.get_specification1()===0 || this.basic.get_specification1()===1){
+    if(this.basic.get_specification1()===0 || this.basic.get_specification1()===1 || this.basic.get_specification1()===3){
       let index = this.table1_datas.findIndex((data) => data.id === 2)
       if (index > -1) {
         this.removeData = this.table1_datas[index]
@@ -309,7 +309,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
 
   public  saveData(): void {
     let tableTemp = JSON.parse(JSON.stringify(this.table1_datas)); 
-    if (this.basic.get_specification1() === 0 || this.basic.get_specification1() === 1) {
+    if (this.basic.get_specification1() === 0 || this.basic.get_specification1() === 1 || this.basic.get_specification1() === 3) {
       let index = tableTemp.findIndex((data) => data.id === 2)
       if (this.basic.removeData && index===-1){
         tableTemp.splice(2, 0, this.basic.removeData);

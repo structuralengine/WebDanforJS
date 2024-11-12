@@ -53,6 +53,11 @@ export class InputBasicInformationService {
         selected: true,
       },
       {
+        id: 3,
+        title: this.translate.instant("basic-information.rail_Bangladesh"),
+        selected: true,
+      },
+      {
         id: 2,
         title: this.translate.instant("basic-information.road"),
         selected: false,
@@ -141,7 +146,8 @@ export class InputBasicInformationService {
     let result: any[] = new Array();
     switch (specification1) {
       case 0: // 鉄道
-      case 1: // 土木学会
+      case 1: // フィリピン版
+      case 3: // バングラディッシュ版
         result = [
           {
             id: 0,
@@ -344,7 +350,8 @@ export class InputBasicInformationService {
     let result: any[] = new Array();
     switch (specification1) {
       case 0: // 鉄道
-      case 1: // 土木学会
+      case 1: // フィリピン版
+      case 3: // バングラディッシュ版
         result = [
           {
             id: 0,
@@ -503,7 +510,8 @@ export class InputBasicInformationService {
     let result: any[] = new Array();
     switch (specification1) {
       case 0: // 鉄道
-      case 1: // 土木学会
+      case 1: // フィリピン版
+      case 3: // バングラディッシュ版
         result = [
           {
             id: 0,
@@ -629,6 +637,8 @@ export class InputBasicInformationService {
     let result: any[] = new Array();
     switch (specification1) {
       case 0: // 鉄道
+      case 1: // フィリピン版
+      case 3: // バングラディッシュ版
         result = [
           {
             id: 0,
@@ -657,10 +667,6 @@ export class InputBasicInformationService {
           },
           // { id: 5, title: 'ＪＲ東日本（既存構造物）', selected: false }
         ];
-        break;
-
-      case 1: // 土木学会
-        result = [];
         break;
 
       case 2: // 港湾
@@ -710,8 +716,8 @@ export class InputBasicInformationService {
     let result: any[] = new Array();
     switch (specification1) {
       case 0: // 鉄道
-      case 1: // 土木学会
-      case 2: // 港湾
+      case 1: // フィリピン版
+      case 3: // バングラディッシュ版
         result = [
           {
             id: "JR-001",
