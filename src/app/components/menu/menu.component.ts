@@ -602,7 +602,7 @@ export class MenuComponent implements OnInit {
     this.specification1_list = basic.specification1_list; // 適用
 
     ///Set selected for specification2_list
-    if (i === 2) {
+    if (i === 2) { //道路
       //Case Road: temporary set default spe_2.2: "partial coefficient method"
       basic.specification2_list.map(
         (obj) => (obj.selected = obj.id === 6 ? true : false)
