@@ -75,6 +75,7 @@ export class AuthProvider {
             const authResponse = await this.clientApplication.acquireTokenInteractive({
                 ...tokenRequest,
                 openBrowser,
+                redirectUri: this.msalConfig.auth.redirectUri,
                 successTemplate: '<h1>Successfully signed in!</h1> <p>You can close this window now.</p>',
             });
 
