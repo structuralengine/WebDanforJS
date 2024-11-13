@@ -3,8 +3,11 @@ import { LogLevel } from '@azure/msal-browser';
 
 export const msalConfig = {
     auth: {
-        clientId: environment.msalConfig.authElectron.clientIdElectron,
-        authority: environment.msalConfig.authElectron.authorityElectron,
+        clientId: environment.msalConfig.authElectron.clientId,
+        authority: environment.b2cPolicies.authorities.signUpSignIn.authority,
+        redirectUri: environment.msalConfig.authElectron.redirectUri,
+        postLogoutRedirectUri: environment.msalConfig.authElectron.postLogoutRedirectUri,
+        knownAuthorities: [environment.b2cPolicies.authorityDomain]
     },
     system: {
         loggerOptions: {
@@ -15,4 +18,10 @@ export const msalConfig = {
             logLevel: LogLevel.Verbose,
         },
     },
+};
+
+export const policeResetPassword = {
+    resetPassword: {
+        authority: 'https://malmeapp.b2clogin.com/malmeapp.onmicrosoft.com/B2C_1_msal_forgot'
+      },
 };

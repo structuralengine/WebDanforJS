@@ -59,16 +59,13 @@ export class UserInfoService {
     } else {
       const isLoggedIn = this.authService.instance.getAllAccounts().length > 0;
       if (isLoggedIn) {
-        this.http.get(environment.apiConfig.uri).subscribe((profile: any) => {
-          if (profile.id) {
-            this.setUserProfile({
-              uid: profile.id,
-              email: profile.userPrincipalName,
-              firstName: profile.givenName ?? "User",
-              lastName: profile.surname ?? "",
-            });
-          }
-        })
+        const listClaims = this.getClaims(this.authService.instance.getActiveAccount()?.idTokenClaims as Record<string, any>);
+          this.setUserProfile({
+            uid: listClaims.find(item => item.claim === "sub")?.value,
+            email: listClaims.find(item => item.claim === "emails")?.value[0],
+            firstName: listClaims.find(item => item.claim === "given_name")?.value,
+            lastName: listClaims.find(item => item.claim === "family_name")?.value
+          });
       } else {
         this.setUserProfile(null);
       }
@@ -108,5 +105,14 @@ export class UserInfoService {
     this.deduct_points += _deduct_points;
     this.daily_points = Math.max(this.daily_points, _daily_points);
   }
-  
+
+  getClaims(claims: Record<string, any>) {
+    const listClaims = []
+    if (claims) {
+      Object.entries(claims).forEach((claim: [string, unknown], index: number) => {
+        listClaims.push({ id: index, claim: claim[0], value: claim[1] });
+      });
+    }
+    return listClaims;
+  }
 }

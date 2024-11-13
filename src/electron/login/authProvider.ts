@@ -1,5 +1,6 @@
 import { AuthenticationResult, InteractionRequiredAuthError, PublicClientApplication, SilentFlowRequest } from '@azure/msal-node';
 import { shell } from 'electron';
+import { policeResetPassword } from './config';
 
 export class AuthProvider {
     private msalConfig;
@@ -16,7 +17,7 @@ export class AuthProvider {
 
     async login() {
         const tokenRequest: SilentFlowRequest = {
-            scopes: ['User.Read'],
+            scopes: [],
             account: null,
         };
         const authResponse = await this.getToken(tokenRequest);
@@ -26,15 +27,7 @@ export class AuthProvider {
     async logout() {
         if (!this.account) return;
         try {
-            /**
-             * If you would like to end the session with AAD, use the logout endpoint. You'll need to enable
-             * the optional token claim 'login_hint' for this to work as expected. For more information, visit:
-             * https://learn.microsoft.com/azure/active-directory/develop/v2-protocols-oidc#send-a-sign-out-request
-             */
-            // if (this.account.idTokenClaims.hasOwnProperty('login_hint')) {
-                await shell.openExternal(`${this.msalConfig.auth.authority}/oauth2/v2.0/logout`);
-            // }
-
+            await shell.openExternal(`${this.msalConfig.auth.authority}/oauth2/v2.0/logout?post_logout_redirect_uri=${this.msalConfig.auth.postLogoutRedirectUri}`);
             await this.cache.removeAccount(this.account);
             this.account = null;
         } catch (error) {
@@ -82,14 +75,31 @@ export class AuthProvider {
             const authResponse = await this.clientApplication.acquireTokenInteractive({
                 ...tokenRequest,
                 openBrowser,
-                // successTemplate: '<h1>Successfully signed in!</h1> <p>You can close this window now.</p>',
-                // errorTemplate: '<h1>Oops! Something went wrong</h1> <p>Check the console for more information.</p>',
+                successTemplate: '<h1>Successfully signed in!</h1> <p>You can close this window now.</p>',
             });
 
             return authResponse;
         } catch (error) {
+            if (error.errorMessage && error.errorMessage.includes('AADB2C90118')) {
+                // User clicked "Forgot Password"
+                return await this.passwordReset();
+            }
             throw error;
         }
+    }
+
+    async passwordReset() {
+        const passwordResetRequest = {
+            scopes: [],
+            authority: policeResetPassword.resetPassword.authority,
+            redirectUri: this.msalConfig.auth.redirectUri,
+            openBrowser: async (url) => {
+                console.log("Password reset URL --- ", url);
+                await shell.openExternal(url);
+            },
+        };
+        const authResponse = await this.clientApplication.acquireTokenInteractive(passwordResetRequest);
+        return authResponse;
     }
 
     

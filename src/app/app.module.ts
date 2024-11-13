@@ -89,10 +89,11 @@ export function loggerCallback(logLevel: LogLevel, message: string) {
 export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
-      clientId: environment.msalConfig.authWeb.clientId,
-      authority: environment.msalConfig.authWeb.authority,
-      redirectUri: environment.msalConfig.authWeb.redirectUri,
-      postLogoutRedirectUri: environment.msalConfig.authWeb.redirectUri
+      clientId: environment.msalConfig.auth.clientId,
+      authority: environment.b2cPolicies.authorities.signUpSignIn.authority,
+      redirectUri: environment.msalConfig.auth.redirectUri,
+      postLogoutRedirectUri:environment.msalConfig.auth.postLogoutRedirectUri,
+      knownAuthorities: [environment.b2cPolicies.authorityDomain]
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -101,7 +102,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
       allowNativeBroker: false, // Disables WAM Broker
       loggerOptions: {
         loggerCallback,
-        logLevel: LogLevel.Info,
+        logLevel: LogLevel.Verbose,
         piiLoggingEnabled: false,
       },
     },
