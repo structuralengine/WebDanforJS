@@ -285,30 +285,30 @@ export class MenuComponent implements OnInit {
             this.authService.instance.setActiveAccount(payload.account);
           }
 
-          if (
-            idtoken.acr === environment.b2cPolicies.names.editProfile ||
-            idtoken.tfp === environment.b2cPolicies.names.editProfile
-          ) {
-            const originalSignInAccount = this.authService.instance
-              .getAllAccounts()
-              .find(
-                (account: AccountInfo) =>
-                  account.idTokenClaims?.oid === idtoken.oid &&
-                  account.idTokenClaims?.sub === idtoken.sub &&
-                  ((account.idTokenClaims as IdTokenClaimsWithPolicyId).acr ===
-                    environment.b2cPolicies.names.signUpSignIn ||
-                    (account.idTokenClaims as IdTokenClaimsWithPolicyId).tfp ===
-                      environment.b2cPolicies.names.signUpSignIn)
-              );
+          // if (
+          //   idtoken.acr === environment.b2cPolicies.names.editProfile ||
+          //   idtoken.tfp === environment.b2cPolicies.names.editProfile
+          // ) {
+          //   const originalSignInAccount = this.authService.instance
+          //     .getAllAccounts()
+          //     .find(
+          //       (account: AccountInfo) =>
+          //         account.idTokenClaims?.oid === idtoken.oid &&
+          //         account.idTokenClaims?.sub === idtoken.sub &&
+          //         ((account.idTokenClaims as IdTokenClaimsWithPolicyId).acr ===
+          //           environment.b2cPolicies.names.signUpSignIn ||
+          //           (account.idTokenClaims as IdTokenClaimsWithPolicyId).tfp ===
+          //             environment.b2cPolicies.names.signUpSignIn)
+          //     );
 
-            let signUpSignInFlowRequest: SsoSilentRequest = {
-              authority:
-                environment.b2cPolicies.authorities.signUpSignIn.authority,
-              account: originalSignInAccount,
-            };
+          //   let signUpSignInFlowRequest: SsoSilentRequest = {
+          //     authority:
+          //       environment.b2cPolicies.authorities.signUpSignIn.authority,
+          //     account: originalSignInAccount,
+          //   };
 
-            this.authService.ssoSilent(signUpSignInFlowRequest);
-          }
+          //   this.authService.ssoSilent(signUpSignInFlowRequest);
+          // }
 
           if (
             idtoken.acr === environment.b2cPolicies.names.resetPassword ||
