@@ -66,13 +66,13 @@ jobs:
 
     - name: Set environment.prod
       env:
-        JSON_DECODE: ${{ secrets.environment_prod }}
+        JSON_DECODE: ${{ secrets.environment_prod_staging }}
       run: |
         echo $JSON_DECODE | base64 --decode > ./src/environments/environment.prod.ts
 
     - name: Set environment
       env:
-        JSON_DECODE: ${{ secrets.environment }}
+        JSON_DECODE: ${{ secrets.environment_staging }}
       run: |
         echo $JSON_DECODE | base64 --decode > ./src/environments/environment.ts
 
