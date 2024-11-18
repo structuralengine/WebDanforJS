@@ -64,7 +64,6 @@ import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { ChatComponent } from './components/chat/chat.component';
 import { ShearComponent } from './components/shear/shear.component';
 
-import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { ActivateSessionComponent } from './components/activate-session/activate-session.component';
 
 import { PreviewExcelComponent } from "./components/preview-excel/preview-excel.component";
@@ -82,27 +81,6 @@ import { MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalBroadcas
 const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
   new TranslateHttpLoader(http, "./assets/i18n/", ".json");
 const config: MultiWindowConfig = {windowSaveStrategy: WindowSaveStrategy.SAVE_WHEN_EMPTY};
-// function initializeKeycloak(keycloak: KeycloakService) {
-//     console.log("initializaing keycloak");
-//     return () => keycloak.init({
-//         config: {
-//             url: 'https://auth.malme.app',
-//             realm: 'structural-engine',
-//             clientId: 'malme-mypage'
-//         },
-//         initOptions: {
-//             onLoad: 'check-sso',
-//         }
-//     })
-//     .catch((error) => {
-//       const elVer = window?.process?.versions["electron"];
-//       if (elVer) {
-//         return;
-//       } else {
-//         window.alert("自動ログインに失敗しました。");
-//       }
-//     });
-// }
 
 export function loggerCallback(logLevel: LogLevel, message: string) {
     console.log(message);
@@ -111,10 +89,11 @@ export function loggerCallback(logLevel: LogLevel, message: string) {
 export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
-      clientId: environment.msalConfig.authWeb.clientId,
-      authority: environment.msalConfig.authWeb.authority,
-      redirectUri: environment.msalConfig.authWeb.redirectUri,
-      postLogoutRedirectUri: environment.msalConfig.authWeb.redirectUri
+      clientId: environment.msalConfig.auth.clientId,
+      authority: environment.b2cPolicies.authorities.signUpSignIn.authority,
+      redirectUri: environment.msalConfig.auth.redirectUri,
+      postLogoutRedirectUri:environment.msalConfig.auth.postLogoutRedirectUri,
+      knownAuthorities: [environment.b2cPolicies.authorityDomain]
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -123,7 +102,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
       allowNativeBroker: false, // Disables WAM Broker
       loggerOptions: {
         loggerCallback,
-        logLevel: LogLevel.Info,
+        logLevel: LogLevel.Verbose,
         piiLoggingEnabled: false,
       },
     },
@@ -167,7 +146,6 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
         BrowserAnimationsModule,
         NgbModule,
         NgxPrintModule,
-        KeycloakAngularModule,
         provideFirebaseApp(() => initializeApp(environment.firebase)),
         provideAuth(() => getAuth()),
         provideFirestore(() => getFirestore()),
@@ -231,12 +209,6 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
         // declarations だけではなくココ(providers) にも宣言して
         // 他のコンポーネントから機能の一部を使えるようにする
         ElectronService,
-        // {
-        //     provide: APP_INITIALIZER,
-        //     useFactory: initializeKeycloak,
-        //     multi: true,
-        //     deps: [KeycloakService]
-        // },
         NgbActiveModal,
         {
           provide: HTTP_INTERCEPTORS,

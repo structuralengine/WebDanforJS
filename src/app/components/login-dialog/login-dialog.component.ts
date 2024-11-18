@@ -7,7 +7,6 @@ import { environment } from 'src/environments/environment';
 import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { UserInfoService } from 'src/app/providers/user-info.service';
-import { KeycloakService } from 'keycloak-angular';
 import axios from 'axios';
 import qs from 'qs';
 
@@ -34,7 +33,6 @@ export class LoginDialogComponent implements OnInit {
     private translate: TranslateService,
     private helper: DataHelperModule,
     public user: UserInfoService,
-    //private readonly keycloak: KeycloakService
     ) {
     this.loginError = false;
     this.connecting = false;
@@ -70,7 +68,6 @@ export class LoginDialogComponent implements OnInit {
     
     axios.request(config)
       .then((response) => {
-        // const keycloakInstance = this.keycloak.getKeycloakInstance();
         const keycloakInstance = null;
         keycloakInstance.token = response.data.access_token;
         keycloakInstance.refreshToken = response.data.refresh_token;
