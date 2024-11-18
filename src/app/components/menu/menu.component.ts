@@ -30,8 +30,7 @@ import { LanguagesService } from "../../providers/languages.service";
 import { ElectronService } from "src/app/providers/electron.service";
 import packageJson from '../../../../package.json';
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
-// import { KeycloakService } from 'keycloak-angular';
-// import { KeycloakProfile } from 'keycloak-js';
+
 import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
 import { MenuService } from "./menu.service";
@@ -41,11 +40,17 @@ import { InputBarsService } from "../bars/bars.service";
 import { ShearStrengthService } from "../shear/shear-strength.service";
 import { Subject } from 'rxjs';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from "@azure/msal-angular";
-import { RedirectRequest, InteractionStatus, EventMessage, EventType, } from "@azure/msal-browser";
+import { RedirectRequest, InteractionStatus, EventMessage, EventType, IdTokenClaims, PopupRequest, AuthenticationResult, AccountInfo, SsoSilentRequest, PromptValue, } from "@azure/msal-browser";
 import { filter, takeUntil } from 'rxjs/operators';
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { IPC_MESSAGES } from "src/electron/login/constants";
+
+type IdTokenClaimsWithPolicyId = IdTokenClaims & {
+  acr?: string,
+  tfp?: string,
+};
+
 @Component({
   selector: "app-menu",
   templateUrl: "./menu.component.html",
@@ -119,7 +124,6 @@ export class MenuComponent implements OnInit {
     public electronService: ElectronService,
     private translate: TranslateService,
     private elementRef: ElementRef,
-    // private readonly keycloak: KeycloakService,
     private multiWindowService: MultiWindowService,
     private bars: InputBarsService,
     private http: HttpClient,
@@ -196,17 +200,33 @@ export class MenuComponent implements OnInit {
 
   initMSAL() {
     if (this.electronService.isElectron) {
-      this.electronService.ipcRenderer.on(IPC_MESSAGES.GET_PROFILE, (event, profile) => {
-        if (profile.id) {
-          this.setUserProfile(profile)
+      this.electronService.ipcRenderer.on(
+        IPC_MESSAGES.GET_PROFILE,
+        (event, listClaims) => {
+          const profile = {
+            uid: listClaims.find((item) => item.claim === "sub")?.value,
+            email: listClaims.find((item) => item.claim === "emails")?.value[0],
+            givenName: listClaims.find((item) => item.claim === "given_name")
+              ?.value,
+            surname: listClaims.find((item) => item.claim === "family_name")
+              ?.value,
+          };
+          if (profile.uid) {
+            this.setUserProfile(profile);
+          }
         }
-      })
+      );
     } else {
       this.setLoginDisplay();
+
       this.authService.instance.enableAccountStorageEvents();
       this.msalBroadcastService.msalSubject$
         .pipe(
-          filter((msg: EventMessage) => msg.eventType === EventType.ACCOUNT_ADDED || msg.eventType === EventType.ACCOUNT_REMOVED),
+          filter(
+            (msg: EventMessage) =>
+              msg.eventType === EventType.ACCOUNT_ADDED ||
+              msg.eventType === EventType.ACCOUNT_REMOVED
+          )
         )
         .subscribe((result: EventMessage) => {
           if (this.authService.instance.getAllAccounts().length === 0) {
@@ -218,29 +238,137 @@ export class MenuComponent implements OnInit {
 
       this.msalBroadcastService.inProgress$
         .pipe(
-          filter((status: InteractionStatus) => status === InteractionStatus.None),
+          filter(
+            (status: InteractionStatus) => status === InteractionStatus.None
+          ),
           takeUntil(this._destroying$)
         )
         .subscribe(() => {
           this.setLoginDisplay();
           this.checkAndSetActiveAccount();
           if (this.loginDisplay) {
-            this.http.get(environment.apiConfig.uri).subscribe((profile: any) => {
-              if (profile.id) {
-                this.setUserProfile(profile)
-              }
-            })
+            const listClaims = this.getClaims(
+              this.authService.instance.getActiveAccount()
+                ?.idTokenClaims as Record<string, any>
+            );
+            const profile = {
+              uid: listClaims.find((item) => item.claim === "sub")?.value,
+              email: listClaims.find((item) => item.claim === "emails")
+                ?.value[0],
+              givenName: listClaims.find((item) => item.claim === "given_name")
+                ?.value,
+              surname: listClaims.find((item) => item.claim === "family_name")
+                ?.value,
+            };
+            this.setUserProfile(profile);
           }
-        })
+        });
+
+      this.msalBroadcastService.msalSubject$
+        .pipe(
+          filter(
+            (msg: EventMessage) =>
+              msg.eventType === EventType.LOGIN_SUCCESS ||
+              msg.eventType === EventType.ACQUIRE_TOKEN_SUCCESS ||
+              msg.eventType === EventType.SSO_SILENT_SUCCESS
+          ),
+          takeUntil(this._destroying$)
+        )
+        .subscribe((result: EventMessage) => {
+          let payload = result.payload as AuthenticationResult;
+          let idtoken = payload.idTokenClaims as IdTokenClaimsWithPolicyId;
+
+          if (
+            idtoken.acr === environment.b2cPolicies.names.signUpSignIn ||
+            idtoken.tfp === environment.b2cPolicies.names.signUpSignIn
+          ) {
+            this.authService.instance.setActiveAccount(payload.account);
+          }
+
+          // if (
+          //   idtoken.acr === environment.b2cPolicies.names.editProfile ||
+          //   idtoken.tfp === environment.b2cPolicies.names.editProfile
+          // ) {
+          //   const originalSignInAccount = this.authService.instance
+          //     .getAllAccounts()
+          //     .find(
+          //       (account: AccountInfo) =>
+          //         account.idTokenClaims?.oid === idtoken.oid &&
+          //         account.idTokenClaims?.sub === idtoken.sub &&
+          //         ((account.idTokenClaims as IdTokenClaimsWithPolicyId).acr ===
+          //           environment.b2cPolicies.names.signUpSignIn ||
+          //           (account.idTokenClaims as IdTokenClaimsWithPolicyId).tfp ===
+          //             environment.b2cPolicies.names.signUpSignIn)
+          //     );
+
+          //   let signUpSignInFlowRequest: SsoSilentRequest = {
+          //     authority:
+          //       environment.b2cPolicies.authorities.signUpSignIn.authority,
+          //     account: originalSignInAccount,
+          //   };
+
+          //   this.authService.ssoSilent(signUpSignInFlowRequest);
+          // }
+
+          if (
+            idtoken.acr === environment.b2cPolicies.names.resetPassword ||
+            idtoken.tfp === environment.b2cPolicies.names.resetPassword
+          ) {
+            let signUpSignInFlowRequest: RedirectRequest | PopupRequest = {
+              authority:
+                environment.b2cPolicies.authorities.signUpSignIn.authority,
+              scopes: [...environment.apiConfig.scopes],
+              prompt: PromptValue.LOGIN,
+            };
+
+            this.loginMS(signUpSignInFlowRequest);
+          }
+
+          return result;
+        });
+
+      this.msalBroadcastService.msalSubject$
+        .pipe(
+          filter(
+            (msg: EventMessage) =>
+              msg.eventType === EventType.LOGIN_FAILURE ||
+              msg.eventType === EventType.ACQUIRE_TOKEN_FAILURE
+          ),
+          takeUntil(this._destroying$)
+        )
+        .subscribe((result: EventMessage) => {
+          if (
+            result.error &&
+            result.error.message.indexOf("AADB2C90118") > -1
+          ) {
+            let resetPasswordFlowRequest: RedirectRequest | PopupRequest = {
+              authority:
+                environment.b2cPolicies.authorities.resetPassword.authority,
+              scopes: [],
+            };
+
+            this.loginMS(resetPasswordFlowRequest);
+          }
+        });
     }
+  }
+
+  getClaims(claims: Record<string, any>) {
+    const listClaims = []
+    if (claims) {
+      Object.entries(claims).forEach((claim: [string, unknown], index: number) => {
+        listClaims.push({ id: index, claim: claim[0], value: claim[1] });
+      });
+    }
+    return listClaims;
   }
 
   setUserProfile(profile: any) {
     this.user.setUserProfile({
-      uid: profile.id,
-      email: profile.userPrincipalName,
+      uid: profile.uid,
+      email: profile.email,
       firstName: profile.givenName ?? "User",
-      lastName: profile.surname ?? "User",
+      lastName: profile.surname ?? "",
     });
   }
 
@@ -265,7 +393,7 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  loginMS() {
+  loginMS(userFlowRequest?: RedirectRequest | PopupRequest) {
     if (this.electronService.isElectron) {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGIN);
     } else {
@@ -278,12 +406,10 @@ export class MenuComponent implements OnInit {
         )
         .subscribe(async () => {
           if (this.msalGuardConfig.authRequest) {
-            await this.authService.loginRedirect({
-              ...this.msalGuardConfig.authRequest,
-            } as RedirectRequest);
+            await this.authService.loginRedirect({ ...this.msalGuardConfig.authRequest, ...userFlowRequest } as RedirectRequest);
             await this.authService.acquireTokenRedirect({ ...this.msalGuardConfig.authRequest } as RedirectRequest)
           } else {
-            await this.authService.loginRedirect();
+            await this.authService.loginRedirect( userFlowRequest);
           }
         });
       }
@@ -602,7 +728,7 @@ export class MenuComponent implements OnInit {
     this.specification1_list = basic.specification1_list; // 適用
 
     ///Set selected for specification2_list
-    if (i === 2) {
+    if (i === 2) { //道路
       //Case Road: temporary set default spe_2.2: "partial coefficient method"
       basic.specification2_list.map(
         (obj) => (obj.selected = obj.id === 6 ? true : false)

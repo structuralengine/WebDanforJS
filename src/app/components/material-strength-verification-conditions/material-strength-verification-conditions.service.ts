@@ -3,6 +3,7 @@ import { InputMembersService } from '../members/members.service';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from '@ngx-translate/core';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
+import { constants } from 'buffer';
 
 @Injectable({
   providedIn: 'root'
@@ -165,82 +166,61 @@ export class InputMaterialStrengthVerificationConditionService {
     return result;
   } 
   public default_verification(): any{
-    let result = [];
-    switch(this.basic.get_specification1()){
-      case 0:
-      case 1:
-      case 2:
-        result = [
-          {
-            id: 0,
-            title: this.translate.instant("material-strength-verifiaction-condition.var_st"),
-            selected: false,
-            type: null
-          },
-          {
-            id: 1,
-            title: this.translate.instant("material-strength-verifiaction-condition.acc_st"),
-            selected: false,
-            type: null
-          },
-        ]
-        break;
-    }
+    const result = [
+      {
+        id: 0,
+        title: this.translate.instant("material-strength-verifiaction-condition.var_st"),
+        selected: false,
+        type: null
+      },
+      {
+        id: 1,
+        title: this.translate.instant("material-strength-verifiaction-condition.acc_st"),
+        selected: false,
+        type: null
+      },
+    ];
     return result;
   }
 
   public default_component(): any{
-    let result = [];
-    switch(this.basic.get_specification1()){
-      case 0:
-      case 1:
-      case 2:
-        result = [
-          {
-            id: 0,
-            title: this.translate.instant("material-strength-verifiaction-condition.ge_pa"),
-            selected: false           
-          },
-          {
-            id: 1,
-            title: this.translate.instant("material-strength-verifiaction-condition.fla_for_flo_sla"),
-            selected: false            
-          },
-          {
-            id: 2,
-            title: this.translate.instant("material-strength-verifiaction-condition.sub"),
-            selected: true           
-          },
-          {
-            id: 11,
-            title: this.translate.instant("material-strength-verifiaction-condition.co"),
-            selected: true           
-          },
-        ]
-        break;
-    }
+    const result =  [
+      {
+        id: 0,
+        title: this.translate.instant("material-strength-verifiaction-condition.ge_pa"),
+        selected: false           
+      },
+      {
+        id: 1,
+        title: this.translate.instant("material-strength-verifiaction-condition.fla_for_flo_sla"),
+        selected: false            
+      },
+      {
+        id: 2,
+        title: this.translate.instant("material-strength-verifiaction-condition.sub"),
+        selected: true           
+      },
+      {
+        id: 11,
+        title: this.translate.instant("material-strength-verifiaction-condition.co"),
+        selected: true           
+      },
+    ];
     return result;
   }
   public default_other(): any{
-    let result = [];
-    switch(this.basic.get_specification1()){
-      case 0:
-      case 1:
-      case 2:
-        result = [
-          {
-            id: 0,
-            title: this.translate.instant("material-strength-verifiaction-condition.sep"),
-            selected: false           
-          },
-          {
-            id: 1,
-            title: this.translate.instant("material-strength-verifiaction-condition.do_not"),
-            selected: false           
-          }            
-        ]
-        break;
-    }
+    let result =  [
+      {
+        id: 0,
+        title: this.translate.instant("material-strength-verifiaction-condition.sep"),
+        selected: false           
+      },
+      {
+        id: 1,
+        title: this.translate.instant("material-strength-verifiaction-condition.do_not"),
+        selected: false           
+      }            
+    ];
     return result;
   }
 

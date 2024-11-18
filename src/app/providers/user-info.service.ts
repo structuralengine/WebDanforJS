@@ -1,9 +1,11 @@
 ﻿import { Injectable } from '@angular/core';
-import { KeycloakService } from 'keycloak-angular';
 import { ElectronService } from './electron.service';
 import { nanoid } from 'nanoid';
 import axios from 'axios';
 import { Firestore, collection, doc, getDocs, getFirestore, onSnapshot } from '@angular/fire/firestore';
+import { MsalService } from '@azure/msal-angular';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 const APP = 'WebDan';
 const USER_PROFILE = 'userProfile';
@@ -30,8 +32,9 @@ export class UserInfoService {
 
   constructor(
     public electronService: ElectronService,
-    private readonly keycloak: KeycloakService,
     private db: Firestore,
+    private authService: MsalService,
+    private http: HttpClient,
   ) {
     this.db = getFirestore();
     const clientId = window.sessionStorage.getItem(CLIENT_ID);
@@ -54,15 +57,15 @@ export class UserInfoService {
         this.setUserProfile(null);
       }
     } else {
-      const isLoggedIn = await this.keycloak.isLoggedIn();
+      const isLoggedIn = this.authService.instance.getAllAccounts().length > 0;
       if (isLoggedIn) {
-        const keycloakProfile = await this.keycloak.loadUserProfile();
-        this.setUserProfile({
-          uid: keycloakProfile.id,
-          email: keycloakProfile.email,
-          firstName: keycloakProfile.firstName,
-          lastName: keycloakProfile.lastName,
-        });
+        const listClaims = this.getClaims(this.authService.instance.getActiveAccount()?.idTokenClaims as Record<string, any>);
+          this.setUserProfile({
+            uid: listClaims.find(item => item.claim === "sub")?.value,
+            email: listClaims.find(item => item.claim === "emails")?.value[0],
+            firstName: listClaims.find(item => item.claim === "given_name")?.value,
+            lastName: listClaims.find(item => item.claim === "family_name")?.value
+          });
       } else {
         this.setUserProfile(null);
       }
@@ -102,5 +105,14 @@ export class UserInfoService {
     this.deduct_points += _deduct_points;
     this.daily_points = Math.max(this.daily_points, _daily_points);
   }
-  
+
+  getClaims(claims: Record<string, any>) {
+    const listClaims = []
+    if (claims) {
+      Object.entries(claims).forEach((claim: [string, unknown], index: number) => {
+        listClaims.push({ id: index, claim: claim[0], value: claim[1] });
+      });
+    }
+    return listClaims;
+  }
 }

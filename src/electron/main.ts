@@ -276,14 +276,18 @@ ipcMain.on(IPC_MESSAGES.LOGIN, async () => {
 
   const tokenRequest = {
     account: account,
-    scopes: ["User.Read"]
+    scopes: []
   };
 
   const tokenResponse = await authProvider.getToken(tokenRequest);
-  const graphResponse = await getGraphClient(tokenResponse.accessToken)
-    .api("https://graph.microsoft.com/v1.0/me").get();
-
-  mainWindow.webContents.send(IPC_MESSAGES.GET_PROFILE, graphResponse);
+  const userClaims = tokenResponse.idTokenClaims
+  const listClaims = []
+  if (userClaims) {
+    Object.entries(userClaims).forEach((claim: [string, unknown], index: number) => {
+      listClaims.push({ id: index, claim: claim[0], value: claim[1] });
+    });
+  }
+  mainWindow.webContents.send(IPC_MESSAGES.GET_PROFILE, listClaims);
 });
 
 ipcMain.on(IPC_MESSAGES.LOGOUT, async () => {

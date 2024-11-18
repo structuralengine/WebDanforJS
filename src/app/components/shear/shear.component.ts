@@ -108,7 +108,7 @@ export class ShearComponent implements OnInit {
           const speci2 = this.basic.get_specification2();
           const speci1 = this.basic.get_specification1();
           data.La = Math.abs(data.La)
-          if ((speci1 === 0 || speci1 === 1) && (speci2 === 0 || speci2 === 1)) {
+          if ((speci1 === 0 || speci1 === 1 || speci1 === 3) && (speci2 === 0 || speci2 === 1)) {
             let fixed_end = data.fixed_end
             if (fixed_end === null || !fixed_end)
               data.fixed_end = true
@@ -206,7 +206,7 @@ export class ShearComponent implements OnInit {
               const speci1 = this.basic.get_specification1();
               ui.updateList[0].newRow.La = Math.abs(ui.updateList[0].newRow.La)
               ui.updateList[0].rowData.La = Math.abs(ui.updateList[0].rowData.La)
-              if ((speci1 === 0 || speci1 === 1 ) && (speci2 === 0 || speci2 === 1)) {
+              if ((speci1 === 0 || speci1 === 1 || speci1 === 3 ) && (speci2 === 0 || speci2 === 1)) {
                 let fixed_end = ui.updateList[0].rowData.fixed_end
                 if (fixed_end ===null || !fixed_end)
                   ui.updateList[0].rowData.fixed_end= true
@@ -327,7 +327,7 @@ export class ShearComponent implements OnInit {
       // 令和5年 RC標準
       const speci1 = this.basic.get_specification1();
       const speci2 = this.basic.get_specification2();
-      if (speci1 === 0 && (speci2 === 3 || speci2 === 4 || speci2 == 0|| speci2 == 1 )) {
+      if ((speci1 === 0 || speci1 === 1 || speci1 === 3 ) && (speci2 === 3 || speci2 === 4 || speci2 == 0|| speci2 == 1 )) {
         this.columnHeaders.push(
           {
             title: this.translate.instant("shear-strength.fixed_end"),
