@@ -15,6 +15,7 @@ export class InputBarsService {
   private bar_list: any[];
   private jp_rebar_List: any[];
   private ph_rebar_List: any[];
+  private bd_rebar_List: any[];
 
   constructor(
     private helper: DataHelperModule,
@@ -48,6 +49,7 @@ export class InputBarsService {
         { 'D': 40, 'As': 1256.64 },
         { 'D': 50, 'As': 1963.50 }
       ];
+      this.bd_rebar_List = this.ph_rebar_List;
       this.clear();
   }
 
@@ -59,6 +61,9 @@ export class InputBarsService {
     const speci1 = this.basic.get_specification1();
     if(speci1 == 1){
       return this.ph_rebar_List;
+    }
+    if(speci1 == 3){
+      return this.bd_rebar_List;
     }
     return this.jp_rebar_List;
   }

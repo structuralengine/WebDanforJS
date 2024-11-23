@@ -4,16 +4,22 @@ import * as fs from 'fs';
 import log from 'electron-log';
 import isDev from 'electron-is-dev';
 import path from 'path'
+import { msalConfig } from './login/config';
+import { IPC_MESSAGES } from './login/constants';
+import { AuthProvider } from './login/authProvider';
+import { getGraphClient } from './login/graph';
 // 起動 --------------------------------------------------------------
 
 let mainWindow: BrowserWindow;
 let locale = 'ja';
 let check = -1;
 let arg_path: string = null;
+let authProvider : AuthProvider;
 autoUpdater.autoDownload = false
 // log.transports.file.resolvePath = () => path.join('D:/logs/main.logs')
 async function createWindow() {
   check = -1;
+  authProvider = new AuthProvider(msalConfig);
   // log.info("check install k", check);
   mainWindow = new BrowserWindow({
     webPreferences: {
@@ -23,7 +29,7 @@ async function createWindow() {
   });
   mainWindow.maximize();
   mainWindow.setMenuBarVisibility(false);
-  //mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   mainWindow.on('close', function (e) {
     if(check == -1){
       let langText = require(`../assets/i18n/${locale}.json`)
@@ -262,3 +268,30 @@ ipcMain.on(
   'get-main-wdj', (event: Electron.IpcMainEvent) => {
     event.returnValue = arg_path;
   })
+
+//Event login, logout
+ipcMain.on(IPC_MESSAGES.LOGIN, async () => {
+  const account = await authProvider.login();
+  await mainWindow.loadFile(path.join(__dirname, "./index.html"));
+
+  const tokenRequest = {
+    account: account,
+    scopes: []
+  };
+
+  const tokenResponse = await authProvider.getToken(tokenRequest);
+  const userClaims = tokenResponse.idTokenClaims
+  const listClaims = []
+  if (userClaims) {
+    Object.entries(userClaims).forEach((claim: [string, unknown], index: number) => {
+      listClaims.push({ id: index, claim: claim[0], value: claim[1] });
+    });
+  }
+  mainWindow.webContents.send(IPC_MESSAGES.GET_PROFILE, listClaims);
+});
+
+ipcMain.on(IPC_MESSAGES.LOGOUT, async () => {
+  await authProvider.logout();
+  await mainWindow.loadFile(path.join(__dirname, "./index.html"));
+});
+  

@@ -45,7 +45,8 @@ export class InputSafetyFactorsMaterialStrengthsService {
     const sp2 = this.basic.get_specification2();
     switch (sp1) {
       case 0: // 鉄道
-      case 1: // 土木学会
+      case 1: // フィリピン版
+      case 3: // バングラディッシュ版
         result = [
           {
             id: 0,
@@ -265,6 +266,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
 
     switch (this.basic.get_specification1()) {
       case 0: // 鉄道
+      case 3: // バングラディッシュ鉄道
         result = [
           {
             id: "pile-000",
@@ -324,7 +326,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
         ];
         break;
 
-      case 1: // 土木学会
+      case 1: // フィリピン版
         result = [
           {
             id: "pile-000",
@@ -384,7 +386,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
         ];
         break;
 
-      case 2: // 港湾
+      case 2: // 道路
         result = new Array();
 
         break;
