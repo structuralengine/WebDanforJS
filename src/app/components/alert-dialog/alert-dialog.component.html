@@ -1,4 +1,5 @@
-<div class="modal-wrapper">
+<div class="modal-wrapper">\
+  <div class="text" *ngIf="title">{{ title }}</div>
   <div class="text">{{ message }}</div>
   <div class="button-wrapper" *ngIf="dialogMode === 'confirm'">
     <div

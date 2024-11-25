@@ -274,7 +274,7 @@ export class MenuComponent implements OnInit {
           ),
           takeUntil(this._destroying$)
         )
-        .subscribe((result: EventMessage) => {
+        .subscribe(async (result: EventMessage) => {
           let payload = result.payload as AuthenticationResult;
           let idtoken = payload.idTokenClaims as IdTokenClaimsWithPolicyId;
 
@@ -321,7 +321,7 @@ export class MenuComponent implements OnInit {
               prompt: PromptValue.LOGIN,
             };
 
-            this.loginMS(signUpSignInFlowRequest);
+            await this.loginMS(signUpSignInFlowRequest);
           }
 
           return result;
@@ -336,7 +336,7 @@ export class MenuComponent implements OnInit {
           ),
           takeUntil(this._destroying$)
         )
-        .subscribe((result: EventMessage) => {
+        .subscribe(async (result: EventMessage) => {
           if (
             result.error &&
             result.error.message.indexOf("AADB2C90118") > -1
@@ -347,7 +347,7 @@ export class MenuComponent implements OnInit {
               scopes: [],
             };
 
-            this.loginMS(resetPasswordFlowRequest);
+            await this.loginMS(resetPasswordFlowRequest);
           }
         });
     }
@@ -393,11 +393,17 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  loginMS(userFlowRequest?: RedirectRequest | PopupRequest) {
+  async loginMS(userFlowRequest?: RedirectRequest | PopupRequest) {
     if (this.electronService.isElectron) {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGIN);
     } else {
-      if (!this.loginDisplay && confirm(this.translate.instant("menu.leave"), )) {
+      const isConfirm = await this.helper.confirm(
+        this.translate.instant("menu.leave"),  this.translate.instant("window.leaveTitle"),
+      );
+     
+
+      // if (!this.loginDisplay && confirm(this.translate.instant("menu.leave"), )) {
+      if (!this.loginDisplay && isConfirm) {
         this.msalBroadcastService.inProgress$
         .pipe(
           filter(
