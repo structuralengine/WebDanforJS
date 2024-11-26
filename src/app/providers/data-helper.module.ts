@@ -35,7 +35,7 @@ export class DataHelperModule {
         centered: true,
         backdrop: true,
         keyboard: true,
-        size: "sm",
+        size: "md",
         windowClass: "confirm-modal",
       });
       modalRef.componentInstance.message = message;

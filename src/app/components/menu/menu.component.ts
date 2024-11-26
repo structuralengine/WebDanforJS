@@ -321,7 +321,7 @@ export class MenuComponent implements OnInit {
               prompt: PromptValue.LOGIN,
             };
 
-            await this.loginMS(signUpSignInFlowRequest);
+            await this.loginMS(signUpSignInFlowRequest, true);
           }
 
           return result;
@@ -347,7 +347,7 @@ export class MenuComponent implements OnInit {
               scopes: [],
             };
 
-            await this.loginMS(resetPasswordFlowRequest);
+            await this.loginMS(resetPasswordFlowRequest, true);
           }
         });
     }
@@ -393,16 +393,20 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  async loginMS(userFlowRequest?: RedirectRequest | PopupRequest) {
+  async loginMS(userFlowRequest?: RedirectRequest | PopupRequest, ignoreAlert?: boolean) {
     if (this.electronService.isElectron) {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGIN);
     } else {
-      const isConfirm = await this.helper.confirm(
-        this.translate.instant("menu.leave"),  this.translate.instant("window.leaveTitle"),
-      );
-     
+      //If you ignore the alert, it is considered as confirmation to leave the page.
+      let isConfirm = false;
+      if(ignoreAlert) isConfirm = true;
+      else
+      {
+        isConfirm = await this.helper.confirm(
+          this.translate.instant("menu.leave"),  this.translate.instant("window.leaveTitle"),
+        );
+      }
 
-      // if (!this.loginDisplay && confirm(this.translate.instant("menu.leave"), )) {
       if (!this.loginDisplay && isConfirm) {
         this.msalBroadcastService.inProgress$
         .pipe(
