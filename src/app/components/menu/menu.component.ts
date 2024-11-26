@@ -431,7 +431,13 @@ export class MenuComponent implements OnInit {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGOUT)
       this.user.setUserProfile(null);
     } else {
-      await this.authService.instance
+      const isConfirm = await this.helper.confirm(
+        this.translate.instant("menu.leave"),  this.translate.instant("window.leaveTitle"),
+      );
+
+      if(isConfirm)
+      {
+        await this.authService.instance
         .handleRedirectPromise()
         .then((tokenResponse) => {
           if (!tokenResponse) {
@@ -445,6 +451,7 @@ export class MenuComponent implements OnInit {
           // Handle error
           console.error(err);
         });
+      }
     }
   }
 
