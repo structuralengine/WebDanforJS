@@ -274,7 +274,7 @@ export class MenuComponent implements OnInit {
           ),
           takeUntil(this._destroying$)
         )
-        .subscribe((result: EventMessage) => {
+        .subscribe(async (result: EventMessage) => {
           let payload = result.payload as AuthenticationResult;
           let idtoken = payload.idTokenClaims as IdTokenClaimsWithPolicyId;
 
@@ -321,7 +321,7 @@ export class MenuComponent implements OnInit {
               prompt: PromptValue.LOGIN,
             };
 
-            this.loginMS(signUpSignInFlowRequest);
+            await this.loginMS(signUpSignInFlowRequest, true);
           }
 
           return result;
@@ -336,7 +336,7 @@ export class MenuComponent implements OnInit {
           ),
           takeUntil(this._destroying$)
         )
-        .subscribe((result: EventMessage) => {
+        .subscribe(async (result: EventMessage) => {
           if (
             result.error &&
             result.error.message.indexOf("AADB2C90118") > -1
@@ -347,7 +347,7 @@ export class MenuComponent implements OnInit {
               scopes: [],
             };
 
-            this.loginMS(resetPasswordFlowRequest);
+            await this.loginMS(resetPasswordFlowRequest, true);
           }
         });
     }
@@ -393,11 +393,21 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  loginMS(userFlowRequest?: RedirectRequest | PopupRequest) {
+  async loginMS(userFlowRequest?: RedirectRequest | PopupRequest, ignoreAlert?: boolean) {
     if (this.electronService.isElectron) {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGIN);
     } else {
-      if (!this.loginDisplay && confirm('Your work will be lost. Do you want to leave this site?', )) {
+      //If you ignore the alert, it is considered as confirmation to leave the page.
+      let isConfirm = false;
+      if(ignoreAlert) isConfirm = true;
+      else
+      {
+        isConfirm = await this.helper.confirm(
+          this.translate.instant("menu.leave"),  this.translate.instant("window.leaveTitle"),
+        );
+      }
+
+      if (!this.loginDisplay && isConfirm) {
         this.msalBroadcastService.inProgress$
         .pipe(
           filter(
@@ -421,7 +431,13 @@ export class MenuComponent implements OnInit {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGOUT)
       this.user.setUserProfile(null);
     } else {
-      await this.authService.instance
+      const isConfirm = await this.helper.confirm(
+        this.translate.instant("menu.leave"),  this.translate.instant("window.leaveTitle"),
+      );
+
+      if(isConfirm)
+      {
+        await this.authService.instance
         .handleRedirectPromise()
         .then((tokenResponse) => {
           if (!tokenResponse) {
@@ -435,6 +451,7 @@ export class MenuComponent implements OnInit {
           // Handle error
           console.error(err);
         });
+      }
     }
   }
 
