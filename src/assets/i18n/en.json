@@ -18,7 +18,8 @@
         "NewWindow":"New window",
         "contact":"Contact",
         "message_ver":"The current version of WebDan does not support roads (beta version)",
-        "removed_steel":"Removed steel frame data due to incompatibility"
+        "removed_steel":"Removed steel frame data due to incompatibility",
+        "leave":"Your work will be lost. Do you want to leave this site?"
     },
     "login-dialog":{
         "createAccount":"Creat account",
@@ -617,6 +618,7 @@
         "updateMessage": "Update is available.\nDo you want to reboot to perform the update?\nIf you choose to cancel, the application will be automatically updated after it is closed."
     },
     "window": {
+        "leaveTitle": "All input will be discarded",
         "closeTitle": "Confirm",
         "closeMessage": "Changes may not to be saved. Are you sure you want to quit?",
         "confirm": "Information being entered is discarded?"
