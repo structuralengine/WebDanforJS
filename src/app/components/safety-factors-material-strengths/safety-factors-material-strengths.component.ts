@@ -1589,7 +1589,6 @@ export class SafetyFactorsMaterialStrengthsComponent
     });
     this.safety.arrayAxis = this.arrayAxis;
     this.safety.axisforce_condition = this.arrayAxisForce;
-    console.log('saveData()', this.arrayAxisForce);
   }
 
   // 杭の施工条件を変更を処理する関数
