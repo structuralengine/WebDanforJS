@@ -636,18 +636,24 @@ export class MenuComponent implements OnInit {
 
   // ピックアップファイルを開く
   pickup(evt) {
+    this.showMenu = false;
+
     const file = evt.target.files[0];
     var ext = /^.+\.([^.]+)$/.exec(file.name);
-    if (
-      ext != null &&
-      (ext[1].toLowerCase() == "pik" || ext[1].toLowerCase() == "csv")
-    ) {
-      const modalRef = this.modalService.open(WaitDialogComponent);
-      evt.target.value = "";
+    // nullじゃないことの確認
+    if ( ext == null){
+      this.helper.alert(this.translate.instant("menu.acceptedFile"));
+      return;
+    }
 
-      this.router.navigate(["/blank-page"]);
-      this.app.deactiveButtons();
+    const modalRef = this.modalService.open(WaitDialogComponent);
+    evt.target.value = "";
 
+    this.router.navigate(["/blank-page"]);
+    this.app.deactiveButtons();
+
+    const _ext = ext[1].toLowerCase();
+    if (_ext == "pik" || _ext == "csv" ) {
       this.fileToText(file)
         .then((text) => {
           this.save.readPickUpData(text, file.name, this.checkOpenDSD); // データを読み込む
@@ -658,10 +664,12 @@ export class MenuComponent implements OnInit {
           modalRef.close();
           console.log(err);
         });
+    } else if (_ext == "xls" || _ext == "xlsx" ) {
+
     } else {
       this.helper.alert(this.translate.instant("menu.acceptedFile"));
+      return;
     }
-    this.showMenu = false;
   }
 
   // ファイルのテキストを読み込む
