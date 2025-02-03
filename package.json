@@ -1,6 +1,6 @@
 {
   "name": "web-dan-for-js",
-  "version": "2.3.11",
+  "version": "2.3.12",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port=4200",
@@ -65,7 +65,7 @@
     "electron-updater": "^6.1.0",
     "encoding-japanese": "^1.0.30",
     "file-saver": "^2.0.5",
-    "firebase": "^9.20.0",
+    "firebase": "^11.2.0",
     "guid-typescript": "^1.0.9",
     "igniteui-angular-core": "^16.1.0",
     "igniteui-angular-excel": "^16.1.0",

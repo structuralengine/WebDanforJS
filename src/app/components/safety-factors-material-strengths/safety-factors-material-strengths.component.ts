@@ -789,6 +789,9 @@ export class SafetyFactorsMaterialStrengthsComponent
       this.opt_no_for_v = dataOfTab.opt_no_for_v;
       this.opt_max_min = dataOfTab.opt_max_min;
       this.opt_tens_only = dataOfTab.opt_tens_only;
+      this.consider_moment_checked = this.used;
+      this.not_consider_moment_checked = !this.used;
+      this.considerMomentChecked = !this.used;
     }
   }
   private checkForScrollbar() {
