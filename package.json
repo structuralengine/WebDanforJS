@@ -1,6 +1,6 @@
 {
   "name": "web-dan-for-js",
-  "version": "2.3.12",
+  "version": "2.3.13",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port=4200",
