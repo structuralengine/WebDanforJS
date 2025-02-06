@@ -18,9 +18,8 @@ import { InputMaterialStrengthVerificationConditionService } from "../components
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from "@ngx-translate/core";
 
-import { read, utils, WorkBook, writeFile } from 'xlsx';
-import { forEach } from "jszip";
-import { each } from "jquery";
+import * as XLSX from 'xlsx';
+import { midas2csv } from "./midas2csv";
 
 @Injectable({
   providedIn: "root",
@@ -265,116 +264,17 @@ export class SaveDataService {
   }
 
   // Midasのピックアップファイルを読み込む
-  public readMidasData(wb: WorkBook){
-    // 有効判定
-    if(wb.SheetNames.length == 0){
+  public readMidasData(wb: XLSX.WorkBook): void {
+    // シートが含まれていなければ何もしない
+    if (wb.SheetNames.length === 0) {
       return;
     }
-    // 3次元解析のピックアップデータかどうか判定する
-    if(wb.SheetNames.length < 3){
-      alert("3次元解析のピックアップデータは対応していません。");
-      return;
-    }
-    // .pik 形式に変換する
-    let result = "Convert Midas File\n";
-
-    const ws_name_Nd = wb.SheetNames.find((name) => name.includes("軸力")) || null;
-    const ws_name_Vd = wb.SheetNames.find((name) => name.includes("せん断")) || null;
-    const ws_name_Md = wb.SheetNames.find((name) => name.includes("曲げ")) || null;
-    if(ws_name_Nd == null || ws_name_Vd == null || ws_name_Md == null){
-      alert("「軸力」「せん断」「曲げ」シートがありません");
-      return;
-    }
-    // 
-    const ws_Nd = wb.Sheets[ws_name_Nd];
-    const ws_Vd = wb.Sheets[ws_name_Vd];
-    const ws_Md = wb.Sheets[ws_name_Md];
-
-    // PickUpNo
-    const range_Nd  = utils.decode_range(ws_Nd['!ref']);
-    // const range_Vd  = utils.decode_range(ws_Vd['!ref']);
-    // const range_Md  = utils.decode_range(ws_Md['!ref']);
-
-    // Sheet ws_Nd の 2行目と3行目に値がある列を探す
-    const PickUpCase = [];
-    for (let col = 8; col <= range_Nd.e.c; col++) {
-      let val2 = this.getCellValue(ws_Nd, 1, col);
-      const val3 = this.getCellValue(ws_Nd, 2, col);
-      if (val2.trim().length > 0) {
-        if (val3.trim().length > 0){
-          val2 += "-" + val3;
-        }
-        PickUpCase.push(val2);
-      }
-    }
-
-    // 部材No,最大CaseNo,最小CaseNo,着目点,着目点距離 を取得
-    /// Sheet ws_Nd の 5行目から値がある行を探す
-    const rows = [];
-    for (let row = 4; row <= range_Nd.e.r; row++) {
-      const mNo = this.getCellValue(ws_Nd, row, 2);
-      if (mNo.toString().trim().length > 0) {
-        const point_name =this.getCellValue(ws_Nd, row, 6);
-        const l =this.getCellValue(ws_Nd, row, 7);
-        rows.push({
-          mNo: mNo,
-          point_name,
-          l: Number(l),
-          row
-        });
-      }
-    }
-
-    // 書き込む
-    for (let No = 0; No < PickUpCase.length; No++) {
-      const key = ["M", "S", "N"];
-
-      for (let i = 0; i < key.length; i++) {
-
-        rows.forEach((item) => {
-          const mz = this.getCellValue(ws_Md, item.row, 8 + No);
-          const fy = this.getCellValue(ws_Vd, item.row, 8 + No);
-          const fx = this.getCellValue(ws_Nd, item.row, 8 + No);
-
-          result += this.spacePadding((No + 1).toString(), 5);
-          result += this.spacePadding(key[i], 5);
-          result += this.spacePadding(item.mNo, 5);
-          result += this.spacePadding(PickUpCase[No], 5);
-          result += this.spacePadding(PickUpCase[No], 5);
-          result += this.spacePadding(item.point_name, 5);
-          result += this.spacePadding(item.l.toFixed(3), 10);
-
-          result += this.spacePadding(Number(mz).toFixed(2), 10);
-          result += this.spacePadding(Number(fy).toFixed(2), 10);
-          result += this.spacePadding(Number(fx).toFixed(2), 10);
-
-          result += this.spacePadding(Number(mz).toFixed(2), 10);
-          result += this.spacePadding(Number(fy).toFixed(2), 10);
-          result += this.spacePadding(Number(fx).toFixed(2), 10);
-
-          result += "\n";
-        });
-      }
-    }
-    
-    // 読み込み処理を行う
+    // Midasのデータをcsv形式に変換する
+    const csv = midas2csv(wb);
+    // csv形式のピックアップデータとして読み込む
     let fileName = wb.Props?.Title || 'Convert Midas File'
-    fileName += ".pik";
-    this.readPickUpData(result, fileName, false);
-  }
-
-  // 指定の文字数になるまでスペースを追加する
-  private spacePadding(val, len) {
-    for (var i = 0; i < len; i++) {
-      val = " " + val;
-    }
-    return val.slice(-1 * len);
-  }
-
-  // シートからセルの値を取得
-  private getCellValue(ws, row, col): string {
-    const ad = utils.encode_cell({ r: row, c: col });
-    return ws[ad].v;
+    fileName += ".csv";
+    this.readPickUpData(csv, fileName, false);
   }
 
   // ファイルに保存用データを生成
