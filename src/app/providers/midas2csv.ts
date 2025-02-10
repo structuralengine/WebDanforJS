@@ -255,16 +255,18 @@ function extractLoadInfo(value: string | null): {
   let maxmin: "max" | "min" | null = null;
   if (value !== null) {
     const elms = /^\s*(.+)\s*(\(最[大小]\))\s*$/.exec(value);
-    loadName = elms[1];
-    switch (elms[2]) {
-      case "(最大)":
-        maxmin = "max";
-        break;
-      case "(最小)":
-        maxmin = "min";
-        break;
-      default:
-        break;
+    if (elms !== null && elms.length > 1) {
+      loadName = elms[1];
+      switch (elms[2]) {
+        case "(最大)":
+          maxmin = "max";
+          break;
+        case "(最小)":
+          maxmin = "min";
+          break;
+        default:
+          break;
+      }
     }
   }
   return { loadName, maxmin };
@@ -529,7 +531,7 @@ function toNumber(num: string | null): number | null {
 
     const tmp: string = num.toString().trim();
     if (tmp.length > 0) {
-      result = ((n: number) => (isNaN(n) ? null : n))(+tmp);
+      result = ((n: number) => (!isFinite(n) ? null : n))(+tmp);
     }
   } catch {
     result = null;
