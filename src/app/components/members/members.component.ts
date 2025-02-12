@@ -306,7 +306,8 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         {
           title: this.translate.instant("members.m_len"),
-          dataType: 'float', format: '#.000', dataIndx: 'm_len', editable: false, sortable: false, width: 90, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' }
+          dataType: 'float', format: '#.000', dataIndx: 'm_len', editable: false, sortable: false, width: 90, nodrag: true, style: { 'background': '#373e45' }, styleHead: { 'background': '#373e45' },
+          hidden: this.save.isMidasPickUp(), // Midasピックアップデータの場合は"部材長"を非表示にする
         },
       ];
     }

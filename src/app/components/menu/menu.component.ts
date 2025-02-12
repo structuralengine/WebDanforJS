@@ -670,7 +670,7 @@ export class MenuComponent implements OnInit {
       this.fileToBinary(file)
       .then((data) => {
         const workbook = read(data, { type: 'array' });
-        this.save.readMidasData(workbook); // データを読み込む
+        this.save.readMidasData(workbook, file.name); // データを読み込む
         this.pickup_file_name = this.save.getPickupFilename();
         modalRef.close();
       })

@@ -912,8 +912,10 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.grid.getColModel().forEach((column, index) => {
       const isInTargetRange = index >= startCellIndex && index <= endCellIndex;
       const isFixedCell = index <= FIXED_CELLS_COUNT;
+      // Midasピックアップデータの場合は"位置"を非表示にする
+      const isPositionColumn = column.dataIndx === "position" && this.save.isMidasPickUp();
 
-      column.hidden = !(isInTargetRange || isFixedCell);
+      column.hidden = isPositionColumn || !(isInTargetRange || isFixedCell);
     });
 
     this.grid.refreshDataAndView();

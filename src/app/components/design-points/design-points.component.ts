@@ -376,7 +376,8 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
       editable: false,
       nodrag: true,
       style: { 'background': '#373e45' },
-      styleHead: { 'background': '#373e45' }
+      styleHead: { 'background': '#373e45' },
+      hidden: this.save.isMidasPickUp(), // Midasピックアップデータの場合は"位置"を非表示にする
     },
     {
       title: this.translate.instant("design-points.p_name"),
