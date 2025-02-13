@@ -14,6 +14,7 @@
         "login":"ログイン",
         "fail":"ファイルを開くことに失敗しました, status:",
         "open":"を開いてください！",
+        "acceptedFile":"pik, csv, xls または xlsx ファイル形式を選択してください",
         "NewWindow":"新しいウィンドウ",
         "contact":"お問い合わせ",
         "message_ver":"現バージョンのWebDanは道路（β版）に対応しておりません",
@@ -27,8 +28,7 @@
         "login":"ログイン",
         "cancel":"キャンセル",
         "mail_check":"メールアドレスが確認できていません。",
-        "fail":"ログインに失敗しました。\n",
-        "acceptedFile":"pik または csv ファイル形式を選択してください"
+        "fail":"ログインに失敗しました。\n"
     },
     "app":{
         "basic_info":"基本データ",
