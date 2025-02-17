@@ -1243,7 +1243,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
           index >= startCellIndex && index <= endCellIndex;
         const isFixedCell = index <= FIXED_CELLS_COUNT;
         const isCheckCell = index === CHECK_CELL_INDEX;
-        column.hidden = !(isInTargetRange || isFixedCell || isCheckCell);
+        // Midasピックアップデータの場合は"位置"を非表示にする
+        const isPositionColumn = column.dataIndx === "position" && this.save.isMidasPickUp();
+        column.hidden = isPositionColumn || !(isInTargetRange || isFixedCell || isCheckCell);
         if (column.dataIndx === "tan" && this.activeTab === "rebar_ax") {
           column.hidden =
             this.basic.get_specification2() !== 3 &&

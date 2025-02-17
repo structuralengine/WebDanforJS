@@ -449,6 +449,7 @@ export class CrackSettingsComponent
           nodrag: true,
           style: { background: "#373e45" },
           styleHead: { background: "#373e45" },
+          hidden: this.save.isMidasPickUp(), // Midasピックアップデータの場合は"位置"を非表示にする
         },
       ];
     }

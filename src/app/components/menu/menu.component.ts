@@ -5,6 +5,7 @@ import { InputBasicInformationService } from '../basic-information/basic-informa
 // import { InputFatiguesService } from '../fatigues/fatigues.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
+import { read } from 'xlsx';
 
 import {
   Router,
@@ -637,17 +638,24 @@ export class MenuComponent implements OnInit {
   // ピックアップファイルを開く
   pickup(evt) {
     const file = evt.target.files[0];
-    var ext = /^.+\.([^.]+)$/.exec(file.name);
-    if (
-      ext != null &&
-      (ext[1].toLowerCase() == "pik" || ext[1].toLowerCase() == "csv")
-    ) {
-      const modalRef = this.modalService.open(WaitDialogComponent);
-      evt.target.value = "";
 
-      this.router.navigate(["/blank-page"]);
-      this.app.deactiveButtons();
+    this.showMenu = false;
 
+    let ext = this.helper.getExt(file.name); ///^.+\.([^.]+)$/.exec(file.name);
+    // nullじゃないことの確認
+    if ( ext == ''){
+      this.helper.alert(this.translate.instant("menu.acceptedFile"));
+      return;
+    }
+
+    const modalRef = this.modalService.open(WaitDialogComponent);
+    evt.target.value = "";
+
+    this.router.navigate(["/blank-page"]);
+    this.app.deactiveButtons();
+
+    ext = ext.toLowerCase();
+    if (ext == "pik" || ext == "csv" ) {
       this.fileToText(file)
         .then((text) => {
           this.save.readPickUpData(text, file.name, this.checkOpenDSD); // データを読み込む
@@ -658,10 +666,22 @@ export class MenuComponent implements OnInit {
           modalRef.close();
           console.log(err);
         });
+    } else if (ext == "xls" || ext == "xlsx" ) {
+      this.fileToBinary(file)
+      .then((data) => {
+        const workbook = read(data, { type: 'array' });
+        this.save.readMidasData(workbook, file.name); // データを読み込む
+        this.pickup_file_name = this.save.getPickupFilename();
+        modalRef.close();
+      })
+      .catch((err) => {
+        modalRef.close();
+        console.log(err);
+      });
     } else {
       this.helper.alert(this.translate.instant("menu.acceptedFile"));
+      return;
     }
-    this.showMenu = false;
   }
 
   // ファイルのテキストを読み込む
