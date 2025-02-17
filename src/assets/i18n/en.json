@@ -14,7 +14,7 @@
         "login":"Login",
         "fail":"Failed to open the file. status:",
         "open":"Please open",
-        "acceptedFile":"Please choose pik or csv file format",
+        "acceptedFile":"Please choose pik, csv, xls or xlsx file format",
         "NewWindow":"New window",
         "contact":"Contact",
         "message_ver":"The current version of WebDan does not support roads (beta version)",

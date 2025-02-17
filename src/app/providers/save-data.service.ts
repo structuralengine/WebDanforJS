@@ -18,6 +18,9 @@ import { InputMaterialStrengthVerificationConditionService } from "../components
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { TranslateService } from "@ngx-translate/core";
 
+import * as XLSX from 'xlsx';
+import { midas2csv } from "./midas2csv";
+
 @Injectable({
   providedIn: "root",
 })
@@ -88,12 +91,19 @@ export class SaveDataService {
     }
   }
 
-  // 3次元解析のピックアップデータかどうか判定する
+  // 3次元解析のピックアップデータかどうか判定する(Midasピックアップデータも含む)
   public is3DPickUp(): boolean {
-    if (this.helper.getExt(this.pickup_filename) === "csv") {
-      return true;
-    }
-    return false;
+    const ext = this.helper.getExt(this.pickup_filename);
+    return ext === "csv" || ext === "xls" || ext === "xlsx";
+  }
+
+  /**
+   * Midasピックアップデータかどうか判定する
+   * @returns true=Midasピックアップデータ、false=その他
+   */
+  public isMidasPickUp(): boolean {
+    const ext = this.helper.getExt(this.pickup_filename);
+    return ext === "xls" || ext === "xlsx";
   }
 
   // ピックアップファイルを読み込む
@@ -118,6 +128,7 @@ export class SaveDataService {
             data = this.pikFileRead(tmp[j]); // 2次元（平面）解析のピックアップデータ
             break;
           case "csv":
+          case "xls": case "xlsx": // Midasピックアップデータをcsvに変換したものが入力
             data = this.csvFileRead(line); // 3次元（立体）解析のピックアップデータ
             break;
           default:
@@ -258,6 +269,18 @@ export class SaveDataService {
       minMdz: this.helper.toNumber(line[18]),
     };
     // ※ このソフトでは 圧縮がプラス(+)
+  }
+
+  // Midasのピックアップファイルを読み込む
+  public readMidasData(wb: XLSX.WorkBook, filename: string): void {
+    // シートが含まれていなければ何もしない
+    if (wb.SheetNames.length === 0) {
+      return;
+    }
+    // Midasのデータをcsv形式に変換する
+    const csv = midas2csv(wb);
+    // csv形式のピックアップデータとして読み込む
+    this.readPickUpData(csv, filename, false);
   }
 
   // ファイルに保存用データを生成
