@@ -19,7 +19,8 @@
         "contact":"Contact",
         "message_ver":"The current version of WebDan does not support roads (beta version)",
         "removed_steel":"Removed steel frame data due to incompatibility",
-        "leave":"Your work will be lost. Do you want to leave this site?"
+        "leave":"Your work will be lost. Do you want to leave this site?",
+        "my_page": "My page"
     },
     "login-dialog":{
         "createAccount":"Creat account",

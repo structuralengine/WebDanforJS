@@ -889,4 +889,8 @@ export class MenuComponent implements OnInit {
     const elementChat = document.getElementById("chatplusheader");
     elementChat.click();
   }
+  
+  navigateMyPage() {
+    window.open('https://mypage.malme.app/', '_blank');
+  }
 }
