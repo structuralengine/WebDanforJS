@@ -4,8 +4,10 @@ import { nanoid } from 'nanoid';
 import axios from 'axios';
 import { Firestore, collection, doc, getDocs, getFirestore, onSnapshot } from '@angular/fire/firestore';
 import { MsalService } from '@azure/msal-angular';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { timer, Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 const APP = 'WebDan';
 const USER_PROFILE = 'userProfile';
@@ -114,5 +116,35 @@ export class UserInfoService {
       });
     }
     return listClaims;
+  }
+
+  
+  checkPermission() {
+    return timer(3000).pipe(
+      switchMap(() => this.getAcessToken()),
+      switchMap((res) => {
+        const header = new HttpHeaders({
+          'Authorization': `Bearer ${res}`,
+        });
+        return this.http.get(`${environment.mypageUrl}/user/check-permission`, { headers: header });
+      })
+    );
+  }
+
+  getAcessToken(): Observable<string> {
+    const request = { scopes: environment.apiConfig.scopes };
+    return new Observable<string>((observer) => {
+      this.authService.acquireTokenSilent(request).subscribe({
+        next: (result) => {
+          localStorage.setItem('webdan_accesstoken', result.accessToken);
+          observer.next(result.accessToken);
+          observer.complete();
+        },
+        error: (err) => {
+          console.error('Token error:', err);
+          observer.error(err);
+        }
+      });
+    });
   }
 }
