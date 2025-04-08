@@ -21,22 +21,22 @@ interface UserProfile {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserInfoService {
-  
   public uid: string = '';
   public deduct_points: number = 0;
   public daily_points: number = 0;
   public userProfile: UserProfile | null = null;
   public clientId: string = null;
   public activeSession: string = null;
+  public user: UserInfoService;
 
   constructor(
     public electronService: ElectronService,
     private db: Firestore,
     private authService: MsalService,
-    private http: HttpClient,
+    private http: HttpClient
   ) {
     this.db = getFirestore();
     const clientId = window.sessionStorage.getItem(CLIENT_ID);
@@ -46,7 +46,7 @@ export class UserInfoService {
       this.clientId = nanoid();
       window.sessionStorage.setItem(CLIENT_ID, this.clientId);
     }
-    
+
     this.initializeUserProfile();
   }
 
@@ -61,13 +61,20 @@ export class UserInfoService {
     } else {
       const isLoggedIn = this.authService.instance.getAllAccounts().length > 0;
       if (isLoggedIn) {
-        const listClaims = this.getClaims(this.authService.instance.getActiveAccount()?.idTokenClaims as Record<string, any>);
-          this.setUserProfile({
-            uid: listClaims.find(item => item.claim === "sub")?.value,
-            email: listClaims.find(item => item.claim === "emails")?.value[0],
-            firstName: listClaims.find(item => item.claim === "given_name")?.value,
-            lastName: listClaims.find(item => item.claim === "family_name")?.value
-          });
+        const listClaims = this.getClaims(
+          this.authService.instance.getActiveAccount()?.idTokenClaims as Record<
+            string,
+            any
+          >
+        );
+        this.setUserProfile({
+          uid: listClaims.find((item) => item.claim === 'sub')?.value,
+          email: listClaims.find((item) => item.claim === 'emails')?.value[0],
+          firstName: listClaims.find((item) => item.claim === 'given_name')
+            ?.value,
+          lastName: listClaims.find((item) => item.claim === 'family_name')
+            ?.value,
+        });
       } else {
         this.setUserProfile(null);
       }
@@ -79,9 +86,12 @@ export class UserInfoService {
     window.localStorage.setItem(USER_PROFILE, JSON.stringify(userProfile));
     if (this.userProfile) {
       this.setActiveSession();
-      onSnapshot(doc(this.db, "sessions", this.userProfile.uid, "active_sessions", APP), (doc) => {
-        this.activeSession = doc.data().session_id;
-      });
+      onSnapshot(
+        doc(this.db, 'sessions', this.userProfile.uid, 'active_sessions', APP),
+        (doc) => {
+          this.activeSession = doc.data().session_id;
+        }
+      );
     } else {
       this.activeSession = null;
     }
@@ -89,44 +99,50 @@ export class UserInfoService {
 
   setActiveSession() {
     if (this.userProfile) {
-      axios.post('https://asia-northeast1-strcutural-engine.cloudfunctions.net/manage-session/', {
-        uid: this.userProfile.uid,
-        app: APP,
-        session_id: this.clientId,
-      });
+      axios.post(
+        'https://asia-northeast1-strcutural-engine.cloudfunctions.net/manage-session/',
+        {
+          uid: this.userProfile.uid,
+          app: APP,
+          session_id: this.clientId,
+        }
+      );
     }
   }
 
-  public clear(uid: string): void{
+  public clear(uid: string): void {
     this.uid = uid;
     this.deduct_points = 0;
     this.daily_points = 0;
   }
 
-  public setUserPoint(_deduct_points: number, _daily_points: number){
+  public setUserPoint(_deduct_points: number, _daily_points: number) {
     this.deduct_points += _deduct_points;
     this.daily_points = Math.max(this.daily_points, _daily_points);
   }
 
   getClaims(claims: Record<string, any>) {
-    const listClaims = []
+    const listClaims = [];
     if (claims) {
-      Object.entries(claims).forEach((claim: [string, unknown], index: number) => {
-        listClaims.push({ id: index, claim: claim[0], value: claim[1] });
-      });
+      Object.entries(claims).forEach(
+        (claim: [string, unknown], index: number) => {
+          listClaims.push({ id: index, claim: claim[0], value: claim[1] });
+        }
+      );
     }
     return listClaims;
   }
 
-  
   checkPermission() {
     return timer(3000).pipe(
       switchMap(() => this.getAcessToken()),
       switchMap((res) => {
         const header = new HttpHeaders({
-          'Authorization': `Bearer ${res}`,
+          Authorization: `Bearer ${res}`,
         });
-        return this.http.get(`${environment.mypageUrl}/user/check-permission`, { headers: header });
+        return this.http.get(`${environment.mypageUrl}/user/check-permission`, {
+          headers: header,
+        });
       })
     );
   }
@@ -143,7 +159,7 @@ export class UserInfoService {
         error: (err) => {
           console.error('Token error:', err);
           observer.error(err);
-        }
+        },
       });
     });
   }

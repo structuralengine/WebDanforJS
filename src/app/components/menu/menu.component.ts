@@ -383,7 +383,7 @@ export class MenuComponent implements OnInit {
           return;
         } else {
           const isForceLogout = true;
-          alert('No access to app')
+          // alert('No access to app')
           localStorage.removeItem('frameweb_accesstoken');
           localStorage.removeItem('webdan_roles');
           this.logoutMS(isForceLogout);
@@ -458,41 +458,68 @@ export class MenuComponent implements OnInit {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGOUT)
       this.user.setUserProfile(null);
     } else {
-      const isConfirm = await this.helper.confirm(
-        this.translate.instant("menu.leave"), this.translate.instant("window.leaveTitle"),
-      );
-      if (isForceLogout) {
-        this.authService.instance
-          .handleRedirectPromise()
-          .then((tokenResponse) => {
-            if (!tokenResponse) {
-              this.user.setUserProfile(null);
-              localStorage.removeItem('webdan_accesstoken');
-              localStorage.removeItem('webdan_roles');
-              this.authService.logoutRedirect();
-              window.sessionStorage.setItem("openStart", "1");
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-        return;
+      if(isForceLogout) {
+        try {
+          const isConfirm = await this.helper.notify(
+            this.translate.instant('menu.logoutMessage'),
+            this.translate.instant('menu.logoutTitle')
+          );
+          if (isConfirm) {
+            await this.authService.instance
+              .handleRedirectPromise()
+              .then((tokenResponse) => {
+                if (!tokenResponse) {
+                  this.user.setUserProfile(null);
+                  localStorage.removeItem('webdan_accesstoken');
+                  localStorage.removeItem('webdan_roles');
+                  this.authService.logoutRedirect();
+                }
+              })
+              .catch((err) => {
+                // Handle error
+                console.error(err);
+              });
+          }
+        } catch (err) {
+          console.error(err);
+          this.authService.instance
+            .handleRedirectPromise()
+            .then((tokenResponse) => {
+              if (!tokenResponse) {
+                this.user.setUserProfile(null);
+                localStorage.removeItem('webdan_accesstoken');
+                localStorage.removeItem('webdan_roles');
+                this.authService.logoutRedirect();
+                window.sessionStorage.setItem('openStart', '1');
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+          return;
+        }
       }
-      if (isConfirm) {
-        await this.authService.instance
-          .handleRedirectPromise()
-          .then((tokenResponse) => {
-            if (!tokenResponse) {
-              this.user.setUserProfile(null);
-              localStorage.removeItem('webdan_accesstoken');
-              localStorage.removeItem('webdan_roles');
-              this.authService.logoutRedirect();
-            }
-          })
-          .catch((err) => {
-            // Handle error
-            console.error(err);
-          });
+      else {
+         const isConfirm = await this.helper.confirm(
+          this.translate.instant('menu.leave'),
+            this.translate.instant('window.leaveTitle')
+          );
+          if (isConfirm) {
+            await this.authService.instance
+              .handleRedirectPromise()
+              .then((tokenResponse) => {
+                if (!tokenResponse) {
+                  this.user.setUserProfile(null);
+                  localStorage.removeItem('webdan_accesstoken');
+                  localStorage.removeItem('webdan_roles');
+                  this.authService.logoutRedirect();
+                }
+              })
+              .catch((err) => {
+                // Handle error
+                console.error(err);
+              });
+          }
       }
     }
   }

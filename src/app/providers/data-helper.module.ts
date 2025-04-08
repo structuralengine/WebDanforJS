@@ -24,12 +24,34 @@ export class DataHelperModule {
     }
   }
 
+  // 通知ダイアログを表示する
+  public async notify(message: string, title?: string | undefined): Promise<boolean> {
+    if (this.electronService.isElectron) {
+      this.electronService.ipcRenderer.sendSync('alert', message);
+      return true;
+    } else {
+      const modalRef = this.modalService.open(AlertDialogComponent, {
+        centered: true,
+        backdrop: true,
+        keyboard: true,
+        size: "md",
+        windowClass: "notify-modal",
+      });
+      modalRef.componentInstance.message = message;
+      modalRef.componentInstance.title = title;
+      modalRef.componentInstance.dialogMode = "alert";
+
+      const result = await modalRef.result;
+      return result === "ok";
+    }
+  }
+
   //Yes/Noのダイアログを表示する
   public async confirm(message: string, title?: string | undefined): Promise<boolean> {
     if (this.electronService.isElectron) {
       var r = await this.electronService.ipcRenderer.sendSync('alertConfirm', message);
       return r === 0;
-    } 
+    }
     else {
       const modalRef = this.modalService.open(AlertDialogComponent, {
         centered: true,
