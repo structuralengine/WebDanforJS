@@ -255,6 +255,7 @@
         "s_len_a":"せん断スパン長\n a(mm)",
         "fixed_end":"両端固定",
         "m_len":"部材長さ(mm)",
+        "antisymmetric_bending":"逆対称曲げ",
         "consider_shear":"せん断スパン比の影響を考慮する",
         "concrete":"コンクリート",
         "reinforcement_bar":"せん断補強鉄筋"
