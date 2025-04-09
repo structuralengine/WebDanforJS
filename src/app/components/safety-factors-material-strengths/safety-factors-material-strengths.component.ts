@@ -1233,6 +1233,7 @@ export class SafetyFactorsMaterialStrengthsComponent
               "safety-factors-material-strengths.d25"
             ),
             dataIndx: "options1",
+            align: "center",
             sortable: false,
             width: 112,
             nodrag: true,
@@ -1254,6 +1255,7 @@ export class SafetyFactorsMaterialStrengthsComponent
               "safety-factors-material-strengths.d29"
             ),
             dataIndx: "options2",
+            align: "center",
             sortable: false,
             width: 112,
             nodrag: true,
