@@ -80,7 +80,7 @@
     "ngx-multi-window": "^0.6.0",
     "ngx-print": "~1.2.1",
     "pako": "^2.0.2",
-    "pqgrid": "file:./paramquery-9.0.1/",
+    "pqgrid": "file:./paramquery-10.1.0/",
     "print-js": "^1.6.0",
     "rxfire": "^6.0.3",
     "rxjs": "~6.6.0",
