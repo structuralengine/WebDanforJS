@@ -944,7 +944,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                   "safety-factors-material-strengths.γc_safe"
                 ),
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "M_rc",
                 sortable: false,
                 width: 70,
@@ -961,7 +961,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                   "safety-factors-material-strengths.γs_safe"
                 ),
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "M_rs",
                 sortable: false,
                 width: 70,
@@ -994,7 +994,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                   "safety-factors-material-strengths.γbs"
                 ),
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "M_rbs",
                 sortable: false,
                 width: 70,
@@ -1035,7 +1035,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                   "safety-factors-material-strengths.γc_safe"
                 ),
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "V_rc",
                 sortable: false,
                 width: 70,
@@ -1052,7 +1052,7 @@ export class SafetyFactorsMaterialStrengthsComponent
                   "safety-factors-material-strengths.γs_safe"
                 ),
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "V_rs",
                 sortable: false,
                 width: 70,
@@ -1082,7 +1082,7 @@ export class SafetyFactorsMaterialStrengthsComponent
               {
                 title: "Vcd, Vod, Vwcd",
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "V_rbc",
                 sortable: false,
                 width: 70,
@@ -1097,7 +1097,7 @@ export class SafetyFactorsMaterialStrengthsComponent
               {
                 title: "Vsd, frd",
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "V_rbs",
                 sortable: false,
                 width: 70,
@@ -1112,7 +1112,7 @@ export class SafetyFactorsMaterialStrengthsComponent
               {
                 title: "Vdd",
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "V_rbv",
                 sortable: false,
                 width: 70,
@@ -1127,7 +1127,7 @@ export class SafetyFactorsMaterialStrengthsComponent
               {
                 title: "Mtcd, Mtyd, Mtcud",
                 dataType: "float",
-                format: "#.00",
+                format: "0.00",
                 dataIndx: "T_rbt",
                 sortable: false,
                 width: 70,
@@ -1166,7 +1166,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       {
         title: this.translate.instant("safety-factors-material-strengths.γi"),
         dataType: "float",
-        format: "#.00",
+        format: "0.00",
         dataIndx: "ri",
         sortable: false,
         width: 70,
@@ -1387,7 +1387,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         ),
         align: "right",
         dataType: "float",
-        format: "#.0",
+        format: "0.0",
         dataIndx: "value",
         editable: (op) => {
           const value = op.rowData.value;
@@ -1426,7 +1426,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       {
         title: "γs",
         dataType: "float",
-        format: "#.00",
+        format: "0.00",
         dataIndx: "S_rs",
         sortable: false,
         width: 70,
@@ -1435,7 +1435,7 @@ export class SafetyFactorsMaterialStrengthsComponent
       {
         title: "γb",
         dataType: "float",
-        format: "#.00",
+        format: "0.00",
         dataIndx: "S_rb",
         sortable: false,
         width: 70,

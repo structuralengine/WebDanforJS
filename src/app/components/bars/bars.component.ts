@@ -551,7 +551,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           title: this.translate.instant("bars.position"),
           dataType: "float",
-          format: "#.000",
+          format: "0.000",
           dataIndx: "position",
           editable: false,
           frozen: true,
