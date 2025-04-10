@@ -287,7 +287,7 @@ export class ShearComponent implements OnInit {
           {
             title: this.translate.instant("shear-strength.position"),
             dataType: "float",
-            format: "#.000",
+            format: "0.000",
             dataIndx: "position",
             editable: false,
             frozen: true,
@@ -402,7 +402,7 @@ export class ShearComponent implements OnInit {
           {
             title: this.translate.instant("shear-strength.position"),
             dataType: "float",
-            format: "#.000",
+            format: "0.000",
             dataIndx: "position",
             editable: false,
             frozen: true,
