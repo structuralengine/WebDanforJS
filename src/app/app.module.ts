@@ -231,7 +231,6 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
         MsalGuard,
         MsalBroadcastService
     ],
-    entryComponents: [PreviewExcelComponent],
     bootstrap: [AppComponent, MsalRedirectComponent]
 })
 export class AppModule {}
