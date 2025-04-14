@@ -255,6 +255,7 @@
         "s_len_a":"Shear span length\n a(mm)",
         "fixed_end":"fixed end",
         "m_len":"Distance (mm)",
+        "antisymmetric_bending":"Antisymmetric bending",
         "consider_shear":"Consider the effect of shear span ratio",
         "concrete":"concrete",
         "reinforcement_bar":"shear reinforcement bar"

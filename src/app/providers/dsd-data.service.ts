@@ -15,7 +15,6 @@ import { InputSectionForcesService } from '../components/section-forces/section-
 import { InputSteelsService } from '../components/steels/steels.service';
 import { ShearStrengthService } from '../components/shear/shear-strength.service';
 import { data } from 'jquery';
-import { worker } from 'cluster';
 
 @Injectable({
   providedIn: 'root'
