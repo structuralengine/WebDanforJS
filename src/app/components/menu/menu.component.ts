@@ -213,8 +213,22 @@ export class MenuComponent implements OnInit {
               ?.value,
           };
           if (profile.uid) {
-            this.setUserProfile(profile);
-            this.checkUserPermission();
+            // this.setUserProfile(profile);
+            // this.checkUserPermission();
+            const role = listClaims.find(
+              (item) => item.claim === "extension_Role"
+            )?.value;
+            if (role && role.includes(environment.productionRole)) {
+              localStorage.setItem("malme_roles", JSON.stringify(role));
+              this.setUserProfile(profile);
+              return;
+            } else {
+              const isForceLogout = true;
+              // alert('No access to app')
+              localStorage.removeItem("frameweb_accesstoken");
+              localStorage.removeItem("malme_roles");
+              this.logoutMS(isForceLogout);
+            }
           }
         }
       );
@@ -450,6 +464,40 @@ export class MenuComponent implements OnInit {
             }
           });
       }
+    }
+  }
+
+  functionHandleRedirectPromise() {
+    this.authService.instance
+    .handleRedirectPromise()
+    .then((tokenResponse) => {
+      if (!tokenResponse) {
+        this.user.setUserProfile(null);
+        localStorage.removeItem("frameweb_accesstoken");
+        localStorage.removeItem("malme_roles");
+        this.authService.logoutRedirect();
+        window.sessionStorage.setItem("openStart", "1");
+      } else {
+        // Do something with the tokenResponse
+      }
+    })
+    .catch((err) => {
+      // Handle error
+      console.error(err);
+    });
+  }
+
+  async handleForceLogout() {
+    try {
+      const isNotify = await this.helper.notify(
+        this.translate.instant("menu.logoutMessage"),
+        this.translate.instant("menu.logoutTitle")
+      );
+      if (isNotify) {
+        this.functionHandleRedirectPromise()
+      }
+    } catch (error) {
+      this.functionHandleRedirectPromise()
     }
   }
 

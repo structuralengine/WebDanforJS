@@ -18,6 +18,8 @@ interface UserProfile {
   email: string;
   firstName: string;
   lastName: string;
+  extension_Role?: string;
+  malme_roles?: string;
 }
 
 @Injectable({
@@ -61,20 +63,15 @@ export class UserInfoService {
     } else {
       const isLoggedIn = this.authService.instance.getAllAccounts().length > 0;
       if (isLoggedIn) {
-        const listClaims = this.getClaims(
-          this.authService.instance.getActiveAccount()?.idTokenClaims as Record<
-            string,
-            any
-          >
-        );
-        this.setUserProfile({
-          uid: listClaims.find((item) => item.claim === 'sub')?.value,
-          email: listClaims.find((item) => item.claim === 'emails')?.value[0],
-          firstName: listClaims.find((item) => item.claim === 'given_name')
-            ?.value,
-          lastName: listClaims.find((item) => item.claim === 'family_name')
-            ?.value,
-        });
+        const listClaims = this.getClaims(this.authService.instance.getActiveAccount()?.idTokenClaims as Record<string, any>);
+          this.setUserProfile({
+            uid: listClaims.find(item => item.claim === "sub")?.value,
+            email: listClaims.find(item => item.claim === "emails")?.value[0],
+            firstName: listClaims.find(item => item.claim === "given_name")?.value,
+            lastName: listClaims.find(item => item.claim === "family_name")?.value,
+            extension_Role: listClaims.find(item => item.claim === "extension_Role")?.value,
+            malme_roles: listClaims.find(item => item.claim === "extension_Role" || item.claim === "malme_roles")?.value,
+          });
       } else {
         this.setUserProfile(null);
       }
