@@ -22,7 +22,7 @@ import { SaveDataService } from "../../providers/save-data.service";
 import { ConfigService } from "../../providers/config.service";
 import { DsdDataService } from "src/app/providers/dsd-data.service";
 
-import {DataHelperModule} from "src/app/providers/data-helper.module";
+import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { InputMembersService } from "../members/members.service";
 import { InputDesignPointsService } from "../design-points/design-points.service";
 // import { Auth, getAuth } from "@angular/fire/auth";
@@ -213,7 +213,22 @@ export class MenuComponent implements OnInit {
               ?.value,
           };
           if (profile.uid) {
-            this.setUserProfile(profile);
+            // this.setUserProfile(profile);
+            // this.checkUserPermission();
+            const role = listClaims.find(
+              (item) => item.claim === "extension_Role"
+            )?.value;
+            if (role && role.includes(environment.productionRole)) {
+              localStorage.setItem("malme_roles", JSON.stringify(role));
+              this.setUserProfile(profile);
+              return;
+            } else {
+              const isForceLogout = true;
+              // alert('No access to app')
+              localStorage.removeItem("frameweb_accesstoken");
+              localStorage.removeItem("malme_roles");
+              this.logoutMS(isForceLogout);
+            }
           }
         }
       );
@@ -262,6 +277,7 @@ export class MenuComponent implements OnInit {
                 ?.value,
             };
             this.setUserProfile(profile);
+            this.checkUserPermission();
           }
         });
 
@@ -373,6 +389,31 @@ export class MenuComponent implements OnInit {
     });
   }
 
+  checkUserPermission() {
+    this.user.checkPermission().subscribe({
+      next: (res: any) => {
+        if (res.roles && res.roles.includes(environment.productionRole)) {
+          localStorage.setItem('malme_roles', JSON.stringify(res.roles));
+          return;
+        } else {
+          const isForceLogout = true;
+          // alert('No access to app')
+          localStorage.removeItem('frameweb_accesstoken');
+          localStorage.removeItem('webdan_roles');
+          this.logoutMS(isForceLogout);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        const isForceLogout = true;
+        alert('No access to app')
+        localStorage.removeItem('frameweb_accesstoken');
+        localStorage.removeItem('webdan_roles');
+        this.logoutMS(isForceLogout);
+      }
+    });
+  }
+
   setLoginDisplay() {
     this.loginDisplay = this.authService.instance.getAllAccounts().length > 0;
   }
@@ -400,58 +441,86 @@ export class MenuComponent implements OnInit {
     } else {
       //If you ignore the alert, it is considered as confirmation to leave the page.
       let isConfirm = false;
-      if(ignoreAlert) isConfirm = true;
-      else
-      {
+      if (ignoreAlert) isConfirm = true;
+      else {
         isConfirm = await this.helper.confirm(
-          this.translate.instant("menu.leave"),  this.translate.instant("window.leaveTitle"),
+          this.translate.instant("menu.leave"), this.translate.instant("window.leaveTitle"),
         );
       }
 
       if (!this.loginDisplay && isConfirm) {
         this.msalBroadcastService.inProgress$
-        .pipe(
-          filter(
-            (status: InteractionStatus) => status === InteractionStatus.None
+          .pipe(
+            filter(
+              (status: InteractionStatus) => status === InteractionStatus.None
+            )
           )
-        )
-        .subscribe(async () => {
-          if (this.msalGuardConfig.authRequest) {
-            await this.authService.loginRedirect({ ...this.msalGuardConfig.authRequest, ...userFlowRequest } as RedirectRequest);
-            await this.authService.acquireTokenRedirect({ ...this.msalGuardConfig.authRequest } as RedirectRequest)
-          } else {
-            await this.authService.loginRedirect( userFlowRequest);
-          }
-        });
+          .subscribe(async () => {
+            if (this.msalGuardConfig.authRequest) {
+              await this.authService.loginRedirect({ ...this.msalGuardConfig.authRequest, ...userFlowRequest } as RedirectRequest);
+              await this.authService.acquireTokenRedirect({ ...this.msalGuardConfig.authRequest } as RedirectRequest)
+            } else {
+              await this.authService.loginRedirect(userFlowRequest);
+            }
+          });
       }
     }
   }
 
-  async logoutMS() {
+  functionHandleRedirectPromise() {
+    this.authService.instance
+    .handleRedirectPromise()
+    .then((tokenResponse) => {
+      if (!tokenResponse) {
+        this.user.setUserProfile(null);
+        localStorage.removeItem("frameweb_accesstoken");
+        localStorage.removeItem("malme_roles");
+        this.authService.logoutRedirect();
+        window.sessionStorage.setItem("openStart", "1");
+      } else {
+        // Do something with the tokenResponse
+      }
+    })
+    .catch((err) => {
+      // Handle error
+      console.error(err);
+    });
+  }
+
+  async handleForceLogout() {
+    try {
+      const isNotify = await this.helper.notify(
+        this.translate.instant("menu.logoutMessage"),
+        this.translate.instant("menu.logoutTitle")
+      );
+      if (isNotify) {
+        this.functionHandleRedirectPromise()
+      }
+    } catch (error) {
+      this.functionHandleRedirectPromise()
+    }
+  }
+
+  async logoutMS(isForceLogout?: boolean) {
     if (this.electronService.isElectron) {
       this.electronService.ipcRenderer.send(IPC_MESSAGES.LOGOUT)
       this.user.setUserProfile(null);
+      window.sessionStorage.setItem("openStart", "1");
+      if (isForceLogout) {
+        await this.handleForceLogout()
+        return;
+      }
     } else {
+      if(isForceLogout) {
+        await this.handleForceLogout()
+        return;
+      }
       const isConfirm = await this.helper.confirm(
-        this.translate.instant("menu.leave"),  this.translate.instant("window.leaveTitle"),
+        this.translate.instant('menu.leave'),
+        this.translate.instant('window.leaveTitle')
       );
-
-      if(isConfirm)
-      {
-        await this.authService.instance
-        .handleRedirectPromise()
-        .then((tokenResponse) => {
-          if (!tokenResponse) {
-            this.user.setUserProfile(null);
-            this.authService.logoutRedirect();
-          } else {
-            // Do something with the tokenResponse
-          }
-        })
-        .catch((err) => {
-          // Handle error
-          console.error(err);
-        });
+      if (isConfirm) {
+        this.functionHandleRedirectPromise()
       }
     }
   }
@@ -643,7 +712,7 @@ export class MenuComponent implements OnInit {
 
     let ext = this.helper.getExt(file.name); ///^.+\.([^.]+)$/.exec(file.name);
     // nullじゃないことの確認
-    if ( ext == ''){
+    if (ext == '') {
       this.helper.alert(this.translate.instant("menu.acceptedFile"));
       return;
     }
@@ -655,7 +724,7 @@ export class MenuComponent implements OnInit {
     this.app.deactiveButtons();
 
     ext = ext.toLowerCase();
-    if (ext == "pik" || ext == "csv" ) {
+    if (ext == "pik" || ext == "csv") {
       this.fileToText(file)
         .then((text) => {
           this.save.readPickUpData(text, file.name, this.checkOpenDSD); // データを読み込む
@@ -666,18 +735,18 @@ export class MenuComponent implements OnInit {
           modalRef.close();
           console.log(err);
         });
-    } else if (ext == "xls" || ext == "xlsx" ) {
+    } else if (ext == "xls" || ext == "xlsx") {
       this.fileToBinary(file)
-      .then((data) => {
-        const workbook = read(data, { type: 'array' });
-        this.save.readMidasData(workbook, file.name); // データを読み込む
-        this.pickup_file_name = this.save.getPickupFilename();
-        modalRef.close();
-      })
-      .catch((err) => {
-        modalRef.close();
-        console.log(err);
-      });
+        .then((data) => {
+          const workbook = read(data, { type: 'array' });
+          this.save.readMidasData(workbook, file.name); // データを読み込む
+          this.pickup_file_name = this.save.getPickupFilename();
+          modalRef.close();
+        })
+        .catch((err) => {
+          modalRef.close();
+          console.log(err);
+        });
     } else {
       this.helper.alert(this.translate.instant("menu.acceptedFile"));
       return;
@@ -741,7 +810,7 @@ export class MenuComponent implements OnInit {
     if (this.electronService.isElectron) {
       this.modalService
         .open(LoginDialogComponent, { backdrop: false })
-        .result.then((result) => {});
+        .result.then((result) => { });
     } else {
       //this.keycloak.login();
     }
