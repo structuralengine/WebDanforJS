@@ -1,25 +1,27 @@
 {
     "menu": {
-        "softName": "WebDanforJS",
-        "file": "file",
-        "newEntry":"Create a new file",
-        "openFile":"Open file",
-        "saveFile":"Save a file",
-        "overwrite":"Overwrite save",
-        "openPick":"Open the pickup file",
-        "language": "Language",
-        "help": "Manual",
-        "control": "Control",
-        "logout":"Logout",
-        "login":"Login",
-        "fail":"Failed to open the file. status:",
-        "open":"Please open",
-        "acceptedFile":"Please choose pik, csv, xls or xlsx file format",
-        "NewWindow":"New window",
-        "contact":"Contact",
-        "message_ver":"The current version of WebDan does not support roads (beta version)",
-        "removed_steel":"Removed steel frame data due to incompatibility",
-        "leave":"Your work will be lost. Do you want to leave this site?"
+      "softName": "WebDanforJS",
+      "file": "file",
+      "newEntry": "Create a new file",
+      "openFile": "Open file",
+      "saveFile": "Save a file",
+      "overwrite": "Overwrite save",
+      "openPick": "Open the pickup file",
+      "language": "Language",
+      "help": "Manual",
+      "control": "Control",
+      "logout": "Logout",
+      "login": "Login",
+      "fail": "Failed to open the file. status:",
+      "open": "Please open",
+      "acceptedFile": "Please choose pik, csv, xls or xlsx file format",
+      "NewWindow": "New window",
+      "contact": "Contact",
+      "message_ver": "The current version of WebDan does not support roads (beta version)",
+      "removed_steel": "Removed steel frame data due to incompatibility",
+      "leave": "Your work will be lost. Do you want to leave this site?",
+      "logoutTitle": "You don’t have access",
+      "logoutMessage": "Your account does not have permission to access the Webdan system.\nPlease contact Malme administrator for more information."
     },
     "login-dialog":{
         "createAccount":"Creat account",
@@ -298,12 +300,12 @@
         "rsb_con":"Reinforcing bar ・ Concrete",
         "rebar_ax":"Axial rebar",
         "rebar_la":"Lateral rebar",
-        "stirrup":"Stirrup",     
+        "stirrup":"Stirrup",
         "ys":"Yield strength(N/mm2)",
         "d25":"D25 or less",
         "d29":"D29 and above",
         "dts":"Design tensile strength(N/mm2)",
-        "r_mta":"Reinforcing bar material strength",   
+        "r_mta":"Reinforcing bar material strength",
         "sei_ver": "Seismic Verification Conditions",
         "c_mta":"Concrete material strength",
         "si": "Situation",
@@ -448,7 +450,7 @@
         "exam_max":"Examination of maximum rebar amount",
         "summary":"Summary table",
         "deduct_points":"points consumed. Today's usage is",
-        "daily_points":"points." 
+        "daily_points":"points."
     },
     "result-summary-table":{
         "unit":"Unit",
@@ -541,7 +543,7 @@
         "env":"condition",
         "typ_steel":"Types of steel",
         "fit_typ":"Fitting type",
-        "str_grade":"Strength grade",          
+        "str_grade":"Strength grade",
         "sh_span":"Shear span (mm)",
         "sh_span_ratio":"Shear span ratio",
         "gen_env":"General environment",
@@ -615,7 +617,7 @@
     "modal": {
         "close": "Close",
         "cancel": "Cancel",
-        "ok": "OK",       
+        "ok": "OK",
         "updateMessage": "Update is available.\nDo you want to reboot to perform the update?\nIf you choose to cancel, the application will be automatically updated after it is closed."
     },
     "window": {
@@ -638,5 +640,5 @@
         "HorizontalOval": "Horizontal Oval",
         "VerticalOval": "Vertical Oval",
         "CircleRing": "Circle・Ring"
-    }    
+    }
 }
