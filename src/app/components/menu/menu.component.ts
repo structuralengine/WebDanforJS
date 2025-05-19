@@ -958,8 +958,15 @@ export class MenuComponent implements OnInit {
     const elementChat = document.getElementById("chatplusheader");
     elementChat.click();
   }
-  
+
   navigateMyPage() {
-    window.open('https://mypage.malme.app/', '_blank');
+    // Open user's personal page in a new browser tab with security best practices
+    const url = 'https://mypage.malme.app/';
+    const newTab = window.open(url, '_blank', 'noopener,noreferrer');
+
+    if (!newTab) {
+      console.error('Failed to open new tab. The browser may have blocked it.');
+    }
   }
+
 }
