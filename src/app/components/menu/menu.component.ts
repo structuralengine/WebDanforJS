@@ -962,5 +962,4 @@ export class MenuComponent implements OnInit {
   navigateMyPage() {
     window.open('https://mypage.malme.app/', '_blank');
   }
-
 }
