@@ -968,5 +968,4 @@ export class MenuComponent implements OnInit {
       console.error('Failed to open new tab. The browser may have blocked it.');
     }
   }
-
 }
