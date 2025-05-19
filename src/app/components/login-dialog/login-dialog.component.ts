@@ -84,6 +84,8 @@ export class LoginDialogComponent implements OnInit {
               email: profile.email,
               firstName: profile.given_name,
               lastName: profile.family_name,
+              extension_Role: profile.extension_Role || 'none',
+              malme_roles: profile.extension_Role || profile.malme_roles || 'none',
             });
           })
           .catch(error => {

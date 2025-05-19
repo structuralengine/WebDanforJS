@@ -242,7 +242,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
         {
           title: this.translate.instant("design-points.position"),
           dataType: "float",
-          format: "#.000",
+          format: "0.000",
           dataIndx: "position",
           frozen: true,
           sortable: false,
@@ -368,7 +368,7 @@ export class DesignPointsComponent implements OnInit, OnDestroy, AfterViewInit {
     {
       title: this.translate.instant("design-points.position"),
       dataType: "float",
-      format: "#.000",
+      format: "0.000",
       dataIndx: "position",
       frozen: true,
       sortable: false,
