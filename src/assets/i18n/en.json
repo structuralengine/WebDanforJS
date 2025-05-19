@@ -20,6 +20,7 @@
       "message_ver": "The current version of WebDan does not support roads (beta version)",
       "removed_steel": "Removed steel frame data due to incompatibility",
       "leave": "Your work will be lost. Do you want to leave this site?",
+      "my_page": "My page",
       "logoutTitle": "You don’t have access",
       "logoutMessage": "Your account does not have permission to access the Webdan system.\nPlease contact Malme administrator for more information."
     },

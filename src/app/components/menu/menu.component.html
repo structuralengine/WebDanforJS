@@ -419,7 +419,8 @@
           <div ngbDropdown>
               <a class="icon file" id="dropdownBasic1" class="menu-btn menu-item" ngbDropdownToggle
                   onfocus="this.blur();"><i class="far fa-user-circle"></i>{{ user.lastName + user.firstName }}</a>
-              <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="sub-menu">
+                  <a (click)="navigateMyPage()" class="menu-btn logOut text-center menu-item dropdown-item" translate>menu.my_page</a>
                   <a  (click)="logoutMS()" class="menu-btn logOut menu-item dropdown-item" translate>menu.logout</a>
               </div>
           </div>
