@@ -210,7 +210,7 @@ export class InputSectionForcesService {
           {
             title: "Md<br/>(kN・m)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Md",
             sortable: false,
             width: 100,
@@ -219,7 +219,7 @@ export class InputSectionForcesService {
           {
             title: "Nd<br/>(kN)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Nd",
             sortable: false,
             width: 100,
@@ -232,7 +232,7 @@ export class InputSectionForcesService {
           {
             title: "Vd<br/>(kN)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Vd",
             sortable: false,
             width: 100,
@@ -241,7 +241,7 @@ export class InputSectionForcesService {
           {
             title: "Md<br/>(kN・m)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Md",
             sortable: false,
             width: 100,
@@ -250,7 +250,7 @@ export class InputSectionForcesService {
           {
             title: "Nd<br/>(kN)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Nd",
             sortable: false,
             width: 100,
@@ -263,7 +263,7 @@ export class InputSectionForcesService {
           {
             title: "Mt<br/>(kN・m)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Mt",
             sortable: false,
             width: 100,
@@ -272,7 +272,7 @@ export class InputSectionForcesService {
           {
             title: "Md<br/>(kN・m)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Md",
             sortable: false,
             width: 100,
@@ -281,7 +281,7 @@ export class InputSectionForcesService {
           {
             title: "Vd<br/>(kN)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Vd",
             sortable: false,
             width: 100,
@@ -290,7 +290,7 @@ export class InputSectionForcesService {
           {
             title: "Nd<br/>(kN)",
             dataType: "float",
-            format: "#.00",
+            format: "0.00",
             dataIndx: key + "_Nd",
             sortable: false,
             width: 100,

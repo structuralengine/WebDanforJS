@@ -287,7 +287,7 @@ export class ShearComponent implements OnInit {
           {
             title: this.translate.instant("shear-strength.position"),
             dataType: "float",
-            format: "#.000",
+            format: "0.000",
             dataIndx: "position",
             editable: false,
             frozen: true,
@@ -328,20 +328,20 @@ export class ShearComponent implements OnInit {
       // 令和5年 RC標準
       const speci1 = this.basic.get_specification1();
       const speci2 = this.basic.get_specification2();
-      if ((speci1 === 0 || speci1 === 1 || speci1 === 3 ) && (speci2 === 3 || speci2 === 4 || speci2 == 0|| speci2 == 1 )) {
-        this.columnHeaders.push(
-          {
-            title: this.translate.instant("shear-strength.fixed_end"),
-            align: "center",
-            dataType: "bool",
-            dataIndx: "fixed_end",
-            type: "checkbox",
-            sortable: false,
-            width: 100,
-            nodrag: true,
-          },
-        );
-        if (speci2 === 3 || speci2 === 4){
+      if ((speci1 === 0 || speci1 === 1 || speci1 === 3 )) {
+        if (speci2 === 3 || speci2 === 4) {
+          this.columnHeaders.push(
+            {
+              title: this.translate.instant("shear-strength.fixed_end"),
+              align: "center",
+              dataType: "bool",
+              dataIndx: "fixed_end",
+              type: "checkbox",
+              sortable: false,
+              width: 100,
+              nodrag: true,
+            },
+          );
           this.columnHeaders.push(
             {
               title: this.translate.instant("shear-strength.m_len"),
@@ -351,7 +351,20 @@ export class ShearComponent implements OnInit {
               width: 150,
               nodrag: true,
             }
-          )
+          );
+        } else if (speci2 === 0 || speci2 === 1) {
+          this.columnHeaders.push(
+            {
+              title: this.translate.instant("shear-strength.antisymmetric_bending"),
+              align: "center",
+              dataType: "bool",
+              dataIndx: "fixed_end",
+              type: "checkbox",
+              sortable: false,
+              width: 100,
+              nodrag: true,
+            },
+          );
         }
       }
     } else {
@@ -389,7 +402,7 @@ export class ShearComponent implements OnInit {
           {
             title: this.translate.instant("shear-strength.position"),
             dataType: "float",
-            format: "#.000",
+            format: "0.000",
             dataIndx: "position",
             editable: false,
             frozen: true,
