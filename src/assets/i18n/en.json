@@ -22,7 +22,9 @@
       "leave": "Your work will be lost. Do you want to leave this site?",
       "my_page": "My page",
       "logoutTitle": "You don’t have access",
-      "logoutMessage": "Your account does not have permission to access the Webdan system.\nPlease contact Malme administrator for more information."
+      "logoutMessage": "Your account does not have permission to access the Webdan system.\nPlease contact Malme administrator for more information.",
+      "loginSuccessTitle": "Successfully signed in!",
+      "loginSuccessDescription": "You can close this window now."
     },
     "login-dialog":{
         "createAccount":"Creat account",

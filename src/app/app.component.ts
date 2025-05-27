@@ -6,6 +6,7 @@ import { SaveDataService } from "./providers/save-data.service";
 import { MenuService } from "./components/menu/menu.service";
 import { TranslateService } from "@ngx-translate/core";
 import { InputBasicInformationService } from "./components/basic-information/basic-information.service";
+import { HelperService } from "./providers/helper.service";
 
 @Component({
   selector: "app-root",
@@ -36,6 +37,7 @@ export class AppComponent {
     },
   ];
   public text:any
+  public browserLang: string;
 
   constructor(
     private config: ConfigService,
@@ -44,9 +46,11 @@ export class AppComponent {
     public menuService: MenuService,
     private points: InputDesignPointsService,
     private translate: TranslateService,
-    private basic: InputBasicInformationService
+    private basic: InputBasicInformationService,
+    private helperProvider: HelperService
   ) {
-    translate.use(this.translate.getBrowserLang());
+    this.browserLang = this.helperProvider.getLang();
+    translate.use(this.browserLang);
     this.menuService.checkedRadio$.subscribe(
       (value) => {
         this.getText(value)

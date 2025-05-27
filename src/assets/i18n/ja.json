@@ -22,7 +22,9 @@
         "leave":"入力内容が破棄されます。このページから遷移してもよろしいですか？",
         "my_page": "マイページ",
         "logoutTitle":"アクセス権がありません",
-        "logoutMessage":"お客様のアカウントにはWebdanシステムへのアクセス権限がありません。\n詳しくはMalme管理者にお問い合わせください。"
+        "logoutMessage":"お客様のアカウントにはWebdanシステムへのアクセス権限がありません。\n詳しくはMalme管理者にお問い合わせください。",
+        "loginSuccessTitle": "正常にサインインしました",
+        "loginSuccessDescription": "このウィンドウを閉じてください。"
     },
     "login-dialog":{
         "createAccount":"ユーザー登録がお済みでない方はこちらから",
