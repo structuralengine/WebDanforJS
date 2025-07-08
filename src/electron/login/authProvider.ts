@@ -7,12 +7,18 @@ export class AuthProvider {
     private clientApplication : PublicClientApplication;
     account;
     cache;
+    private successTemplate: string;
 
-    constructor(msalConfig) {
+    constructor(msalConfig, successTemplate = '') {
         this.msalConfig = msalConfig;
         this.clientApplication = new PublicClientApplication(this.msalConfig);
         this.cache = this.clientApplication.getTokenCache();
         this.account = null;
+        this.successTemplate = successTemplate;
+    }
+
+    public setSuccessTemplate(template: string) {
+        this.successTemplate = template;
     }
 
     async login() {
@@ -76,7 +82,7 @@ export class AuthProvider {
                 ...tokenRequest,
                 openBrowser,
                 redirectUri: this.msalConfig.auth.redirectUri,
-                successTemplate: '<h1>Successfully signed in!</h1> <p>You can close this window now.</p>',
+                successTemplate: this.successTemplate,
             });
 
             return authResponse;

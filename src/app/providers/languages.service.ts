@@ -2,7 +2,10 @@ import { Injectable } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { DataHelperModule } from "./data-helper.module";
 import { ElectronService } from "./electron.service";
-const SELECTED_LANGUAGE = 'lang';
+import { HelperService } from './helper.service';
+
+export const SELECTED_LANGUAGE = 'lang';
+
 @Injectable({
   providedIn: "root",
 })
