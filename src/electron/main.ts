@@ -19,7 +19,8 @@ autoUpdater.autoDownload = false
 // log.transports.file.resolvePath = () => path.join('D:/logs/main.logs')
 async function createWindow() {
   check = -1;
-  authProvider = new AuthProvider(msalConfig);
+  const successMessage = buildSuccessMessage(locale);
+  authProvider = new AuthProvider(msalConfig, successMessage);
   // log.info("check install k", check);
   mainWindow = new BrowserWindow({
     webPreferences: {
@@ -263,6 +264,10 @@ ipcMain.on(
 ipcMain.on(
   'change-lang', (event, lang) => {
     locale = lang;
+    const newSuccessMessage = buildSuccessMessage(locale)
+    if (authProvider) {
+      authProvider.setSuccessTemplate(newSuccessMessage)
+    }
   })
 ipcMain.on(
   'get-main-wdj', (event: Electron.IpcMainEvent) => {
@@ -294,4 +299,30 @@ ipcMain.on(IPC_MESSAGES.LOGOUT, async () => {
   await authProvider.logout();
   await mainWindow.loadFile(path.join(__dirname, "./index.html"));
 });
-  
+
+function buildSuccessMessage(locale: string): string {
+  let langText;
+  try {
+    const filePath = path.join(__dirname, '../src/assets/i18n', `${locale}.json`);
+    const jsonString = fs.readFileSync(filePath, 'utf-8');
+    langText = JSON.parse(jsonString);
+  } catch (error) {
+    console.warn(`Failed to load locale '${locale}', falling back to 'ja'`, error);
+    const fallbackPath = path.join(__dirname, '../src/assets/i18n', 'ja.json');
+    const fallbackString = fs.readFileSync(fallbackPath, 'utf-8');
+    langText = JSON.parse(fallbackString);
+  }
+
+  return `
+    <!DOCTYPE html>
+    <html lang="${locale}">
+    <head>
+      <meta charset="UTF-8">
+      <title>My App</title>
+    </head>
+    <body>
+      <h1>${langText.menu.loginSuccessTitle}</h1>
+      <p>${langText.menu.loginSuccessDescription}</p>
+    </body>
+    </html>`;
+}
