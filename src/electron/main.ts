@@ -17,6 +17,29 @@ let arg_path: string = null;
 let authProvider : AuthProvider;
 autoUpdater.autoDownload = false
 // log.transports.file.resolvePath = () => path.join('D:/logs/main.logs')
+
+// パッケージ化後の環境を考慮したパス解決
+const getAssetsPath = () =>
+  isDev
+    ? path.join(__dirname, '../assets/i18n')
+    : path.join(process.resourcesPath, 'app/assets/i18n');
+
+export function getLangText(locale: string, fallback: string = 'ja'): any {
+  const assetsPath = getAssetsPath();
+  const readLangFile = (loc: string) => {
+    const filePath = path.join(assetsPath, `${loc}.json`);
+    const jsonString = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(jsonString);
+  };
+
+  try {
+    return readLangFile(locale);
+  } catch (error) {
+    console.warn(`Failed to load locale '${locale}', falling back to '${fallback}'`, error);
+    return readLangFile(fallback);
+  }
+}
+
 async function createWindow() {
   check = -1;
   const successMessage = buildSuccessMessage(locale);
@@ -33,7 +56,7 @@ async function createWindow() {
   // mainWindow.webContents.openDevTools();
   mainWindow.on('close', function (e) {
     if(check == -1){
-      let langText = require(`../assets/i18n/${locale}.json`)
+      const langText = getLangText(locale)
       let choice = dialog.showMessageBoxSync(this,
         {
           type: 'question',
@@ -77,29 +100,31 @@ autoUpdater.on('download-progress', (progressObj) => {
 //when update downloaded, reboot to install
 autoUpdater.on('update-downloaded', (info) => {
   log.info('Update-downloaded', info)
-  let langText = require(`../assets/i18n/${locale}.json`)
-  let choice = dialog.showMessageBoxSync(mainWindow,
-    {
-      type: 'question',
-      buttons: ["Ok", "Cancel"],
-      message: langText.modal.updateMessage,
-    });
-  if (choice == 0) {
-    let langText = require(`../assets/i18n/${locale}.json`)
-    let choice1 = dialog.showMessageBoxSync(mainWindow,
+  try {
+    const langText = getLangText(locale)
+    let choice = dialog.showMessageBoxSync(mainWindow,
       {
         type: 'question',
-        buttons: ['Yes', 'No'],
-        title: langText.window.closeTitle,
-        message: langText.window.closeMessage,
+        buttons: ["Ok", "Cancel"],
+        message: langText.modal.updateMessage,
       });
-    if (choice1 == 0) {
-      check = 0;
-      log.info("check install", check);
-      autoUpdater.quitAndInstall();
+    if (choice == 0) {
+      let choice1 = dialog.showMessageBoxSync(mainWindow,
+        {
+          type: 'question',
+          buttons: ['Yes', 'No'],
+          title: langText.window.closeTitle,
+          message: langText.window.closeMessage,
+        });
+      if (choice1 == 0) {
+        check = 0;
+        log.info("check install", check);
+        autoUpdater.quitAndInstall();
+      }
     }
+  } catch (error) {
+    console.error('Failed to load language file:', error);
   }
-
 });
 // Angular -> Electron --------------------------------------------------
 ipcMain.on("newWindow", async() => await createWindow())
@@ -301,17 +326,7 @@ ipcMain.on(IPC_MESSAGES.LOGOUT, async () => {
 });
 
 function buildSuccessMessage(locale: string): string {
-  let langText;
-  try {
-    const filePath = path.join(__dirname, '../src/assets/i18n', `${locale}.json`);
-    const jsonString = fs.readFileSync(filePath, 'utf-8');
-    langText = JSON.parse(jsonString);
-  } catch (error) {
-    console.warn(`Failed to load locale '${locale}', falling back to 'ja'`, error);
-    const fallbackPath = path.join(__dirname, '../src/assets/i18n', 'ja.json');
-    const fallbackString = fs.readFileSync(fallbackPath, 'utf-8');
-    langText = JSON.parse(fallbackString);
-  }
+  const langText = getLangText(locale);
 
   return `
     <!DOCTYPE html>
