@@ -417,16 +417,37 @@
     <div class="login-area">
       <div *ngIf="user.userProfile as user; else showLogin" class="userInfo">
           <div ngbDropdown>
-              <a class="icon file" id="dropdownBasic1" class="menu-btn menu-item" ngbDropdownToggle
-                  onfocus="this.blur();"><i class="far fa-user-circle"></i>{{ user.lastName + user.firstName }}</a>
-              <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                  <a  (click)="logoutMS()" class="menu-btn logOut menu-item dropdown-item" translate>menu.logout</a>
-              </div>
+            <a
+              id="dropdownBasic1"
+              class="icon file menu-btn menu-item"
+              ngbDropdownToggle
+              (focus)="removeFocus($event)"
+            >
+              <i class="far fa-user-circle"></i>
+              {{ user.lastName + user.firstName }}
+            </a>
+
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="sub-menu">
+              <a
+                (click)="navigateMyPage()"
+                class="menu-btn logOut text-center menu-item dropdown-item"
+                translate
+              >
+                menu.my_page
+              </a>
+              <a
+                (click)="logoutMS()"
+                class="menu-btn logOut menu-item dropdown-item"
+                translate
+              >
+                menu.logout
+              </a>
+            </div>
           </div>
       </div>
   </div>
   <ng-template #showLogin>
-      <a (click)="loginMS()" class="menu-btn">
+      <a (click)="loginMS()" class="menu-btn menu-btn-flex">
           <i class="fas fa-sign-in-alt"></i>
           <p translate class="menu-item dropdown-item">menu.login</p>
       </a>
