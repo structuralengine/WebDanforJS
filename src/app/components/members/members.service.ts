@@ -527,6 +527,13 @@ export class InputMembersService {
     }
   }
 
+  /**
+   * 部材数を返す。ただし、データの中抜けを考慮していないことに注意。
+   * @returns 部材数
+   */
+  public getDataCount(): number {
+    return this.member_list.length;
+  }
 
   //Set for g_type in member
   // public setGTypeForMembers() {
