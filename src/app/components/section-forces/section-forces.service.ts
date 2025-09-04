@@ -393,6 +393,14 @@ export class InputSectionForcesService {
     this.force = force;
   }
 
+  /**
+   * 断面力のデータ数を返す。ただし、データの中抜けを考慮していないことに注意。
+   * @returns 断面力のデータ数
+   */
+  public getDataCount(): number {
+    return this.force.length;
+  }
+
   public setCelCols(toggleStatus: any){
      this.toggleStatus = toggleStatus;
   }
