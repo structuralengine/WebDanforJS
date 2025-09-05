@@ -218,7 +218,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
           this.grid.refreshDataAndView();
         }
       }
-      this.loadData(this.ROWS_COUNT);
+      this.loadData(this.members.getDataCount())
 
     } else {
       // ピックアップファイルを使う場合
