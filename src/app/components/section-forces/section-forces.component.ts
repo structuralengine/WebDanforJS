@@ -239,6 +239,10 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
     // データを登録する
     this.ROWS_COUNT = this.force.getDataCount();
+    if (this.ROWS_COUNT === 0) {
+      // ROWS_COUNTが0だとbeforeTableView()の中で無限ループが発生してしまう
+      this.ROWS_COUNT = this.rowsCount();
+    }
     this.loadData(this.ROWS_COUNT);
 
     this.columnHeaders1 = this.force.getColumnHeaders1();
@@ -519,6 +523,12 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     // containerHeight /= 2;
 
     return containerHeight;
+  }
+
+  // 表高さに合わせた行数を計算する
+  private rowsCount(): number {
+    const containerHeight = this.tableHeight();
+    return Math.round(containerHeight / 30);
   }
 
   public activePageChenge(id: number): void {
