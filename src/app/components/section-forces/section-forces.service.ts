@@ -18,7 +18,6 @@ export class InputSectionForcesService {
     private basic: InputBasicInformationService,
     private points: InputDesignPointsService,
     private translate: TranslateService,
-    private menu: MenuService
   ) {
     this.clear();
   }
@@ -31,7 +30,7 @@ export class InputSectionForcesService {
     let pushIds = new Array();
     let pickup_moment = this.basic.pickup_moment;
 
-    if(this.menu.selectedRoad){
+    if(this.basic.category === 'Road'){
       pushIds = [0, 2];
       const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
       pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
@@ -47,7 +46,7 @@ export class InputSectionForcesService {
 
   public getColumnHeaders2(): any {
     let pushIds = new Array();
-    if(this.menu.selectedRoad){
+    if(this.basic.category === 'Road'){
       pushIds = [0, 2];
     }
     else
@@ -62,7 +61,7 @@ export class InputSectionForcesService {
 
   public getColumnHeaders3(): any {
     let pushIds = new Array();
-    if(this.menu.selectedRoad){
+    if(this.basic.category === 'Road'){
       pushIds = [0, 2];
     }
     else
@@ -129,7 +128,7 @@ export class InputSectionForcesService {
     const result: object[] = [baseColumn];
     let currentHead: any = null;
 
-    if(this.menu.selectedRoad)
+    if(this.basic.category === 'Road')
     {
       //Customer title table for Road
       for (const data of dataArray) {
