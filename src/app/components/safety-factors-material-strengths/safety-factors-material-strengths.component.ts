@@ -18,7 +18,7 @@ import { SaveDataService } from "../../providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { MenuService } from "../menu/menu.service";
 import { Subscription } from "rxjs";
-import { InputBasicInformationService } from "../basic-information/basic-information.service";
+import { InputBasicInformationService, Specification2 } from "../basic-information/basic-information.service";
 
 @Component({
   selector: "app-safety-factors-material-strengths",
@@ -225,7 +225,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   public propNoEdit = { edit: false };
   public considerMomentChecked: boolean;
   public showOption: boolean = true;
-  checkedRadioValue: number;
+  isR5: boolean = false;
   private checkedRadioSubscription: Subscription;
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
@@ -239,8 +239,9 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.members.checkGroupNo();
     this.checkedRadioSubscription = this.menuService.checkedRadio$.subscribe(
       (value) => {
-        this.checkedRadioValue = value;
-        if (this.checkedRadioValue > 3) {
+        const sp2 = value as Specification2;
+        this.isR5 = this.basic.isR5(sp2);
+        if (this.isR5) {
           this.opt_no_for_v = true;
         }
       }
@@ -250,7 +251,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     return this.save.isManual();
   }
   ngOnInit() {
-    this.checkedRadioValue = this.basic.get_specification2();
+    this.isR5 = this.basic.isR5();
     this.setTitle();
     const safety = this.safety.getTableColumns();
     this.default_factor = {};

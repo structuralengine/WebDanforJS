@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
-import { InputBasicInformationService } from "../basic-information/basic-information.service";
+import { InputBasicInformationService, Specification1, Specification2 } from "../basic-information/basic-information.service";
 import { InputMembersService } from "../members/members.service";
 import { TranslateService } from "@ngx-translate/core";
 import { InputMaterialStrengthVerificationConditionService } from "../material-strength-verification-conditions/material-strength-verification-conditions.service";
@@ -41,12 +41,10 @@ export class InputSafetyFactorsMaterialStrengthsService {
   /// specification1_selected によって変わる項目の設定
   public default_safety_factor(): any {
     let result: any;
-    const sp1 = this.basic.get_specification1();
-    const sp2 = this.basic.get_specification2();
-    switch (sp1) {
-      case 0: // 鉄道
-      case 1: // フィリピン版
-      case 3: // バングラディッシュ版
+    const category = this.basic.category;
+    const isR5 = this.basic.isR5;
+    switch (category) {
+      case 'Rail':
         result = [
           {
             id: 0,
@@ -107,14 +105,10 @@ export class InputSafetyFactorsMaterialStrengthsService {
           },
           {
             id: 6,
-            title:
-              sp2 !== 3 && sp2 !== 4
-                ? this.translate.instant(
-                    "safety-factors-material-strengths.r_ex"
-                  )
-                : this.translate.instant(
-                    "safety-factors-material-strengths.u_damage"
-                  ),
+            title: this.translate.instant(
+              !isR5
+                ? "safety-factors-material-strengths.r_ex"
+                : "safety-factors-material-strengths.u_damage"),
             M_rc: 1.3,
             M_rs: 1.0,
             M_rbs: 1.0,
@@ -171,17 +165,15 @@ export class InputSafetyFactorsMaterialStrengthsService {
 
         break;
 
-      case 2: // 港湾
+      case 'Road':
         result = new Array();
         break;
     }
 
     // 例外
-    if (sp1 === 0) {
-      if (this.basic.get_specification2() === 2) {
-        // JR東日本
-        result[3].r1 = 1.0; // 復旧性の γi =1.00
-      }
+    if (this.basic.specification2 === Specification2.JREast_H16) {
+      // JR東日本
+      result[3].r1 = 1.0; // 復旧性の γi =1.00
     }
 
     return result;
@@ -189,7 +181,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
 
   // 材料強度情報
   public default_material_bar(): any {
-    const sp1 = this.basic.get_specification1();
+    const sp1 = this.basic.specification1;
     let result: any = [
       {
         separate: 25,
@@ -213,7 +205,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
       //   // bend: { fsy: 390, fsu: 560 }
       // }
     ];
-    if (sp1 === 1) {
+    if (sp1 === Specification1.Rail_Ph) {
       result = [
         {
           tensionBar: { fsy: 415, fsu: 550 },
@@ -264,9 +256,9 @@ export class InputSafetyFactorsMaterialStrengthsService {
   public default_pile_factor(): any {
     let result = [];
 
-    switch (this.basic.get_specification1()) {
-      case 0: // 鉄道
-      case 3: // バングラディッシュ鉄道
+    switch (this.basic.specification1) {
+      case Specification1.Rail:
+      case Specification1.Rail_Bd:
         result = [
           {
             id: "pile-000",
@@ -326,7 +318,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
         ];
         break;
 
-      case 1: // フィリピン版
+      case Specification1.Rail_Ph:
         result = [
           {
             id: "pile-000",
@@ -386,7 +378,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
         ];
         break;
 
-      case 2: // 道路
+      case Specification1.Road:
         result = new Array();
 
         break;

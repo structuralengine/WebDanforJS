@@ -17,7 +17,7 @@ import { MenuService } from "../menu/menu.service";
 import { data } from "jquery";
 import { log } from "console";
 import { InputBasicInformationService } from "../basic-information/basic-information.service";
-import { Subscription } from "rxjs";
+import { distinctUntilChanged, Subscription } from "rxjs";
 
 @Component({
   selector: "app-bars",
@@ -134,7 +134,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   public elements: any;
   public element: any;
 
-  public refreshSubscription: Subscription;
+  private refreshSubscription: Subscription | undefined = undefined;
 
   constructor(
     private members: InputMembersService,
@@ -503,9 +503,9 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.checkForScrollbar();
     this.activeButtons(0);
     this.setActiveTab(this.activeTab);
-    this.refreshSubscription = this.bars.refreshShowHidden$.subscribe(() => {
-      this.handleShowHiddenCol();
-    });
+    this.refreshSubscription = this.menuService.checkedRadio$.pipe(
+      distinctUntilChanged()
+    ).subscribe((_) => this.handleShowHiddenCol());
   }
   private checkForScrollbar() {
     // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
@@ -1247,11 +1247,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
         const isPositionColumn = column.dataIndx === "position" && this.save.isMidasPickUp();
         column.hidden = isPositionColumn || !(isInTargetRange || isFixedCell || isCheckCell);
         if (column.dataIndx === "tan" && this.activeTab === "rebar_ax") {
-          column.hidden =
-            this.basic.get_specification2() !== 3 &&
-            this.basic.get_specification2() !== 4
-              ? false
-              : true;
+          column.hidden = this.basic.isR5();
         }
       });
     }
@@ -1331,11 +1327,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
   handleShowHiddenCol() {
     this.grid.grid.getColModel().forEach((column, index) => {
       if (column.dataIndx === "tan" && this.activeTab === "rebar_ax") {
-        column.hidden =
-          this.basic.get_specification2() !== 3 &&
-          this.basic.get_specification2() !== 4
-            ? false
-            : true;
+        column.hidden = this.basic.isR5();
       }
     });
     this.grid.refreshCM();

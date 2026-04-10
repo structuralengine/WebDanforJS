@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { InputMembersService } from '../members/members.service';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { TranslateService } from '@ngx-translate/core';
-import { InputBasicInformationService } from '../basic-information/basic-information.service';
+import { InputBasicInformationService, Specification1 } from '../basic-information/basic-information.service';
 import { constants } from 'buffer';
 
 @Injectable({
@@ -128,7 +128,7 @@ export class InputMaterialStrengthVerificationConditionService {
   }
   
   public default_material_bar(): any {
-    const sp1 = this.basic.get_specification1();
+    const sp1 = this.basic.specification1;
     let result: any = [
       {
         separate: 25,
@@ -145,7 +145,7 @@ export class InputMaterialStrengthVerificationConditionService {
         bend: { fsy: 390, fsu: 560 }
       }
     ]
-    if (sp1 === 1) {
+    if (sp1 === Specification1.Rail_Ph) {
       result = [
         {
           tensionBar: { fsy: 415, fsu: 550 },
