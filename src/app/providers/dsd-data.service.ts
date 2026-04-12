@@ -14,7 +14,6 @@ import { InputSafetyFactorsMaterialStrengthsService } from '../components/safety
 import { InputSectionForcesService } from '../components/section-forces/section-forces.service';
 import { InputSteelsService } from '../components/steels/steels.service';
 import { ShearStrengthService } from '../components/shear/shear-strength.service';
-import { MenuService } from '../components/menu/menu.service';
 import { distinctUntilChanged } from 'rxjs';
 
 @Injectable({
@@ -40,7 +39,6 @@ export class DsdDataService {
     private force: InputSectionForcesService,
     private calc: InputCalclationPrintService,
     private helper: DataHelperModule,
-    private menu: MenuService,
   ) { }
 
   /**
@@ -138,7 +136,6 @@ export class DsdDataService {
         const sp2 =  dt1Spec as Specification2;
         if (this.basic.isH16(sp2)) {
           this.basic.specification2 = sp2;
-          this.menu.setSpecification2Subject.next(sp2 as number);
         }
       }
     }

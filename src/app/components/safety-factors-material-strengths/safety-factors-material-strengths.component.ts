@@ -16,7 +16,6 @@ import { InputMembersService } from "../members/members.service";
 import { visitAll } from "@angular/compiler";
 import { SaveDataService } from "../../providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
-import { MenuService } from "../menu/menu.service";
 import { Subscription } from "rxjs";
 import { InputBasicInformationService, Specification2 } from "../basic-information/basic-information.service";
 
@@ -233,11 +232,10 @@ export class SafetyFactorsMaterialStrengthsComponent
     private translate: TranslateService,
     private cdref: ChangeDetectorRef,
     private save: SaveDataService,
-    private menuService: MenuService,
     private basic: InputBasicInformationService
   ) {
     this.members.checkGroupNo();
-    this.checkedRadioSubscription = this.menuService.setSpecification2$.subscribe(
+    this.checkedRadioSubscription = this.basic.setSpecification2Subject$.subscribe(
       (value) => {
         const sp2 = value as Specification2;
         this.isR5 = this.basic.isR5(sp2);

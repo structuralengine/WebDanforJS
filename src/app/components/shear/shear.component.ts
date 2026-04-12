@@ -9,7 +9,6 @@ import { ShearStrengthService } from "./shear-strength.service";
 import { InputBasicInformationService, Specification1, Specification2 } from "../basic-information/basic-information.service";
 import { InputMembersService } from "../members/members.service";
 import { InputSafetyFactorsMaterialStrengthsService } from "../safety-factors-material-strengths/safety-factors-material-strengths.service";
-import { MenuService } from "../menu/menu.service";
 import { InputMaterialStrengthVerificationConditionService } from "../material-strength-verification-conditions/material-strength-verification-conditions.service";
 import { distinctUntilChanged, Subscription } from "rxjs";
 
@@ -59,14 +58,12 @@ export class ShearComponent implements OnInit {
     private shear: ShearStrengthService,
     private members: InputMembersService,
     // private material: InputSafetyFactorsMaterialStrengthsService,
-    // private menu: MenuService,
 
     private save: SaveDataService,
     public helper: DataHelperModule,
     private basic: InputBasicInformationService,
     private translate: TranslateService,
     private material: InputMaterialStrengthVerificationConditionService,
-    private menu: MenuService
   ) {
     this.members.checkGroupNo();
   }
@@ -240,7 +237,7 @@ export class ShearComponent implements OnInit {
   ngAfterViewInit() {
     this.checkForScrollbar();
     this.activeButtons(0);
-    this.refreshSubscription = this.menu.setSpecification2$.pipe(
+    this.refreshSubscription = this.basic.setSpecification2Subject$.pipe(
       distinctUntilChanged()
     ).subscribe((_) => {
       this.saveData();

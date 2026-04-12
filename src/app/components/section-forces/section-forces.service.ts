@@ -3,7 +3,6 @@ import { DataHelperModule } from 'src/app/providers/data-helper.module';
 import { InputBasicInformationService } from '../basic-information/basic-information.service';
 import { InputDesignPointsService } from '../design-points/design-points.service';
 import { TranslateService } from "@ngx-translate/core";
-import { MenuService } from '../menu/menu.service';
 import { log } from 'console';
 
 @Injectable({

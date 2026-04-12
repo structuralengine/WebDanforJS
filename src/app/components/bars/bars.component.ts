@@ -13,7 +13,6 @@ import { SaveDataService } from "src/app/providers/save-data.service";
 import pq from "pqgrid";
 import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from "../members/members.service";
-import { MenuService } from "../menu/menu.service";
 import { data } from "jquery";
 import { log } from "console";
 import { InputBasicInformationService } from "../basic-information/basic-information.service";
@@ -141,7 +140,6 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     private bars: InputBarsService,
     private save: SaveDataService,
     private translate: TranslateService,
-    private menuService: MenuService,
     private basic: InputBasicInformationService
   ) {
     this.members.checkGroupNo();
@@ -503,7 +501,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.checkForScrollbar();
     this.activeButtons(0);
     this.setActiveTab(this.activeTab);
-    this.refreshSubscription = this.menuService.setSpecification2$.pipe(
+    this.refreshSubscription = this.basic.setSpecification2Subject$.pipe(
       distinctUntilChanged()
     ).subscribe((_) => this.handleShowHiddenCol());
   }

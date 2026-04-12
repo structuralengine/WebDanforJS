@@ -34,7 +34,6 @@ import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
 
 import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
-import { MenuService } from "./menu.service";
 import { InputCrackSettingsService } from "../crack/crack-settings.service";
 import { InputBarsService } from "../bars/bars.service";
 import { ShearStrengthService } from "../shear/shear-strength.service";
@@ -90,7 +89,6 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    public menuService: MenuService,
     private app: AppComponent,
     private save: SaveDataService,
     private members: InputMembersService,
@@ -632,8 +630,6 @@ export class MenuComponent implements OnInit {
               const basicFile = this.save.getBasicData();
               this.specification1_list = basicFile.specification1_list;
               this.specification2_list = basicFile.specification2_list;
-              this.menuService.setSpecification1Subject.next(basicFile.specification1);
-              this.menuService.setSpecification2Subject.next(basicFile.specification2);
             }
             this.open_done(modalRef);
           })
@@ -820,14 +816,10 @@ export class MenuComponent implements OnInit {
     this.basic.specification1 = specification1;
     this.specification1_list = this.basic.specification1_list;
 
-    this.menuService.setSpecification1Subject.next(i);
-
     const currSp2 = this.basic.specification2;
     if (prevSp2 !== currSp2) {
       this.specification2_list = this.basic.specification2_list;
       this.specification2_select_id = currSp2 as number;
-
-      this.menuService.setSpecification2Subject.next(currSp2 as number);
     }
 
     this.router.navigate(["./basic-information"]);
@@ -849,8 +841,6 @@ export class MenuComponent implements OnInit {
     const specification2 = id as Specification2;
     this.basic.specification2 = specification2;
     this.specification2_list = this.basic.specification2_list;
-
-    this.menuService.setSpecification2Subject.next(id);
   }
 
   // 耐用年数, jA, jB

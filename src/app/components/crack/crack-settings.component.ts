@@ -15,7 +15,6 @@ import { TranslateService } from "@ngx-translate/core";
 import { InputBasicInformationService, Specification1, Specification2 } from "../basic-information/basic-information.service";
 import { InputMembersService } from "../members/members.service";
 import { distinctUntilChanged, Subscription } from "rxjs";
-import { MenuService } from "../menu/menu.service";
 
 @Component({
   selector: "app-crack-settings",
@@ -81,7 +80,6 @@ export class CrackSettingsComponent
     private translate: TranslateService,
     private basic: InputBasicInformationService,
     private members: InputMembersService,
-    private menuService: MenuService
   ) {
     this.members.checkGroupNo();
   }
@@ -385,7 +383,7 @@ export class CrackSettingsComponent
     this.checkForScrollbar();
 
     this.activeButtons(0);
-    this.refreshSubscription = this.menuService.setSpecification2$.pipe(
+    this.refreshSubscription = this.basic.setSpecification2Subject$.pipe(
       distinctUntilChanged()
     ).subscribe((_) => this.changeTitle());
   }

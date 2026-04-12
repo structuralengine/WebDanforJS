@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { TranslateService } from "@ngx-translate/core";
-import { MenuService } from "../menu/menu.service";
+import { Subject } from "rxjs";
 
 /**
  * 設計分野
@@ -87,7 +87,6 @@ export class InputBasicInformationService {
   constructor(
     private helper: DataHelperModule,
     private translate: TranslateService,
-    private menuService: MenuService,
   ) {
     this.clear();
   }
@@ -149,6 +148,8 @@ export class InputBasicInformationService {
       throw new Error(`Invalid specification1: ${value}`);
     }
     this._specification1 = value;
+
+    this.setSpecification1Subject.next(value);
   }
   get specification1_list(): Specification1List {
     return this._specification1_list.map((s) => ({
@@ -319,6 +320,8 @@ export class InputBasicInformationService {
       throw new Error(`Invalid specification2: ${value}`);
     }
     this._specification2_dic[category] = value;
+
+    this.setSpecification2Subject.next(value);
   }
   get specification2_list(): Specification2List {
     return this._specification2_list.map((s) => ({
@@ -349,6 +352,12 @@ export class InputBasicInformationService {
     const title = s!.title;
     return this.translate.instant(title);
   }
+
+  private setSpecification1Subject = new Subject<Specification1>();
+  setSpecification1Subject$ = this.setSpecification1Subject.asObservable();
+
+  private setSpecification2Subject = new Subject<Specification2>();
+  setSpecification2Subject$ = this.setSpecification2Subject.asObservable();
 
   isH16(specification2 = this.specification2): boolean {
     let result = false;

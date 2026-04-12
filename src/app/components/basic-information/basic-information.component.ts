@@ -1,4 +1,3 @@
-import { MenuService } from './../menu/menu.service';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { InputBasicInformationService, PickupMomentList, PickupShearForceList, PickupTorsionalMomentList } from './basic-information.service';
 import { SaveDataService } from '../../providers/save-data.service';
@@ -37,7 +36,6 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
     public basic: InputBasicInformationService,
     private save: SaveDataService,
     private translate: TranslateService,
-    private menuService: MenuService
   ) { }
 
   ngOnInit() {
@@ -48,13 +46,13 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
         this.saveData();
         this.onInitData();
       }),
-      this.menuService.setSpecification1$.pipe(
+      this.basic.setSpecification1Subject$.pipe(
         distinctUntilChanged()
       ).subscribe((_) => {
         // 適用が変更されたとき
         this.onInitData();
       }),
-      this.menuService.setSpecification2$.pipe(
+      this.basic.setSpecification2Subject$.pipe(
         distinctUntilChanged()
       ).subscribe((_) => {
         // 仕様が変更されたとき

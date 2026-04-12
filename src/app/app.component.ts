@@ -3,7 +3,6 @@ import { InputDesignPointsService } from "./components/design-points/design-poin
 import { InputMembersService } from "./components/members/members.service";
 import { ConfigService } from "./providers/config.service";
 import { SaveDataService } from "./providers/save-data.service";
-import { MenuService } from "./components/menu/menu.service";
 import { TranslateService } from "@ngx-translate/core";
 import { InputBasicInformationService } from "./components/basic-information/basic-information.service";
 import { HelperService } from "./providers/helper.service";
@@ -43,7 +42,6 @@ export class AppComponent {
     private config: ConfigService,
     private save: SaveDataService,
     private members: InputMembersService,
-    private menuService: MenuService,
     private points: InputDesignPointsService,
     private translate: TranslateService,
     public basic: InputBasicInformationService,
@@ -51,7 +49,7 @@ export class AppComponent {
   ) {
     this.browserLang = this.helperProvider.getLang();
     translate.use(this.browserLang);
-    this.menuService.setSpecification2$.subscribe(
+    this.basic.setSpecification2Subject$.subscribe(
       (_) => this.getText()
     );
     this.translate.onLangChange.subscribe(() => this.getText());
