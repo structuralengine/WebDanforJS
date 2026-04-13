@@ -441,8 +441,8 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.grid.grid.getColModel().forEach((column, index) => {
       if (index >= start && index <= end) {
         column.hidden = !this.toggleStatus[group];
-        const speci1 = this.basic.specification1;
-        if((index===5 || index===6)&& this.idTagPage===0 && (speci1===Specification1.Rail || speci1===Specification1.Rail_Ph || speci1===Specification1.Rail_Bd)){
+        const category = this.basic.category;
+        if((index===5 || index===6)&& this.idTagPage===0 && category === 'Rail'){
           column.hidden =true
         }
       }
@@ -551,7 +551,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
           column.hidden = !this.toggleStatus[group];
         }
         const category = this.basic.category;
-        if((index===5 || index===6)&& id===0 && category !== 'Road'){
+        if((index===5 || index===6)&& id===0 && category === 'Rail'){
           column.hidden =true
         }
       }

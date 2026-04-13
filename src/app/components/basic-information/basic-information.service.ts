@@ -417,14 +417,14 @@ export class InputBasicInformationService {
       this._pickup_moment_dic[category] = dic;
     }
   }
-  get pickup_moment(): PickupMomentList {
+  get pickup_moment_without_id2(): PickupMomentList {
     return this._get_pickup_moment().map((s) => ({
       id: s.id,
       title: this.translate.instant(s.title),
       no: s.no,
     }));
   }
-  get pickup_moment_with_id2(): PickupMomentList {
+  get pickup_moment(): PickupMomentList {
     return this._get_pickup_moment(true).map((s) => ({
       id: s.id,
       title: this.translate.instant(s.title),

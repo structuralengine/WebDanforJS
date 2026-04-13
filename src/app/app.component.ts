@@ -6,6 +6,7 @@ import { SaveDataService } from "./providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { InputBasicInformationService } from "./components/basic-information/basic-information.service";
 import { HelperService } from "./providers/helper.service";
+import { distinctUntilChanged } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -49,7 +50,9 @@ export class AppComponent {
   ) {
     this.browserLang = this.helperProvider.getLang();
     translate.use(this.browserLang);
-    this.basic.setSpecification2Subject$.subscribe(
+    this.basic.setSpecification2Subject$.pipe(
+      distinctUntilChanged()
+    ).subscribe(
       (_) => this.getText()
     );
     this.translate.onLangChange.subscribe(() => this.getText());

@@ -81,7 +81,7 @@ export class BasicInformationComponent implements OnInit, OnDestroy {
   private onInitData() {
     this.isManual = this.save.isManual();
 
-    this.table1_datas = this.basic.pickup_moment;
+    this.table1_datas = this.basic.pickup_moment_without_id2;
     this.table2_datas = this.basic.pickup_shear_force;
     this.table3_datas = this.basic.pickup_torsional_moment;
 
