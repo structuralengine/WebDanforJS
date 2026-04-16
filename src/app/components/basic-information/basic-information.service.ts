@@ -39,6 +39,8 @@ export const Specification2 = {
   RoadStd_H29_Partial: 6,
   /** 許容応力度法 */
   Allowable: 7,
+  /** JR東日本 (R5標準ベース) */
+  JREast_R5: 8,
 } as const;
 export type Specification2 =
   (typeof Specification2)[keyof typeof Specification2];
@@ -219,6 +221,7 @@ export class InputBasicInformationService {
           case Specification2.JREast_H16:
           case Specification2.RaidStd_R5:
           case Specification2.Shinkansen_R5:
+          case Specification2.JREast_R5:
             result = true;
             break;
         }
@@ -276,6 +279,11 @@ export class InputBasicInformationService {
             id: Specification2.Shinkansen_R5 as number,
             title: "basic-information.trans5",
             selected: this.specification2 === Specification2.Shinkansen_R5,
+          },
+          {
+            id: Specification2.JREast_R5 as number,
+            title: "basic-information.jr_east5",
+            selected: this.specification2 === Specification2.JREast_R5,
           },
         ];
         break;
@@ -369,6 +377,7 @@ export class InputBasicInformationService {
         break;
       case Specification2.RaidStd_R5:
       case Specification2.Shinkansen_R5:
+      case Specification2.JREast_R5:
         break;
       case Specification2.RoadStd_H29_Limit:
       case Specification2.RoadStd_H29_Partial:
@@ -388,6 +397,7 @@ export class InputBasicInformationService {
         break;
       case Specification2.RaidStd_R5:
       case Specification2.Shinkansen_R5:
+      case Specification2.JREast_R5:
         result = true;
         break;
       case Specification2.RoadStd_H29_Limit:

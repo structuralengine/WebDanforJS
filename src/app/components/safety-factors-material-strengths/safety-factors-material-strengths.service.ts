@@ -171,7 +171,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
     }
 
     // 例外
-    if (this.basic.specification2 === Specification2.JREast_H16) {
+    if (this.basic.specification2 === Specification2.JREast_H16 || this.basic.specification2 === Specification2.JREast_R5) {
       // JR東日本
       result[3].r1 = 1.0; // 復旧性の γi =1.00
     }
