@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import * as fs from 'fs';
 import log from 'electron-log';
@@ -21,7 +21,7 @@ autoUpdater.autoDownload = false
 // パッケージ化後の環境を考慮したパス解決
 const getAssetsPath = () =>
   isDev
-    ? path.join(__dirname, '../assets/i18n')
+    ? path.join(__dirname, 'assets/i18n')
     : path.join(process.resourcesPath, 'app/assets/i18n');
 
 export function getLangText(locale: string, fallback: string = 'ja'): any {
@@ -53,6 +53,14 @@ async function createWindow() {
   });
   mainWindow.maximize();
   mainWindow.setMenuBarVisibility(false);
+  // 外部サイト(http/https)へのリンクは新しいウィンドウではなく既定ブラウザで開く
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    }
+    return { action: 'allow' };
+  });
   // mainWindow.webContents.openDevTools();
   mainWindow.on('close', function (e) {
     if(check == -1){
