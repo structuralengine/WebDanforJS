@@ -518,7 +518,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   // 表の高さを計算する
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
-    containerHeight -= 250;
+    containerHeight -= 200;
     // containerHeight -= 30;
     // containerHeight /= 2;
 

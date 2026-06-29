@@ -850,7 +850,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
   // 表の高さを計算す�
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
-    containerHeight -= 230;
+    containerHeight -= 310;
     return containerHeight;
   }
 
