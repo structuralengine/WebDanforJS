@@ -512,7 +512,8 @@
       
       
       </div>
-      <div class="download-item" style="width: 20%;padding-left: 40px;">
+      <div class="download-items" style="padding-left: 40px;">
+        <div class="download-item">
           <!-- *ngIf="table_datas.length > 0" -->
           <legend class="title" translate> 
             <input
@@ -523,20 +524,21 @@
             [(ngModel)]="isChecked"
             (change)="handleCheckAll()" /> 
             calculation-print.member</legend>
-        <div class="hot">
-          <ng-container *ngFor="let item of table_datas; index as j">
-            <label class="checkbox-container">
-              <input
-                type="checkbox"
-                class="checkbox-input"
-                [value]="item.calc_checked"
-                [(ngModel)]="item.calc_checked"
-                [checked]="item.calc_checked"
-                (change)="handleCheck()"
-              />
-              <span class="checkbox-parts">{{ item.g_name }}</span>
-            </label>
-          </ng-container>
+          <div class="hot">
+            <ng-container *ngFor="let item of table_datas; index as j">
+              <label class="checkbox-container">
+                <input
+                  type="checkbox"
+                  class="checkbox-input"
+                  [value]="item.calc_checked"
+                  [(ngModel)]="item.calc_checked"
+                  [checked]="item.calc_checked"
+                  (change)="handleCheck()"
+                />
+                <span class="checkbox-parts">{{ item.g_name }}</span>
+              </label>
+            </ng-container>
+          </div>
         </div>
       </div>
     </div>
