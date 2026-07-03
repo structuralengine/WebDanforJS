@@ -230,6 +230,7 @@ ipcMain.on(
     // キャンセルで閉じた場合
     if (path == null) {
       event.returnValue = '';
+      return;
     }
 
     // ファイルの内容を返却
