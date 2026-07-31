@@ -14,28 +14,6 @@ import { distinctUntilChanged } from "rxjs";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
-  public specification2 = [
-    {
-      id: 0,
-      title: "basic-information.jr_standard",
-    },
-    {
-      id: 1,
-      title: "basic-information.trans",
-    },
-    {
-      id: 2,
-      title: "basic-information.jr_east",
-    },
-    {
-      id: 3,
-      title: "basic-information.jr_com5",
-    },
-    {
-      id: 4, 
-      title: "basic-information.trans5",
-    },
-  ];
   public text:any
   public browserLang: string;
 
