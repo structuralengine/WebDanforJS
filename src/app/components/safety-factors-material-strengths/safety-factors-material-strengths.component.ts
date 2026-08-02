@@ -87,7 +87,7 @@ export class SafetyFactorsMaterialStrengthsComponent
   private current_index: number;
   private groupe_list: any[];
   public groupe_name: any[];
-  public allowedValues1 = [18, 21, 24, 27, 30, 33, 36, 42, 45, 50, 55, 60];
+  public allowedValues1 = [18, 21, 24, 27, 30, 33, 36, 40, 42, 45, 50, 55, 60];
   public allowedValues2 = [20, 25, 40];
   public options = {
     0: { text: this.translate.instant("safety-factors-material-strengths.av") },
@@ -117,6 +117,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     30: { text: "Fc30" },
     33: { text: "Fc33" },
     36: { text: "Fc36" },
+    40: { text: "Fc40" },
     42: { text: "Fc42" },
     45: { text: "Fc45" },
     50: { text: "Fc50" },
@@ -135,6 +136,7 @@ export class SafetyFactorsMaterialStrengthsComponent
     { id: 30, value: 30, text: "Fc30" },
     { id: 33, value: 33, text: "Fc33" },
     { id: 36, value: 36, text: "Fc36" },
+    { id: 40, value: 40, text: "Fc40" },
     { id: 42, value: 42, text: "Fc42" },
     { id: 45, value: 45, text: "Fc45" },
     { id: 50, value: 50, text: "Fc50" },

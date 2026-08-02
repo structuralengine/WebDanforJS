@@ -771,11 +771,14 @@ export class MenuComponent implements OnInit {
     }
     // 保存する
     if (this.electronService.isElectron) {
-      this.fileName = this.electronService.ipcRenderer.sendSync(
+      const fileName = this.electronService.ipcRenderer.sendSync(
         "saveFile",
         this.fileName,
         inputJson
       );
+      if (fileName != '') {
+        this.fileName = fileName;
+      }
     } else {
       const blob = new window.Blob([inputJson], { type: "text/plain" });
       FileSaver.saveAs(blob, this.fileName);
