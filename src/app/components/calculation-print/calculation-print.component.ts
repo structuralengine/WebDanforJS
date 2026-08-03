@@ -20,9 +20,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PreviewExcelComponent } from '../preview-excel/preview-excel.component';
 import { merge } from 'rxjs';
 import { Guid } from 'guid-typescript';
-import { MenuService } from '../menu/menu.service';
 
 import { generateCalculationData, getByteCount } from './generate-calculation-data';
+import { InputBasicInformationService } from '../basic-information/basic-information.service';
 
 @Component({
   selector: 'app-calculation-print',
@@ -64,7 +64,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     public language: LanguagesService,
     private helper: DataHelperModule,
     private modalService: NgbModal,
-    private menuService: MenuService,
+    private basic: InputBasicInformationService,
   ) {
     // this.auth = getAuth();
 
@@ -72,7 +72,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.selectedRoad = this.menuService.selectedRoad
+    this.selectedRoad = this.basic.category === 'Road';
     this.print_calculate_checked = this.calc.print_selected.print_calculate_checked;
     this.print_section_force_checked = this.calc.print_selected.print_section_force_checked;
     this.print_summary_table_checked = this.calc.print_selected.print_summary_table_checked;
@@ -80,7 +80,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
 
     this.calculate_moment_checked = this.calc.print_selected.calculate_moment_checked;
     this.calculate_shear_force_checked = this.calc.print_selected.calculate_shear_force;
-    if (this.menuService.selectedRoad == true) {
+    if (this.selectedRoad == true) {
 
       this.calculate_torsional_moment_checked = false;
     } else {

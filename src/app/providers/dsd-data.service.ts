@@ -4,7 +4,7 @@ import { SaveDataService } from './save-data.service';
 import * as Encord from 'encoding-japanese';
 import { DataHelperModule } from './data-helper.module';
 import { InputBarsService } from '../components/bars/bars.service';
-import { InputBasicInformationService } from '../components/basic-information/basic-information.service';
+import { InputBasicInformationService, Specification2 } from '../components/basic-information/basic-information.service';
 import { InputCalclationPrintService } from '../components/calculation-print/calculation-print.service';
 import { InputCrackSettingsService } from '../components/crack/crack-settings.service';
 import { InputDesignPointsService } from '../components/design-points/design-points.service';
@@ -14,7 +14,7 @@ import { InputSafetyFactorsMaterialStrengthsService } from '../components/safety
 import { InputSectionForcesService } from '../components/section-forces/section-forces.service';
 import { InputSteelsService } from '../components/steels/steels.service';
 import { ShearStrengthService } from '../components/shear/shear-strength.service';
-import { data } from 'jquery';
+import { distinctUntilChanged } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +38,7 @@ export class DsdDataService {
     private safety: InputSafetyFactorsMaterialStrengthsService,
     private force: InputSectionForcesService,
     private calc: InputCalclationPrintService,
-    private helper: DataHelperModule
+    private helper: DataHelperModule,
   ) { }
 
   /**
@@ -132,8 +132,11 @@ export class DsdDataService {
     // 仕様
     const dt1Spec = this.readByte(buff);
     if (this.isOlder('4.0.0', buff.datVersID)) {  // フィリピン版の場合は設定しない（デフォルト設定）
-      if (dt1Spec != null && dt1Spec >= 0 && dt1Spec <= 2) {
-        this.basic.set_specification2(dt1Spec);
+      if (dt1Spec != null) {
+        const sp2 =  dt1Spec as Specification2;
+        if (this.basic.isH16(sp2)) {
+          this.basic.specification2 = sp2;
+        }
       }
     }
 

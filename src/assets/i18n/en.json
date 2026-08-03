@@ -102,6 +102,7 @@
         "trans":"Transport Organization (2004 standard based)",
         "trans5":"Transport Organization (2023 standard based)",
         "jr_east":"JR East (2004 standard based)",
+        "jr_east5":"Trial: JR East (2023 standard based)",
         "limit100":"The upper limit of the cover used for the crack width limit is 100 mm.",
         "apex":"Place one reinforcing bar at the apex in a circular cross section",
         "Mud":"Mud when calculating βn in shear strength does not consider axial force",

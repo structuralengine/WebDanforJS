@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
 import { DataHelperModule } from '../../providers/data-helper.module';
 import { InputDesignPointsService } from '../design-points/design-points.service';
-import { InputBasicInformationService } from '../basic-information/basic-information.service';
+import { InputBasicInformationService, Specification1 } from '../basic-information/basic-information.service';
 import { TranslateService } from "@ngx-translate/core";
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InputBarsService {
-  public refreshShowHidden$ = new BehaviorSubject<any>({});
-
   // 鉄筋情報
   private bar_list: any[];
   private jp_rebar_List: any[];
@@ -58,11 +55,11 @@ export class InputBarsService {
   }
 
   public get rebar_List(): any[] {
-    const speci1 = this.basic.get_specification1();
-    if(speci1 == 1){
+    const speci1 = this.basic.specification1;
+    if (speci1 === Specification1.Rail_Ph) {
       return this.ph_rebar_List;
     }
-    if(speci1 == 3){
+    if (speci1 === Specification1.Rail_Bd) {
       return this.bd_rebar_List;
     }
     return this.jp_rebar_List;

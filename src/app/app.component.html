@@ -39,7 +39,7 @@
           </a>
         </li>
         <!-- Material strength - verification condition         -->
-        <li class="c-mainNavArea__navItem" *ngIf="menuService.selectedRoad">
+        <li class="c-mainNavArea__navItem" *ngIf="basic.category === 'Road'">
           <a
             routerLink="./material-strength-verification-conditions"
             routerLinkActive="selected-item"
@@ -324,7 +324,7 @@
             <span translate>app.shear</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad">
+        <li class="c-mainNavArea__navItem" *ngIf="basic.category === 'Rail'">
           <a
             routerLink="./crack"
             routerLinkActive="selected-item"
@@ -350,7 +350,7 @@
             <span translate>app.crack</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad">
+        <li class="c-mainNavArea__navItem" *ngIf="basic.category === 'Rail'">
           <a
             routerLink="./fatigues"
             routerLinkActive="selected-item"
@@ -375,7 +375,7 @@
             <span translate>app.fatigues</span>
           </a>
         </li>
-        <li class="c-mainNavArea__navItem" *ngIf="!menuService.selectedRoad">
+        <li class="c-mainNavArea__navItem" *ngIf="basic.category === 'Rail'">
           <a
             routerLink="./safety-factors-material-strengths"
             routerLinkActive="selected-item"
@@ -406,7 +406,7 @@
           </a>
         </li>
         <!-- Durability Data -->
-        <li class="c-mainNavArea__navItem"  *ngIf="menuService.selectedRoad">
+        <li class="c-mainNavArea__navItem"  *ngIf="basic.category === 'Road'">
           <a
             routerLink="./durability_data"
             routerLinkActive="selected-item"

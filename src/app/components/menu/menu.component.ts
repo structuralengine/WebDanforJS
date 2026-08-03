@@ -1,7 +1,7 @@
 ﻿import { Component, HostListener, OnInit, ElementRef, ViewChild, Inject } from "@angular/core";
 import { NgbModal, ModalDismissReasons } from "@ng-bootstrap/ng-bootstrap";
 import { AppComponent } from "../../app.component";
-import { InputBasicInformationService } from '../basic-information/basic-information.service';
+import { InputBasicInformationService, Specification1, Specification2 } from '../basic-information/basic-information.service';
 // import { InputFatiguesService } from '../fatigues/fatigues.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
@@ -34,15 +34,13 @@ import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
 
 import { UserInfoService } from "src/app/providers/user-info.service";
 import { MultiWindowService, Message, KnownAppWindow } from 'ngx-multi-window';
-import { MenuService } from "./menu.service";
-import { MenuBehaviorSubject } from "./menu-behavior-subject.service";
 import { InputCrackSettingsService } from "../crack/crack-settings.service";
 import { InputBarsService } from "../bars/bars.service";
 import { ShearStrengthService } from "../shear/shear-strength.service";
 import { Subject } from 'rxjs';
 import { MSAL_GUARD_CONFIG, MsalBroadcastService, MsalGuardConfiguration, MsalService } from "@azure/msal-angular";
 import { RedirectRequest, InteractionStatus, EventMessage, EventType, IdTokenClaims, PopupRequest, AuthenticationResult, AccountInfo, SsoSilentRequest, PromptValue, } from "@azure/msal-browser";
-import { filter, takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, filter, takeUntil } from 'rxjs/operators';
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 import { IPC_MESSAGES } from "src/electron/login/constants";
@@ -69,22 +67,8 @@ export class MenuComponent implements OnInit {
   // public service_life: number;
   public showIcon: boolean = false;
 
-  @ViewChild("grid1") grid1: SheetComponent;
-  private table1_datas: any[] = [];
-  public options1: pq.gridT.options;
-
-  @ViewChild("grid2") grid2: SheetComponent;
-  private table2_datas: any[] = [];
-  public options2: pq.gridT.options;
-
-  @ViewChild("grid3") grid3: SheetComponent;
-  private table3_datas: any[] = [];
-  public options3: pq.gridT.options;
-
   // 適用 に関する変数
   public specification1_list: any[];
-  public specification1_list_file: any[];
-  public specification2_list_file: any[];
 
   // 仕様 に関する変数
   public specification2_list: any[];
@@ -105,7 +89,6 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    public menuService: MenuService,
     private app: AppComponent,
     private save: SaveDataService,
     private members: InputMembersService,
@@ -117,7 +100,6 @@ export class MenuComponent implements OnInit {
     public user: UserInfoService,
     private basic: InputBasicInformationService,
     // private fatigues: InputFatiguesService,
-    private menuBehaviorSubject: MenuBehaviorSubject,
     private crack: InputCrackSettingsService,
     private shear: ShearStrengthService,
     // public auth: Auth,
@@ -140,7 +122,6 @@ export class MenuComponent implements OnInit {
 
   ngOnInit() {
     this.initMSAL();
-    this.menuService.selectedRoad = false;
     this._renew();
     this.windows = this.multiWindowService.getKnownWindows();
     this.setDefaultOpenControl();
@@ -619,7 +600,6 @@ export class MenuComponent implements OnInit {
           .then((buff) => {
             this.checkOpenDSD = true;
             const pik = this.dsdData.readDsdData(buff);
-            this.app.getText(this.basic.get_specification2());
             this.open_done(modalRef);
             if (pik !== null) {
               this.helper.alert(pik + this.translate.instant("menu.open"));
@@ -647,11 +627,8 @@ export class MenuComponent implements OnInit {
             } else {
               this.showIcon = true;
               this.save.readInputData(text);
-              let basicFile = this.save.getBasicData();
-              this.specification1_list_file = basicFile.specification1_list;
-              this.basic.set_specification1_data_file(
-                this.specification1_list_file
-              );
+              const basicFile = this.save.getBasicData();
+              this.specification1_list = basicFile.specification1_list;
               this.specification2_list = basicFile.specification2_list;
             }
             this.open_done(modalRef);
@@ -833,45 +810,21 @@ export class MenuComponent implements OnInit {
   }
 
   public setSpecification1(i: number): void {
-    let basic = this.basic.set_specification1(i);
-    this.specification1_list = basic.specification1_list; // 適用
-
-    ///Set selected for specification2_list
-    if (i === 2) { //道路
-      //Case Road: temporary set default spe_2.2: "partial coefficient method"
-      basic.specification2_list.map(
-        (obj) => (obj.selected = obj.id === 6 ? true : false)
-      );
-      this.specification2_select_id = 6;
-      this.basic.setPreSpecification2(
-        this.specification1_select_id,
-        basic.specification2_list
-      );
-    } else {
-      const prev = this.basic.prevSpecification2[i];
-      if (prev != undefined) {
-        this.basic.specification2_list = prev;
-        basic.specification2_list = this.basic.specification2_list;
-      }
-      const selectedObject = basic.specification2_list.find(
-        (obj) => obj.selected === true
-      );
-      this.specification2_select_id = selectedObject ? selectedObject.id : 0;
+    const prevSp2 = this.basic.specification2;
+    if (this.specification2_select_id !== prevSp2 as number) {
+      throw new Error(`Mismatch specification2: this=${this.specification2_select_id}, basic=${prevSp2}`);
     }
 
-    this.specification2_list = basic.specification2_list; // 仕様
-    this.conditions_list = basic.conditions_list; //  設計条件
+    const specification1 = i as Specification1;
+    this.basic.specification1 = specification1;
+    this.specification1_list = this.basic.specification1_list;
 
-    this.table1_datas = basic.pickup_moment;
-    this.table2_datas = basic.pickup_shear_force;
-    this.table3_datas = basic.pickup_torsional_moment;
+    const currSp2 = this.basic.specification2;
+    if (prevSp2 !== currSp2) {
+      this.specification2_list = this.basic.specification2_list;
+      this.specification2_select_id = currSp2 as number;
+    }
 
-    if (!(this.grid1 == null)) this.grid1.refreshDataAndView();
-    if (!(this.grid2 == null)) this.grid2.refreshDataAndView();
-    if (!(this.grid3 == null)) this.grid3.refreshDataAndView();
-    this.specification1_select_id = i;
-    this.menuService.selectApply(i);
-    this.menuBehaviorSubject.setValue(i.toString());
     this.router.navigate(["./basic-information"]);
     for (let i = 0; i <= 12; i++) {
       const data = document.getElementById(i + "");
@@ -886,60 +839,33 @@ export class MenuComponent implements OnInit {
 
   /// 仕様 変更時の処理
   public setSpecification2(id: number): void {
-    this.menuService.setCheckedRadio(id);
-    this.specification2_list.map(
-      (obj) => (obj.selected = obj.id === id ? true : false)
-    );
-    this.specification2_select_id = id;
-    this.bars.refreshShowHidden$.next({});
-    this.crack.refreshTitle$.next({});
-    this.shear.refreshTable$.next({});
-    this.basic.setPreSpecification2(
-      this.specification1_select_id,
-      this.specification2_list
-    );
+    // this.specification2_select_id = id;
+
+    const specification2 = id as Specification2;
+    this.basic.specification2 = specification2;
+    this.specification2_list = this.basic.specification2_list;
   }
 
   // 耐用年数, jA, jB
   public openShiyoJoken() {
-    const basic = this.basic.getSaveData();
     // 適用
-    this.basic.updateTitleSpecification(1, basic.specification1_list);
-    this.specification1_list = basic.specification1_list;
-    this.specification1_select_id = this.basic.get_specification1();
+    this.specification1_list = this.basic.specification1_list;
+    this.specification1_select_id = this.basic.specification1;
 
     // 仕様
-    this.basic.updateTitleSpecification(2, basic.specification2_list);
-    this.specification2_list = basic.specification2_list;
-    this.specification2_select_id = this.basic.get_specification2();
+    this.specification2_list = this.basic.specification2_list;
+    this.specification2_select_id = this.basic.specification2;
     //  設計条件
-    this.basic.updateTitleCondition(basic.conditions_list);
-    this.conditions_list = basic.conditions_list;
-
-    this.table1_datas = basic.pickup_moment;
-    this.table2_datas = basic.pickup_shear_force;
-    this.table3_datas = basic.pickup_torsional_moment;
-
-    // const fatigues = this.fatigues.getSaveData();
-    // this.train_A_count = fatigues.train_A_count;
-    // this.train_B_count = fatigues.train_B_count;
-    // this.service_life = fatigues.service_life;
+    this.conditions_list = this.basic.conditions_list;
   }
 
   ngOnDestroy() {
     this.saveData();
   }
 
-  public saveData(): void {
-    this.basic.setSaveData({
-      pickup_moment: this.table1_datas,
-      pickup_shear_force: this.table2_datas,
-      pickup_torsional_moment: this.table3_datas,
-
-      specification1_list: this.specification1_list, // 適用
-      specification2_list: this.specification2_list, // 仕様
-      conditions_list: this.conditions_list, // 設計条件
-    });
+  private saveData(): void {
+    this.basic.specification1 = this.specification1_select_id as Specification1;
+    this.basic.specification2 = this.specification2_select_id as Specification2;
   }
 
   public changeDesignCondition(item: any) {
