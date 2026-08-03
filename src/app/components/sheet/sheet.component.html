@@ -61,7 +61,7 @@
   >
     <div class="container">
       <table>
-        <tbody *ngIf="basic.get_specification2()!==3 && basic.get_specification2()!==4  else JR2023">
+        <tbody *ngIf="!basic.isR5()  else JR2023">
           <tr>
             <th width="30">1</th>
             <td translate>crack-settings.normal</td>
