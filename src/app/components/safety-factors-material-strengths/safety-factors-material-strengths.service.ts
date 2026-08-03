@@ -42,7 +42,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
   public default_safety_factor(): any {
     let result: any;
     const category = this.basic.category;
-    const isR5 = this.basic.isR5;
+    const isR5 = this.basic.isR5();
     switch (category) {
       case 'Rail':
         result = [
