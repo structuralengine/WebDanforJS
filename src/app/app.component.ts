@@ -3,10 +3,10 @@ import { InputDesignPointsService } from "./components/design-points/design-poin
 import { InputMembersService } from "./components/members/members.service";
 import { ConfigService } from "./providers/config.service";
 import { SaveDataService } from "./providers/save-data.service";
-import { MenuService } from "./components/menu/menu.service";
 import { TranslateService } from "@ngx-translate/core";
 import { InputBasicInformationService } from "./components/basic-information/basic-information.service";
 import { HelperService } from "./providers/helper.service";
+import { distinctUntilChanged } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -14,28 +14,6 @@ import { HelperService } from "./providers/helper.service";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent {
-  public specification2 = [
-    {
-      id: 0,
-      title: "basic-information.jr_standard",
-    },
-    {
-      id: 1,
-      title: "basic-information.trans",
-    },
-    {
-      id: 2,
-      title: "basic-information.jr_east",
-    },
-    {
-      id: 3,
-      title: "basic-information.jr_com5",
-    },
-    {
-      id: 4, 
-      title: "basic-information.trans5",
-    },
-  ];
   public text:any
   public browserLang: string;
 
@@ -43,25 +21,22 @@ export class AppComponent {
     private config: ConfigService,
     private save: SaveDataService,
     private members: InputMembersService,
-    public menuService: MenuService,
     private points: InputDesignPointsService,
     private translate: TranslateService,
-    private basic: InputBasicInformationService,
+    public basic: InputBasicInformationService,
     private helperProvider: HelperService
   ) {
     this.browserLang = this.helperProvider.getLang();
     translate.use(this.browserLang);
-    this.menuService.checkedRadio$.subscribe(
-      (value) => {
-        this.getText(value)
-      }
+    this.basic.setSpecification2Subject$.pipe(
+      distinctUntilChanged()
+    ).subscribe(
+      (_) => this.getText()
     );
-     this.translate.onLangChange.subscribe(() => {
-      this.getText(this.basic.get_specification2())
-    });
+    this.translate.onLangChange.subscribe(() => this.getText());
   }
   ngOnInit() {
-    this.getText(this.basic.get_specification2())
+    this.getText();
   }
   public isManual(): boolean {
     return this.save.isManual();
@@ -145,16 +120,9 @@ export class AppComponent {
       this.isDesignPointEnable = flg;
     }
   }
-  public onClickHeader(){
-    console.log("test")
-  }
-  getText(id:any){
-    let index = this.specification2.findIndex((data)=> data.id === id)
-    if(index !== -1){
-      let data = this.specification2[index].title
-      this.text = this.translate.instant(data)
-    }else{
-      this.text=""
-    }
+
+  private getText(): void {
+    const text = this.basic.specification2_title;
+    this.text = text;
   }
 }

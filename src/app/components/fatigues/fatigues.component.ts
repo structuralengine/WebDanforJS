@@ -15,7 +15,7 @@ import { AppComponent } from "src/app/app.component";
 import { SaveDataService } from "src/app/providers/save-data.service";
 import { TranslateService } from "@ngx-translate/core";
 import { InputMembersService } from "../members/members.service";
-import { MenuService } from "../menu/menu.service";
+import { InputBasicInformationService } from "../basic-information/basic-information.service";
 
 @Component({
   selector: "app-fatigues",
@@ -105,7 +105,7 @@ export class FatiguesComponent implements OnInit, OnDestroy, AfterViewInit {
     private save: SaveDataService,
     private translate: TranslateService,
     private members: InputMembersService,
-    public menuService: MenuService,
+    public basic: InputBasicInformationService,
   ) {
     this.members.checkGroupNo();
   }

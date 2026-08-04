@@ -5,8 +5,7 @@ import { InputSectionForcesService } from './section-forces.service';
 import { SheetComponent } from '../sheet/sheet.component';
 import pq from 'pqgrid';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { MenuService } from '../menu/menu.service';
-import { InputBasicInformationService } from '../basic-information/basic-information.service';
+import { InputBasicInformationService, Specification1 } from '../basic-information/basic-information.service';
 import { log } from 'console';
 import { hide } from '@popperjs/core';
 
@@ -21,7 +20,6 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   constructor(
     private force: InputSectionForcesService,
     private translate: TranslateService,
-    private menu: MenuService,
     private basic: InputBasicInformationService,
      ) { }
 
@@ -78,16 +76,16 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   public idTagPage:number=0;
 
   ngOnInit() {
-    this.selectedRoad = this.menu.selectedRoad;
+    this.selectedRoad = this.basic.category === 'Road';
     this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
       this.saveData();
-      if(this.menu.selectedRoad){
+      if(this.selectedRoad){
         this.setKeyGroupsRoad()
       }
       this.initTable ();
     });
 
-    if(this.menu.selectedRoad){
+    if(this.selectedRoad){
       this.setKeyGroupsRoad()
     }
     this.initTable ();
@@ -220,7 +218,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.setColGroupsAndKeys(0);
 
     //Set active start
-    if(this.menu.selectedRoad){
+    if(this.selectedRoad){
       this.bendingColGroupKeys = Object.keys(this.bendingColGroupsRoad);
     }
     else
@@ -317,12 +315,11 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   private setKeyGroupsRoad(){
-    const basic = this.basic.getSaveData();
     this.bendingColGroupsRoad = {};
     this.shearColGroupsRoad = {};
     this.torsionalColGroupsRoad = {};
     const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
-    let pickup_moment = basic.pickup_moment;
+    let pickup_moment = this.basic.pickup_moment;
 
     pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
 
@@ -337,7 +334,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
     //Shear
     let shearRoad: any = new Object, iS = 1;
-    basic.pickup_shear_force.forEach((value, index) => {
+    this.basic.pickup_shear_force.forEach((value, index) => {
       let key = "S" + value.id;
       shearRoad[key] = { start: iS, end: iS + 2 };
       iS += 3;
@@ -346,7 +343,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
     //Torsional
     let torsionalRoad: any = new Object, iT = 1;
-    basic.pickup_torsional_moment.forEach((value, index) => {
+    this.basic.pickup_torsional_moment.forEach((value, index) => {
       let key = "T" + value.id;
       torsionalRoad[key] = { start: iT, end: iT + 3 };
       iT += 4;
@@ -355,12 +352,11 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   private setTitleGroupsRoad(id: number) {
-    const basic = this.basic.getSaveData();
     //Set title switch
     let currentSW = new Array();
     if (id === 0) {
       const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
-      let pickup_moment = basic.pickup_moment;
+      let pickup_moment = this.basic.pickup_moment;
       pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
       pickup_moment.forEach((value, index) => {
         let key = "B" + value.id;
@@ -371,7 +367,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         })
       });
     } else if (id === 1) {
-      basic.pickup_shear_force.forEach((value, index) => {
+      this.basic.pickup_shear_force.forEach((value, index) => {
         let key = "S" + value.id;
         const [mainTitle, subTitle] = this.force.handleTitle(value.title, value.id < 2 ? 1 : 3);
         currentSW.push({
@@ -380,7 +376,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         })
       });
     } else if (id === 2) {
-      basic.pickup_torsional_moment.forEach((value, index) => {
+      this.basic.pickup_torsional_moment.forEach((value, index) => {
         let key = "T" + value.id;
         const [mainTitle, subTitle] = this.force.handleTitle(value.title, value.id < 2 ? 1 : 3);
         currentSW.push({
@@ -393,7 +389,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
   private setColGroupsAndKeys(id: number): void {
     this.groupActive = [];
-    if(this.menu.selectedRoad)
+    if(this.selectedRoad)
     {
       //set for CurrentColGroupKeys
       this.setTitleGroupsRoad(id);
@@ -445,8 +441,8 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.grid.grid.getColModel().forEach((column, index) => {
       if (index >= start && index <= end) {
         column.hidden = !this.toggleStatus[group];
-        const speci1 = this.basic.get_specification1();
-        if((index===5 || index===6)&& this.idTagPage===0 && (speci1===0 || speci1===1 || speci1===3)){
+        const category = this.basic.category;
+        if((index===5 || index===6)&& this.idTagPage===0 && category === 'Rail'){
           column.hidden =true
         }
       }
@@ -554,8 +550,8 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         if (index >= start && index <= end) {
           column.hidden = !this.toggleStatus[group];
         }
-        const speci1 = this.basic.get_specification1();
-        if((index===5 || index===6)&& id===0 && (speci1===0 || speci1===1 || speci1===3)){
+        const category = this.basic.category;
+        if((index===5 || index===6)&& id===0 && category === 'Rail'){
           column.hidden =true
         }
       }

@@ -6,12 +6,11 @@ import { SaveDataService } from "src/app/providers/save-data.service";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
 import { ShearStrengthService } from "./shear-strength.service";
-import { InputBasicInformationService } from "../basic-information/basic-information.service";
+import { InputBasicInformationService, Specification1, Specification2 } from "../basic-information/basic-information.service";
 import { InputMembersService } from "../members/members.service";
 import { InputSafetyFactorsMaterialStrengthsService } from "../safety-factors-material-strengths/safety-factors-material-strengths.service";
-import { MenuService } from "../menu/menu.service";
 import { InputMaterialStrengthVerificationConditionService } from "../material-strength-verification-conditions/material-strength-verification-conditions.service";
-import { Subscription } from "rxjs";
+import { distinctUntilChanged, Subscription } from "rxjs";
 
 @Component({
   selector: "app-shear",
@@ -50,7 +49,7 @@ export class ShearComponent implements OnInit {
     L : { ...this.propTrue},
   }
   public groupe_name: string[];
-  public refreshSubscription: Subscription;
+  public refreshSubscription: Subscription | undefined = undefined;
 
   // public isSubstructure: boolean = false;
   // public isRoad: boolean = false;
@@ -59,14 +58,12 @@ export class ShearComponent implements OnInit {
     private shear: ShearStrengthService,
     private members: InputMembersService,
     // private material: InputSafetyFactorsMaterialStrengthsService,
-    // private menu: MenuService,
 
     private save: SaveDataService,
     public helper: DataHelperModule,
     private basic: InputBasicInformationService,
     private translate: TranslateService,
     private material: InputMaterialStrengthVerificationConditionService,
-    private menu: MenuService
   ) {
     this.members.checkGroupNo();
   }
@@ -88,7 +85,7 @@ export class ShearComponent implements OnInit {
 
   onInitData() {
     this.clear();
-    this.isRoad = this.menu.selectedRoad;
+    this.isRoad = this.basic.category === 'Road';
     if (this.isRoad) {
       this.setShow(0); //set default by first group
     }
@@ -105,10 +102,11 @@ export class ShearComponent implements OnInit {
           data.La=null
         }
         if (data.La!==null && data.La<0){
-          const speci2 = this.basic.get_specification2();
-          const speci1 = this.basic.get_specification1();
+          const category = this.basic.category;
+          const speci2 = this.basic.specification2;
           data.La = Math.abs(data.La)
-          if ((speci1 === 0 || speci1 === 1 || speci1 === 3) && (speci2 === 0 || speci2 === 1)) {
+          if (category === 'Rail' &&
+              (speci2 === Specification2.RailStd_H16 || speci2 === Specification2.Shinkansen_H16)) {
             let fixed_end = data.fixed_end
             if (fixed_end === null || !fixed_end)
               data.fixed_end = true
@@ -202,11 +200,12 @@ export class ShearComponent implements OnInit {
           if (keyChange[0]=="La"){
             let newData = ui.updateList[0].newRow.La
             if (newData!==null && newData<0){
-              const speci2 = this.basic.get_specification2();
-              const speci1 = this.basic.get_specification1();
+              const category = this.basic.category;
+              const speci2 = this.basic.specification2;
               ui.updateList[0].newRow.La = Math.abs(ui.updateList[0].newRow.La)
               ui.updateList[0].rowData.La = Math.abs(ui.updateList[0].rowData.La)
-              if ((speci1 === 0 || speci1 === 1 || speci1 === 3 ) && (speci2 === 0 || speci2 === 1)) {
+              if (category === 'Rail' &&
+                  (speci2 === Specification2.RailStd_H16 || speci2 === Specification2.Shinkansen_H16)) {
                 let fixed_end = ui.updateList[0].rowData.fixed_end
                 if (fixed_end ===null || !fixed_end)
                   ui.updateList[0].rowData.fixed_end= true
@@ -238,10 +237,12 @@ export class ShearComponent implements OnInit {
   ngAfterViewInit() {
     this.checkForScrollbar();
     this.activeButtons(0);
-    this.refreshSubscription=  this.shear.refreshTable$.subscribe(()=>{
+    this.refreshSubscription = this.basic.setSpecification2Subject$.pipe(
+      distinctUntilChanged()
+    ).subscribe((_) => {
       this.saveData();
       this.onInitData();
-    })
+    });
   }
   private checkForScrollbar() {
     // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;
@@ -326,10 +327,11 @@ export class ShearComponent implements OnInit {
       );
 
       // 令和5年 RC標準
-      const speci1 = this.basic.get_specification1();
-      const speci2 = this.basic.get_specification2();
-      if ((speci1 === 0 || speci1 === 1 || speci1 === 3 )) {
-        if (speci2 === 3 || speci2 === 4) {
+      const category = this.basic.category;
+      const isR5 = this.basic.isR5();
+      const speci2 = this.basic.specification2;
+      if (category === 'Rail') {
+        if (isR5) {
           this.columnHeaders.push(
             {
               title: this.translate.instant("shear-strength.fixed_end"),
@@ -352,7 +354,7 @@ export class ShearComponent implements OnInit {
               nodrag: true,
             }
           );
-        } else if (speci2 === 0 || speci2 === 1) {
+        } else if (speci2 === Specification2.RailStd_H16 || speci2 === Specification2.Shinkansen_H16) {
           this.columnHeaders.push(
             {
               title: this.translate.instant("shear-strength.antisymmetric_bending"),

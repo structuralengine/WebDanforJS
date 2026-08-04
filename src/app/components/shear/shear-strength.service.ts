@@ -10,7 +10,6 @@ export class ShearStrengthService {
 
   // 部材情報
   public shear_list: any[];
-  public refreshTable$ = new BehaviorSubject<any>({});
 
   constructor(
     private helper: DataHelperModule,
