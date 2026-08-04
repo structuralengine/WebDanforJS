@@ -20,7 +20,6 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { NgxPrintModule } from "ngx-print";
 
 import { DataHelperModule } from "./providers/data-helper.module";
-import { MenuService } from "./components/menu/menu.service";
 import { InputBasicInformationService } from "./components/basic-information/basic-information.service";
 import { InputMembersService } from "./components/members/members.service";
 import { InputDesignPointsService } from "./components/design-points/design-points.service";
@@ -191,7 +190,6 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
         ModalPreview,
     ],
     providers: [
-        MenuService,
         UserInfoService,
         ConfigService,
         InputBasicInformationService,
