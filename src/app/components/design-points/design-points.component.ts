@@ -490,7 +490,7 @@ if (this.save.isManual()) {
   // 表の高さを計算する
   private tableHeight(): number {
   let containerHeight = window.innerHeight;
-  containerHeight -= 230;
+  containerHeight -= 150;
   return containerHeight;
 }
 

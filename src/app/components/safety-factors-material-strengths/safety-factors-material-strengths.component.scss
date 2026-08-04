@@ -18,7 +18,6 @@ h5 {
 .tabContent {
   padding: 15px;
   background: var(--base-900);
-  overflow: auto;
   height: 94%;
   .tab-inner {
     padding-top: 16px;
@@ -61,13 +60,14 @@ h5 {
 }
 .concrete-strength{
   max-width: 475px;
+  margin-bottom: 30px;
 }
 .safety-factors,
 .material-strength {
   display: inline-block;
 }
 .safety-factors {
-  max-width: 1072px;
+  width: 1072px;
 }
 .pile-factors {
   display: inline-block;
@@ -167,7 +167,6 @@ h5 {
 .tabContent {
   padding: 15px;
   background: var(--base-900);
-  overflow: auto;
   height: 94%;
   .tab-inner {
     padding-top: 16px;

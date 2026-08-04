@@ -17,7 +17,6 @@
     margin: 0 auto;
     width: 100%;
     max-width: 2500px;
-    min-width: 1024px;
     padding-top: 44px;
     height: 100vh;
 }
@@ -25,10 +24,10 @@
 .c-mainNavArea {
     // padding-top: 0px;
     width: 212px;
-    height: 100%;
     background: var(--base-950);
     position: fixed;
     top: 44px;
+    height: calc(100vh - 44px);
     left: 0;
     overflow-y: auto;
     z-index: 500;
@@ -116,4 +115,5 @@
     margin-left: 212px;
     height: 100%;
     // background: var(--base-950);
+    overflow-y: auto;
 }
