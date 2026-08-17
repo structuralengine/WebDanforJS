@@ -887,4 +887,16 @@ export class MenuComponent implements OnInit {
     const elementChat = document.getElementById("chatplusheader");
     elementChat.click();
   }
+
+  navigateMyPage(): void {
+    // Opens the user's profile page in a new tab with security best practices
+    const url = 'https://mypage.malme.app/';
+
+    // Security: Ensure URL is trusted — do not pass user input directly
+    const newTab = window.open(url, '_blank', 'noopener,noreferrer');
+
+    if (!newTab) {
+      console.error('Failed to open new tab. The browser may have blocked it.');
+    }
+  }  
 }
