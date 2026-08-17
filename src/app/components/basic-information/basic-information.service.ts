@@ -98,6 +98,9 @@ export class InputBasicInformationService {
     this._pickup_moment_dic = {};
     this._pickup_shear_force_dic = {};
     this._pickup_torsional_moment_dic = {};
+
+    this.setSpecification1Subject.next(this.specification1);
+    this.setSpecification2Subject.next(this.specification2);
   }
 
   private _specification1: Specification1 = Specification1.Rail;
