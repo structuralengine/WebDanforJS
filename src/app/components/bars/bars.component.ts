@@ -911,7 +911,7 @@ export class BarsComponent implements OnInit, OnDestroy, AfterViewInit {
               nodrag: true,
             },
             {
-              title: this.translate.instant("bars.number"),
+              title: this.translate.instant("bars.total_number"),
               dataType: "float",
               dataIndx: "rebar_n",
               sortable: false,
