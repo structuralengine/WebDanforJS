@@ -32,14 +32,7 @@
           <div class="tobble-icon"></div>
         </div>
         <div class="tobble-label" >
-          <ng-container  [ngSwitch]="group">
-            <span *ngSwitchCase="'stress'">耐久性</span>
-            <span *ngSwitchCase="'safe-ff'">安全性（疲労破壊）</span>
-            <span *ngSwitchCase="'safe-destruct'">安全性（破壊）</span>
-            <span *ngSwitchCase="'recover-ex-earth'">復旧性（損傷）地震時以外</span>
-            <span *ngSwitchCase="'recover-earth'">復旧性（損傷）地震時</span>
-            <span *ngSwitchCase="'rebar'">最小鉄筋量</span>
-          </ng-container>
+          {{ getGroupLabel(group) }}
         </div>
       </div>
     </div>
