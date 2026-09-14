@@ -200,6 +200,7 @@
         "rebar_ax":"軸方向鉄筋",
         "dia":"鉄筋径\n(mm)",
         "number":"本数",
+        "total_number":"本数",
         "cover":"芯かぶり\n1段目\n(mm)",
         "lines":"ならび\n本数",
         "space":"段間隔\n(mm)",
@@ -213,7 +214,7 @@
         "angle":"角度\n(°)",
         "process":"照査対象",
         "tp":"上端位置\n(mm)",
-        "tp_side":"上端位置\n/側芯かぶり"
+        "tp_side":"上端位置\n/側芯かぶり\n(mm)"
     },
     "steels":{
         "m_no":"部材\n番号",
