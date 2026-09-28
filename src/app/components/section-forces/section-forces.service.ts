@@ -34,8 +34,10 @@ export class InputSectionForcesService {
       const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
       pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
     }
-    else
+    else {
+      // 鉄道の見出しは component 側の静的定義で生成するため、この経路は不要
       throw new Error('road category only');
+    }
     return this.createColumnHeaders(
       pickup_moment,
       pushIds,
@@ -48,8 +50,10 @@ export class InputSectionForcesService {
     if(this.basic.category === 'Road'){
       pushIds = [0, 2];
     }
-    else
+    else {
+      // 鉄道の見出しは component 側の静的定義で生成するため、この経路は不要
       throw new Error('road category only');
+    }
 
     return this.createColumnHeaders(
       this.basic.pickup_shear_force,
@@ -63,8 +67,10 @@ export class InputSectionForcesService {
     if(this.basic.category === 'Road'){
       pushIds = [0, 2];
     }
-    else
+    else {
+      // 鉄道の見出しは component 側の静的定義で生成するため、この経路は不要
       throw new Error('road category only');
+    }
 
     return this.createColumnHeaders(
       this.basic.pickup_torsional_moment,
@@ -144,6 +150,7 @@ export class InputSectionForcesService {
     }
     else
     {
+      // 鉄道の見出しは component 側の静的定義で生成するため、この経路は不要
       throw new Error('road category only');
     }
 
