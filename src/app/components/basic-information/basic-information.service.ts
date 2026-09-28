@@ -490,7 +490,9 @@ export class InputBasicInformationService {
           },
           {
             id: 7,
-            title: "basic-information.r_at",
+            title: isH16
+              ? "basic-information.r_at"
+              : "basic-information.r_damage",
             no: dic[7] ?? null,
           },
           {
@@ -637,7 +639,9 @@ export class InputBasicInformationService {
           },
           {
             id: 7,
-            title: "basic-information.r_at",
+            title: isH16
+              ? "basic-information.r_at"
+              : "basic-information.r_damage",
             no: dic[7] ?? null,
           },
         ];
@@ -753,7 +757,9 @@ export class InputBasicInformationService {
           },
           {
             id: 7,
-            title: "basic-information.r_at",
+            title: isH16
+              ? "basic-information.r_at"
+              : "basic-information.r_damage",
             no: dic[7] ?? null,
           },
         ];
