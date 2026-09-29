@@ -94,7 +94,6 @@
     "@angular-devkit/build-angular": "^16.2.9",
     "@angular/cli": "^16.2.9",
     "@angular/compiler-cli": "^16.2.9",
-    "@types/encoding-japanese": "^2.0.1",
     "@types/file-saver": "^2.0.3",
     "@types/jasmine": "~4.3.1",
     "@types/jquery": "^3.5.6",
