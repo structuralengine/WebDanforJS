@@ -1,58 +1,377 @@
-import { parse } from 'path';
-import { forEach } from 'jszip';
-import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
-import { InputSectionForcesService } from './section-forces.service';
-import { SheetComponent } from '../sheet/sheet.component';
-import pq from 'pqgrid';
-import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
-import { InputBasicInformationService, Specification1 } from '../basic-information/basic-information.service';
-import { log } from 'console';
-import { hide } from '@popperjs/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  OnDestroy,
+  AfterViewInit,
+} from "@angular/core";
+import { InputSectionForcesService } from "./section-forces.service";
+import { SheetComponent } from "../sheet/sheet.component";
+import pq from "pqgrid";
+import { LangChangeEvent, TranslateService } from "@ngx-translate/core";
+import { InputBasicInformationService } from "../basic-information/basic-information.service";
+import { Subscription } from "rxjs";
 
+/**
+ * 照査種別 (
+ *   stress: 耐久性,
+ *   safe-ff: 安全性(疲労破壊),
+ *   safe-destruct: 安全性(破壊),
+ *   recover-ex-earth: 復旧性(損傷)地震時以外 or 使用性(損傷),
+ *   recover-earth: 復旧性(損傷)地震時 or 復旧性(損傷),
+ *   rebar: 最小鉄筋量
+ * )
+ */
+type GroupKey =
+  | "stress"
+  | "safe-ff"
+  | "safe-destruct"
+  | "recover-ex-earth"
+  | "recover-earth"
+  | "rebar";
+/**
+ * TranslateServiceに渡すキーを保持するデータ型
+ */
+type LabelKey = {
+  /** H16仕様の場合はh16が参照される。nullは空文字列。R5仕様の場合でもr5がundefinedならh16が参照される */
+  h16: string | null;
+  /** R5仕様の場合はr5が参照される(r5がundefinedの場合を除く)。nullは空文字列 */
+  r5?: string | null
+};
+type ToggleLabelDic = Record<GroupKey, LabelKey>;
+type ColumnTypes = ("Md" | "Nd" | "Vd" | "Mt")[];
+type Subgroup = {
+  dataIndxPrefix: string;
+  /** 中見出し */
+  labelKey?: LabelKey;
+  columnTypes: ColumnTypes;
+  hidden?: boolean;
+};
+type GroupDic = Record<
+  GroupKey,
+  {
+    /** 大見出し */
+    labelKey: LabelKey;
+    subgroups: Subgroup[];
+    start: number;
+    end: number;
+  }
+>;
 
 @Component({
-  selector: 'app-section-forces',
-  templateUrl: './section-forces.component.html',
-  styleUrls: ['./section-forces.component.scss']
+  selector: "app-section-forces",
+  templateUrl: "./section-forces.component.html",
+  styleUrls: ["./section-forces.component.scss"],
 })
-export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy {
-
+export class SectionForcesComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   constructor(
     private force: InputSectionForcesService,
     private translate: TranslateService,
     private basic: InputBasicInformationService,
-     ) { }
+  ) {}
 
-  @ViewChild('grid') grid: SheetComponent;
-  public options: pq.gridT.options;
-  public currentColGroups: { [key: string]: { start: number; end: number } };
-  public currentColGroupKeys: string[];
-  public bendingColGroupKeys: string[];
-  public bendingColGroups = {
-    stress: { start: 1, end: 4 }, //耐久性トグル
-    "safe-ff": { start: 5, end: 10 }, //安全性(疲労破壊)トグル
-    "safe-destruct": { start: 11, end: 12 }, //安全性(破壊)トグル
-    "recover-ex-earth": { start: 13, end: 14 }, //復旧性(地震以外)トグル
-    "recover-earth": { start: 15, end: 16 }, //復旧性(地震)トグル
-    "rebar": { start: 17, end: 18 }, //最小鉄筋量トグル
-  };
-  public shearColGroups = {
-    stress: { start: 1, end: 9 }, //耐久性トグル
-    "safe-ff": { start: 10, end: 15 }, //安全性(疲労破壊)トグル
-    "safe-destruct": { start: 16, end: 18 }, //安全性(破壊)トグル
-    "recover-ex-earth": { start: 19, end: 21 }, //復旧性(地震以外)トグル
-    "recover-earth": { start: 22, end: 24 }, //復旧性(地震)トグル
-  };
-  public torsionalColGroups = {
-    stress: { start: 1, end: 8 }, //耐久性トグル
-    "safe-destruct": { start: 9, end: 12 }, //安全性(破壊)トグル
-    "recover-ex-earth": { start: 13, end: 16 }, //復旧性(地震以外)トグル
-    "recover-earth": { start: 17, end: 20 }, //復旧性(地震)トグル
+  @ViewChild("grid") grid?: SheetComponent;
+
+  /**
+   * トグルスイッチの見出し
+   */
+  private readonly toggleLabelDic: ToggleLabelDic = {
+    stress: { h16: "section-forces.stress" }, // 耐久性
+    "safe-ff": { h16: "section-forces.safe-ff" }, // 安全性(疲労破壊)
+    "safe-destruct": { h16: "section-forces.safe-d" }, // 安全性(破壊)
+    "recover-ex-earth": {
+      h16: "section-forces.restorability-ex", // 復旧性(損傷)地震時以外
+      r5: "section-forces.usability", // 使用性(損傷)
+    },
+    "recover-earth": {
+      h16: "section-forces.restorability-at", // 復旧性(損傷)地震時
+      r5: "section-forces.restorability", // 復旧性(損傷)
+    },
+    rebar: { h16: "section-forces.rebar" }, // 最小鉄筋量
   };
 
-  public bendingColGroupsRoad : any;
-  public shearColGroupsRoad : any;
-  public torsionalColGroupsRoad: any;;
+  private readonly bendingColumnTypes: ColumnTypes = ["Md", "Nd"];
+  private readonly shearColumnTypes: ColumnTypes = ["Vd", "Md", "Nd"];
+  private readonly torsionalColumnTypes: ColumnTypes = ["Mt", "Vd", "Md", "Nd"];
+
+  private readonly bendingGroupDic: GroupDic = {
+    stress: {
+      labelKey: { h16: "section-forces.stress" }, // 耐久性
+      subgroups: [
+        {
+          dataIndxPrefix: "Md0_",
+          labelKey: { h16: "section-forces.stress-b0" }, // 縁応力度検討用
+          columnTypes: this.bendingColumnTypes,
+        },
+        {
+          dataIndxPrefix: "Md1_",
+          labelKey: { h16: "section-forces.stress-b1" }, // 永久作用
+          columnTypes: this.bendingColumnTypes,
+        },
+      ],
+      start: 1,
+      end: 4,
+    },
+    "safe-ff": {
+      labelKey: { h16: "section-forces.safe-ff" }, // 安全性(疲労破壊)
+      subgroups: [
+        {
+          dataIndxPrefix: "Md2_",
+          labelKey: { h16: "section-forces.safe-ff-b2" }, // 疲労限
+          columnTypes: this.bendingColumnTypes,
+          hidden: true, // 非表示
+        },
+        {
+          dataIndxPrefix: "Md3_",
+          labelKey: { h16: "section-forces.safe-ff-b3" }, // 永久作用
+          columnTypes: this.bendingColumnTypes,
+        },
+        {
+          dataIndxPrefix: "Md4_",
+          labelKey: { h16: "section-forces.safe-ff-b4" }, // 永久＋変動
+          columnTypes: this.bendingColumnTypes,
+        },
+      ],
+      start: 5,
+      end: 10,
+    },
+    "safe-destruct": {
+      labelKey: { h16: "section-forces.safe-d" }, // 安全性(破壊)
+      subgroups: [
+        {
+          dataIndxPrefix: "Md5_",
+          // labelKey: undefined, // (空欄)
+          columnTypes: this.bendingColumnTypes,
+        },
+      ],
+      start: 11,
+      end: 12,
+    },
+    "recover-ex-earth": {
+      labelKey: {
+        h16: "section-forces.restorability", // 復旧性(損傷)
+        r5: "section-forces.usability", // 使用性(損傷)
+      },
+      subgroups: [
+        {
+          dataIndxPrefix: "Md6_",
+          labelKey: {
+            h16: "section-forces.restorability-b6", // 地震時以外
+            r5: null, // (空欄)
+          },
+          columnTypes: this.bendingColumnTypes,
+        },
+      ],
+      start: 13,
+      end: 14,
+    },
+    "recover-earth": {
+      labelKey: { h16: "section-forces.restorability" }, // 復旧性(損傷)
+      subgroups: [
+        {
+          dataIndxPrefix: "Md7_",
+          labelKey: {
+            h16: "section-forces.restorability-b7", // 地震時
+            r5: null, // (空欄)
+          },
+          columnTypes: this.bendingColumnTypes,
+        },
+      ],
+      start: 15,
+      end: 16,
+    },
+    rebar: {
+      labelKey: { h16: "section-forces.rebar" }, // 最小鉄筋量
+      subgroups: [
+        {
+          dataIndxPrefix: "Md8_",
+          // labelKey: undefined, // (空欄)
+          columnTypes: this.bendingColumnTypes,
+        },
+      ],
+      start: 17,
+      end: 18,
+    },
+  };
+  private readonly shearGroupDic: Partial<GroupDic> = {
+    stress: {
+      labelKey: { h16: "section-forces.stress" }, // 耐久性
+      subgroups: [
+        {
+          dataIndxPrefix: "Vd0_",
+          labelKey: { h16: "section-forces.stress-s0" }, // せん断ひび割れ検討判定用
+          columnTypes: this.shearColumnTypes,
+        },
+        {
+          dataIndxPrefix: "Vd1_",
+          labelKey: { h16: "section-forces.stress-s1" }, // 永久作用
+          columnTypes: this.shearColumnTypes,
+        },
+        {
+          dataIndxPrefix: "Vd2_",
+          labelKey: { h16: "section-forces.stress-s2" }, // (変動荷重)
+          columnTypes: this.shearColumnTypes,
+        },
+      ],
+      start: 1,
+      end: 9,
+    },
+    "safe-ff": {
+      labelKey: { h16: "section-forces.safe-ff" }, // 安全性(疲労破壊)
+      subgroups: [
+        {
+          dataIndxPrefix: "Vd3_",
+          labelKey: { h16: "section-forces.safe-ff-s3" }, // 永久作用
+          columnTypes: this.shearColumnTypes,
+        },
+        {
+          dataIndxPrefix: "Vd4_",
+          labelKey: { h16: "section-forces.safe-ff-s4" }, // 永久＋変動
+          columnTypes: this.shearColumnTypes,
+        },
+      ],
+      start: 10,
+      end: 15,
+    },
+    "safe-destruct": {
+      labelKey: { h16: "section-forces.safe-d" }, // 安全性(破壊)
+      subgroups: [
+        {
+          dataIndxPrefix: "Vd5_",
+          // labelKey: undefined, // (空欄)
+          columnTypes: this.shearColumnTypes,
+        },
+      ],
+      start: 16,
+      end: 18,
+    },
+    "recover-ex-earth": {
+      labelKey: {
+        h16: "section-forces.restorability", // 復旧性(損傷)
+        r5: "section-forces.usability", // 使用性(損傷)
+      },
+      subgroups: [
+        {
+          dataIndxPrefix: "Vd6_",
+          labelKey: {
+            h16: "section-forces.restorability-s6", // 地震時以外
+            r5: null, // (空欄)
+          },
+          columnTypes: this.shearColumnTypes,
+        },
+      ],
+      start: 19,
+      end: 21,
+    },
+    "recover-earth": {
+      labelKey: { h16: "section-forces.restorability" }, // 復旧性(損傷)
+      subgroups: [
+        {
+          dataIndxPrefix: "Vd7_",
+          labelKey: {
+            h16: "section-forces.restorability-s7", // 地震時
+            r5: null, // (空欄)
+          },
+          columnTypes: this.shearColumnTypes,
+        },
+      ],
+      start: 22,
+      end: 24,
+    },
+  };
+  private readonly torsionalGroupDic: Partial<GroupDic> = {
+    stress: {
+      labelKey: { h16: "section-forces.stress" }, // 耐久性
+      subgroups: [
+        {
+          dataIndxPrefix: "Mt0_",
+          labelKey: { h16: "section-forces.stress-t0" }, // ねじりひび割れ検討判定用
+          columnTypes: this.torsionalColumnTypes,
+        },
+        {
+          dataIndxPrefix: "Mt1_",
+          labelKey: { h16: "section-forces.stress-t1" }, // 永久作用
+          columnTypes: this.torsionalColumnTypes,
+        },
+      ],
+      start: 1,
+      end: 8,
+    },
+    "safe-destruct": {
+      labelKey: { h16: "section-forces.safe-d" }, // 安全性(破壊)
+      subgroups: [
+        {
+          dataIndxPrefix: "Mt5_",
+          // labelKey: undefined, // (空欄)
+          columnTypes: this.torsionalColumnTypes,
+        },
+      ],
+      start: 9,
+      end: 12,
+    },
+    "recover-ex-earth": {
+      labelKey: {
+        h16: "section-forces.restorability", // 復旧性(損傷)
+        r5: "section-forces.usability", // 使用性(損傷)
+      },
+      subgroups: [
+        {
+          dataIndxPrefix: "Mt6_",
+          labelKey: {
+            h16: "section-forces.restorability-t6", // 地震時以外
+            r5: null, // (空欄)
+          },
+          columnTypes: this.torsionalColumnTypes,
+        },
+      ],
+      start: 13,
+      end: 16,
+    },
+    "recover-earth": {
+      labelKey: { h16: "section-forces.restorability" }, // 復旧性(損傷)
+      subgroups: [
+        {
+          dataIndxPrefix: "Mt7_",
+          labelKey: {
+            h16: "section-forces.restorability-t7", // 地震時
+            r5: null, // (空欄)
+          },
+          columnTypes: this.torsionalColumnTypes,
+        },
+      ],
+      start: 17,
+      end: 20,
+    },
+  };
+
+  public options: pq.gridT.options = {};
+  private currentColGroups: { [key: string]: { start: number; end: number } } =
+    {};
+  public currentColGroupKeys: string[] = [];
+  private readonly bendingColGroups = Object.fromEntries(
+    Object.entries(this.bendingGroupDic).map(([key, value]) => [
+      key,
+      { start: value.start, end: value.end },
+    ]),
+  );
+  private readonly shearColGroups = Object.fromEntries(
+    Object.entries(this.shearGroupDic).map(([key, value]) => [
+      key,
+      { start: value.start, end: value.end },
+    ]),
+  );
+  private readonly torsionalColGroups = Object.fromEntries(
+    Object.entries(this.torsionalGroupDic).map(([key, value]) => [
+      key,
+      { start: value.start, end: value.end },
+    ]),
+  );
+
+  public bendingColGroupsRoad: any;
+  public shearColGroupsRoad: any;
+  public torsionalColGroupsRoad: any;
 
   public toggleStatus: { [key: string]: boolean } = {};
 
@@ -60,180 +379,54 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   private table_datas: any[] = [];
 
   // 曲げモーメントのグリッド設定変数
-  private columnHeaders1: object[];
-
+  private columnHeaders1: pq.gridT.colModel = [];
   // せん断力のグリッド設定変数
-  private columnHeaders2: object[];
-
+  private columnHeaders2: pq.gridT.colModel = [];
   // ねじりモーメントのグリッド設定変数
-  private columnHeaders3: object[];
-  public imgLink ="";
+  private columnHeaders3: pq.gridT.colModel = [];
+
   public selectedRoad = false;
-  public currentSW: any[];
-  public groupActive: any[];
-  public toggleStatusPick: { [key: string]: boolean } = {};
-  public toggleStatusShear: { [key: string]: boolean } = {};
-  public idTagPage:number=0;
+  public currentSW: any[] = [];
+  private groupActive: any[] = [];
+  private toggleStatusPick: { [key: string]: boolean } = {};
+  private toggleStatusShear: { [key: string]: boolean } = {};
+  private idTagPage: number = 0;
+
+  private readonly subscriptions: Subscription[] = [];
 
   ngOnInit() {
-    this.selectedRoad = this.basic.category === 'Road';
-    this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
-      this.saveData();
-      if(this.selectedRoad){
-        this.setKeyGroupsRoad()
-      }
-      this.initTable ();
-    });
+    this.selectedRoad = this.basic.category === "Road";
+    this.subscriptions.push(
+      this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
+        this.saveData();
+        if (this.selectedRoad) {
+          this.setKeyGroupsRoad();
+        }
+        this.initTable();
+      }),
+    );
 
-    if(this.selectedRoad){
-      this.setKeyGroupsRoad()
+    if (this.selectedRoad) {
+      this.setKeyGroupsRoad();
     }
-    this.initTable ();
-    
-    // let currentLang = this.translate.currentLang;
-    // switch (currentLang) {
-    //   case "en": {
-    //     this.imgLink = "assets/img/basic-information/en.png";
-    //     break;
-    //   }
-    //   case "ja": {
-    //     this.imgLink = "assets/img/basic-information/jp.png";
-    //     break;
-    //   }
-    //   default: {
-    //   }
-    // }
-    // this.translate.onDefaultLangChange.subscribe((event: LangChangeEvent) => {
-    //   switch (event.lang) {
-    //     case "en": {
-    //       this.imgLink = "assets/img/basic-information/en.png";
-    //       break;
-    //     }
-    //     case "ja": {
-    //       this.imgLink = "assets/img/basic-information/jp.png";
-    //       break;
-    //     }
-    //     default: {
-    //     }
-    //   }
-    // });
-    // this.translate.onLangChange.subscribe((event: LangChangeEvent) => {
-    //   switch (event.lang) {
-    //     case "en": {
-    //       this.imgLink = "assets/img/basic-information/en.png";
-    //       break;
-    //     }
-    //     case "ja": {
-    //       this.imgLink = "assets/img/basic-information/jp.png";
-    //       break;
-    //     }
-    //     default: {
-    //     }
-    //   }
-    // });
-    // //this.setColGroupsAndKeys(0);
-    // if (JSON.stringify(this.force.toggleStatus) != '{}') {
-    //   this.toggleStatus = this.force.toggleStatus;
-    //   this.currentColGroupKeys = Object.keys(this.force.toggleStatus);      
-    // } else {
-    //   this.currentColGroups = this.bendingColGroups;
-    //   this.currentColGroupKeys = Object.keys(this.currentColGroups);
-    //   for (const group of this.currentColGroupKeys) {
-    //     this.toggleStatus[group] = true;
-    //   }
-    // }
-
-    // this.setColGroupsAndKeys(0);
-    // this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
-    // for (const group of this.bendingColGroupKeys) {
-    //   this.toggleStatus[group] = true;
-    // }
-
-    // // データを登録する
-    // this.ROWS_COUNT = this.rowsCount();
-    // this.loadData(this.ROWS_COUNT);
-
-    // this.columnHeaders1 = this.force.getColumnHeaders1();
-    // this.columnHeaders2 = this.force.getColumnHeaders2();
-    // this.columnHeaders3 = this.force.getColumnHeaders3();
-
-    // // グリッドの初期化 --------------------------------------
-    // this.options = {
-    //   showTop: false,
-    //   reactive: true,
-    //   sortable: false,
-    //   locale: 'jp',
-    //   height: this.tableHeight().toString(),
-    //   numberCell: { show: true }, // 行番号
-    //   colModel: this.columnHeaders1,
-    //   dataModel: { data: this.table_datas },
-    //   freezeCols: 1,
-    //   contextMenu: {
-    //     on: true,
-    //     items: [
-    //       {
-    //         name: this.translate.instant("action_key.copy"),
-    //         shortcut: 'Ctrl + C',
-    //         action: function (evt, ui, item) {
-    //           this.copy();
-    //         }
-    //       },
-    //       {
-    //         name: this.translate.instant("action_key.paste"),
-    //         shortcut: 'Ctrl + V',
-    //         action: function (evt, ui, item) {
-    //           this.paste();
-    //         }
-    //       },
-    //       {
-    //         name: this.translate.instant("action_key.cut"),
-    //         shortcut: 'Ctrl + X',
-    //         action: function (evt, ui, item) {
-    //           this.cut();
-    //         }
-    //       },
-    //       {
-    //         name: this.translate.instant("action_key.undo"),
-    //         shortcut: 'Ctrl + Z',
-    //         action: function (evt, ui, item) {
-    //           this.History().undo();
-    //         }
-    //       }
-    //     ]
-    //   },
-    //   beforeTableView: (evt, ui) => {
-    //     const dataV = this.table_datas.length;
-    //     if (ui.initV == null) {
-    //       return;
-    //     }
-    //     if (ui.finalV >= dataV - 1) {
-    //       this.loadData(dataV + this.ROWS_COUNT);
-    //       this.grid.refreshDataAndView();
-    //     }
-    //   },
-    // };
+    this.initTable();
   }
 
-  initTable () {
+  private initTable() {
     this.setColGroupsAndKeys(0);
 
     //Set active start
-    if(this.selectedRoad){
-      this.bendingColGroupKeys = Object.keys(this.bendingColGroupsRoad);
-    }
-    else
-    {
-      this.bendingColGroupKeys = Object.keys(this.bendingColGroups);
-    }
-    const toggleStatusService:any = this.force.getToggleStatus();
-    if(Object.keys(toggleStatusService).length>0){
-      this.toggleStatus = toggleStatusService
-    }else{
-      for (const group of this.bendingColGroupKeys) {
+    const toggleStatusService: any = this.force.getToggleStatus();
+    if (Object.keys(toggleStatusService).length > 0) {
+      this.toggleStatus = toggleStatusService;
+    } else {
+      const bendingColGroupKeys = this.selectedRoad
+        ? Object.keys(this.bendingColGroupsRoad)
+        : Object.keys(this.bendingColGroups);
+      for (const group of bendingColGroupKeys) {
         this.toggleStatus[group] = true;
       }
     }
-    
 
     // データを登録する
     this.ROWS_COUNT = this.force.getDataCount();
@@ -243,16 +436,16 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     this.loadData(this.ROWS_COUNT);
 
-    this.columnHeaders1 = this.force.getColumnHeaders1();
-    this.columnHeaders2 = this.force.getColumnHeaders2();
-    this.columnHeaders3 = this.force.getColumnHeaders3();
+    this.columnHeaders1 = this.getColumnHeaders(this.bendingGroupDic);
+    this.columnHeaders2 = this.getColumnHeaders(this.shearGroupDic);
+    this.columnHeaders3 = this.getColumnHeaders(this.torsionalGroupDic);
 
     // グリッドの初期化 --------------------------------------
     this.options = {
       showTop: false,
       reactive: true,
       sortable: false,
-      locale: 'jp',
+      locale: "jp",
       height: this.tableHeight().toString(),
       numberCell: { show: true }, // 行番号
       colModel: this.columnHeaders1,
@@ -263,33 +456,33 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         items: [
           {
             name: this.translate.instant("action_key.copy"),
-            shortcut: 'Ctrl + C',
+            shortcut: "Ctrl + C",
             action: function (evt, ui, item) {
-              this.copy();
-            }
+              (this as any).copy();
+            },
           },
           {
             name: this.translate.instant("action_key.paste"),
-            shortcut: 'Ctrl + V',
+            shortcut: "Ctrl + V",
             action: function (evt, ui, item) {
-              this.paste();
-            }
+              (this as any).paste();
+            },
           },
           {
             name: this.translate.instant("action_key.cut"),
-            shortcut: 'Ctrl + X',
+            shortcut: "Ctrl + X",
             action: function (evt, ui, item) {
-              this.cut();
-            }
+              (this as any).cut();
+            },
           },
           {
             name: this.translate.instant("action_key.undo"),
-            shortcut: 'Ctrl + Z',
+            shortcut: "Ctrl + Z",
             action: function (evt, ui, item) {
-              this.History().undo();
-            }
-          }
-        ]
+              (this as any).History().undo();
+            },
+          },
+        ],
       },
       beforeTableView: (evt, ui) => {
         const dataV = this.table_datas.length;
@@ -298,7 +491,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         }
         if (ui.finalV >= dataV - 1) {
           this.loadData(dataV + this.ROWS_COUNT);
-          this.grid.refreshDataAndView();
+          this.grid!.refreshDataAndView();
         }
       },
     };
@@ -307,24 +500,28 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   ngAfterViewInit() {
     this.activeButtons(0);
 
-    this.grid.refreshCell({
+    this.grid!.refreshCell({
       rowIndx: 0,
       colIndx: 0,
     });
-    this.activePageChenge(0)
+    this.activePageChenge(0);
   }
 
-  private setKeyGroupsRoad(){
+  private setKeyGroupsRoad() {
     this.bendingColGroupsRoad = {};
     this.shearColGroupsRoad = {};
     this.torsionalColGroupsRoad = {};
-    const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
+    const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"];
     let pickup_moment = this.basic.pickup_moment;
 
-    pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
+    pickup_moment = pickup_moment.filter(
+      (value, index) =>
+        !arrayIgnore.includes(this.translate.instant(value.title)),
+    );
 
     //bending
-    let bendingRoad: any = new Object, iB = 1;
+    let bendingRoad: any = new Object(),
+      iB = 1;
     pickup_moment.forEach((value, index) => {
       let key = "B" + value.id;
       bendingRoad[key] = { start: iB, end: iB + 1 };
@@ -333,7 +530,8 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.bendingColGroupsRoad = bendingRoad;
 
     //Shear
-    let shearRoad: any = new Object, iS = 1;
+    let shearRoad: any = new Object(),
+      iS = 1;
     this.basic.pickup_shear_force.forEach((value, index) => {
       let key = "S" + value.id;
       shearRoad[key] = { start: iS, end: iS + 2 };
@@ -342,7 +540,8 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     this.shearColGroupsRoad = shearRoad;
 
     //Torsional
-    let torsionalRoad: any = new Object, iT = 1;
+    let torsionalRoad: any = new Object(),
+      iT = 1;
     this.basic.pickup_torsional_moment.forEach((value, index) => {
       let key = "T" + value.id;
       torsionalRoad[key] = { start: iT, end: iT + 3 };
@@ -355,42 +554,53 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     //Set title switch
     let currentSW = new Array();
     if (id === 0) {
-      const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
+      const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"];
       let pickup_moment = this.basic.pickup_moment;
-      pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
+      pickup_moment = pickup_moment.filter(
+        (value, index) =>
+          !arrayIgnore.includes(this.translate.instant(value.title)),
+      );
       pickup_moment.forEach((value, index) => {
         let key = "B" + value.id;
-        const [mainTitle, subTitle] = this.force.handleTitle(value.title, value.id < 2 ? 1 : 3);
+        const [mainTitle, subTitle] = this.force.handleTitle(
+          value.title,
+          value.id < 2 ? 1 : 3,
+        );
         currentSW.push({
           id: key,
           title: subTitle,
-        })
+        });
       });
     } else if (id === 1) {
       this.basic.pickup_shear_force.forEach((value, index) => {
         let key = "S" + value.id;
-        const [mainTitle, subTitle] = this.force.handleTitle(value.title, value.id < 2 ? 1 : 3);
+        const [mainTitle, subTitle] = this.force.handleTitle(
+          value.title,
+          value.id < 2 ? 1 : 3,
+        );
         currentSW.push({
           id: key,
           title: subTitle,
-        })
+        });
       });
     } else if (id === 2) {
       this.basic.pickup_torsional_moment.forEach((value, index) => {
         let key = "T" + value.id;
-        const [mainTitle, subTitle] = this.force.handleTitle(value.title, value.id < 2 ? 1 : 3);
+        const [mainTitle, subTitle] = this.force.handleTitle(
+          value.title,
+          value.id < 2 ? 1 : 3,
+        );
         currentSW.push({
           id: key,
           title: subTitle,
-        })
+        });
       });
     }
     this.currentSW = currentSW;
   }
   private setColGroupsAndKeys(id: number): void {
     this.groupActive = [];
-    if(this.selectedRoad)
-    {
+    if (this.selectedRoad) {
       //set for CurrentColGroupKeys
       this.setTitleGroupsRoad(id);
       this.toggleStatus = {};
@@ -402,16 +612,14 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
 
       if (id === 0) {
         this.currentColGroups = this.bendingColGroupsRoad;
-        this.toggleStatus = this.toggleStatusPick
+        this.toggleStatus = this.toggleStatusPick;
       } else if (id === 1) {
         this.currentColGroups = this.shearColGroupsRoad;
-        this.toggleStatus = this.toggleStatusShear
+        this.toggleStatus = this.toggleStatusShear;
       } else if (id === 2) {
         this.currentColGroups = this.torsionalColGroupsRoad;
       }
-    }
-    else
-    {
+    } else {
       if (id === 0) {
         this.currentColGroups = this.bendingColGroups;
       } else if (id === 1) {
@@ -426,8 +634,7 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
         this.toggleStatus[group] = true;
       }
       if (this.selectedRoad) {
-        if(this.toggleStatus[group])
-        {
+        if (this.toggleStatus[group]) {
           const id = parseInt(group.slice(1));
           this.groupActive.push(id);
         }
@@ -438,54 +645,65 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   public toggleDataLoad(group: string): void {
     this.toggleStatus[group] = !this.toggleStatus[group];
     const { start, end } = this.currentColGroups[group];
-    this.grid.grid.getColModel().forEach((column, index) => {
+    this.grid!.grid.getColModel().forEach((column, index) => {
       if (index >= start && index <= end) {
         column.hidden = !this.toggleStatus[group];
         const category = this.basic.category;
-        if((index===5 || index===6)&& this.idTagPage===0 && category === 'Rail'){
-          column.hidden =true
+        if (
+          (index === 5 || index === 6) &&
+          this.idTagPage === 0 &&
+          category === "Rail"
+        ) {
+          column.hidden = true;
         }
       }
     });
-    if(this.selectedRoad)
-    {
-      if(group.includes('B'))
-      {
-        const returnHeader = this.reloadHeader(group, this.force.getColumnHeaders1());
-        this.columnHeaders1 = returnHeader
+    if (this.selectedRoad) {
+      if (group.includes("B")) {
+        const returnHeader = this.reloadHeader(
+          group,
+          this.force.getColumnHeaders1(),
+        );
+        this.columnHeaders1 = returnHeader;
         this.options.colModel = this.columnHeaders1;
-      }
-      else if(group.includes('S'))
-      {
-        const returnHeader = this.reloadHeader(group, this.force.getColumnHeaders2());
-        this.columnHeaders1 = returnHeader
+      } else if (group.includes("S")) {
+        const returnHeader = this.reloadHeader(
+          group,
+          this.force.getColumnHeaders2(),
+        );
+        this.columnHeaders1 = returnHeader;
         this.options.colModel = this.columnHeaders1;
       }
     }
     this.saveDataCol();
-    this.grid.refreshDataAndView();
-    this.grid.setColsShow();
+    this.grid!.refreshDataAndView();
+    this.grid!.setColsShow();
   }
 
-  public reloadHeader(group: string, headers: any) {
+  private reloadHeader(group: string, headers: any) {
     let returnHeader = headers;
     const hidden = !this.toggleStatus[group];
     const id = parseInt(group.slice(1));
     if (hidden)
-      this.groupActive = this.groupActive.filter((value, index) => value !== id);
-    else
-      this.groupActive.splice(id, 0, id);
+      this.groupActive = this.groupActive.filter(
+        (value, index) => value !== id,
+      );
+    else this.groupActive.splice(id, 0, id);
 
-    returnHeader[1].colModel = returnHeader[1].colModel.filter((value, index) => this.groupActive.includes(index));
-    returnHeader[2].colModel = returnHeader[2].colModel.filter((value, index) => this.groupActive.includes(index + 2));
+    returnHeader[1].colModel = returnHeader[1].colModel.filter(
+      (value: any, index: number) => this.groupActive.includes(index),
+    );
+    returnHeader[2].colModel = returnHeader[2].colModel.filter(
+      (value: any, index: number) => this.groupActive.includes(index + 2),
+    );
 
-    const hideParent1 = this.groupActive.find(value => value < 2);
-    if(hideParent1 === undefined || hideParent1 === null) returnHeader.splice(1,1);
+    const hideParent1 = this.groupActive.find((value) => value < 2);
+    if (hideParent1 === undefined || hideParent1 === null)
+      returnHeader.splice(1, 1);
 
-    const hideParent2 = this.groupActive.find(value => value >= 2);
-    if(hideParent2 === undefined || hideParent2 === null) 
-    {
-      returnHeader.splice(returnHeader.length - 1,1);
+    const hideParent2 = this.groupActive.find((value) => value >= 2);
+    if (hideParent2 === undefined || hideParent2 === null) {
+      returnHeader.splice(returnHeader.length - 1, 1);
     }
     return returnHeader;
   }
@@ -498,18 +716,19 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
-
   ngOnDestroy(): void {
+    while (this.subscriptions.length > 0) {
+      this.subscriptions.pop()?.unsubscribe();
+    }
     this.saveData();
     // this.saveDataCol();
   }
   public saveData(): void {
     this.force.setTableColumns(this.table_datas);
-    
   }
 
   public saveDataCol() {
-    this.force.setCelCols(this.toggleStatus)
+    this.force.setCelCols(this.toggleStatus);
   }
   // 表の高さを計算する
   private tableHeight(): number {
@@ -528,11 +747,11 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   public activePageChenge(id: number): void {
-    if(this.selectedRoad){
+    if (this.selectedRoad) {
       this.groupActive = [];
     }
     this.setColGroupsAndKeys(id);
-    this.idTagPage=id
+    this.idTagPage = id;
     if (id === 0) {
       this.options.colModel = this.columnHeaders1;
     } else if (id === 1) {
@@ -543,23 +762,23 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
       return;
     }
 
-    this.grid.grid.getColModel().forEach((column, index) => {
+    this.grid!.grid.getColModel().forEach((column, index) => {
       for (const [group, { start, end }] of Object.entries(
-        this.currentColGroups
+        this.currentColGroups,
       )) {
         if (index >= start && index <= end) {
           column.hidden = !this.toggleStatus[group];
         }
         const category = this.basic.category;
-        if((index===5 || index===6)&& id===0 && category === 'Rail'){
-          column.hidden =true
+        if ((index === 5 || index === 6) && id === 0 && category === "Rail") {
+          column.hidden = true;
         }
       }
     });
 
     this.activeButtons(id);
-    this.grid.options = this.options;
-    this.grid.refreshDataAndView();
+    this.grid!.options = this.options;
+    this.grid!.refreshDataAndView();
   }
 
   // アクティブになっているボタンを全て非アクティブにする
@@ -576,4 +795,99 @@ export class SectionForcesComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
+  /**
+   * 指定されたキーに対応するテキストを返す
+   * @param labelKey キー名
+   * @param isR5 令和5年仕様かどうか
+   * @returns 指定されたキーに対応するテキスト
+   */
+  private getTranslation(
+    labelKey: LabelKey | undefined,
+    isR5: boolean = this.basic.isR5(),
+  ): string {
+    if (labelKey === undefined) {
+      return "";
+    }
+    let key: string | null;
+    if (isR5) {
+      key = labelKey.r5 === undefined ? labelKey.h16 : labelKey.r5;
+    } else {
+      key = labelKey.h16;
+    }
+    if (key === null) {
+      return "";
+    }
+    return this.translate.instant(key);
+  }
+
+  /**
+   * 指定されたグループキーに対応するトグルスイッチの見出しテキストを返す
+   * @param group グループキー
+   * @returns トグルスイッチお見出しテキスト
+   */
+  public getGroupLabel(group: GroupKey): string {
+    const key = this.toggleLabelDic[group];
+    return this.getTranslation(key);
+  }
+
+  /**
+   * 表見出し情報(colModel)を生成する
+   * @param groupDic グループ情報
+   * @returns 表見出し情報(colModel)
+   */
+  private getColumnHeaders(groupDic: Partial<GroupDic>): pq.gridT.colModel {
+    const result: pq.gridT.colModel = [];
+
+    // 算出点名
+    result.push({
+      title: this.translate.instant("section-forces.p_name"),
+      align: "left",
+      dataType: "string",
+      dataIndx: "p_name",
+      sortable: false,
+      width: 250,
+      nodrag: true,
+    });
+
+    for (const group of Object.values(groupDic)) {
+      const entry: pq.gridT.column = {
+        title: this.getTranslation(group.labelKey),
+        align: "center",
+        colModel: [],
+        nodrag: true,
+      };
+      for (const subgroup of group.subgroups) {
+        const subentry: pq.gridT.column = {
+          title: this.getTranslation(subgroup.labelKey),
+          align: "center",
+          colModel: [],
+          nodrag: true,
+          hidden: subgroup.hidden ?? false,
+        };
+        for (const columnType of subgroup.columnTypes) {
+          const titleDic = {
+            Md: "Md<br/>(kN・m)",
+            Nd: "Nd<br/>(kN)",
+            Vd: "Vd<br/>(kN)",
+            Mt: "Mt<br/>(kN・m)",
+          } as const;
+          const column: pq.gridT.column = {
+            title: titleDic[columnType],
+            align: "center",
+            dataType: "float",
+            format: "0.00",
+            dataIndx: `${subgroup.dataIndxPrefix}${columnType}`,
+            sortable: false,
+            width: 100,
+            nodrag: true,
+          };
+          subentry.colModel!.push(column);
+        }
+        entry.colModel!.push(subentry);
+      }
+      result.push(entry);
+    }
+
+    return result;
+  }
 }

@@ -777,12 +777,6 @@ export class SafetyFactorsMaterialStrengthsComponent
     this.pile_factor_select_id = this.getPileFactorSelectId();
     this.safety.arrayAxis = this.arrayAxis;
     this.safety.axisforce_condition = this.arrayAxisForce;
-  }
-
-  ngAfterViewInit() {
-    this.checkForScrollbar();
-    this.activeButtons(0);
-    this.setActiveTab(this.activeTab);
 
     let dataOfTab = this.arrayAxisForce[this.groupId];
     if (dataOfTab != undefined) {
@@ -794,6 +788,12 @@ export class SafetyFactorsMaterialStrengthsComponent
       this.not_consider_moment_checked = !this.used;
       this.considerMomentChecked = !this.used;
     }
+  }
+
+  ngAfterViewInit() {
+    this.checkForScrollbar();
+    this.activeButtons(0);
+    this.setActiveTab(this.activeTab);
   }
   private checkForScrollbar() {
     // this.subNavArea.nativeElement.element.style.overflow ? this.hasScrollbar = false : this.hasScrollbar = true;

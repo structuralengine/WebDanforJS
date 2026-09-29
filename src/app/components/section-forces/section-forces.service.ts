@@ -34,8 +34,10 @@ export class InputSectionForcesService {
       const arrayIgnore = ["Minimum rebar amount[1-10]", "最小鉄筋量[1~10]"]
       pickup_moment = pickup_moment.filter((value, index) => !arrayIgnore.includes(this.translate.instant(value.title)));
     }
-    else
-      pushIds = [0, 3, 5, 6, 7, 8];
+    else {
+      // 鉄道の見出しは component 側の静的定義で生成するため、この経路は不要
+      throw new Error('road category only');
+    }
     return this.createColumnHeaders(
       pickup_moment,
       pushIds,
@@ -48,8 +50,10 @@ export class InputSectionForcesService {
     if(this.basic.category === 'Road'){
       pushIds = [0, 2];
     }
-    else
-      pushIds = [0, 3, 5, 6, 7];
+    else {
+      // 鉄道の見出しは component 側の静的定義で生成するため、この経路は不要
+      throw new Error('road category only');
+    }
 
     return this.createColumnHeaders(
       this.basic.pickup_shear_force,
@@ -63,8 +67,10 @@ export class InputSectionForcesService {
     if(this.basic.category === 'Road'){
       pushIds = [0, 2];
     }
-    else
-      pushIds = [0, 5, 6, 7];
+    else {
+      // 鉄道の見出しは component 側の静的定義で生成するため、この経路は不要
+      throw new Error('road category only');
+    }
 
     return this.createColumnHeaders(
       this.basic.pickup_torsional_moment,
@@ -144,32 +150,8 @@ export class InputSectionForcesService {
     }
     else
     {
-      for (const data of dataArray) {
-        //If it cannot be translated, it will still return itself
-        // const [mainTitle, subTitle] = data.title.split(" ");
-        const [mainTitle, subTitle] = this.translate.instant(data.title).split(" ");
-        let title:string=subTitle;
-        let checkHidden= false;
-        if(keyPrefix==="Md"){
-          if(this.translate.instant(data.title) === this.translate.instant("basic-information.d_stress")){
-            title=this.translate.instant("basic-information.study_edge_str")
-          }
-          if(this.translate.instant(data.title) === this.translate.instant("basic-information.pl_d")){
-            title=this.translate.instant("basic-information.per_act")
-          }
-          if(data.id===2 && this.translate.instant(data.title)=== this.translate.instant("basic-information.safe_limit")){
-            checkHidden= true
-          }
-        }
-        if (pushIds.includes(data.id)) {
-          if (currentHead) {
-            result.push(currentHead);
-          }
-          currentHead = this.createNewHeader(mainTitle);
-        }
-        const key = keyPrefix + data.id;
-        currentHead.colModel.push(this.createSubColumn(title, key, keyPrefix,checkHidden));
-      }
+      // 鉄道の見出しは component 側の静的定義で生成するため、この経路は不要
+      throw new Error('road category only');
     }
 
     if (currentHead) {
