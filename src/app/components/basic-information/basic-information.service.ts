@@ -98,6 +98,9 @@ export class InputBasicInformationService {
     this._pickup_moment_dic = {};
     this._pickup_shear_force_dic = {};
     this._pickup_torsional_moment_dic = {};
+
+    this.setSpecification1Subject.next(this.specification1);
+    this.setSpecification2Subject.next(this.specification2);
   }
 
   private _specification1: Specification1 = Specification1.Rail;
@@ -487,7 +490,9 @@ export class InputBasicInformationService {
           },
           {
             id: 7,
-            title: "basic-information.r_at",
+            title: isH16
+              ? "basic-information.r_at"
+              : "basic-information.r_damage",
             no: dic[7] ?? null,
           },
           {
@@ -634,7 +639,9 @@ export class InputBasicInformationService {
           },
           {
             id: 7,
-            title: "basic-information.r_at",
+            title: isH16
+              ? "basic-information.r_at"
+              : "basic-information.r_damage",
             no: dic[7] ?? null,
           },
         ];
@@ -750,7 +757,9 @@ export class InputBasicInformationService {
           },
           {
             id: 7,
-            title: "basic-information.r_at",
+            title: isH16
+              ? "basic-information.r_at"
+              : "basic-information.r_damage",
             no: dic[7] ?? null,
           },
         ];
